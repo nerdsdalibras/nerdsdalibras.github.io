@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Editais PNCP – Intérprete de Libras | Nerds da Libras</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fffaf5;
+      color: #333;
+    }
+    header {
+      background-color: #ff7a00;
+      color: white;
+      padding: 1em;
+      text-align: center;
+    }
+    header a {
+      color: white;
+      text-decoration: none;
+    }
+    header a:hover { text-decoration: underline; }
+    nav {
+      background-color: #ffe0c2;
+      display: flex;
+      justify-content: center;
+      padding: 0.5em 0;
+      flex-wrap: wrap;
+      gap: 0.5em;
+    }
+    nav a {
+      margin: 0 1em;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    nav a:hover { color: #ff7a00; }
+
+    .container {
+      max-width: 1000px;
+      margin: 2em auto;
+      padding: 0 1em;
+    }
+
+    h2 {
+      color: #ff7a00;
+      border-bottom: 2px solid #ffe0c2;
+      padding-bottom: 0.3em;
+    }
+
+    .search-box {
+      background: white;
+      border: 1px solid #ffe0c2;
+      border-radius: 8px;
+      padding: 1.5em;
+      margin-bottom: 1.5em;
+      box-shadow: 0 2px 6px rgba(255,122,0,0.08);
+    }
+    .search-row {
+      display: flex;
+      gap: 0.5em;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 0.8em;
+    }
+    .search-row label {
+      display: block;
+      font-weight: bold;
+      font-size: 0.85em;
+      margin-bottom: 0.25em;
+      color: #555;
+    }
+    .search-row .field {
+      display: flex;
+      flex-direction: column;
+    }
+    .field-grow { flex: 1 1 260px; }
+    input[type="text"], input[type="date"], select {
+      padding: 0.55em 0.8em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+      width: 100%;
+    }
+    input[type="text"]:focus, input[type="date"]:focus, select:focus {
+      outline: none;
+      border-color: #ff7a00;
+      box-shadow: 0 0 0 2px rgba(255,122,0,0.15);
+    }
+    .btn-primary {
+      background-color: #ff7a00;
+      color: white;
+      border: none;
+      padding: 0.6em 1.6em;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary:hover { background-color: #e06c00; }
+    .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: transparent;
+      color: #ff7a00;
+      border: 1px solid #ff7a00;
+      padding: 0.6em 1.2em;
+      border-radius: 6px;
+      font-size: 0.9em;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background-color: #fff3e8; }
+
+    .status-bar {
+      background: #fff3e8;
+      border-left: 4px solid #ff7a00;
+      padding: 0.7em 1em;
+      margin-bottom: 1em;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.95em;
+    }
+
+    #resultados { margin-top: 0.5em; }
+
+    .card {
+      background: white;
+      border: 1px solid #ffe0c2;
+      border-radius: 8px;
+      padding: 1.2em 1.4em;
+      margin-bottom: 1em;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 3px 10px rgba(255,122,0,0.15); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-bottom: 0.6em;
+    }
+    .card-title {
+      font-weight: bold;
+      font-size: 1em;
+      color: #222;
+      flex: 1 1 300px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2em 0.7em;
+      border-radius: 12px;
+      font-size: 0.75em;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    .badge-orange { background: #fff3e8; color: #cc5e00; border: 1px solid #ff7a00; }
+    .badge-green  { background: #e8f5e9; color: #2e7d32; border: 1px solid #66bb6a; }
+    .badge-blue   { background: #e3f2fd; color: #1565c0; border: 1px solid #64b5f6; }
+    .badge-gray   { background: #f5f5f5; color: #555;    border: 1px solid #bbb; }
+
+    .card-meta {
+      font-size: 0.85em;
+      color: #666;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em 1.5em;
+      margin-bottom: 0.7em;
+    }
+    .card-meta span::before { content: "• "; color: #ff7a00; }
+
+    .card-objeto {
+      font-size: 0.95em;
+      color: #444;
+      margin-bottom: 0.8em;
+      line-height: 1.5;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5em;
+    }
+    .card-valor {
+      font-weight: bold;
+      color: #ff7a00;
+      font-size: 0.95em;
+    }
+    .card-link {
+      color: #ff7a00;
+      text-decoration: none;
+      font-size: 0.9em;
+      font-weight: bold;
+      border: 1px solid #ff7a00;
+      padding: 0.3em 0.9em;
+      border-radius: 5px;
+      transition: all 0.2s;
+    }
+    .card-link:hover { background: #ff7a00; color: white; }
+
+    .paginacao {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5em;
+      margin-top: 1.5em;
+      flex-wrap: wrap;
+    }
+    .paginacao button {
+      padding: 0.5em 1em;
+      border: 1px solid #ff7a00;
+      background: white;
+      color: #ff7a00;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .paginacao button:hover:not(:disabled) { background: #ff7a00; color: white; }
+    .paginacao button:disabled { opacity: 0.4; cursor: default; }
+    .paginacao .pag-info { font-size: 0.9em; color: #666; padding: 0 0.5em; }
+
+    .loader {
+      text-align: center;
+      padding: 2em;
+      color: #ff7a00;
+      font-size: 1.1em;
+    }
+    .loader::after {
+      content: "";
+      display: block;
+      width: 36px;
+      height: 36px;
+      margin: 0.7em auto 0;
+      border: 4px solid #ffe0c2;
+      border-top-color: #ff7a00;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      text-align: center;
+      padding: 3em 1em;
+      color: #888;
+    }
+    .empty-state svg { margin-bottom: 0.5em; opacity: 0.35; }
+
+    .erro-box {
+      background: #fff3e8;
+      border: 1px solid #ff7a00;
+      border-radius: 8px;
+      padding: 1.2em;
+      color: #cc5e00;
+      margin-top: 1em;
+    }
+
+    footer {
+      background-color: #ff7a00;
+      color: white;
+      text-align: center;
+      padding: 1em;
+      margin-top: 3em;
+    }
+
+    @media (max-width: 600px) {
+      .search-row { flex-direction: column; }
+      .card-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><a href="index.html">Nerds da Libras</a></h1>
+  <p>Buscador de Editais PNCP – Intérprete de Libras</p>
+</header>
+
+<nav>
+  <a href="index.html">Início</a>
+  <a href="index.html#sobre">Quem Somos</a>
+  <a href="index.html#servicos">Serviços</a>
+  <a href="index.html#contato">Contato</a>
+  <a href="buscador-pncp.html"><strong>Editais PNCP</strong></a>
+</nav>
+
+<div class="container">
+  <h2>🔍 Editais com Intérprete de Libras – PNCP</h2>
+  <p style="color:#666; margin-top:-0.5em; margin-bottom:1.2em;">
+    Busca automatizada no Portal Nacional de Contratações Públicas (PNCP) por licitações que demandam serviços de interpretação em Libras.
+  </p>
+
+  <div class="search-box">
+    <div class="search-row">
+      <div class="field field-grow">
+        <label for="input-termo">Termo de busca</label>
+        <input type="text" id="input-termo" value="interprete de libras" placeholder="Ex: interprete de libras">
+      </div>
+      <div class="field">
+        <label for="input-status">Situação</label>
+        <select id="input-status">
+          <option value="">Todas</option>
+          <option value="recebendo_proposta">Recebendo Proposta</option>
+          <option value="em_andamento">Em Andamento</option>
+          <option value="encerrada">Encerrada</option>
+        </select>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="field">
+        <label for="input-data-ini">Data inicial</label>
+        <input type="date" id="input-data-ini">
+      </div>
+      <div class="field">
+        <label for="input-data-fim">Data final</label>
+        <input type="date" id="input-data-fim">
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
+        <button class="btn-primary" id="btn-buscar" onclick="buscar(1)">Buscar</button>
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
+        <button class="btn-secondary" onclick="limparFiltros()">Limpar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="status-bar" class="status-bar" style="display:none;"></div>
+  <div id="resultados"></div>
+
+  <div class="paginacao" id="paginacao" style="display:none;">
+    <button id="btn-ant" onclick="mudarPagina(-1)">&#8592; Anterior</button>
+    <span class="pag-info" id="pag-info"></span>
+    <button id="btn-prox" onclick="mudarPagina(1)">Próxima &#8594;</button>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2025 Nerds da Libras LTDA – Todos os direitos reservados.</p>
+  <p style="font-size:0.85em; opacity:0.85;">Dados fornecidos pelo Portal Nacional de Contratações Públicas (PNCP) via API pública.</p>
+</footer>
+
+<script>
+  const PNCP_BASE = 'https://pncp.gov.br/api/search/v1';
+  const TAMANHO_PAGINA = 10;
+
+  let paginaAtual = 1;
+  let totalPaginas = 1;
+
+  // Define data padrão: últimos 180 dias até hoje
+  (function() {
+    const hoje = new Date();
+    const ini  = new Date(hoje);
+    ini.setDate(hoje.getDate() - 180);
+    document.getElementById('input-data-fim').value = formataDataInput(hoje);
+    document.getElementById('input-data-ini').value = formataDataInput(ini);
+  })();
+
+  function formataDataInput(d) {
+    return d.toISOString().split('T')[0];
+  }
+
+  function formataDataBR(iso) {
+    if (!iso) return '–';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('pt-BR');
+  }
+
+  function formataValor(v) {
+    if (v == null || v === 0) return null;
+    return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function formataDataAPI(str) {
+    // Converte YYYY-MM-DD → YYYYMMDD
+    return str ? str.replace(/-/g, '') : null;
+  }
+
+  function limparFiltros() {
+    document.getElementById('input-termo').value = 'interprete de libras';
+    document.getElementById('input-status').value = '';
+    const hoje = new Date();
+    const ini  = new Date(hoje);
+    ini.setDate(hoje.getDate() - 180);
+    document.getElementById('input-data-fim').value = formataDataInput(hoje);
+    document.getElementById('input-data-ini').value = formataDataInput(ini);
+  }
+
+  function mudarPagina(delta) {
+    const nova = paginaAtual + delta;
+    if (nova >= 1 && nova <= totalPaginas) buscar(nova);
+  }
+
+  async function buscar(pagina) {
+    pagina = pagina || 1;
+    paginaAtual = pagina;
+
+    const termo  = document.getElementById('input-termo').value.trim() || 'interprete de libras';
+    const status = document.getElementById('input-status').value;
+    const dataIni = document.getElementById('input-data-ini').value;
+    const dataFim = document.getElementById('input-data-fim').value;
+
+    const btn = document.getElementById('btn-buscar');
+    btn.disabled = true;
+    btn.textContent = 'Buscando…';
+
+    document.getElementById('resultados').innerHTML = '<div class="loader">Consultando o PNCP</div>';
+    document.getElementById('status-bar').style.display = 'none';
+    document.getElementById('paginacao').style.display = 'none';
+
+    const params = new URLSearchParams({
+      q: termo,
+      pagina: pagina,
+      tamanhoPagina: TAMANHO_PAGINA,
+    });
+    if (status)  params.set('status', status);
+    if (dataIni) params.set('dataInicial', formataDataAPI(dataIni));
+    if (dataFim) params.set('dataFinal',   formataDataAPI(dataFim));
+
+    const url = `${PNCP_BASE}/contratacoes?${params.toString()}`;
+
+    try {
+      const resp = await fetch(url, {
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!resp.ok) {
+        throw new Error(`Erro HTTP ${resp.status}: ${resp.statusText}`);
+      }
+
+      const dados = await resp.json();
+      renderizarResultados(dados, termo);
+
+    } catch (err) {
+      renderizarErro(err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Buscar';
+    }
+  }
+
+  function renderizarResultados(dados, termo) {
+    const items = dados.data || dados.items || dados.resultado || [];
+    const total = dados.totalRegistros || dados.total || 0;
+    totalPaginas = dados.totalPaginas || Math.ceil(total / TAMANHO_PAGINA) || 1;
+
+    const sb = document.getElementById('status-bar');
+    sb.style.display = 'block';
+
+    if (total === 0 || items.length === 0) {
+      sb.innerHTML = `Nenhum resultado encontrado para <strong>"${termo}"</strong>.`;
+      document.getElementById('resultados').innerHTML = `
+        <div class="empty-state">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <p>Nenhum edital encontrado.<br>Tente ampliar o período ou usar outro termo.</p>
+        </div>`;
+      return;
+    }
+
+    sb.innerHTML = `
+      Exibindo <strong>${items.length}</strong> de <strong>${total.toLocaleString('pt-BR')}</strong> resultados
+      para <strong>"${termo}"</strong> — página <strong>${paginaAtual}</strong> de <strong>${totalPaginas}</strong>.
+    `;
+
+    const html = items.map(item => montarCard(item)).join('');
+    document.getElementById('resultados').innerHTML = html;
+
+    // Paginação
+    if (totalPaginas > 1) {
+      document.getElementById('paginacao').style.display = 'flex';
+      document.getElementById('pag-info').textContent = `Página ${paginaAtual} / ${totalPaginas}`;
+      document.getElementById('btn-ant').disabled  = (paginaAtual <= 1);
+      document.getElementById('btn-prox').disabled = (paginaAtual >= totalPaginas);
+    }
+  }
+
+  function montarCard(item) {
+    const orgao = item.orgaoEntidade?.razaoSocial
+                || item.razaoSocialOrgao
+                || item.nomeOrgao
+                || 'Órgão não informado';
+
+    const unidade = item.unidadeOrgao?.nomeUnidade
+                  || item.nomeUnidadeOrgao
+                  || '';
+
+    const objeto = item.objetoCompra
+                 || item.descricao
+                 || item.objeto
+                 || 'Objeto não informado';
+
+    const modalidade = item.modalidadeNome
+                     || item.modalidade?.nome
+                     || item.tipoInstrumentoConvocatorioNome
+                     || '';
+
+    const situacao = item.situacaoCompraNome
+                   || item.situacao?.nome
+                   || item.status
+                   || '';
+
+    const dataPublic = item.dataPublicacaoPncp
+                     || item.dataPublicacao
+                     || item.dataAberturaProposta
+                     || '';
+
+    const dataEnc = item.dataEncerramentoOfertas
+                  || item.dataEncerramentoProposta
+                  || '';
+
+    const valor = formataValor(item.valorTotalEstimado || item.valorEstimado);
+
+    const cnpj = item.orgaoEntidade?.cnpj || item.cnpj || '';
+    const ano  = item.anoCompra || item.ano || '';
+    const seq  = item.sequencialCompra || item.sequencial || '';
+
+    const linkPNCP = (cnpj && ano && seq)
+      ? `https://pncp.gov.br/app/editais/${cnpj.replace(/\D/g,'')}/${ano}/${seq}`
+      : (item.linkSistemaOrigem || item.url || null);
+
+    const badgeSituacao = classificarBadge(situacao);
+
+    return `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">${escHtml(orgao)}${unidade ? ' — ' + escHtml(unidade) : ''}</div>
+          <div>
+            ${modalidade ? `<span class="badge badge-orange">${escHtml(modalidade)}</span> ` : ''}
+            ${situacao   ? `<span class="badge ${badgeSituacao}">${escHtml(situacao)}</span>` : ''}
+          </div>
+        </div>
+        <div class="card-objeto">${escHtml(objeto)}</div>
+        <div class="card-meta">
+          ${dataPublic ? `<span>Publicado: ${formataDataBR(dataPublic)}</span>` : ''}
+          ${dataEnc    ? `<span>Encerramento: ${formataDataBR(dataEnc)}</span>` : ''}
+          ${cnpj       ? `<span>CNPJ: ${escHtml(cnpj)}</span>` : ''}
+        </div>
+        <div class="card-footer">
+          <span class="card-valor">${valor ? 'Valor estimado: ' + valor : ''}</span>
+          ${linkPNCP
+            ? `<a class="card-link" href="${escHtml(linkPNCP)}" target="_blank" rel="noopener noreferrer">Ver no PNCP ↗</a>`
+            : '<span style="font-size:0.85em;color:#aaa;">Link não disponível</span>'
+          }
+        </div>
+      </div>`;
+  }
+
+  function classificarBadge(situacao) {
+    if (!situacao) return 'badge-gray';
+    const s = situacao.toLowerCase();
+    if (s.includes('proposta') || s.includes('recebendo') || s.includes('aberto')) return 'badge-green';
+    if (s.includes('andamento') || s.includes('publicad')) return 'badge-blue';
+    if (s.includes('encerrad') || s.includes('homologad') || s.includes('revogad')) return 'badge-gray';
+    return 'badge-orange';
+  }
+
+  function renderizarErro(err) {
+    console.error(err);
+    document.getElementById('resultados').innerHTML = `
+      <div class="erro-box">
+        <strong>Não foi possível consultar o PNCP.</strong><br><br>
+        Possíveis causas:
+        <ul style="margin:0.5em 0 0 1em; padding:0;">
+          <li>O servidor do PNCP pode estar temporariamente indisponível.</li>
+          <li>Restrição de CORS do navegador (tente acessar diretamente em
+            <a href="https://pncp.gov.br/app/editais" target="_blank" rel="noopener">pncp.gov.br</a>).</li>
+        </ul>
+        <br>
+        <details>
+          <summary style="cursor:pointer;color:#cc5e00;">Detalhes técnicos</summary>
+          <code style="font-size:0.85em;">${escHtml(String(err))}</code>
+        </details>
+      </div>`;
+  }
+
+  function escHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // Executa busca automática ao carregar a página
+  window.addEventListener('DOMContentLoaded', () => buscar(1));
+</script>
+
+</body>
+</html>
