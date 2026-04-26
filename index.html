@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lorena — Nerds da Libras</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ouro:    #C9963A;
+      --ouro-lt: #E8B96A;
+      --escuro:  #0D0D0D;
+      --cinza:   #1A1A1A;
+      --borda:   rgba(255,255,255,0.07);
+      --texto:   rgba(255,255,255,0.55);
+      --verde:   #22C55E;
+      --roxo:    #8B5CF6;
+      --azul:    #3B82F6;
+      --rosa:    #EC4899;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--escuro);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── FUNDO ── */
+    .bg-noise {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(201,150,58,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 80% 100%, rgba(139,92,246,.12) 0%, transparent 60%);
+    }
+
+    /* linha dourada no topo */
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--ouro), var(--ouro-lt), var(--ouro), transparent);
+      z-index: 100;
+    }
+
+    /* ── WRAPPER ── */
+    .wrapper {
+      position: relative; z-index: 1;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 52px 20px 80px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    /* ── HERO ── */
+    .hero { width: 100%; text-align: center; margin-bottom: 28px; }
+
+    /* foto carrossel */
+    .photo-wrap {
+      width: 130px; height: 130px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    .photo-ring {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      padding: 3px;
+      background: conic-gradient(var(--ouro), var(--ouro-lt), #fff8, var(--ouro));
+      animation: ringRotate 3s linear infinite;
+    }
+    @keyframes ringRotate {
+      to { transform: rotate(360deg); }
+    }
+    .photo-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--cinza);
+      position: relative;
+    }
+    .photo-inner .slide {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      opacity: 0;
+      transition: opacity .8s ease;
+      border-radius: 50%;
+    }
+    .photo-inner .slide.active { opacity: 1; }
+    .photo-inner .fallback {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 50px;
+    }
+
+    /* dots do carrossel */
+    .photo-dots {
+      display: flex; justify-content: center; gap: 5px;
+      margin-top: -10px; margin-bottom: 16px;
+    }
+    .photo-dots span {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.2);
+      transition: background .3s, transform .3s;
+      cursor: pointer;
+    }
+    .photo-dots span.active {
+      background: var(--ouro);
+      transform: scale(1.4);
+    }
+
+    /* badge verificado */
+    .verified {
+      position: absolute; bottom: 4px; right: 4px;
+      width: 28px; height: 28px;
+      background: var(--ouro);
+      border-radius: 50%;
+      border: 2px solid var(--escuro);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      z-index: 2;
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 40%, var(--ouro-lt));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title {
+      margin-top: 6px;
+      font-size: .82rem;
+      color: var(--ouro);
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .hero-bio {
+      margin-top: 10px;
+      font-size: .88rem;
+      color: var(--texto);
+      line-height: 1.55;
+    }
+    .hero-bio strong { color: rgba(255,255,255,.8); font-weight: 600; }
+
+    /* método badge */
+    .method-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 14px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(201,150,58,.35);
+      background: rgba(201,150,58,.07);
+      font-size: .78rem;
+      color: var(--ouro-lt);
+      font-weight: 500;
+    }
+    .method-badge .pill {
+      background: var(--ouro);
+      color: #000;
+      font-weight: 800;
+      font-size: .7rem;
+      padding: 1px 7px;
+      border-radius: 999px;
+      letter-spacing: .03em;
+    }
+
+    /* números de credibilidade */
+    .stats {
+      display: flex; justify-content: center; gap: 0;
+      width: 100%;
+      margin-top: 20px;
+      border: 1px solid var(--borda);
+      border-radius: 16px;
+      background: rgba(255,255,255,.02);
+      overflow: hidden;
+    }
+    .stat {
+      flex: 1;
+      padding: 14px 8px;
+      text-align: center;
+      border-right: 1px solid var(--borda);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--ouro-lt);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: .65rem;
+      color: var(--texto);
+      margin-top: 3px;
+      line-height: 1.3;
+    }
+
+    /* social badges */
+    .social-row {
+      display: flex; gap: 10px; justify-content: center;
+      margin-top: 18px;
+    }
+    .soc-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--borda);
+      background: rgba(255,255,255,.04);
+      font-size: .8rem;
+      color: rgba(255,255,255,.7);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .soc-btn:hover { background: rgba(255,255,255,.09); color: #fff; }
+    .soc-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+
+    /* ── DIVISORES ── */
+    .section-label {
+      width: 100%;
+      display: flex; align-items: center; gap: 12px;
+      margin: 32px 0 16px;
+      color: rgba(255,255,255,.2);
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .section-label::before, .section-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--borda);
+    }
+
+    /* ── CARDS ── */
+    .cards { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+
+    .card {
+      width: 100%;
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      border: 1px solid var(--borda);
+      background: rgba(255,255,255,.03);
+      text-decoration: none;
+      color: #fff;
+      position: relative; overflow: hidden;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+
+    .card::after {
+      content: '';
+      position: absolute; inset: 0;
+      opacity: 0;
+      transition: opacity .3s;
+      border-radius: inherit;
+    }
+    .card:hover { transform: translateY(-3px) scale(1.005); }
+    .card:hover::after { opacity: 1; }
+    .card:active { transform: scale(.98); }
+
+    /* temas */
+    .card.curso   { border-color: rgba(34,197,94,.2); }
+    .card.curso:hover   { box-shadow: 0 10px 40px rgba(34,197,94,.15); border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.04); }
+    .card.curso::after  { background: linear-gradient(135deg, rgba(34,197,94,.06), transparent); }
+
+    .card.mentoria { border-color: rgba(139,92,246,.2); }
+    .card.mentoria:hover { box-shadow: 0 10px 40px rgba(139,92,246,.2); border-color: rgba(139,92,246,.4); background: rgba(139,92,246,.04); }
+    .card.mentoria::after { background: linear-gradient(135deg, rgba(139,92,246,.08), transparent); }
+
+    .card.gratis  { border-color: rgba(59,130,246,.2); }
+    .card.gratis:hover  { box-shadow: 0 10px 40px rgba(59,130,246,.18); border-color: rgba(59,130,246,.4); background: rgba(59,130,246,.04); }
+    .card.gratis::after { background: linear-gradient(135deg, rgba(59,130,246,.08), transparent); }
+
+    .card.servico { border-color: rgba(201,150,58,.2); }
+    .card.servico:hover { box-shadow: 0 10px 40px rgba(201,150,58,.2); border-color: rgba(201,150,58,.4); background: rgba(201,150,58,.04); }
+    .card.servico::after { background: linear-gradient(135deg, rgba(201,150,58,.08), transparent); }
+
+    .card.central { border-color: rgba(236,72,153,.2); }
+    .card.central:hover { box-shadow: 0 10px 40px rgba(236,72,153,.18); border-color: rgba(236,72,153,.4); background: rgba(236,72,153,.04); }
+    .card.central::after { background: linear-gradient(135deg, rgba(236,72,153,.08), transparent); }
+
+    /* ícone */
+    .card-icon {
+      width: 50px; height: 50px; flex-shrink: 0;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      position: relative; z-index: 1;
+    }
+    .curso    .card-icon { background: rgba(34,197,94,.12); }
+    .mentoria .card-icon { background: rgba(139,92,246,.15); }
+    .gratis   .card-icon { background: rgba(59,130,246,.12); }
+    .servico  .card-icon { background: rgba(201,150,58,.12); }
+    .central  .card-icon { background: rgba(236,72,153,.12); }
+
+    /* corpo */
+    .card-body { flex: 1; position: relative; z-index: 1; min-width: 0; }
+
+    .card-type {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .62rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 4px;
+    }
+    .curso    .card-type { background: rgba(34,197,94,.15);  color: #4ADE80; }
+    .mentoria .card-type { background: rgba(139,92,246,.18); color: #A78BFA; }
+    .gratis   .card-type { background: rgba(59,130,246,.15); color: #60A5FA; }
+    .servico  .card-type { background: rgba(201,150,58,.15); color: #E8B96A; }
+    .central  .card-type { background: rgba(236,72,153,.15); color: #F472B6; }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: .97rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #fff;
+    }
+
+    .card-desc {
+      font-size: .76rem;
+      color: var(--texto);
+      margin-top: 3px;
+      line-height: 1.45;
+    }
+
+    /* seta */
+    .card-arrow {
+      flex-shrink: 0;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--borda);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 1;
+      transition: transform .2s, background .2s;
+      color: rgba(255,255,255,.3);
+      font-size: 15px;
+    }
+    .card:hover .card-arrow { transform: translateX(3px); background: rgba(255,255,255,.07); color: #fff; }
+
+    /* ── CARD DESTAQUE (curso principal) ── */
+    .card.highlight {
+      flex-direction: column; align-items: flex-start;
+      padding: 22px;
+      border-color: rgba(34,197,94,.35) !important;
+      background: linear-gradient(135deg, rgba(34,197,94,.05), rgba(139,92,246,.05)) !important;
+    }
+    .card.highlight .card-icon { width: 56px; height: 56px; font-size: 26px; margin-bottom: 12px; }
+    .card.highlight .card-title { font-size: 1.15rem; }
+    .card.highlight .card-desc  { font-size: .82rem; }
+
+    .card.highlight .cta-btn {
+      margin-top: 16px; width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--verde), #16A34A);
+      color: #fff;
+      font-weight: 700; font-size: .88rem;
+      text-align: center; border: none; cursor: pointer;
+      letter-spacing: .02em;
+      transition: opacity .2s, transform .2s;
+      display: block; text-decoration: none;
+    }
+    .card.highlight .cta-btn:hover { opacity: .9; transform: scale(1.01); }
+
+    /* pill oferta */
+    .offer-pill {
+      position: absolute; top: 14px; right: 14px;
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: #fff; font-size: .6rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 999px;
+      letter-spacing: .05em; text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+      z-index: 2;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+
+    /* ── CARD SERVIÇO — layout especial ── */
+    .card.servico-full {
+      flex-direction: column; align-items: flex-start;
+      padding: 20px 22px;
+    }
+    .card.servico-full .card-icon { margin-bottom: 10px; }
+    .card.servico-full .card-title { font-size: 1rem; }
+    .card.servico-full .cta-btn {
+      margin-top: 14px; width: 100%;
+      padding: 11px;
+      border-radius: 12px;
+      background: rgba(201,150,58,.15);
+      border: 1px solid rgba(201,150,58,.4);
+      color: var(--ouro-lt);
+      font-weight: 700; font-size: .85rem;
+      text-align: center; cursor: pointer;
+      text-decoration: none; display: block;
+      transition: background .2s;
+    }
+    .card.servico-full .cta-btn:hover { background: rgba(201,150,58,.25); }
+
+    /* ── RODAPÉ ── */
+    .footer {
+      margin-top: 48px; text-align: center;
+      font-size: .72rem; color: rgba(255,255,255,.15);
+      line-height: 1.8;
+    }
+    .footer span { color: var(--ouro); opacity: .6; }
+
+    /* ── RESPONSIVO ── */
+    @media (max-width: 390px) {
+      .hero-name { font-size: 1.45rem; }
+      .stat-num  { font-size: 1.1rem; }
+      .card { padding: 14px 15px; gap: 11px; }
+      .card-icon { width: 44px; height: 44px; font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+<div class="bg-noise"></div>
+
+<div class="wrapper">
+
+  <!-- ── HERO ── -->
+  <div class="hero" data-aos="fade-down" data-aos-duration="700">
+
+    <div class="photo-wrap">
+      <div class="photo-ring">
+        <div class="photo-inner" id="photoCarousel">
+          <img class="slide active" src="Capa Lorena Traduz.jpg"     alt="Lorena 1" />
+          <img class="slide"        src="image-1777166531647.jpg"    alt="Lorena 2" />
+          <div class="fallback" id="photoFallback" style="display:none">🤟</div>
+        </div>
+      </div>
+      <div class="verified">✓</div>
+    </div>
+    <div class="photo-dots" id="photoDots">
+      <span class="active"></span>
+      <span></span>
+    </div>
+
+    <h1 class="hero-name">Prof. Lorena</h1>
+    <p class="hero-title">Intérprete &amp; Professora de Libras</p>
+
+    <p class="hero-bio">
+      <strong>Fundadora da Nerds da Libras LTDA</strong> — presente em todo o Brasil.<br/>
+      15 anos transformando vidas através da comunicação inclusiva.
+    </p>
+
+    <div class="method-badge">
+      <span class="pill">i+1</span>
+      Método Krashen aplicado à Libras — exclusivo no Brasil
+    </div>
+
+    <!-- Números -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">15+</div>
+        <div class="stat-label">Anos de<br/>experiência</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">🇧🇷</div>
+        <div class="stat-label">Todo o<br/>Brasil</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">#1</div>
+        <div class="stat-label">Canal Libras<br/>Telegram</div>
+      </div>
+    </div>
+
+    <!-- Social -->
+    <div class="social-row">
+      <a href="#" class="soc-btn" id="btn-tiktok">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg>
+        TikTok
+      </a>
+      <a href="#" class="soc-btn" id="btn-youtube">
+        <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+        YouTube
+      </a>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════ CURSOS ══════════════════════ -->
+  <div class="section-label" data-aos="fade-up">Cursos</div>
+  <div class="cards">
+
+    <!-- DESTAQUE: Zero a Libras -->
+    <a href="#" class="card curso highlight" data-aos="fade-up" data-aos-delay="0" data-aos-duration="550">
+      <span class="offer-pill">🔥 Mais Vendido</span>
+      <div class="card-icon">🤟</div>
+      <div class="card-type">📚 Curso Online</div>
+      <div class="card-title">Zero a Libras — Do Zero à Comunicação em 30 Dias</div>
+      <div class="card-desc">
+        Aprenda a se comunicar com surdos do <strong style="color:rgba(255,255,255,.75)">absoluto zero</strong>, com o método i+1 exclusivo da Profa. Lorena. Sem decorar sinais — você aprende do jeito natural.
+      </div>
+      <a href="#" class="cta-btn">Quero começar agora →</a>
+    </a>
+
+  </div>
+
+  <!-- ══════════════════════ MENTORIA ══════════════════════ -->
+  <div class="section-label" data-aos="fade-up">Mentoria</div>
+  <div class="cards">
+
+    <a href="#" class="card mentoria" data-aos="fade-up" data-aos-delay="0" data-aos-duration="550">
+      <div class="card-icon">🚀</div>
+      <div class="card-body">
+        <div class="card-type">🎯 Mentoria Profissional</div>
+        <div class="card-title">Destrava Libras</div>
+        <div class="card-desc">Para intérpretes e profissionais da área que querem avançar rápido. Mentoria direta com Lorena.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+  </div>
+
+  <!-- ══════════════════════ COMUNIDADE ══════════════════════ -->
+  <div class="section-label" data-aos="fade-up">Comunidade</div>
+  <div class="cards">
+
+    <a href="#" class="card gratis" data-aos="fade-up" data-aos-delay="0" data-aos-duration="550">
+      <div class="card-icon">✈️</div>
+      <div class="card-body">
+        <div class="card-type">💙 Gratuito — Telegram</div>
+        <div class="card-title">Maior Canal de Libras do Brasil</div>
+        <div class="card-desc">Conteúdo exclusivo, dicas diárias e comunidade ativa. Entre agora — é totalmente gratuito.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+  </div>
+
+  <!-- ══════════════════════ SERVIÇOS ══════════════════════ -->
+  <div class="section-label" data-aos="fade-up">Serviços</div>
+  <div class="cards">
+
+    <!-- Intérprete para eventos -->
+    <a href="#" class="card servico servico-full" data-aos="fade-up" data-aos-delay="0" data-aos-duration="550">
+      <div class="card-icon">🎤</div>
+      <div class="card-type">🏢 Serviço Profissional</div>
+      <div class="card-title">Intérprete para o seu Evento</div>
+      <div class="card-desc">
+        Precisa de intérprete de Libras <strong style="color:rgba(255,255,255,.7)">remoto ou presencial</strong> para seu evento, congresso, aula ou reunião?<br/>
+        Atendemos em todo o Brasil com profissionais certificados.
+      </div>
+      <a href="#" class="cta-btn">Solicitar intérprete →</a>
+    </a>
+
+    <!-- Central de Libras para surdos -->
+    <a href="#" class="card central" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550">
+      <div class="card-icon">👂</div>
+      <div class="card-body">
+        <div class="card-type">🤝 Central de Libras — Para Surdos</div>
+        <div class="card-title">Você é surdo e precisa de intérprete?</div>
+        <div class="card-desc">Nossa central conecta surdos a intérpretes certificados. Rápido, seguro e acessível.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+  </div>
+
+  <!-- ── RODAPÉ ── -->
+  <div class="footer" data-aos="fade-up">
+    <p>© 2026 <span>Nerds da Libras LTDA</span> · Prof. Lorena</p>
+    <p>Presente em todo o Brasil 🇧🇷</p>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ once: true, easing: 'ease-out-cubic', offset: 30 });
+
+  // Ripple nos cards
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('pointerdown', e => {
+      const r = document.createElement('span');
+      const rect = card.getBoundingClientRect();
+      const sz = Math.max(rect.width, rect.height) * 1.8;
+      r.style.cssText = `
+        position:absolute; border-radius:50%; pointer-events:none; z-index:0;
+        width:${sz}px; height:${sz}px;
+        left:${e.clientX - rect.left - sz/2}px;
+        top:${e.clientY  - rect.top  - sz/2}px;
+        background:rgba(255,255,255,.05);
+        transform:scale(0); animation:ripple .55s ease-out forwards;
+      `;
+      card.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    });
+  });
+
+  // ── Carrossel de fotos ──
+  (function() {
+    const slides = document.querySelectorAll('#photoCarousel .slide');
+    const dots   = document.querySelectorAll('#photoDots span');
+    const fallback = document.getElementById('photoFallback');
+    let current = 0;
+    let loaded = 0;
+
+    // Verifica se alguma foto carregou
+    slides.forEach((img, i) => {
+      img.addEventListener('error', () => {
+        img.style.display = 'none';
+        if (dots[i]) dots[i].style.display = 'none';
+      });
+      img.addEventListener('load', () => { loaded++; });
+    });
+
+    function goTo(n) {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = (n + slides.length) % slides.length;
+      // pula slides que falharam
+      let tries = 0;
+      while (slides[current].style.display === 'none' && tries < slides.length) {
+        current = (current + 1) % slides.length;
+        tries++;
+      }
+      slides[current].classList.add('active');
+      if (dots[current]) dots[current].classList.add('active');
+    }
+
+    // clique nos dots
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+    // auto-play a cada 3.5s
+    setInterval(() => goTo(current + 1), 3500);
+  })();
+
+  // Contador animado nos stats
+  function animateCounter(el, target, suffix='') {
+    let start = 0;
+    const step = () => {
+      start += Math.ceil((target - start) / 8);
+      el.textContent = start + suffix;
+      if (start < target) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounter(e.target.querySelector('.stat:nth-child(1) .stat-num'), 15, '+');
+        observer.disconnect();
+      }
+    });
+  }, { threshold: .5 });
+  observer.observe(document.querySelector('.stats'));
+</script>
+<style>
+  @keyframes ripple { to { transform:scale(1); opacity:0; } }
+</style>
+</body>
+</html>
