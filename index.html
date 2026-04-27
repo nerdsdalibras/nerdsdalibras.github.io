@@ -262,14 +262,15 @@
     }
 
     .soc-card {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px; border-radius: 18px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0;
+      padding: 24px 20px 20px; border-radius: 20px;
       border: 1px solid var(--borda);
       background: rgba(255,255,255,.03);
       text-decoration: none; color: #fff;
       position: relative; overflow: hidden;
       transition: transform .2s, box-shadow .2s, border-color .2s;
-      cursor: pointer;
+      cursor: pointer; text-align: center;
     }
     .soc-card:hover { transform: translateY(-2px); }
     .soc-card:active { transform: scale(.98); }
@@ -293,13 +294,14 @@
     .soc-card.telegram .soc-icon { background: #0088CC; }
 
     .soc-icon {
-      width: 46px; height: 46px; flex-shrink: 0;
-      border-radius: 13px;
+      width: 62px; height: 62px; flex-shrink: 0;
+      border-radius: 18px;
       display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
     }
-    .soc-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .soc-icon svg { width: 28px; height: 28px; fill: #fff; }
 
-    .soc-body { flex: 1; min-width: 0; text-align: left; }
+    .soc-body { width: 100%; text-align: center; margin-bottom: 16px; }
     .soc-platform {
       font-size: .68rem; font-weight: 800;
       letter-spacing: .08em; text-transform: uppercase;
@@ -310,32 +312,28 @@
     .telegram .soc-platform { color: #29B6F6; }
 
     .soc-title {
-      font-size: .88rem; font-weight: 700;
-      color: #fff; line-height: 1.2;
+      font-size: .92rem; font-weight: 700;
+      color: #fff; line-height: 1.25;
     }
     .soc-desc {
-      font-size: .73rem; color: var(--texto);
-      margin-top: 2px; line-height: 1.35;
+      font-size: .75rem; color: var(--texto);
+      margin-top: 5px; line-height: 1.4;
     }
 
-    /* pill de ação */
+    /* botão de ação — full width, abaixo do ícone */
     .soc-action {
-      flex-shrink: 0;
-      font-size: .68rem; font-weight: 800;
-      padding: 5px 11px; border-radius: 999px;
-      white-space: nowrap;
-      letter-spacing: .03em;
-    }
-    .tiktok  .soc-action { background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.12); }
-    .youtube .soc-action { background: #FF0000; color: #fff; }
-    .telegram .soc-action { background: rgba(0,136,204,.2); color: #29B6F6; border: 1px solid rgba(0,136,204,.3); }
-
-    .soc-card:hover .soc-action { opacity: .9; transform: scale(1.03); }
-    .soc-action {
+      width: 100%;
+      font-size: .82rem; font-weight: 800;
+      padding: 11px 16px; border-radius: 12px;
+      text-align: center; letter-spacing: .04em;
       transition: opacity .2s, transform .2s;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
+    .tiktok  .soc-action { background: rgba(255,255,255,.08); color: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.15); }
+    .youtube .soc-action { background: #FF0000; color: #fff; }
+    .telegram .soc-action { background: rgba(0,136,204,.2); color: #29B6F6; border: 1px solid rgba(0,136,204,.35); }
+
+    .soc-card:hover .soc-action { opacity: .9; transform: scale(1.02); }
 
     /* ── EFEITO SHIMMER DIAMANTE ── */
     .soc-action::after {
