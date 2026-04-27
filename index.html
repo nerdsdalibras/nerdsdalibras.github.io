@@ -3,7 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lorena — Nerds da Libras</title>
+  <title>Prof. Lorena — Nerds da Libras | Intérprete & Professora de Libras</title>
+
+  <!-- ═══ SEO ═══ -->
+  <meta name="description" content="Prof. Lorena — Fundadora da Nerds da Libras. 15 anos de experiência. Cursos, mentoria e serviços de interpretação de Libras em todo o Brasil." />
+  <meta name="keywords" content="libras, curso de libras, intérprete de libras, aprender libras, nerds da libras, lorena libras, mentoria libras" />
+  <meta name="author" content="Prof. Lorena — Nerds da Libras" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://nerdsdalibras.github.io/" />
+
+  <!-- ═══ OPEN GRAPH — preview no WhatsApp, Instagram, Facebook ═══ -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://nerdsdalibras.github.io/" />
+  <meta property="og:title"       content="Prof. Lorena — Nerds da Libras" />
+  <meta property="og:description" content="Aprenda Libras do zero em 30 dias com o método exclusivo i+1 da Profa. Lorena. Fundadora da Nerds da Libras — presente em todo o Brasil." />
+  <meta property="og:image"       content="https://nerdsdalibras.github.io/fotos/IMG_4952.jpg" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale"      content="pt_BR" />
+  <meta property="og:site_name"   content="Nerds da Libras" />
+
+  <!-- ═══ TWITTER CARD ═══ -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Prof. Lorena — Nerds da Libras" />
+  <meta name="twitter:description" content="Aprenda Libras do zero em 30 dias. Método exclusivo i+1." />
+  <meta name="twitter:image"       content="https://nerdsdalibras.github.io/fotos/IMG_4952.jpg" />
+
+  <!-- ═══ META PIXEL (Facebook/Instagram Ads) — cole seu ID abaixo ═══ -->
+  <!--
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'SEU_PIXEL_ID_AQUI');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=SEU_PIXEL_ID_AQUI&ev=PageView&noscript=1"/></noscript>
+  -->
+
+  <!-- ═══ GOOGLE ANALYTICS — cole seu ID abaixo ═══ -->
+  <!--
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  -->
+
+  <!-- ═══ SCHEMA.ORG — ajuda o Google entender quem é você ═══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Prof. Lorena",
+    "jobTitle": "Intérprete e Professora de Libras",
+    "worksFor": { "@type": "Organization", "name": "Nerds da Libras LTDA" },
+    "url": "https://nerdsdalibras.github.io",
+    "sameAs": [
+      "https://www.youtube.com/@nerdsdalibras"
+    ],
+    "description": "Fundadora da Nerds da Libras. 15 anos de experiência em Libras. Presente em todo o Brasil."
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
@@ -33,7 +100,6 @@
       overflow-x: hidden;
     }
 
-    /* ── FUNDO ── */
     .bg-noise {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background:
@@ -41,7 +107,6 @@
         radial-gradient(ellipse 40% 30% at 80% 100%, rgba(139,92,246,.12) 0%, transparent 60%);
     }
 
-    /* linha dourada no topo */
     .top-bar {
       position: fixed; top: 0; left: 0; right: 0;
       height: 2px;
@@ -49,7 +114,6 @@
       z-index: 100;
     }
 
-    /* ── WRAPPER ── */
     .wrapper {
       position: relative; z-index: 1;
       max-width: 480px;
@@ -58,25 +122,23 @@
       display: flex; flex-direction: column; align-items: center;
     }
 
-    /* ── HERO ── */
     .hero { width: 100%; text-align: center; margin-bottom: 28px; }
 
-    /* foto carrossel */
+    /* ── CARROSSEL COM KEN BURNS ── */
     .photo-wrap {
       width: 130px; height: 130px;
-      margin: 0 auto 20px;
+      margin: 0 auto 8px;
       position: relative;
     }
+
+    /* anel dourado estático — sem rotação */
     .photo-ring {
       width: 100%; height: 100%;
       border-radius: 50%;
       padding: 3px;
-      background: conic-gradient(var(--ouro), var(--ouro-lt), #fff8, var(--ouro));
-      animation: ringRotate 3s linear infinite;
+      background: linear-gradient(135deg, var(--ouro) 0%, var(--ouro-lt) 40%, #fff9 60%, var(--ouro) 100%);
     }
-    @keyframes ringRotate {
-      to { transform: rotate(360deg); }
-    }
+
     .photo-inner {
       width: 100%; height: 100%;
       border-radius: 50%;
@@ -84,39 +146,52 @@
       background: var(--cinza);
       position: relative;
     }
+
+    /* cada slide fica sobreposto */
     .photo-inner .slide {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: cover; object-position: top center;
+      object-fit: cover;
+      object-position: top center;
       opacity: 0;
-      transition: opacity .8s ease;
-      border-radius: 50%;
+      transition: opacity 1s ease;
+      transform: scale(1);
     }
-    .photo-inner .slide.active { opacity: 1; }
+
+    /* quando ativo: fade in + inicia o zoom suave */
+    .photo-inner .slide.active {
+      opacity: 1;
+      animation: kenBurns 5s ease-in-out forwards;
+    }
+
+    @keyframes kenBurns {
+      0%   { transform: scale(1);    }
+      100% { transform: scale(1.13); }
+    }
+
     .photo-inner .fallback {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
       font-size: 50px;
     }
 
-    /* dots do carrossel */
+    /* dots */
     .photo-dots {
       display: flex; justify-content: center; gap: 5px;
-      margin-top: -10px; margin-bottom: 16px;
+      margin-bottom: 16px;
     }
     .photo-dots span {
       width: 5px; height: 5px;
       border-radius: 50%;
-      background: rgba(255,255,255,.2);
+      background: rgba(255,255,255,.18);
       transition: background .3s, transform .3s;
       cursor: pointer;
     }
     .photo-dots span.active {
       background: var(--ouro);
-      transform: scale(1.4);
+      transform: scale(1.5);
     }
 
-    /* badge verificado */
     .verified {
       position: absolute; bottom: 4px; right: 4px;
       width: 28px; height: 28px;
@@ -130,197 +205,245 @@
 
     .hero-name {
       font-family: 'Playfair Display', serif;
-      font-size: 1.7rem;
-      font-weight: 800;
-      line-height: 1.1;
+      font-size: 1.7rem; font-weight: 800; line-height: 1.1;
       background: linear-gradient(135deg, #fff 40%, var(--ouro-lt));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .hero-title {
-      margin-top: 6px;
-      font-size: .82rem;
-      color: var(--ouro);
-      font-weight: 600;
-      letter-spacing: .06em;
-      text-transform: uppercase;
+      margin-top: 6px; font-size: .82rem;
+      color: var(--ouro); font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
     }
 
     .hero-bio {
-      margin-top: 10px;
-      font-size: .88rem;
-      color: var(--texto);
-      line-height: 1.55;
+      margin-top: 10px; font-size: .88rem;
+      color: var(--texto); line-height: 1.55;
     }
     .hero-bio strong { color: rgba(255,255,255,.8); font-weight: 600; }
 
-    /* método badge */
     .method-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      margin-top: 14px;
-      padding: 8px 16px;
+      margin-top: 14px; padding: 8px 16px;
       border-radius: 999px;
       border: 1px solid rgba(201,150,58,.35);
       background: rgba(201,150,58,.07);
-      font-size: .78rem;
-      color: var(--ouro-lt);
-      font-weight: 500;
+      font-size: .78rem; color: var(--ouro-lt); font-weight: 500;
     }
     .method-badge .pill {
-      background: var(--ouro);
-      color: #000;
-      font-weight: 800;
-      font-size: .7rem;
-      padding: 1px 7px;
-      border-radius: 999px;
-      letter-spacing: .03em;
+      background: var(--ouro); color: #000;
+      font-weight: 800; font-size: .7rem;
+      padding: 1px 7px; border-radius: 999px;
     }
 
-    /* números de credibilidade */
     .stats {
-      display: flex; justify-content: center; gap: 0;
-      width: 100%;
-      margin-top: 20px;
-      border: 1px solid var(--borda);
-      border-radius: 16px;
-      background: rgba(255,255,255,.02);
-      overflow: hidden;
+      display: flex; justify-content: center;
+      width: 100%; margin-top: 20px;
+      border: 1px solid var(--borda); border-radius: 16px;
+      background: rgba(255,255,255,.02); overflow: hidden;
     }
     .stat {
-      flex: 1;
-      padding: 14px 8px;
-      text-align: center;
+      flex: 1; padding: 14px 8px; text-align: center;
       border-right: 1px solid var(--borda);
     }
     .stat:last-child { border-right: none; }
     .stat-num {
       font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--ouro-lt);
-      line-height: 1;
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--ouro-lt); line-height: 1;
     }
-    .stat-label {
-      font-size: .65rem;
-      color: var(--texto);
-      margin-top: 3px;
-      line-height: 1.3;
+    .stat-label { font-size: .65rem; color: var(--texto); margin-top: 3px; line-height: 1.3; }
+
+    /* ── CARDS DE REDES SOCIAIS ── */
+    .social-cards {
+      width: 100%; display: flex; flex-direction: column; gap: 10px;
+      margin-top: 20px;
     }
 
-    /* social badges */
-    .social-row {
-      display: flex; gap: 10px; justify-content: center;
-      margin-top: 18px;
-    }
-    .soc-btn {
-      display: flex; align-items: center; gap: 7px;
-      padding: 8px 18px;
-      border-radius: 999px;
+    .soc-card {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; border-radius: 18px;
       border: 1px solid var(--borda);
-      background: rgba(255,255,255,.04);
-      font-size: .8rem;
-      color: rgba(255,255,255,.7);
-      text-decoration: none;
-      font-weight: 500;
-      transition: all .2s;
+      background: rgba(255,255,255,.03);
+      text-decoration: none; color: #fff;
+      position: relative; overflow: hidden;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
       cursor: pointer;
     }
-    .soc-btn:hover { background: rgba(255,255,255,.09); color: #fff; }
-    .soc-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+    .soc-card:hover { transform: translateY(-2px); }
+    .soc-card:active { transform: scale(.98); }
 
-    /* ── DIVISORES ── */
+    /* TikTok */
+    .soc-card.tiktok { border-color: rgba(255,255,255,.08); }
+    .soc-card.tiktok:hover { border-color: rgba(255,255,255,.2); box-shadow: 0 8px 30px rgba(0,0,0,.4); }
+    .soc-card.tiktok .soc-icon {
+      background: linear-gradient(135deg, #010101, #1a1a2e);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    /* YouTube */
+    .soc-card.youtube { border-color: rgba(255,0,0,.2); }
+    .soc-card.youtube:hover { border-color: rgba(255,0,0,.45); box-shadow: 0 8px 30px rgba(255,0,0,.15); }
+    .soc-card.youtube .soc-icon { background: #FF0000; }
+
+    /* Telegram */
+    .soc-card.telegram { border-color: rgba(0,136,204,.2); }
+    .soc-card.telegram:hover { border-color: rgba(0,136,204,.45); box-shadow: 0 8px 30px rgba(0,136,204,.15); }
+    .soc-card.telegram .soc-icon { background: #0088CC; }
+
+    .soc-icon {
+      width: 46px; height: 46px; flex-shrink: 0;
+      border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .soc-icon svg { width: 22px; height: 22px; fill: #fff; }
+
+    .soc-body { flex: 1; min-width: 0; }
+    .soc-platform {
+      font-size: .68rem; font-weight: 800;
+      letter-spacing: .08em; text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .tiktok  .soc-platform { color: rgba(255,255,255,.5); }
+    .youtube .soc-platform { color: #FF4444; }
+    .telegram .soc-platform { color: #29B6F6; }
+
+    .soc-title {
+      font-size: .88rem; font-weight: 700;
+      color: #fff; line-height: 1.2;
+    }
+    .soc-desc {
+      font-size: .73rem; color: var(--texto);
+      margin-top: 2px; line-height: 1.35;
+    }
+
+    /* pill de ação */
+    .soc-action {
+      flex-shrink: 0;
+      font-size: .68rem; font-weight: 800;
+      padding: 5px 11px; border-radius: 999px;
+      white-space: nowrap;
+      letter-spacing: .03em;
+    }
+    .tiktok  .soc-action { background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.12); }
+    .youtube .soc-action { background: #FF0000; color: #fff; }
+    .telegram .soc-action { background: rgba(0,136,204,.2); color: #29B6F6; border: 1px solid rgba(0,136,204,.3); }
+
+    .soc-card:hover .soc-action { opacity: .9; transform: scale(1.03); }
+    .soc-action {
+      transition: opacity .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── EFEITO SHIMMER DIAMANTE ── */
+    .soc-action::after {
+      content: '';
+      position: absolute;
+      top: -20%; left: -80%;
+      width: 50%; height: 140%;
+      background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255,255,255,.55) 50%,
+        transparent 70%
+      );
+      transform: skewX(-15deg);
+      animation: shimmer 2.8s ease-in-out infinite;
+    }
+
+    /* delay diferente para cada botão */
+    .tiktok  .soc-action::after { animation-delay: 0s; }
+    .youtube .soc-action::after { animation-delay: .9s; }
+    .telegram .soc-action::after { animation-delay: 1.8s; }
+
+    @keyframes shimmer {
+      0%   { left: -80%; opacity: 1; }
+      55%  { left: 130%; opacity: 1; }
+      56%  { opacity: 0; }
+      100% { left: 130%; opacity: 0; }
+    }
+
     .section-label {
-      width: 100%;
-      display: flex; align-items: center; gap: 12px;
+      width: 100%; display: flex; align-items: center; gap: 10px;
       margin: 32px 0 16px;
-      color: rgba(255,255,255,.2);
-      font-size: .7rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      font-weight: 600;
+      font-size: .72rem; letter-spacing: .14em;
+      text-transform: uppercase; font-weight: 800;
+      color: var(--ouro-lt);
     }
     .section-label::before, .section-label::after {
       content: ''; flex: 1; height: 1px;
-      background: var(--borda);
+      background: linear-gradient(90deg, transparent, rgba(201,150,58,.3), transparent);
     }
 
-    /* ── CARDS ── */
     .cards { width: 100%; display: flex; flex-direction: column; gap: 12px; }
 
     .card {
-      width: 100%;
-      display: flex; align-items: center; gap: 14px;
-      padding: 16px 18px;
-      border-radius: 20px;
+      width: 100%; display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px; border-radius: 20px;
       border: 1px solid var(--borda);
       background: rgba(255,255,255,.03);
-      text-decoration: none;
-      color: #fff;
+      text-decoration: none; color: #fff;
       position: relative; overflow: hidden;
       transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
+      cursor: pointer; backdrop-filter: blur(8px);
     }
-
     .card::after {
-      content: '';
-      position: absolute; inset: 0;
-      opacity: 0;
-      transition: opacity .3s;
-      border-radius: inherit;
+      content: ''; position: absolute; inset: 0;
+      opacity: 0; transition: opacity .3s; border-radius: inherit;
     }
     .card:hover { transform: translateY(-3px) scale(1.005); }
     .card:hover::after { opacity: 1; }
     .card:active { transform: scale(.98); }
 
-    /* temas */
-    .card.curso   { border-color: rgba(34,197,94,.2); }
-    .card.curso:hover   { box-shadow: 0 10px 40px rgba(34,197,94,.15); border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.04); }
-    .card.curso::after  { background: linear-gradient(135deg, rgba(34,197,94,.06), transparent); }
-
+    .card.curso    { border-color: rgba(34,197,94,.2); }
+    .card.curso:hover    { box-shadow: 0 10px 40px rgba(34,197,94,.15); border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.04); }
+    .card.curso::after   { background: linear-gradient(135deg, rgba(34,197,94,.06), transparent); }
     .card.mentoria { border-color: rgba(139,92,246,.2); }
     .card.mentoria:hover { box-shadow: 0 10px 40px rgba(139,92,246,.2); border-color: rgba(139,92,246,.4); background: rgba(139,92,246,.04); }
-    .card.mentoria::after { background: linear-gradient(135deg, rgba(139,92,246,.08), transparent); }
-
-    .card.gratis  { border-color: rgba(59,130,246,.2); }
-    .card.gratis:hover  { box-shadow: 0 10px 40px rgba(59,130,246,.18); border-color: rgba(59,130,246,.4); background: rgba(59,130,246,.04); }
-    .card.gratis::after { background: linear-gradient(135deg, rgba(59,130,246,.08), transparent); }
-
-    .card.servico { border-color: rgba(201,150,58,.2); }
-    .card.servico:hover { box-shadow: 0 10px 40px rgba(201,150,58,.2); border-color: rgba(201,150,58,.4); background: rgba(201,150,58,.04); }
+    .card.mentoria::after{ background: linear-gradient(135deg, rgba(139,92,246,.08), transparent); }
+    .card.gratis   { border-color: rgba(59,130,246,.2); }
+    .card.gratis:hover   { box-shadow: 0 10px 40px rgba(59,130,246,.18); border-color: rgba(59,130,246,.4); background: rgba(59,130,246,.04); }
+    .card.gratis::after  { background: linear-gradient(135deg, rgba(59,130,246,.08), transparent); }
+    .card.servico  { border-color: rgba(201,150,58,.2); }
+    .card.servico:hover  { box-shadow: 0 10px 40px rgba(201,150,58,.2); border-color: rgba(201,150,58,.4); background: rgba(201,150,58,.04); }
     .card.servico::after { background: linear-gradient(135deg, rgba(201,150,58,.08), transparent); }
-
-    .card.central { border-color: rgba(236,72,153,.2); }
-    .card.central:hover { box-shadow: 0 10px 40px rgba(236,72,153,.18); border-color: rgba(236,72,153,.4); background: rgba(236,72,153,.04); }
+    .card.central  { border-color: rgba(236,72,153,.2); }
+    .card.central:hover  { box-shadow: 0 10px 40px rgba(236,72,153,.18); border-color: rgba(236,72,153,.4); background: rgba(236,72,153,.04); }
     .card.central::after { background: linear-gradient(135deg, rgba(236,72,153,.08), transparent); }
 
-    /* ícone */
     .card-icon {
-      width: 50px; height: 50px; flex-shrink: 0;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
-      position: relative; z-index: 1;
+      width: 52px; height: 52px; flex-shrink: 0;
+      border-radius: 16px; display: flex; align-items: center;
+      justify-content: center; position: relative; z-index: 1;
+      border: 1px solid transparent;
     }
-    .curso    .card-icon { background: rgba(34,197,94,.12); }
-    .mentoria .card-icon { background: rgba(139,92,246,.15); }
-    .gratis   .card-icon { background: rgba(59,130,246,.12); }
-    .servico  .card-icon { background: rgba(201,150,58,.12); }
-    .central  .card-icon { background: rgba(236,72,153,.12); }
+    .card-icon svg { width: 22px; height: 22px; stroke-width: 1.8; }
 
-    /* corpo */
+    .curso    .card-icon { background: linear-gradient(135deg,rgba(34,197,94,.15),rgba(34,197,94,.06)); border-color: rgba(34,197,94,.2); }
+    .curso    .card-icon svg { stroke: #4ADE80; }
+    .mentoria .card-icon { background: linear-gradient(135deg,rgba(139,92,246,.2),rgba(139,92,246,.07)); border-color: rgba(139,92,246,.25); }
+    .mentoria .card-icon svg { stroke: #A78BFA; }
+    .gratis   .card-icon { background: linear-gradient(135deg,rgba(59,130,246,.15),rgba(59,130,246,.06)); border-color: rgba(59,130,246,.2); }
+    .gratis   .card-icon svg { stroke: #60A5FA; }
+    .servico  .card-icon { background: linear-gradient(135deg,rgba(201,150,58,.15),rgba(201,150,58,.06)); border-color: rgba(201,150,58,.25); }
+    .servico  .card-icon svg { stroke: #E8B96A; }
+    .central  .card-icon { background: transparent; border-color: transparent; padding: 0; }
+    .central  .card-icon svg { stroke: #F472B6; }
+    .central  .card-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
+
+    /* highlight card icon maior */
+    .card.highlight .card-icon { width: 58px; height: 58px; margin-bottom: 14px; }
+    .card.highlight .card-icon svg { width: 26px; height: 26px; }
+
     .card-body { flex: 1; position: relative; z-index: 1; min-width: 0; }
 
     .card-type {
       display: inline-flex; align-items: center; gap: 4px;
-      font-size: .62rem;
-      font-weight: 800;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 999px;
-      margin-bottom: 4px;
+      font-size: .62rem; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; padding: 2px 8px;
+      border-radius: 999px; margin-bottom: 4px;
     }
     .curso    .card-type { background: rgba(34,197,94,.15);  color: #4ADE80; }
     .mentoria .card-type { background: rgba(139,92,246,.18); color: #A78BFA; }
@@ -330,106 +453,154 @@
 
     .card-title {
       font-family: 'Playfair Display', serif;
-      font-size: .97rem;
-      font-weight: 700;
-      line-height: 1.2;
-      color: #fff;
+      font-size: .97rem; font-weight: 700; line-height: 1.2; color: #fff;
     }
+    .card-desc { font-size: .76rem; color: var(--texto); margin-top: 3px; line-height: 1.45; }
 
-    .card-desc {
-      font-size: .76rem;
-      color: var(--texto);
-      margin-top: 3px;
-      line-height: 1.45;
-    }
-
-    /* seta */
     .card-arrow {
-      flex-shrink: 0;
-      width: 34px; height: 34px;
-      border-radius: 50%;
+      flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
       border: 1px solid var(--borda);
       display: flex; align-items: center; justify-content: center;
       position: relative; z-index: 1;
       transition: transform .2s, background .2s;
-      color: rgba(255,255,255,.3);
-      font-size: 15px;
+      color: rgba(255,255,255,.3); font-size: 15px;
     }
     .card:hover .card-arrow { transform: translateX(3px); background: rgba(255,255,255,.07); color: #fff; }
 
-    /* ── CARD DESTAQUE (curso principal) ── */
     .card.highlight {
-      flex-direction: column; align-items: flex-start;
-      padding: 22px;
+      flex-direction: column; align-items: flex-start; padding: 22px;
       border-color: rgba(34,197,94,.35) !important;
       background: linear-gradient(135deg, rgba(34,197,94,.05), rgba(139,92,246,.05)) !important;
     }
-    .card.highlight .card-icon { width: 56px; height: 56px; font-size: 26px; margin-bottom: 12px; }
     .card.highlight .card-title { font-size: 1.15rem; }
     .card.highlight .card-desc  { font-size: .82rem; }
 
+    /* ── BOTÃO LUMINOSO (curso) ── */
     .card.highlight .cta-btn {
-      margin-top: 16px; width: 100%;
-      padding: 13px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--verde), #16A34A);
-      color: #fff;
-      font-weight: 700; font-size: .88rem;
+      margin-top: 18px; width: 100%; padding: 14px; border-radius: 13px;
+      background: linear-gradient(135deg, #22C55E, #16A34A);
+      color: #fff; font-weight: 800; font-size: .9rem;
       text-align: center; border: none; cursor: pointer;
-      letter-spacing: .02em;
-      transition: opacity .2s, transform .2s;
-      display: block; text-decoration: none;
+      letter-spacing: .03em; display: block; text-decoration: none;
+      box-shadow: 0 0 24px rgba(34,197,94,.45), 0 4px 16px rgba(34,197,94,.25);
+      transition: box-shadow .3s, transform .2s;
     }
-    .card.highlight .cta-btn:hover { opacity: .9; transform: scale(1.01); }
+    .card.highlight .cta-btn:hover {
+      box-shadow: 0 0 36px rgba(34,197,94,.65), 0 6px 22px rgba(34,197,94,.35);
+      transform: scale(1.02);
+    }
 
-    /* pill oferta */
+    /* ── CARD MENTORIA — layout full ── */
+    .card.mentoria-full {
+      flex-direction: column; align-items: flex-start; padding: 20px 22px;
+    }
+    .card.mentoria-full .card-icon { margin-bottom: 12px; }
+    .card.mentoria-full .card-title { font-size: 1.05rem; }
+    .card.mentoria-full .men-btn {
+      margin-top: 14px; width: 100%; padding: 12px; border-radius: 12px;
+      background: rgba(139,92,246,.15);
+      border: 1px solid rgba(139,92,246,.45);
+      color: #C4B5FD; font-weight: 800; font-size: .85rem;
+      text-align: center; cursor: pointer; text-decoration: none;
+      display: block; letter-spacing: .02em;
+      box-shadow: 0 0 18px rgba(139,92,246,.2);
+      transition: background .25s, box-shadow .25s, transform .2s;
+    }
+    .card.mentoria-full .men-btn:hover {
+      background: rgba(139,92,246,.28);
+      box-shadow: 0 0 28px rgba(139,92,246,.35);
+      transform: scale(1.01);
+    }
+
     .offer-pill {
       position: absolute; top: 14px; right: 14px;
       background: linear-gradient(135deg, #EF4444, #DC2626);
       color: #fff; font-size: .6rem; font-weight: 800;
       padding: 3px 9px; border-radius: 999px;
       letter-spacing: .05em; text-transform: uppercase;
-      animation: pulse 2s ease-in-out infinite;
-      z-index: 2;
+      animation: pulse 2s ease-in-out infinite; z-index: 2;
     }
     @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
 
-    /* ── CARD SERVIÇO — layout especial ── */
-    .card.servico-full {
-      flex-direction: column; align-items: flex-start;
-      padding: 20px 22px;
-    }
-    .card.servico-full .card-icon { margin-bottom: 10px; }
-    .card.servico-full .card-title { font-size: 1rem; }
+    .card.servico-full { flex-direction: column; align-items: flex-start; padding: 20px 22px; }
+    .card.servico-full .card-icon { margin-bottom: 12px; }
+    .card.servico-full .card-title { font-size: 1.05rem; }
     .card.servico-full .cta-btn {
-      margin-top: 14px; width: 100%;
-      padding: 11px;
-      border-radius: 12px;
+      margin-top: 14px; width: 100%; padding: 12px; border-radius: 12px;
       background: rgba(201,150,58,.15);
-      border: 1px solid rgba(201,150,58,.4);
-      color: var(--ouro-lt);
-      font-weight: 700; font-size: .85rem;
-      text-align: center; cursor: pointer;
-      text-decoration: none; display: block;
-      transition: background .2s;
+      border: 1px solid rgba(201,150,58,.45);
+      color: var(--ouro-lt); font-weight: 800; font-size: .85rem;
+      text-align: center; cursor: pointer; text-decoration: none;
+      display: block; letter-spacing: .02em;
+      box-shadow: 0 0 16px rgba(201,150,58,.15);
+      transition: background .25s, box-shadow .25s, transform .2s;
     }
-    .card.servico-full .cta-btn:hover { background: rgba(201,150,58,.25); }
+    .card.servico-full .cta-btn:hover {
+      background: rgba(201,150,58,.28);
+      box-shadow: 0 0 26px rgba(201,150,58,.3);
+      transform: scale(1.01);
+    }
 
-    /* ── RODAPÉ ── */
+    /* ── CARD CENTRAL SURDOS ── */
+    .card.central-full {
+      flex-direction: column; align-items: flex-start; padding: 20px 22px;
+      border-color: rgba(236,72,153,.3) !important;
+      background: linear-gradient(135deg, rgba(236,72,153,.06), rgba(139,92,246,.04)) !important;
+    }
+    .ilibras-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px; width: 100%;
+    }
+    .ilibras-name { display: flex; flex-direction: column; gap: 2px; }
+    .card.central-full .card-icon { margin-bottom: 0; width: 58px; height: 58px; flex-shrink: 0; }
+    .card.central-full .card-title { font-size: 1.05rem; }
+    .card.central-full .exclusivo-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(236,72,153,.18); border: 1px solid rgba(236,72,153,.35);
+      color: #F9A8D4; font-size: .62rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 999px;
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .play-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      margin-top: 12px; padding: 8px 14px;
+      border-radius: 10px;
+      background: #1a1a2e;
+      border: 1px solid rgba(255,255,255,.12);
+      color: #fff; font-size: .78rem; font-weight: 700;
+      width: 100%; justify-content: center;
+      letter-spacing: .02em;
+    }
+    .card.central-full .surdos-btn {
+      margin-top: 14px; width: 100%; padding: 12px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(236,72,153,.25), rgba(236,72,153,.12));
+      border: 1px solid rgba(236,72,153,.5);
+      color: #F9A8D4; font-weight: 800; font-size: .85rem;
+      text-align: center; cursor: pointer; text-decoration: none;
+      display: block; letter-spacing: .02em;
+      box-shadow: 0 0 18px rgba(236,72,153,.2);
+      transition: background .25s, box-shadow .25s, transform .2s;
+    }
+    .card.central-full .surdos-btn:hover {
+      background: linear-gradient(135deg, rgba(236,72,153,.38), rgba(236,72,153,.2));
+      box-shadow: 0 0 28px rgba(236,72,153,.35);
+      transform: scale(1.01);
+    }
+
     .footer {
       margin-top: 48px; text-align: center;
-      font-size: .72rem; color: rgba(255,255,255,.15);
-      line-height: 1.8;
+      font-size: .72rem; color: rgba(255,255,255,.15); line-height: 1.8;
     }
     .footer span { color: var(--ouro); opacity: .6; }
 
-    /* ── RESPONSIVO ── */
     @media (max-width: 390px) {
       .hero-name { font-size: 1.45rem; }
       .stat-num  { font-size: 1.1rem; }
       .card { padding: 14px 15px; gap: 11px; }
       .card-icon { width: 44px; height: 44px; font-size: 19px; }
     }
+
+    @keyframes ripple { to { transform:scale(1); opacity:0; } }
   </style>
 </head>
 <body>
@@ -445,16 +616,25 @@
     <div class="photo-wrap">
       <div class="photo-ring">
         <div class="photo-inner" id="photoCarousel">
-          <img class="slide active" src="Capa Lorena Traduz.jpg"     alt="Lorena 1" />
-          <img class="slide"        src="image-1777166531647.jpg"    alt="Lorena 2" />
-          <div class="fallback" id="photoFallback" style="display:none">🤟</div>
+          <img class="slide active" src="fotos/IMG_4910.jpg" alt="Lorena" />
+          <img class="slide"        src="fotos/IMG_4918.jpg" alt="Lorena" />
+          <img class="slide"        src="fotos/IMG_4945.jpg" alt="Lorena" />
+          <img class="slide"        src="fotos/IMG_4952.jpg" alt="Lorena" />
+          <img class="slide"        src="fotos/IMG_4954.jpg" alt="Lorena" />
+          <img class="slide"        src="fotos/IMG_4966.jpg" alt="Lorena" />
+          <img class="slide"        src="fotos/IMG_4977.jpg" alt="Lorena" />
+          <img class="slide"        src="fotos/IMG_4987.jpg" alt="Lorena" />
+          <img class="slide"        src="fotos/IMG_4993.jpg" alt="Lorena" />
+          <div class="fallback" style="display:none">🤟</div>
         </div>
       </div>
       <div class="verified">✓</div>
     </div>
+
     <div class="photo-dots" id="photoDots">
-      <span class="active"></span>
-      <span></span>
+      <span class="active"></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span>
     </div>
 
     <h1 class="hero-name">Prof. Lorena</h1>
@@ -470,10 +650,9 @@
       Método Krashen aplicado à Libras — exclusivo no Brasil
     </div>
 
-    <!-- Números -->
     <div class="stats">
       <div class="stat">
-        <div class="stat-num">15+</div>
+        <div class="stat-num" id="counter15">15+</div>
         <div class="stat-label">Anos de<br/>experiência</div>
       </div>
       <div class="stat">
@@ -486,100 +665,110 @@
       </div>
     </div>
 
-    <!-- Social -->
-    <div class="social-row">
-      <a href="#" class="soc-btn" id="btn-tiktok">
-        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg>
-        TikTok
+    <div class="social-cards">
+
+      <!-- TikTok -->
+      <a href="#" class="soc-card tiktok" id="btn-tiktok">
+        <div class="soc-icon">
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg>
+        </div>
+        <div class="soc-body">
+          <div class="soc-platform">TikTok</div>
+          <div class="soc-title">Aprenda um sinal novo por dia</div>
+          <div class="soc-desc">Vídeos rápidos de Libras — do básico ao avançado em poucos minutos</div>
+        </div>
+        <div class="soc-action">Seguir</div>
       </a>
-      <a href="#" class="soc-btn" id="btn-youtube">
-        <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
-        YouTube
+
+      <!-- YouTube — clique já abre inscrição -->
+      <a href="https://www.youtube.com/@nerdsdalibras?sub_confirmation=1" target="_blank" class="soc-card youtube" id="btn-youtube">
+        <div class="soc-icon">
+          <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+        </div>
+        <div class="soc-body">
+          <div class="soc-platform">YouTube • Inscreva-se grátis</div>
+          <div class="soc-title">Aulas completas de Libras + Interpretação</div>
+          <div class="soc-desc">Dicas de tradução, técnica e carreira para quem quer ser intérprete de verdade</div>
+        </div>
+        <div class="soc-action">▶ Inscrever</div>
       </a>
+
+      <!-- Telegram -->
+      <a href="#" class="soc-card telegram" id="btn-telegram">
+        <div class="soc-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.667l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.978.892z"/></svg>
+        </div>
+        <div class="soc-body">
+          <div class="soc-platform">Telegram • Canal Oficial 🔥</div>
+          <div class="soc-title">Descontos · Turmas · Dicas · Vagas</div>
+          <div class="soc-desc">Intérprete de Libras? Aqui você pode ser chamado para <strong style="color:#29B6F6">entrevistas e atuação</strong> — vagas exclusivas para membros</div>
+        </div>
+        <div class="soc-action">Entrar</div>
+      </a>
+
     </div>
 
   </div>
 
-  <!-- ══════════════════════ CURSOS ══════════════════════ -->
-  <div class="section-label" data-aos="fade-up">Cursos</div>
+  <!-- CURSOS + MENTORIA -->
+  <div class="section-label" data-aos="fade-up">✦ Meus Produtos ✦</div>
   <div class="cards">
 
-    <!-- DESTAQUE: Zero a Libras -->
-    <a href="#" class="card curso highlight" data-aos="fade-up" data-aos-delay="0" data-aos-duration="550">
+    <div class="card curso highlight" data-aos="fade-up" data-aos-duration="550" onclick="location.href='#'">
       <span class="offer-pill">🔥 Mais Vendido</span>
-      <div class="card-icon">🤟</div>
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
       <div class="card-type">📚 Curso Online</div>
       <div class="card-title">Zero a Libras — Do Zero à Comunicação em 30 Dias</div>
-      <div class="card-desc">
-        Aprenda a se comunicar com surdos do <strong style="color:rgba(255,255,255,.75)">absoluto zero</strong>, com o método i+1 exclusivo da Profa. Lorena. Sem decorar sinais — você aprende do jeito natural.
+      <div class="card-desc">Aprenda a se comunicar com surdos do <strong style="color:#fff">absoluto zero</strong> com o método i+1 exclusivo da Profa. Lorena. <strong style="color:#4ADE80">Sem decorar sinais</strong> — você aprende do jeito natural e rápido.</div>
+      <div class="cta-btn">Quero ver como funciona →</div>
+    </div>
+
+    <div class="card mentoria mentoria-full" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550" onclick="location.href='#'">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       </div>
-      <a href="#" class="cta-btn">Quero começar agora →</a>
-    </a>
+      <div class="card-type">🎯 Mentoria Profissional</div>
+      <div class="card-title">Destrava Libras</div>
+      <div class="card-desc">Para intérpretes e profissionais que querem <strong style="color:#A78BFA">avançar de verdade</strong>. Mentoria direta com a Profa. Lorena — vagas limitadas.</div>
+      <div class="men-btn">Como funciona a mentoria? →</div>
+    </div>
 
   </div>
 
-  <!-- ══════════════════════ MENTORIA ══════════════════════ -->
-  <div class="section-label" data-aos="fade-up">Mentoria</div>
-  <div class="cards">
-
-    <a href="#" class="card mentoria" data-aos="fade-up" data-aos-delay="0" data-aos-duration="550">
-      <div class="card-icon">🚀</div>
-      <div class="card-body">
-        <div class="card-type">🎯 Mentoria Profissional</div>
-        <div class="card-title">Destrava Libras</div>
-        <div class="card-desc">Para intérpretes e profissionais da área que querem avançar rápido. Mentoria direta com Lorena.</div>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
-
-  </div>
-
-  <!-- ══════════════════════ COMUNIDADE ══════════════════════ -->
-  <div class="section-label" data-aos="fade-up">Comunidade</div>
-  <div class="cards">
-
-    <a href="#" class="card gratis" data-aos="fade-up" data-aos-delay="0" data-aos-duration="550">
-      <div class="card-icon">✈️</div>
-      <div class="card-body">
-        <div class="card-type">💙 Gratuito — Telegram</div>
-        <div class="card-title">Maior Canal de Libras do Brasil</div>
-        <div class="card-desc">Conteúdo exclusivo, dicas diárias e comunidade ativa. Entre agora — é totalmente gratuito.</div>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
-
-  </div>
-
-  <!-- ══════════════════════ SERVIÇOS ══════════════════════ -->
+  <!-- SERVIÇOS -->
   <div class="section-label" data-aos="fade-up">Serviços</div>
   <div class="cards">
-
-    <!-- Intérprete para eventos -->
-    <a href="#" class="card servico servico-full" data-aos="fade-up" data-aos-delay="0" data-aos-duration="550">
-      <div class="card-icon">🎤</div>
-      <div class="card-type">🏢 Serviço Profissional</div>
+    <div class="card servico servico-full" data-aos="fade-up" data-aos-duration="550" onclick="location.href='#'">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+      </div>
       <div class="card-title">Intérprete para o seu Evento</div>
-      <div class="card-desc">
-        Precisa de intérprete de Libras <strong style="color:rgba(255,255,255,.7)">remoto ou presencial</strong> para seu evento, congresso, aula ou reunião?<br/>
-        Atendemos em todo o Brasil com profissionais certificados.
-      </div>
-      <a href="#" class="cta-btn">Solicitar intérprete →</a>
-    </a>
+      <div class="card-desc">Precisa de intérprete de Libras <strong style="color:rgba(255,255,255,.85)">remoto ou presencial</strong> para seu evento, congresso, aula ou reunião? Atendemos em todo o Brasil com profissionais certificados.</div>
+      <div class="cta-btn">Solicitar orçamento →</div>
+    </div>
 
-    <!-- Central de Libras para surdos -->
-    <a href="#" class="card central" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550">
-      <div class="card-icon">👂</div>
-      <div class="card-body">
-        <div class="card-type">🤝 Central de Libras — Para Surdos</div>
-        <div class="card-title">Você é surdo e precisa de intérprete?</div>
-        <div class="card-desc">Nossa central conecta surdos a intérpretes certificados. Rápido, seguro e acessível.</div>
+    <div class="card central central-full" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550" onclick="location.href='#'">
+      <div class="ilibras-header">
+        <div class="card-icon">
+          <img src="ilibras.png" alt="iLibras Center" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          <svg viewBox="0 0 24 24" fill="none" style="display:none"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+        </div>
+        <div class="ilibras-name">
+          <div class="exclusivo-badge">🤟 Exclusivo para Surdos</div>
+          <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:2px;">Disponível no Google Play</div>
+        </div>
       </div>
-      <div class="card-arrow">→</div>
-    </a>
-
+      <div class="card-title">iLibras Center — App do Surdo</div>
+      <div class="card-desc">Baixe o app e tenha um intérprete de Libras na palma da mão — <strong style="color:#F9A8D4">remoto, rápido e acessível</strong>. Feito exclusivamente para a <strong style="color:#fff">comunidade surda</strong>.</div>
+      <div class="play-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M3 20.5v-17c0-.83 1-.83 1.5-.5l15 8.5-15 8.5c-.5.33-1.5.33-1.5-.5z"/></svg>
+        Baixar no Google Play
+      </div>
+    </div>
   </div>
 
-  <!-- ── RODAPÉ ── -->
   <div class="footer" data-aos="fade-up">
     <p>© 2026 <span>Nerds da Libras LTDA</span> · Prof. Lorena</p>
     <p>Presente em todo o Brasil 🇧🇷</p>
@@ -591,86 +780,67 @@
 <script>
   AOS.init({ once: true, easing: 'ease-out-cubic', offset: 30 });
 
-  // Ripple nos cards
+  // Ripple
   document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('pointerdown', e => {
       const r = document.createElement('span');
       const rect = card.getBoundingClientRect();
       const sz = Math.max(rect.width, rect.height) * 1.8;
-      r.style.cssText = `
-        position:absolute; border-radius:50%; pointer-events:none; z-index:0;
-        width:${sz}px; height:${sz}px;
-        left:${e.clientX - rect.left - sz/2}px;
-        top:${e.clientY  - rect.top  - sz/2}px;
-        background:rgba(255,255,255,.05);
-        transform:scale(0); animation:ripple .55s ease-out forwards;
-      `;
+      r.style.cssText = `position:absolute;border-radius:50%;pointer-events:none;z-index:0;
+        width:${sz}px;height:${sz}px;
+        left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px;
+        background:rgba(255,255,255,.05);transform:scale(0);
+        animation:ripple .55s ease-out forwards;`;
       card.appendChild(r);
       setTimeout(() => r.remove(), 600);
     });
   });
 
-  // ── Carrossel de fotos ──
+  // ── Carrossel Ken Burns ──
   (function() {
-    const slides = document.querySelectorAll('#photoCarousel .slide');
-    const dots   = document.querySelectorAll('#photoDots span');
-    const fallback = document.getElementById('photoFallback');
-    let current = 0;
-    let loaded = 0;
+    const slides  = Array.from(document.querySelectorAll('#photoCarousel .slide'));
+    const dots    = Array.from(document.querySelectorAll('#photoDots span'));
+    const fallback = document.querySelector('#photoCarousel .fallback');
+    let current  = 0;
+    let failCount = 0;
 
-    // Verifica se alguma foto carregou
     slides.forEach((img, i) => {
       img.addEventListener('error', () => {
         img.style.display = 'none';
         if (dots[i]) dots[i].style.display = 'none';
+        failCount++;
+        if (failCount === slides.length) fallback.style.display = 'flex';
       });
-      img.addEventListener('load', () => { loaded++; });
     });
 
     function goTo(n) {
-      slides[current].classList.remove('active');
-      dots[current].classList.remove('active');
-      current = (n + slides.length) % slides.length;
+      const prev = current;
+      current = ((n % slides.length) + slides.length) % slides.length;
+
       // pula slides que falharam
       let tries = 0;
       while (slides[current].style.display === 'none' && tries < slides.length) {
         current = (current + 1) % slides.length;
         tries++;
       }
+      if (tries === slides.length) return;
+
+      // remove active do anterior
+      slides[prev].classList.remove('active');
+      if (dots[prev]) dots[prev].classList.remove('active');
+
+      // reinicia a animação no novo slide (força reflow)
+      slides[current].classList.remove('active');
+      void slides[current].offsetWidth;
       slides[current].classList.add('active');
       if (dots[current]) dots[current].classList.add('active');
     }
 
-    // clique nos dots
     dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
 
-    // auto-play a cada 3.5s
-    setInterval(() => goTo(current + 1), 3500);
+    // troca a cada 4.5s (zoom dura 5s, troca antes de terminar)
+    setInterval(() => goTo(current + 1), 4500);
   })();
-
-  // Contador animado nos stats
-  function animateCounter(el, target, suffix='') {
-    let start = 0;
-    const step = () => {
-      start += Math.ceil((target - start) / 8);
-      el.textContent = start + suffix;
-      if (start < target) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        animateCounter(e.target.querySelector('.stat:nth-child(1) .stat-num'), 15, '+');
-        observer.disconnect();
-      }
-    });
-  }, { threshold: .5 });
-  observer.observe(document.querySelector('.stats'));
 </script>
-<style>
-  @keyframes ripple { to { transform:scale(1); opacity:0; } }
-</style>
 </body>
 </html>

@@ -1,0 +1,14 @@
+# Netlify Redirects — Nerds da Libras
+# Formato: /link-curto   https://destino-externo   302
+
+# Cursos
+/zero-a-libras        https://SEU-LINK-HOTMART-AQUI     302
+/mentoria             https://SEU-LINK-MENTORIA-AQUI    302
+
+# Redes Sociais
+/youtube              https://www.youtube.com/@nerdsdalibras?sub_confirmation=1  302
+/tiktok               https://www.tiktok.com/@nerdsdalibras  302
+/telegram             https://t.me/SEU-CANAL-AQUI            302
+
+# App
+/app                  https://play.google.com/store/apps/details?id=SEU-APP  302
