@@ -357,23 +357,66 @@
     .vagas-bar-label { font-size: .8rem; color: var(--texto); }
     .vagas-bar-label strong { color: var(--vermelho); }
 
-    /* ══ CUPOM / WHATSAPP ══ */
-    .sec-cupom { background: var(--cinza); text-align: center; }
-    .cupom-box {
-      max-width: 600px; margin: 0 auto;
-      background: linear-gradient(135deg, rgba(201,150,58,.12), rgba(201,150,58,.05));
-      border: 1px solid rgba(201,150,58,.3); border-radius: 20px;
-      padding: 36px 28px; box-shadow: 0 0 30px rgba(201,150,58,.1);
+    /* ══ OPCOES DE PAGAMENTO (unificado) ══ */
+    .escolha-label {
+      font-size: .75rem; font-weight: 800; letter-spacing: .18em;
+      text-transform: uppercase; color: rgba(255,255,255,.35);
+      margin: 36px 0 0; text-align: center;
     }
-    .cupom-title {
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
-      letter-spacing: .08em; color: rgba(255,255,255,.7); margin-bottom: 6px;
+    .opcoes-wrap {
+      display: flex; flex-direction: column; gap: 0;
+      margin: 16px auto 0; max-width: 560px;
     }
-    .cupom-destaque {
-      font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.6rem, 5vw, 2.4rem);
-      color: var(--amarelo); letter-spacing: .05em; margin-bottom: 24px;
-      text-shadow: 0 0 20px rgba(255,214,0,.4);
+    .opcao-card {
+      border-radius: 20px; padding: 28px 24px;
+      position: relative; text-align: center;
     }
+    .opcao-zap {
+      background: linear-gradient(145deg, rgba(0,230,0,.1), rgba(0,230,0,.04));
+      border: 1.5px solid rgba(0,230,0,.5);
+      box-shadow: 0 0 45px rgba(0,230,0,.18), inset 0 1px 0 rgba(0,230,0,.15);
+    }
+    .opcao-normal {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.1);
+    }
+    .opcao-badge {
+      display: inline-block; background: var(--verde); color: #000;
+      font-size: .65rem; font-weight: 900; padding: 5px 14px;
+      border-radius: 999px; letter-spacing: .08em;
+      margin-bottom: 14px; text-transform: uppercase;
+    }
+    .opcao-tag {
+      font-size: .72rem; color: rgba(255,255,255,.4);
+      letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .opcao-riscado {
+      font-size: .9rem; color: rgba(255,255,255,.3);
+      text-decoration: line-through; margin-bottom: 6px;
+    }
+    .opcao-desconto {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 6vw, 2.6rem);
+      color: var(--amarelo); letter-spacing: .04em;
+      text-shadow: 0 0 24px rgba(255,214,0,.45); line-height: 1;
+    }
+    .opcao-sub {
+      font-size: .82rem; color: rgba(255,255,255,.5);
+      margin: 6px 0 22px; line-height: 1.4;
+    }
+    .opcao-ou {
+      text-align: center; padding: 14px 0;
+      position: relative; color: rgba(255,255,255,.2);
+      font-size: .72rem; font-weight: 800; letter-spacing: .2em;
+    }
+    .opcao-ou::before, .opcao-ou::after {
+      content: ''; position: absolute; top: 50%;
+      height: 1px; width: 43%; background: rgba(255,255,255,.07);
+    }
+    .opcao-ou::before { left: 0; }
+    .opcao-ou::after  { right: 0; }
+
+    /* ══ WHATSAPP BUTTON ══ */
     .btn-whatsapp {
       display: flex; align-items: center; justify-content: center; gap: 10px;
       width: 100%; background: var(--verde); color: #000;
@@ -381,7 +424,7 @@
       padding: 18px 20px; border-radius: 14px; text-decoration: none;
       box-shadow: 0 0 30px rgba(0,230,0,.4), 0 4px 16px rgba(0,230,0,.25);
       transition: transform .2s, box-shadow .2s; margin-bottom: 10px; line-height: 1.2;
-      text-align: center;
+      text-align: center; position: relative; overflow: hidden;
     }
     .btn-whatsapp:hover { transform: scale(1.02); box-shadow: 0 0 44px rgba(0,230,0,.6), 0 6px 22px rgba(0,230,0,.35); }
     .btn-whatsapp svg { width: 24px; height: 24px; fill: #000; flex-shrink: 0; }
@@ -655,33 +698,43 @@
       <div class="inc-item"><div class="inc-arrow">→</div>Mini Curso de Interpretação de Música</div>
       <div class="inc-item"><div class="inc-arrow">→</div>Certificado de 100hs</div>
     </div>
-    <div class="preco-box">
-      <p class="preco-label">💰 Investimento:</p>
-      <div class="preco-principal">R$ 1.500,00</div>
-      <p class="preco-parcel">ou em até <strong>12x R$ 155,14</strong></p>
-      <div class="preco-contraste">
-        Isso é <strong>menos de R$ 5 por dia</strong> — o preço de um café.<br/>
-        Mas o valor de uma habilidade que dura a vida toda.
-      </div>
-      <a href="https://pay.kiwify.com.br/1sIyvVL" target="_blank" class="btn-checkout">QUERO GARANTIR MINHA VAGA →</a>
-      <p class="preco-seguro">🔒 Pagamento 100% seguro · Kiwify · 15 dias de garantia</p>
-    </div>
-  </div>
-</section>
 
-<!-- ══ CUPOM — DESCONTO 70% ══ -->
-<section class="sec-cupom" id="cupom">
-  <div class="container">
-    <div class="cupom-box">
-      <p class="cupom-title">QUER PAGAR MUITO MENOS?</p>
-      <p class="cupom-destaque">DESCONTO DE MAIS DE 70%</p>
-      <a href="https://wa.me/message/43QHURBUBKEMP1" target="_blank" class="btn-whatsapp">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        CHAME O JOÃO NETO NO WHATSAPP<br/>
-        <span style="font-size:.85rem; font-weight:600; letter-spacing:.02em">e receba um desconto de mais de 70%</span>
-      </a>
-      <p class="btn-hint">👆 Clique — a mensagem já vai pré-preenchida automaticamente</p>
-      <p style="margin-top:16px; color:var(--vermelho); font-size:.8rem; font-weight:700; animation: pulseBg 1.8s ease-in-out infinite; padding:8px; border-radius:8px; background:rgba(255,32,32,.08)">⏳ Oferta por tempo limitado — vagas esgotando</p>
+    <p class="escolha-label">↓ escolha como quer pagar ↓</p>
+
+    <div class="opcoes-wrap">
+
+      <!-- ── OPÇÃO 1: WHATSAPP (destaque) ── -->
+      <div class="opcao-card opcao-zap">
+        <div class="opcao-badge">🔥 MELHOR OPÇÃO</div>
+        <div class="opcao-tag">preço especial via whatsapp</div>
+        <div class="opcao-riscado">de R$ 1.500,00</div>
+        <div class="opcao-desconto">MAIS DE 70% OFF</div>
+        <p class="opcao-sub">Chame agora e receba o preço especial<br>direto com o João Neto</p>
+        <a href="https://wa.me/message/43QHURBUBKEMP1" target="_blank" class="btn-whatsapp">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          CHAME O JOÃO NETO NO WHATSAPP<br/>
+          <span style="font-size:.85rem; font-weight:600; letter-spacing:.02em">e receba o preço especial agora</span>
+        </a>
+        <p class="btn-hint">👆 Clique — a mensagem já vai pré-preenchida</p>
+      </div>
+
+      <!-- ── OU ── -->
+      <div class="opcao-ou">OU</div>
+
+      <!-- ── OPÇÃO 2: PREÇO CHEIO ── -->
+      <div class="opcao-card opcao-normal">
+        <div class="opcao-tag">preço cheio — sem desconto</div>
+        <p class="preco-label">💰 Investimento:</p>
+        <div class="preco-principal">R$ 1.500,00</div>
+        <p class="preco-parcel">ou em até <strong>12x R$ 155,14</strong></p>
+        <div class="preco-contraste">
+          Isso é <strong>menos de R$ 5 por dia</strong> — o preço de um café.<br/>
+          Mas o valor de uma habilidade que dura a vida toda.
+        </div>
+        <a href="https://pay.kiwify.com.br/1sIyvVL" target="_blank" class="btn-checkout">QUERO GARANTIR MINHA VAGA →</a>
+        <p class="preco-seguro">🔒 Pagamento 100% seguro · Kiwify · 15 dias de garantia</p>
+      </div>
+
     </div>
   </div>
 </section>
