@@ -464,6 +464,33 @@
     .viewers-dot { width: 7px; height: 7px; background: var(--verde); border-radius: 50%; animation: blink 1.2s ease-in-out infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
+    /* ══ VISITOR TOAST (popup de entrada) ══ */
+    .visitor-toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: rgba(10,10,20,.96); border: 1px solid rgba(0,230,0,.35);
+      border-radius: 14px; padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px;
+      font-size: .82rem; color: rgba(255,255,255,.85);
+      z-index: 9999; backdrop-filter: blur(14px);
+      box-shadow: 0 8px 40px rgba(0,0,0,.6), 0 0 24px rgba(0,230,0,.1);
+      transition: transform .5s cubic-bezier(.34,1.56,.64,1), opacity .4s;
+      white-space: nowrap; max-width: 90vw;
+    }
+    .visitor-toast.show { transform: translateX(-50%) translateY(0); }
+    .visitor-toast .t-dot {
+      width: 9px; height: 9px; flex-shrink: 0;
+      background: var(--verde); border-radius: 50%;
+      box-shadow: 0 0 8px rgba(0,230,0,.7);
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    .visitor-toast .t-close {
+      margin-left: 10px; cursor: pointer;
+      color: rgba(255,255,255,.3); font-size: .95rem; line-height: 1;
+      flex-shrink: 0;
+    }
+    .visitor-toast .t-close:hover { color: rgba(255,255,255,.6); }
+
     /* ══ FOOTER ══ */
     footer {
       background: var(--cinza); border-top: 1px solid rgba(255,255,255,.05);
@@ -482,7 +509,7 @@
 <body>
 
 <!-- BARRA URGÊNCIA -->
-<div class="topbar">⏳ Turma de maio — Apenas <strong>12 vagas restantes</strong>. Fecha quando lotar!</div>
+<div class="topbar">⏳ Turma de maio — Apenas <strong><span id="vagasTopbar">12</span> vagas restantes</strong>. Fecha quando lotar!</div>
 
 <!-- ══ HERO ══ -->
 <section class="hero">
@@ -679,8 +706,8 @@
     <h2 class="escassez-titulo">⚡ ATENÇÃO — VAGAS ACABANDO</h2>
     <p class="escassez-sub">Quando as vagas acabarem, a turma fecha. Não tem lista de espera.</p>
     <div class="vagas-bar">
-      <div class="vagas-bar-track"><div class="vagas-bar-fill"></div></div>
-      <p class="vagas-bar-label"><strong>38 de 50 vagas preenchidas</strong> — restam apenas 12</p>
+      <div class="vagas-bar-track"><div class="vagas-bar-fill" id="vagasBarFill"></div></div>
+      <p class="vagas-bar-label" id="vagasBarLabel"><strong>38 de 50 vagas preenchidas</strong> — restam apenas 12</p>
     </div>
   </div>
 </section>
@@ -769,7 +796,7 @@
       <strong style="color:#fff">A diferença é uma decisão.</strong>
     </p>
     <a href="#comprar" class="btn-hero">GARANTIR MINHA VAGA AGORA →</a>
-    <p class="vagas-pill" style="display:block; margin-top:14px;">⏳ Apenas 12 vagas restantes para maio</p>
+    <p class="vagas-pill" style="display:block; margin-top:14px;">⏳ Apenas <span id="vagasPill">12</span> vagas restantes para maio</p>
   </div>
 </section>
 
@@ -778,18 +805,84 @@
   <p style="margin-top:6px"><a href="/">← Voltar para a página principal</a></p>
 </footer>
 
+<!-- ══ VISITOR TOAST ══ -->
+<div class="visitor-toast" id="visitorToast">
+  <div class="t-dot"></div>
+  <span><strong id="toastCount">24</strong> pessoas estão nessa página agora</span>
+  <span class="t-close" onclick="document.getElementById('visitorToast').classList.remove('show')">✕</span>
+</div>
+
 <script>
-  // Contador de visitantes fake (reciprocidade/escassez)
-  const el = document.getElementById('viewerCount');
-  if (el) {
-    let v = 28 + Math.floor(Math.random() * 12);
-    el.textContent = v;
-    setInterval(() => {
-      v += Math.random() > .5 ? 1 : -1;
-      v = Math.max(18, Math.min(47, v));
-      el.textContent = v;
-    }, 8000);
+(function () {
+
+  /* ════════════════════════════════════════
+     1. VAGAS DINÂMICAS (diminui a cada 2 dias)
+     ════════════════════════════════════════ */
+  var INICIO     = new Date('2026-04-29T00:00:00');
+  var TOTAL      = 50;
+  var BASE_PRCH  = 38;   // vagas preenchidas no dia de lançamento
+  var MIN_REST   = 3;    // nunca desce abaixo de 3 vagas
+
+  var hoje        = new Date();
+  var diasPassados = Math.max(0, Math.floor((hoje - INICIO) / 86400000));
+  var extraPrech   = Math.floor(diasPassados / 2);          // +1 vaga a cada 2 dias
+  var preenchidas  = Math.min(TOTAL - MIN_REST, BASE_PRCH + extraPrech);
+  var restantes    = TOTAL - preenchidas;
+  var pct          = Math.round(preenchidas / TOTAL * 100);
+
+  // Atualiza topbar
+  var elTop = document.getElementById('vagasTopbar');
+  if (elTop) elTop.textContent = restantes;
+
+  // Atualiza barra
+  var fill  = document.getElementById('vagasBarFill');
+  var label = document.getElementById('vagasBarLabel');
+  if (fill)  fill.style.width = pct + '%';
+  if (label) label.innerHTML  =
+    '<strong>' + preenchidas + ' de ' + TOTAL + ' vagas preenchidas</strong> — restam apenas ' + restantes;
+
+  // Atualiza pill final
+  var pill = document.getElementById('vagasPill');
+  if (pill) pill.textContent = restantes;
+
+
+  /* ════════════════════════════════════════
+     2. CONTADOR DE VISITANTES AO VIVO
+     ════════════════════════════════════════ */
+  var viewers = 22 + Math.floor(Math.random() * 16);
+
+  // Badge no hero
+  var elHero = document.getElementById('viewerCount');
+  if (elHero) elHero.textContent = viewers;
+
+  // Toast
+  var elToast = document.getElementById('toastCount');
+  if (elToast) elToast.textContent = viewers;
+
+  // Flutuação periódica (ambos sincronizados)
+  setInterval(function () {
+    viewers += Math.random() > .5 ? 1 : -1;
+    viewers = Math.max(14, Math.min(52, viewers));
+    if (elHero)  elHero.textContent  = viewers;
+    if (elToast) elToast.textContent = viewers;
+  }, 7000);
+
+
+  /* ════════════════════════════════════════
+     3. POPUP DE ENTRADA (aparece após 2s)
+     ════════════════════════════════════════ */
+  var toast = document.getElementById('visitorToast');
+  if (toast) {
+    setTimeout(function () {
+      toast.classList.add('show');
+      // Auto-fecha após 8s
+      setTimeout(function () {
+        toast.classList.remove('show');
+      }, 8000);
+    }, 2000);
   }
+
+})();
 </script>
 </body>
 </html>
