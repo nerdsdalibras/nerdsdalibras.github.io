@@ -508,14 +508,16 @@
       line-height: 1.55; position: relative; z-index: 1;
     }
 
-    /* pill "Mais Vendido" */
+    /* pill "Mais Vendido" / "Mais Desejado" */
     .offer-pill {
       position: absolute; top: 16px; right: 16px;
-      background: linear-gradient(135deg, #EF4444, #DC2626);
+      background: linear-gradient(135deg, #EC4899, #BE185D);
+      box-shadow: 0 0 16px rgba(236,72,153,.5);
       color: #fff; font-size: .6rem; font-weight: 800;
-      padding: 4px 10px; border-radius: 999px;
+      padding: 5px 12px; border-radius: 999px;
       letter-spacing: .05em; text-transform: uppercase;
       animation: pulse 2s ease-in-out infinite; z-index: 3;
+      white-space: nowrap;
     }
     @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
 
@@ -767,6 +769,7 @@
     </div>
 
     <div class="card mentoria" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550" onclick="location.href='#'">
+      <span class="offer-pill">💜 O Mais Desejado pelos Intérpretes</span>
       <div class="card-photo-wrap">
         <img src="fotos/image-1777403006556.jpg" alt="Prof. Lorena — Mentoria Profissional">
       </div>
