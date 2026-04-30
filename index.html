@@ -719,20 +719,6 @@
     .rede-row.instagram .rede-icon-sm    { animation-delay: 2s; }
     .rede-row.whatsapp  .rede-icon-sm    { animation-delay: 3s; }
 
-    /* ── ESTRELA BRILHANDO NOS CARDS ── */
-    @keyframes starTwinkle {
-      0%,100% { opacity:0; transform:scale(0) rotate(0deg); }
-      50%     { opacity:1; transform:scale(1) rotate(180deg); }
-    }
-    .card-sparkle-star {
-      position:absolute; pointer-events:none; z-index:4;
-      animation: starTwinkle 2.4s ease-in-out infinite;
-      font-style:normal; line-height:1; user-select:none;
-    }
-    .card.curso    .card-sparkle-star { color:rgba(74,222,128,.9); }
-    .card.mentoria .card-sparkle-star { color:rgba(167,139,250,.9); }
-    .card.servico  .card-sparkle-star { color:rgba(232,185,106,.9); }
-    .card.central  .card-sparkle-star { color:rgba(244,114,182,.9); }
 
     /* ═══ MOBILE ≤ 480px ═══ */
     @media (max-width: 480px) {
@@ -998,27 +984,6 @@
       setTimeout(() => r.remove(), 600);
     });
   });
-
-  // ── Estrelas brilhando nos cards de produto ──
-  (function(){
-    const stars = [
-      {top:'18%', left:'7%',  delay:'0s',    size:'11px'},
-      {top:'32%', right:'8%', delay:'0.6s',  size:'8px'},
-      {top:'62%', left:'10%', delay:'1.2s',  size:'9px'},
-      {top:'78%', right:'6%', delay:'1.8s',  size:'12px'},
-      {top:'48%', left:'5%',  delay:'2.4s',  size:'7px'},
-      {top:'20%', right:'5%', delay:'3s',    size:'10px'},
-    ];
-    document.querySelectorAll('.card').forEach(card => {
-      stars.forEach(s => {
-        const el = document.createElement('span');
-        el.className = 'card-sparkle-star';
-        el.textContent = '✦';
-        el.style.cssText = `top:${s.top};${s.left ? 'left:'+s.left : 'right:'+s.right};font-size:${s.size};animation-delay:${s.delay};`;
-        card.appendChild(el);
-      });
-    });
-  })();
 
   // ── Carrossel Ken Burns ──
   (function() {
