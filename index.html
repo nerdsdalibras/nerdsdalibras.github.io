@@ -639,27 +639,71 @@
     }
     .footer span { color: var(--ouro); opacity: .6; }
 
-    /* ═══ INSTAGRAM CARD ═══ */
-    .soc-card.instagram {
-      background: linear-gradient(135deg, rgba(245,133,41,.07) 0%, rgba(221,42,123,.07) 50%, rgba(129,52,175,.07) 100%);
-      border-color: rgba(221,42,123,.3);
+    /* ═══ CARD UNIFICADO DE REDES SOCIAIS ═══ */
+    .redes-card {
+      width: 100%; margin-top: 20px;
+      padding: 22px 20px 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      backdrop-filter: blur(10px);
     }
-    .soc-card.instagram:hover {
-      border-color: rgba(221,42,123,.6);
-      box-shadow: 0 8px 34px rgba(221,42,123,.22);
+    .redes-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; font-weight: 800;
+      color: #fff; text-align: center;
+      line-height: 1.35; margin-bottom: 18px;
     }
-    .soc-card.instagram .soc-icon {
-      background: linear-gradient(135deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%);
+    .rede-row {
+      display: flex; align-items: center; gap: 13px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      text-decoration: none; color: #fff;
+      transition: opacity .18s; cursor: pointer;
     }
-    .soc-card.instagram .soc-platform { color: #E879A5; }
-    .soc-card.instagram .soc-action {
-      background: linear-gradient(135deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%);
-      color: #fff; border: none;
-      box-shadow: 0 0 20px rgba(221,42,123,.4);
+    .rede-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .rede-row:active { opacity: .7; }
+    .rede-icon-sm {
+      width: 46px; height: 46px; flex-shrink: 0;
+      border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
     }
-    .soc-card.instagram .soc-action::after { animation-delay: 2.7s; }
-
-    .instagram-section { width: 100%; margin-top: 0; }
+    .rede-icon-sm svg { width: 22px; height: 22px; fill: #fff; }
+    .rede-info { flex: 1; min-width: 0; }
+    .rede-name  { font-size: .83rem; font-weight: 700; line-height: 1.2; }
+    .rede-desc  { font-size: .69rem; color: var(--texto); margin-top: 2px; line-height: 1.3; }
+    .rede-btn {
+      flex-shrink: 0;
+      font-size: .7rem; font-weight: 800;
+      padding: 9px 13px; border-radius: 10px;
+      white-space: nowrap; min-height: 36px;
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+    }
+    .rede-btn::after {
+      content: '';
+      position: absolute; top: -20%; left: -80%;
+      width: 50%; height: 140%;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%);
+      transform: skewX(-15deg);
+      animation: shimmerCta 2.8s ease-in-out infinite;
+    }
+    /* TikTok */
+    .rede-row.tiktok .rede-icon-sm { background: linear-gradient(135deg,#010101,#1a1a2e); border:1px solid rgba(255,255,255,.12); }
+    .rede-row.tiktok .rede-btn { background:rgba(255,255,255,.08); color:rgba(255,255,255,.85); border:1px solid rgba(255,255,255,.15); }
+    .rede-row.tiktok .rede-btn::after { animation-delay:0s; }
+    /* YouTube */
+    .rede-row.youtube .rede-icon-sm { background:#FF0000; }
+    .rede-row.youtube .rede-btn { background:#FF0000; color:#fff; border:none; }
+    .rede-row.youtube .rede-btn::after { animation-delay:.7s; }
+    /* WhatsApp */
+    .rede-row.whatsapp .rede-icon-sm { background:#25D366; }
+    .rede-row.whatsapp .rede-btn { background:#25D366; color:#000; border:none; box-shadow:0 0 14px rgba(37,211,102,.35); }
+    .rede-row.whatsapp .rede-btn::after { animation-delay:1.4s; }
+    /* Instagram */
+    .rede-row.instagram .rede-icon-sm { background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); }
+    .rede-row.instagram .rede-btn { background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); color:#fff; border:none; box-shadow:0 0 14px rgba(221,42,123,.35); }
+    .rede-row.instagram .rede-btn::after { animation-delay:2.1s; }
 
     /* ═══ MOBILE ≤ 480px ═══ */
     @media (max-width: 480px) {
@@ -788,42 +832,56 @@
       </div>
     </div>
 
-    <div class="social-cards">
+    <!-- ── CARD UNIFICADO REDES SOCIAIS ── -->
+    <div class="redes-card" data-aos="fade-up" data-aos-duration="600">
+      <div class="redes-titulo">Siga a gente nas redes e se torne um Nerd da Libras 🤟</div>
 
       <!-- TikTok -->
-      <a href="https://www.tiktok.com/@nerds.da.libras" target="_blank" class="soc-card tiktok" id="btn-tiktok">
-        <div class="soc-icon">
+      <a href="https://www.tiktok.com/@nerds.da.libras" target="_blank" class="rede-row tiktok" id="btn-tiktok">
+        <div class="rede-icon-sm">
           <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg>
         </div>
-        <div class="soc-body">
-          <div class="soc-title">Aprenda um sinal novo por dia</div>
-          <div class="soc-desc">Vídeos rápidos de Libras — do básico ao avançado em poucos minutos</div>
+        <div class="rede-info">
+          <div class="rede-name">TikTok</div>
+          <div class="rede-desc">Um sinal novo por dia</div>
         </div>
-        <div class="soc-action">Seguir</div>
+        <div class="rede-btn">Seguir</div>
       </a>
 
-      <!-- YouTube — clique já abre inscrição -->
-      <a href="https://www.youtube.com/@nerdsdalibras?sub_confirmation=1" target="_blank" class="soc-card youtube" id="btn-youtube">
-        <div class="soc-icon">
+      <!-- YouTube -->
+      <a href="https://www.youtube.com/@nerdsdalibras?sub_confirmation=1" target="_blank" class="rede-row youtube" id="btn-youtube">
+        <div class="rede-icon-sm">
           <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
         </div>
-        <div class="soc-body">
-          <div class="soc-title">Aulas completas de Libras + Interpretação</div>
-          <div class="soc-desc">Dicas de tradução, técnica e carreira para quem quer ser intérprete de verdade</div>
+        <div class="rede-info">
+          <div class="rede-name">YouTube</div>
+          <div class="rede-desc">Aulas completas de Libras</div>
         </div>
-        <div class="soc-action">▶ Inscrever</div>
+        <div class="rede-btn">▶ Inscrever</div>
       </a>
 
-      <!-- Telegram -->
-      <a href="https://chat.whatsapp.com/GLQeFyVsR2kFvzcBgggDsV" target="_blank" class="soc-card whatsapp-grupo" id="btn-whatsapp-grupo">
-        <div class="soc-icon">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <!-- WhatsApp -->
+      <a href="https://chat.whatsapp.com/GLQeFyVsR2kFvzcBgggDsV" target="_blank" class="rede-row whatsapp" id="btn-whatsapp-grupo">
+        <div class="rede-icon-sm">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </div>
-        <div class="soc-body">
-          <div class="soc-title">🏆 O Maior Grupo de Libras do Brasil</div>
-          <div class="soc-desc">Tire dúvidas, interaja com a comunidade e <strong style="color:#4AE87A">seja chamado para uma análise de interpretação ao vivo com a Lorena</strong> — só para membros do grupo</div>
+        <div class="rede-info">
+          <div class="rede-name">Grupo WhatsApp 🏆</div>
+          <div class="rede-desc">Maior grupo de Libras do Brasil</div>
         </div>
-        <div class="soc-action">Entrar no Grupo →</div>
+        <div class="rede-btn">Entrar →</div>
+      </a>
+
+      <!-- Instagram -->
+      <a href="https://www.instagram.com/nerdsdalibras" target="_blank" class="rede-row instagram" id="btn-instagram">
+        <div class="rede-icon-sm">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </div>
+        <div class="rede-info">
+          <div class="rede-name">Instagram</div>
+          <div class="rede-desc">Aulas dinâmicas e bastidores</div>
+        </div>
+        <div class="rede-btn">Seguir →</div>
       </a>
 
     </div>
@@ -883,25 +941,6 @@
         Baixar no Google Play
       </div>
     </div>
-  </div>
-
-  <!-- ── INSTAGRAM ── -->
-  <div class="section-label" data-aos="fade-up" style="margin-top:36px">📸 Siga no Instagram</div>
-  <div class="instagram-section" data-aos="fade-up" data-aos-duration="550">
-    <a href="https://www.instagram.com/nerdsdalibras" target="_blank" class="soc-card instagram" id="btn-instagram">
-      <div class="soc-icon">
-        <!-- Instagram icon -->
-        <svg viewBox="0 0 24 24" fill="white" width="28" height="28">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-      </div>
-      <div class="soc-body">
-        <div class="soc-platform">Instagram</div>
-        <div class="soc-title">@nerdsdalibras</div>
-        <div class="soc-desc">Aulas dinâmicas, bastidores dos eventos e conteúdo exclusivo da comunidade Libras — te vemos por lá! 🤟</div>
-      </div>
-      <div class="soc-action">Seguir no Instagram →</div>
-    </a>
   </div>
 
   <div class="footer" data-aos="fade-up">
