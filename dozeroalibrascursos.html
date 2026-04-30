@@ -354,8 +354,7 @@
       animation: fillPulse 1.5s ease-in-out infinite;
     }
     @keyframes fillPulse { 0%,100%{opacity:1} 50%{opacity:.8} }
-    .vagas-bar-label { font-size: .8rem; color: var(--texto); }
-    .vagas-bar-label strong { color: var(--vermelho); }
+    .vagas-bar-label { display: none; } /* comunicado pelo popup flutuante */
 
     /* ══ OPCOES DE PAGAMENTO (unificado) ══ */
     .escolha-label {
@@ -464,32 +463,45 @@
     .viewers-dot { width: 7px; height: 7px; background: var(--verde); border-radius: 50%; animation: blink 1.2s ease-in-out infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
-    /* ══ VISITOR TOAST (popup de entrada) ══ */
-    .visitor-toast {
-      position: fixed; bottom: 24px; left: 50%;
-      transform: translateX(-50%) translateY(120px);
-      background: rgba(10,10,20,.96); border: 1px solid rgba(0,230,0,.35);
-      border-radius: 14px; padding: 14px 20px;
-      display: flex; align-items: center; gap: 12px;
-      font-size: .82rem; color: rgba(255,255,255,.85);
-      z-index: 9999; backdrop-filter: blur(14px);
-      box-shadow: 0 8px 40px rgba(0,0,0,.6), 0 0 24px rgba(0,230,0,.1);
-      transition: transform .5s cubic-bezier(.34,1.56,.64,1), opacity .4s;
-      white-space: nowrap; max-width: 90vw;
+    /* ══ BADGE FLUTUANTE DE VISITANTES ══ */
+    .floating-viewers {
+      position: fixed; bottom: 24px; left: 16px; z-index: 9998;
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(8,12,20,.93); border: 1px solid rgba(0,230,0,.4);
+      border-radius: 999px; padding: 10px 14px 10px 12px;
+      font-size: .78rem; color: rgba(255,255,255,.85);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 4px 24px rgba(0,0,0,.55), 0 0 14px rgba(0,230,0,.12);
+      transition: opacity .35s, transform .35s;
     }
-    .visitor-toast.show { transform: translateX(-50%) translateY(0); }
-    .visitor-toast .t-dot {
-      width: 9px; height: 9px; flex-shrink: 0;
-      background: var(--verde); border-radius: 50%;
-      box-shadow: 0 0 8px rgba(0,230,0,.7);
-      animation: blink 1.2s ease-in-out infinite;
+    .floating-viewers.hidden { opacity: 0; pointer-events: none; transform: translateY(14px); }
+    .fv-dot { width: 9px; height: 9px; flex-shrink: 0; background: var(--verde);
+      border-radius: 50%; box-shadow: 0 0 7px rgba(0,230,0,.8);
+      animation: blink 1.2s ease-in-out infinite; }
+    .fv-close { margin-left: 6px; cursor: pointer; color: rgba(255,255,255,.25);
+      font-size: .75rem; line-height: 1; padding: 2px 4px; }
+    .fv-close:hover { color: rgba(255,255,255,.55); }
+
+    /* ══ POPUP DE COMPRA ══ */
+    .purchase-popup {
+      position: fixed; bottom: 24px; right: 16px; z-index: 9999;
+      background: rgba(8,12,20,.95); border: 1px solid rgba(255,214,0,.3);
+      border-radius: 16px; padding: 14px 16px; max-width: 270px; width: calc(100vw - 32px);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.6), 0 0 18px rgba(255,214,0,.08);
+      transform: translateX(calc(100% + 24px));
+      transition: transform .5s cubic-bezier(.34,1.56,.64,1);
     }
-    .visitor-toast .t-close {
-      margin-left: 10px; cursor: pointer;
-      color: rgba(255,255,255,.3); font-size: .95rem; line-height: 1;
-      flex-shrink: 0;
-    }
-    .visitor-toast .t-close:hover { color: rgba(255,255,255,.6); }
+    .purchase-popup.show { transform: translateX(0); }
+    .pp-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .pp-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#8B5CF6,#EC4899); display:flex; align-items:center; justify-content:center; font-size:.95rem; flex-shrink:0; }
+    .pp-name { font-size:.78rem; color: rgba(255,255,255,.5); }
+    .pp-name strong { color: #fff; display:block; font-size:.82rem; }
+    .pp-msg { font-size: .82rem; color: rgba(255,255,255,.75); line-height: 1.4; }
+    .pp-vagas { margin-top: 8px; font-size: .75rem; font-weight: 700;
+      color: var(--amarelo); display:flex; align-items:center; gap:5px; }
+    .pp-progress { height: 3px; background: rgba(255,255,255,.08); border-radius: 999px; margin-top: 10px; overflow:hidden; }
+    .pp-progress-fill { height: 100%; background: var(--amarelo); border-radius: 999px; width: 100%; transition: width linear; }
 
     /* ══ FOOTER ══ */
     footer {
@@ -805,82 +817,119 @@
   <p style="margin-top:6px"><a href="/">← Voltar para a página principal</a></p>
 </footer>
 
-<!-- ══ VISITOR TOAST ══ -->
-<div class="visitor-toast" id="visitorToast">
-  <div class="t-dot"></div>
-  <span><strong id="toastCount">24</strong> pessoas estão nessa página agora</span>
-  <span class="t-close" onclick="document.getElementById('visitorToast').classList.remove('show')">✕</span>
+<!-- ══ BADGE FLUTUANTE VISITANTES ══ -->
+<div class="floating-viewers" id="floatingViewers">
+  <div class="fv-dot"></div>
+  <span><strong id="floatingCount">24</strong> aqui agora</span>
+  <span class="fv-close" onclick="document.getElementById('floatingViewers').classList.add('hidden')" title="Fechar">✕</span>
+</div>
+
+<!-- ══ POPUP DE COMPRA ══ -->
+<div class="purchase-popup" id="purchasePopup">
+  <div class="pp-head">
+    <div class="pp-avatar">🎓</div>
+    <div class="pp-name"><strong id="ppNome">Alguém</strong> acaba de comprar</div>
+  </div>
+  <div class="pp-msg">✅ <em>Do Zero a Libras</em> — acesso liberado!</div>
+  <div class="pp-vagas">⏳ Restam apenas <span id="ppVagas">11</span> vagas</div>
+  <div class="pp-progress"><div class="pp-progress-fill" id="ppFill"></div></div>
 </div>
 
 <script>
 (function () {
 
-  /* ════════════════════════════════════════
-     1. VAGAS DINÂMICAS (diminui a cada 2 dias)
-     ════════════════════════════════════════ */
-  var INICIO     = new Date('2026-04-29T00:00:00');
-  var TOTAL      = 50;
-  var BASE_PRCH  = 38;   // vagas preenchidas no dia de lançamento
-  var MIN_REST   = 3;    // nunca desce abaixo de 3 vagas
+  /* ══════════════════════════════════════
+     1. VAGAS DINÂMICAS (−1 a cada 2 dias)
+  ══════════════════════════════════════ */
+  var INICIO    = new Date('2026-04-29T00:00:00');
+  var TOTAL     = 50;
+  var BASE_PRCH = 38;
+  var MIN_REST  = 3;
 
-  var hoje        = new Date();
-  var diasPassados = Math.max(0, Math.floor((hoje - INICIO) / 86400000));
-  var extraPrech   = Math.floor(diasPassados / 2);          // +1 vaga a cada 2 dias
-  var preenchidas  = Math.min(TOTAL - MIN_REST, BASE_PRCH + extraPrech);
+  var hoje         = new Date();
+  var diasPass     = Math.max(0, Math.floor((hoje - INICIO) / 86400000));
+  var preenchidas  = Math.min(TOTAL - MIN_REST, BASE_PRCH + Math.floor(diasPass / 2));
   var restantes    = TOTAL - preenchidas;
   var pct          = Math.round(preenchidas / TOTAL * 100);
 
-  // Atualiza topbar
+  // Topbar
   var elTop = document.getElementById('vagasTopbar');
   if (elTop) elTop.textContent = restantes;
 
-  // Atualiza barra
-  var fill  = document.getElementById('vagasBarFill');
-  var label = document.getElementById('vagasBarLabel');
-  if (fill)  fill.style.width = pct + '%';
-  if (label) label.innerHTML  =
-    '<strong>' + preenchidas + ' de ' + TOTAL + ' vagas preenchidas</strong> — restam apenas ' + restantes;
+  // Barra visual (sem label — comunicado pelo popup)
+  var fill = document.getElementById('vagasBarFill');
+  if (fill) fill.style.width = pct + '%';
 
-  // Atualiza pill final
+  // Pill CTA final
   var pill = document.getElementById('vagasPill');
   if (pill) pill.textContent = restantes;
 
 
-  /* ════════════════════════════════════════
-     2. CONTADOR DE VISITANTES AO VIVO
-     ════════════════════════════════════════ */
-  var viewers = 22 + Math.floor(Math.random() * 16);
+  /* ══════════════════════════════════════
+     2. BADGE FLUTUANTE — visitantes ao vivo
+  ══════════════════════════════════════ */
+  var viewers  = 20 + Math.floor(Math.random() * 18);
+  var elHero   = document.getElementById('viewerCount');
+  var elFloat  = document.getElementById('floatingCount');
 
-  // Badge no hero
-  var elHero = document.getElementById('viewerCount');
-  if (elHero) elHero.textContent = viewers;
+  function setViewers(v) {
+    if (elHero)  elHero.textContent  = v;
+    if (elFloat) elFloat.textContent = v;
+  }
+  setViewers(viewers);
 
-  // Toast
-  var elToast = document.getElementById('toastCount');
-  if (elToast) elToast.textContent = viewers;
-
-  // Flutuação periódica (ambos sincronizados)
   setInterval(function () {
     viewers += Math.random() > .5 ? 1 : -1;
-    viewers = Math.max(14, Math.min(52, viewers));
-    if (elHero)  elHero.textContent  = viewers;
-    if (elToast) elToast.textContent = viewers;
+    viewers = Math.max(13, Math.min(54, viewers));
+    setViewers(viewers);
   }, 7000);
 
 
-  /* ════════════════════════════════════════
-     3. POPUP DE ENTRADA (aparece após 2s)
-     ════════════════════════════════════════ */
-  var toast = document.getElementById('visitorToast');
-  if (toast) {
-    setTimeout(function () {
-      toast.classList.add('show');
-      // Auto-fecha após 8s
+  /* ══════════════════════════════════════
+     3. POPUP DE COMPRA (aparece 2× por visita)
+  ══════════════════════════════════════ */
+  var nomes = ['Ana P.','Carlos M.','Juliana R.','Rodrigo S.',
+               'Fernanda L.','Diego T.','Camila O.','Marcos V.',
+               'Patricia N.','Lucas A.','Beatriz F.','Rafael C.'];
+
+  var popup     = document.getElementById('purchasePopup');
+  var ppNome    = document.getElementById('ppNome');
+  var ppVagas   = document.getElementById('ppVagas');
+  var ppFill    = document.getElementById('ppFill');
+  var vagasAtual = restantes;
+
+  function showPurchase() {
+    if (!popup) return;
+    // Diminui 1 vaga nesta sessão
+    vagasAtual = Math.max(MIN_REST, vagasAtual - 1);
+    var nome = nomes[Math.floor(Math.random() * nomes.length)];
+    if (ppNome)  ppNome.textContent  = nome;
+    if (ppVagas) ppVagas.textContent = vagasAtual;
+
+    // Mostra popup
+    popup.classList.add('show');
+
+    // Barra de progresso drenando em 5s
+    if (ppFill) {
+      ppFill.style.transition = 'none';
+      ppFill.style.width = '100%';
       setTimeout(function () {
-        toast.classList.remove('show');
-      }, 8000);
-    }, 2000);
+        ppFill.style.transition = 'width 5s linear';
+        ppFill.style.width = '0%';
+      }, 30);
+    }
+
+    // Auto-fecha após 5.5s
+    setTimeout(function () {
+      popup.classList.remove('show');
+    }, 5500);
   }
+
+  // 1ª aparição: 4 segundos após entrada
+  setTimeout(showPurchase, 4000);
+
+  // 2ª aparição: 2 minutos depois (se ainda na página)
+  setTimeout(showPurchase, 120000);
 
 })();
 </script>
