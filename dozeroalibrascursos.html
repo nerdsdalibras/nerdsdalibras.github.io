@@ -33,13 +33,13 @@
     html { scroll-behavior: smooth; }
     body {
       background: linear-gradient(160deg,
-        #8B1A5E 0%,
-        #C0306A 18%,
-        #D9608E 36%,
-        #ECA0BC 55%,
-        #F5CBDE 72%,
-        #FBE8F2 85%,
-        #FFF4FA 100%
+        #080005 0%,
+        #1E0012 18%,
+        #3D0025 35%,
+        #6B0040 52%,
+        #940858 68%,
+        #B51268 82%,
+        #C8186F 100%
       );
       background-attachment: fixed;
       min-height: 100vh;
@@ -51,7 +51,7 @@
 
     /* ══ TOPBAR ══ */
     .topbar {
-      background: linear-gradient(90deg, #7A0A50, #A81E6A, #7A0A50);
+      background: linear-gradient(90deg, #1E0012, #5C0038, #940858, #5C0038, #1E0012);
       background-size: 200% auto;
       animation: shimmer 4s linear infinite;
       color: #fff;
@@ -122,28 +122,29 @@
 
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.12);
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.7);
-      color: var(--verde); border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #FFD6EA; border-radius: 999px;
       padding: 6px 16px; font-size: .76rem; font-weight: 700;
       letter-spacing: .06em; text-transform: uppercase;
       margin-bottom: 28px;
-      box-shadow: 0 2px 12px rgba(139,26,94,.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,.2);
     }
 
     h1.hero-h1 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2.2rem, 6vw, 4rem);
       font-weight: 900; line-height: 1.12; letter-spacing: -.01em;
-      color: var(--preto); margin-bottom: 22px;
+      color: #ffffff; margin-bottom: 22px;
+      text-shadow: 0 2px 20px rgba(0,0,0,.3);
       max-width: 760px; margin-left: auto; margin-right: auto;
     }
-    h1.hero-h1 em { font-style: italic; color: var(--verde); }
+    h1.hero-h1 em { font-style: italic; color: #FFB3D4; }
 
     .hero-sub {
       font-size: clamp(.95rem, 2.2vw, 1.1rem);
-      color: var(--cinza-esc); line-height: 1.7;
+      color: rgba(255,255,255,0.82); line-height: 1.7;
       max-width: 600px; margin: 0 auto 36px;
     }
 
@@ -179,10 +180,10 @@
     }
 
     .hero-micro {
-      margin-top: 16px; font-size: .82rem; color: var(--cinza-lt);
+      margin-top: 16px; font-size: .82rem; color: rgba(255,255,255,0.6);
       font-style: italic;
     }
-    .hero-micro strong { color: var(--cinza); font-style: normal; }
+    .hero-micro strong { color: rgba(255,255,255,0.85); font-style: normal; }
 
 
     /* ══════════════════════════════════
@@ -203,12 +204,13 @@
       font-family: 'Playfair Display', serif;
       font-size: clamp(1.6rem, 4.5vw, 2.8rem);
       font-weight: 800; line-height: 1.2; letter-spacing: -.01em;
-      color: var(--preto); margin-bottom: 16px;
+      color: #ffffff; margin-bottom: 16px;
+      text-shadow: 0 2px 16px rgba(0,0,0,.25);
     }
-    .sec-title em { font-style: italic; color: var(--verde); }
+    .sec-title em { font-style: italic; color: #FFB3D4; }
 
     .sec-sub {
-      font-size: .97rem; color: var(--cinza); line-height: 1.65;
+      font-size: .97rem; color: rgba(255,255,255,0.75); line-height: 1.65;
       max-width: 600px; margin-bottom: 36px;
     }
 
@@ -251,12 +253,12 @@
 
     .video-micro {
       text-align: center; font-size: .88rem;
-      color: var(--cinza); font-style: italic;
-      border-top: 1px solid var(--borda);
+      color: rgba(255,255,255,0.65); font-style: italic;
+      border-top: 1px solid rgba(255,255,255,0.15);
       padding-top: 24px; margin-top: 4px;
       max-width: 500px; margin-left: auto; margin-right: auto;
     }
-    .video-micro strong { color: var(--preto); font-style: normal; }
+    .video-micro strong { color: rgba(255,255,255,0.9); font-style: normal; }
 
 
     /* ══════════════════════════════════
@@ -342,7 +344,7 @@
       .oferta-sep { padding: 16px 0; }
     }
     .sep-text {
-      font-size: .78rem; font-weight: 700; color: var(--cinza-lt);
+      font-size: .78rem; font-weight: 700; color: rgba(255,255,255,0.5);
       letter-spacing: .15em;
     }
 
