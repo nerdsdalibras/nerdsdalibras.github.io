@@ -396,6 +396,19 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 32px rgba(15,110,86,.45);
     }
+    .cupom-aviso {
+      background: linear-gradient(135deg, #7A4F00, #B8862A, #E8B96A, #B8862A, #7A4F00);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: .85rem; font-weight: 800;
+      letter-spacing: .01em;
+      text-align: center;
+      margin: 10px 0 18px;
+      filter: drop-shadow(0 0 6px rgba(184,134,42,.35));
+      animation: shimmer 2.8s ease-in-out infinite;
+    }
+
     .cupom-micro {
       font-size: .72rem; color: var(--cinza); text-align: center;
       line-height: 1.45;
@@ -604,7 +617,8 @@
 
         <div class="preco-riscado">R$ 1.297,00</div>
         <div class="preco-cupom">R$ 492,86</div>
-        <p class="preco-cupom-detalhe">ou 12x de <strong style="color:var(--preto)">R$ 50,97</strong> · Cupom disponível apenas no dia <strong style="color:var(--ouro)">20 de maio</strong></p>
+        <p class="preco-cupom-detalhe">ou 12x de <strong style="color:var(--preto)">R$ 50,97</strong></p>
+        <div class="cupom-aviso">⚠️ Cupom disponível apenas no dia 20 de maio</div>
 
         <div class="countdown-label">⏳ Cupom liberado em</div>
         <div class="countdown">
