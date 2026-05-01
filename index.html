@@ -700,51 +700,97 @@
     .rede-row.youtube .rede-icon-sm { background:#FF0000; }
     .rede-row.youtube .rede-btn { background:#FF0000; color:#fff; border:none; }
     .rede-row.youtube .rede-btn::after { animation-delay:.7s; }
-    /* Telegram */
-    .rede-row.telegram .rede-icon-sm { background:#229ED9; }
-    .rede-row.telegram .rede-btn { background:#229ED9; color:#fff; border:none; box-shadow:0 0 14px rgba(34,158,217,.35); }
-    .rede-row.telegram .rede-btn::after { animation-delay:1.4s; }
-
-    /* Banner ebook */
-    .ebook-banner {
-      margin-top: 10px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(201,150,58,.13) 0%, rgba(201,150,58,.05) 100%);
-      border: 1px solid rgba(201,150,58,.45);
-      text-align: center;
-      position: relative; overflow: hidden;
+    /* ── CARD TELEGRAM + EBOOK ── */
+    .telegram-ebook-card {
+      display: flex; flex-direction: column;
+      padding: 14px 0 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+      margin-top: 4px;
+      text-decoration: none; color: #fff;
+      cursor: pointer; transition: opacity .18s;
     }
-    .ebook-banner::before {
+    .telegram-ebook-card:active { opacity: .8; }
+
+    .tec-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px;
+    }
+    .tec-canal {
+      display: flex; align-items: center; gap: 7px;
+      font-size: .82rem; font-weight: 700; color: #5BC8F5;
+    }
+    .tec-canal-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: #229ED9;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .tec-canal-icon svg { width: 14px; height: 14px; fill: #fff; }
+    .tec-free {
+      font-size: .63rem; font-weight: 800;
+      background: linear-gradient(135deg, #22C55E, #16A34A);
+      color: #fff; padding: 3px 10px; border-radius: 999px;
+      letter-spacing: .06em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .tec-body { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
+
+    /* Capa do ebook */
+    .tec-cover {
+      flex-shrink: 0; width: 88px; height: 118px;
+      border-radius: 8px;
+      background: linear-gradient(160deg, #080808 0%, #181818 100%);
+      border: 1px solid rgba(201,150,58,.4);
+      box-shadow: 0 6px 24px rgba(201,150,58,.25), 0 0 0 1px rgba(201,150,58,.1);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 8px 7px;
+    }
+    .tec-cover-glow {
+      position: absolute; top: 6px; right: 6px;
+      font-size: 26px;
+      filter: drop-shadow(0 0 10px rgba(201,150,58,1)) drop-shadow(0 0 20px rgba(201,150,58,.6));
+      line-height: 1;
+    }
+    .tec-cover-circle {
+      position: absolute; top: -10px; left: -28px;
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(0,0,0,.55);
+    }
+    .tec-cover-title {
+      font-size: .48rem; font-weight: 900; line-height: 1.35;
+      color: #fff; position: relative; z-index: 1;
+    }
+    .tec-cover-title em { color: #FFD700; font-style: normal; font-size: .58rem; }
+    .tec-cover-author {
+      font-size: .42rem; color: rgba(255,255,255,.55);
+      margin-top: 4px; font-weight: 600; position: relative; z-index: 1;
+    }
+
+    .tec-info { flex: 1; min-width: 0; }
+    .tec-data { font-size: .7rem; font-weight: 800; color: var(--ouro-lt); margin-bottom: 4px; }
+    .tec-desc { font-size: .76rem; color: var(--texto); line-height: 1.45; margin-bottom: 6px; }
+    .tec-desc strong { color: rgba(255,255,255,.8); }
+    .tec-apelo { font-size: .76rem; font-weight: 700; color: #4AE87A; }
+
+    .tec-btn {
+      width: 100%; padding: 13px;
+      background: #229ED9; color: #fff;
+      border-radius: 12px; text-align: center;
+      font-size: .84rem; font-weight: 800; letter-spacing: .04em;
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 18px rgba(34,158,217,.4);
+    }
+    .tec-btn::after {
       content: '';
       position: absolute; top: -20%; left: -80%;
       width: 50%; height: 140%;
-      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.12) 50%, transparent 70%);
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%);
       transform: skewX(-15deg);
-      animation: shimmerCta 3.5s ease-in-out infinite;
+      animation: shimmerCta 2.8s ease-in-out infinite;
+      animation-delay: 1.4s;
     }
-    .ebook-data {
-      font-size: .68rem; font-weight: 800;
-      color: var(--ouro-lt); letter-spacing: .1em;
-      text-transform: uppercase; margin-bottom: 5px;
-    }
-    .ebook-titulo {
-      font-family: 'Playfair Display', serif;
-      font-size: .95rem; font-weight: 800;
-      color: #fff; line-height: 1.25; margin-bottom: 6px;
-    }
-    .ebook-gratuito {
-      display: inline-block;
-      background: linear-gradient(135deg, #22C55E, #16A34A);
-      color: #fff; font-size: .68rem; font-weight: 800;
-      padding: 3px 12px; border-radius: 999px;
-      letter-spacing: .06em; text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-    .ebook-aviso {
-      font-size: .68rem; color: var(--texto); line-height: 1.4;
-    }
-    .ebook-aviso strong { color: rgba(255,255,255,.7); }
     /* Instagram */
     .rede-row.instagram .rede-icon-sm { background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); }
     .rede-row.instagram .rede-btn { background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); color:#fff; border:none; box-shadow:0 0 14px rgba(221,42,123,.35); }
@@ -919,26 +965,38 @@
         <div class="rede-btn">Seguir →</div>
       </a>
 
-      <!-- Telegram — por último, com banner do ebook -->
-      <a href="https://t.me/lorenanerddalibras" target="_blank" class="rede-row telegram" id="btn-telegram">
-        <div class="rede-icon-sm">
-          <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-        </div>
-        <div class="rede-info">
-          <div class="rede-name">Canal Telegram 🔥</div>
-          <div class="rede-desc">Descontos exclusivos · ofertas de trabalhos para intérpretes · análise de sinalização com a Lorena</div>
-          <div class="rede-apelo">👉 Entre, vai valer a pena!</div>
-        </div>
-        <div class="rede-btn">Entrar →</div>
-      </a>
+      <!-- Telegram + eBook integrado -->
+      <a href="https://t.me/lorenanerddalibras" target="_blank" class="telegram-ebook-card" id="btn-telegram">
 
-      <!-- Banner ebook -->
-      <div class="ebook-banner">
-        <div class="ebook-data">📅 20 de Maio de 2026 — Apenas no canal</div>
-        <div class="ebook-titulo">📖 "O Segredo para Aprender Libras"</div>
-        <div class="ebook-gratuito">✅ 100% Gratuito no dia</div>
-        <div class="ebook-aviso">Disponível <strong>só no dia 20/05</strong> para membros do canal.<br/>Depois disso: <strong>R$ 29,90</strong> 💛</div>
-      </div>
+        <div class="tec-header">
+          <div class="tec-canal">
+            <div class="tec-canal-icon">
+              <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            </div>
+            Canal Telegram 🔥
+          </div>
+          <div class="tec-free">✅ Grátis · 20/05</div>
+        </div>
+
+        <div class="tec-body">
+          <div class="tec-cover">
+            <div class="tec-cover-circle"></div>
+            <div class="tec-cover-glow">🗝️</div>
+            <div class="tec-cover-title">
+              O segredo<br/>para aprender<br/><em>Libras</em>
+            </div>
+            <div class="tec-cover-author">Lorena Cristina</div>
+          </div>
+          <div class="tec-info">
+            <div class="tec-data">📅 20 de Maio de 2026</div>
+            <div class="tec-desc">eBook <strong>100% gratuito</strong> exclusivo para membros do canal. Depois: <strong>R$ 29,90</strong></div>
+            <div class="tec-apelo">👉 Entre, vai valer a pena!</div>
+          </div>
+        </div>
+
+        <div class="tec-btn">Entrar no Canal →</div>
+
+      </a>
 
     </div>
 
