@@ -327,13 +327,48 @@
     }
 
     .btn-normal {
-      display: block; width: 100%;
-      background: var(--preto); color: #fff;
-      font-size: .88rem; font-weight: 700; letter-spacing: .02em;
-      padding: 15px 20px; border-radius: 10px; text-decoration: none;
-      text-align: center; transition: background .2s, transform .2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%;
+      background: radial-gradient(ellipse at 50% 40%, #4EE882 0%, #22C05A 45%, #0F6B32 100%);
+      color: #fff;
+      font-size: .82rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase;
+      padding: 17px 22px; border-radius: 50px; text-decoration: none;
+      text-align: center;
+      border: 2.5px solid #B8B8B8;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.55),
+        inset 0 -2px 0 rgba(0,0,0,.25),
+        inset 0 0 0 1px rgba(255,255,255,.15),
+        0 0 0 1px #707070,
+        0 7px 0 #08451F,
+        0 10px 28px rgba(0,0,0,.55),
+        0 0 22px rgba(34,192,90,.35);
+      transition: top .1s, box-shadow .1s;
+      position: relative; top: 0;
     }
-    .btn-normal:hover { background: #333; transform: translateY(-1px); }
+    .btn-normal:hover {
+      top: 3px;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.55),
+        inset 0 -2px 0 rgba(0,0,0,.25),
+        inset 0 0 0 1px rgba(255,255,255,.15),
+        0 0 0 1px #707070,
+        0 4px 0 #08451F,
+        0 6px 16px rgba(0,0,0,.4),
+        0 0 16px rgba(34,192,90,.3);
+    }
+    .btn-normal:active {
+      top: 7px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.4),
+        inset 0 -1px 0 rgba(0,0,0,.2),
+        0 0 0 1px #707070,
+        0 1px 0 #08451F,
+        0 3px 8px rgba(0,0,0,.3);
+    }
+    .btn-normal .kiwify-icon {
+      width: 22px; height: 22px; flex-shrink: 0;
+    }
 
     /* Separador */
     .oferta-sep {
@@ -416,18 +451,48 @@
     }
 
     .btn-telegram {
-      display: block; width: 100%;
-      background: var(--verde); color: #fff;
-      font-size: .95rem; font-weight: 800; letter-spacing: .02em;
-      padding: 17px 20px; border-radius: 12px; text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%;
+      background: radial-gradient(ellipse at 50% 40%, #55CFFF 0%, #229ED9 45%, #0D5E8F 100%);
+      color: #fff;
+      font-size: .82rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase;
+      padding: 17px 22px; border-radius: 50px; text-decoration: none;
       text-align: center;
-      box-shadow: 0 4px 20px rgba(15,110,86,.35);
-      transition: transform .2s, box-shadow .2s;
+      border: 2.5px solid #B8B8B8;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.55),
+        inset 0 -2px 0 rgba(0,0,0,.25),
+        inset 0 0 0 1px rgba(255,255,255,.15),
+        0 0 0 1px #707070,
+        0 7px 0 #083E62,
+        0 10px 28px rgba(0,0,0,.55),
+        0 0 22px rgba(34,158,217,.4);
+      transition: top .1s, box-shadow .1s;
       margin-bottom: 12px;
+      position: relative; top: 0;
     }
     .btn-telegram:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(15,110,86,.45);
+      top: 3px;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.55),
+        inset 0 -2px 0 rgba(0,0,0,.25),
+        inset 0 0 0 1px rgba(255,255,255,.15),
+        0 0 0 1px #707070,
+        0 4px 0 #083E62,
+        0 6px 16px rgba(0,0,0,.4),
+        0 0 16px rgba(34,158,217,.3);
+    }
+    .btn-telegram:active {
+      top: 7px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.4),
+        inset 0 -1px 0 rgba(0,0,0,.2),
+        0 0 0 1px #707070,
+        0 1px 0 #083E62,
+        0 3px 8px rgba(0,0,0,.3);
+    }
+    .btn-telegram .tg-icon {
+      width: 22px; height: 22px; flex-shrink: 0;
     }
     .cupom-aviso {
       display: block;
@@ -492,12 +557,55 @@
 
     /* ══ MOBILE ══ */
     @media (max-width: 640px) {
-      section { padding: 56px 0; }
-      .sec-hero { padding: 60px 0 50px; }
-      .btn-hero { padding: 16px 32px; font-size: .97rem; }
-      .sec-oferta { padding: 56px 0; }
-      .oferta-card { padding: 28px 20px; }
-      .cd-num { font-size: 1.4rem; }
+      body { font-size: 15px; }
+
+      .topbar { font-size: .75rem; padding: 10px 14px; }
+
+      .sec-hero  { padding: 36px 0 0; }
+      .sec-video { padding: 16px 0 32px; }
+      .sec-oferta { padding: 32px 0 40px; }
+
+      h1.hero-h1 { font-size: 2rem; margin-bottom: 14px; }
+      .hero-sub  { font-size: .92rem; }
+      .hero-eyebrow { font-size: .7rem; padding: 5px 12px; margin-bottom: 18px; }
+
+      .sec-title { font-size: 1.5rem; }
+      .sec-sub   { font-size: .88rem; }
+
+      .container    { padding: 0 16px; }
+      .container-sm { padding: 0 16px; }
+
+      .video-wrap { border-radius: 12px; margin-bottom: 24px; }
+
+      .bullets-list { gap: 8px; }
+      .bullet-item  { padding: 12px 14px; font-size: .86rem; }
+      .bullet-num   { width: 24px; height: 24px; font-size: .68rem; }
+
+      .oferta-wrap { gap: 0; }
+      .oferta-card { padding: 22px 18px; border-radius: 16px; }
+      .oferta-sep  { padding: 14px 0; }
+
+      .card-normal-title  { font-size: 1.1rem; }
+      .card-cupom-title   { font-size: 1.25rem; }
+      .preco-principal    { font-size: 2rem; }
+      .preco-cupom        { font-size: 2.2rem; }
+
+      .countdown { gap: 6px; }
+      .cd-block  { border-radius: 8px; padding: 8px 2px; }
+      .cd-num    { font-size: 1.35rem; }
+      .cd-label  { font-size: .52rem; }
+
+      .btn-normal, .btn-telegram {
+        font-size: .75rem;
+        letter-spacing: .1em;
+        padding: 15px 16px;
+      }
+
+      .faixa-garantia { padding: 16px; margin-top: 28px; }
+      .faixa-garantia p { font-size: .8rem; }
+
+      footer { padding: 24px 16px; }
+      .footer-links { gap: 16px; }
     }
   </style>
 </head>
@@ -573,10 +681,6 @@
       </div>
     </div>
 
-    <p class="video-micro">
-      Se você assistiu o vídeo, já sabe o que os outros não sabem.<br/>
-      <strong>Agora escolha como entrar.</strong>
-    </p>
 
   </div>
 </section>
@@ -589,9 +693,6 @@
   <div class="container">
 
     <h2 class="sec-title">Escolha como garantir sua vaga</h2>
-    <p class="sec-sub">
-      60 vagas no total. Quando fecharem, a página sai do ar.
-    </p>
 
     <div class="oferta-wrap">
 
@@ -609,7 +710,22 @@
           50 vagas — sem cupom, sem espera.<br/>Acesso liberado na hora da compra.
         </div>
         <a href="https://pay.kiwify.com.br/1sIyvVL" target="_blank" class="btn-normal btn-shimmer">
-          Garantir minha vaga por R$ 1.297
+          <svg class="kiwify-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- casca externa -->
+            <ellipse cx="12" cy="12" rx="10" ry="10" fill="rgba(255,255,255,0.25)" stroke="#fff" stroke-width="1.8"/>
+            <!-- polpa interna -->
+            <ellipse cx="12" cy="12" rx="7" ry="7" fill="rgba(255,255,255,0.15)" stroke="#fff" stroke-width="1.2"/>
+            <!-- centro / caroço -->
+            <ellipse cx="12" cy="12" rx="2" ry="2" fill="#fff"/>
+            <!-- sementes (6 ao redor) -->
+            <ellipse cx="12" cy="6.2" rx="1" ry="1.5" fill="#fff" transform="rotate(0 12 12)"/>
+            <ellipse cx="12" cy="6.2" rx="1" ry="1.5" fill="#fff" transform="rotate(60 12 12)"/>
+            <ellipse cx="12" cy="6.2" rx="1" ry="1.5" fill="#fff" transform="rotate(120 12 12)"/>
+            <ellipse cx="12" cy="6.2" rx="1" ry="1.5" fill="#fff" transform="rotate(180 12 12)"/>
+            <ellipse cx="12" cy="6.2" rx="1" ry="1.5" fill="#fff" transform="rotate(240 12 12)"/>
+            <ellipse cx="12" cy="6.2" rx="1" ry="1.5" fill="#fff" transform="rotate(300 12 12)"/>
+          </svg>
+          Garantir minha vaga — Kiwify
         </a>
         <p style="font-size:.7rem; color:var(--cinza-lt); text-align:center; margin-top:10px;">🔒 Pagamento seguro · 15 dias de garantia</p>
       </div>
@@ -647,7 +763,11 @@
         </div>
 
         <a href="https://t.me/lorenanerddalibras" target="_blank" class="btn-telegram btn-shimmer">
-          Entrar no Telegram e garantir o cupom →
+          <svg class="tg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 2L11 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Entrar no Telegram e garantir o cupom
         </a>
         <p class="cupom-micro">
           O e-book gratuito também será liberado no grupo<br/><strong>no dia 20 de maio</strong>
