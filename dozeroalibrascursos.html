@@ -3,68 +3,83 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Do Zero a Libras — Aprenda a se Comunicar com Surdos em 30 Dias | Nerds da Libras</title>
-  <meta name="description" content="Aprenda a se comunicar com pessoas surdas em até 30 dias com o método Input Compreensível da Prof. Lorena. Sem decorar sinais."/>
+  <title>Do Zero a Libras — Aprenda a se Comunicar com Surdos em 30 Dias | Prof. Lorena</title>
+  <meta name="description" content="Aprenda a se comunicar com pessoas surdas em até 30 dias com o método de 15 anos da Prof. Lorena. Mesmo sem saber nada de língua de sinais."/>
   <meta property="og:title" content="Do Zero a Libras — Prof. Lorena"/>
-  <meta property="og:description" content="Aprenda a se comunicar com pessoas surdas em até 30 dias."/>
+  <meta property="og:description" content="Aprenda a se comunicar com surdos em até 30 dias. Método exclusivo de 15 anos."/>
   <meta property="og:image" content="https://clubedalibras.com/fotos/IMG_4952.jpg"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --verde:   #00E600;
-      --verde-lt:#39FF39;
-      --vermelho:#FF2020;
-      --amarelo: #FFD600;
-      --laranja: #FF7A00;
-      --roxo:    #8B5CF6;
-      --azul:    #3B82F6;
-      --ouro:    #C9963A;
-      --preto:   #000000;
-      --cinza:   #0D0D0D;
-      --cinza2:  #141414;
-      --texto:   rgba(255,255,255,.7);
+      --verde:     #0F6E56;
+      --verde-lt:  #12856A;
+      --verde-bg:  #F0FAF6;
+      --ouro:      #B8862A;
+      --ouro-lt:   #D4A017;
+      --ouro-bg:   #FFFBF0;
+      --vermelho:  #D63030;
+      --preto:     #111111;
+      --cinza-esc: #333333;
+      --cinza:     #666666;
+      --cinza-lt:  #999999;
+      --borda:     #E5E5E5;
+      --bg:        #FAFAF9;
+      --branco:    #FFFFFF;
     }
 
     html { scroll-behavior: smooth; }
-    body { background: var(--preto); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    body {
+      background: var(--bg);
+      color: var(--preto);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    /* ══ BARRA URGÊNCIA ══ */
+    /* ══ TOPBAR ══ */
     .topbar {
-      background: var(--vermelho);
+      background: var(--verde);
       color: #fff;
       text-align: center;
-      padding: 11px 16px;
-      font-weight: 800;
+      padding: 12px 20px;
       font-size: .82rem;
-      letter-spacing: .05em;
+      font-weight: 600;
+      letter-spacing: .02em;
+      position: sticky; top: 0; z-index: 200;
+      line-height: 1.4;
+    }
+    .topbar strong { font-weight: 800; }
+    .topbar .tag {
+      display: inline-block;
+      background: rgba(255,255,255,.18);
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-right: 6px;
+      letter-spacing: .06em;
       text-transform: uppercase;
-      position: sticky; top: 0; z-index: 100;
-      animation: pulseBg 2s ease-in-out infinite;
     }
-    @keyframes pulseBg { 0%,100%{background:var(--vermelho)} 50%{background:#cc0000} }
 
-    /* ══ SEÇÕES ══ */
-    section { width: 100%; padding: 70px 20px; }
-    .container { max-width: 860px; margin: 0 auto; }
+    /* ══ LAYOUT ══ */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+    .container-sm { max-width: 680px; margin: 0 auto; padding: 0 20px; }
 
-    /* ══ SHIMMER EM TODOS OS CTAs ══ */
-    .btn-hero, .btn-whatsapp, .btn-cupom, .btn-checkout {
-      position: relative; overflow: hidden;
-    }
-    .btn-hero::after, .btn-whatsapp::after, .btn-cupom::after, .btn-checkout::after {
+    section { padding: 72px 0; }
+
+    /* ══ SHIMMER ══ */
+    .btn-shimmer { position: relative; overflow: hidden; }
+    .btn-shimmer::after {
       content: '';
       position: absolute; top: -20%; left: -80%;
       width: 50%; height: 140%;
-      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.6) 50%, transparent 70%);
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%);
       transform: skewX(-15deg);
-      animation: shimmer 2.6s ease-in-out infinite;
+      animation: shimmer 2.8s ease-in-out infinite;
     }
-    .btn-whatsapp::after { animation-delay: .9s; }
-    .btn-cupom::after    { animation-delay: 1.8s; }
-    .btn-checkout::after { animation-delay: .4s; }
     @keyframes shimmer {
       0%   { left: -80%; opacity: 1; }
       55%  { left: 130%; opacity: 1; }
@@ -72,864 +87,605 @@
       100% { left: 130%; opacity: 0; }
     }
 
-    /* ══ HERO ══ */
-    .hero {
-      background: var(--preto); text-align: center;
-      padding: 80px 20px 60px;
-      border-bottom: 2px solid rgba(0,230,0,.15);
-      position: relative; overflow: hidden;
+    /* ══ PULSE DOT ══ */
+    @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.6} }
+    .dot-pulse {
+      display: inline-block;
+      width: 8px; height: 8px; border-radius: 50%;
+      animation: pulseDot 1.4s ease-in-out infinite;
+      flex-shrink: 0;
     }
-    .hero::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(0,230,0,.08), transparent);
-      pointer-events: none;
-    }
-    .hero-headline {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(3rem, 9vw, 6.5rem);
-      line-height: 1.0; letter-spacing: .02em; color: #fff; margin-bottom: 10px;
-    }
-    .hero-headline .destaque { color: var(--vermelho); }
-    .hero-sub {
-      font-size: clamp(.95rem, 2.5vw, 1.2rem); color: var(--texto);
-      max-width: 620px; margin: 20px auto 36px; line-height: 1.65;
-    }
-    .hero-sub strong { color: var(--verde); }
-    .hero-sub b { color: #fff; }
+    .dot-red   { background: var(--vermelho); box-shadow: 0 0 6px rgba(214,48,48,.5); }
+    .dot-green { background: #22C55E; box-shadow: 0 0 6px rgba(34,197,94,.5); }
 
-    .btn-hero {
-      display: inline-block; background: var(--verde); color: #000;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.2rem, 3.5vw, 1.6rem); letter-spacing: .08em;
-      padding: 18px 44px; border-radius: 999px; text-decoration: none;
-      box-shadow: 0 0 40px rgba(0,230,0,.55), 0 4px 20px rgba(0,230,0,.3);
-      transition: transform .2s, box-shadow .2s; cursor: pointer; border: none;
-    }
-    .btn-hero:hover { transform: scale(1.04); box-shadow: 0 0 60px rgba(0,230,0,.75), 0 6px 28px rgba(0,230,0,.4); }
-
-    .vagas-pill { display: inline-block; margin-top: 18px; color: var(--amarelo); font-weight: 700; font-size: .88rem; }
-    .trust-row { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; margin-top: 32px; }
-    .trust-item { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: rgba(255,255,255,.7); }
-    .trust-item .icon {
-      width: 22px; height: 22px; background: var(--ouro); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .7rem; color: #000; font-weight: 900;
-    }
-
-    /* ══ VISÃO DO FUTURO (Desejo + Reciprocidade) ══ */
-    .sec-visao {
-      background: linear-gradient(160deg, #0a0a0a 0%, #050a05 100%);
+    /* ══════════════════════════════════
+       SEÇÃO 1 — HERO
+    ══════════════════════════════════ */
+    .sec-hero {
+      background: var(--branco);
+      border-bottom: 1px solid var(--borda);
+      padding: 80px 0 64px;
       text-align: center;
-      border-top: 1px solid rgba(0,230,0,.1);
-      border-bottom: 1px solid rgba(0,230,0,.1);
     }
-    .visao-intro {
-      font-size: .88rem; color: var(--verde); font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; margin-bottom: 16px;
-    }
-    .visao-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
-      gap: 16px; margin-top: 36px; text-align: left;
-    }
-    .visao-item {
-      background: rgba(0,230,0,.04); border: 1px solid rgba(0,230,0,.12);
-      border-radius: 16px; padding: 20px;
-      transition: border-color .2s, transform .2s;
-    }
-    .visao-item:hover { border-color: rgba(0,230,0,.3); transform: translateY(-2px); }
-    .visao-emoji { font-size: 1.6rem; margin-bottom: 10px; display: block; }
-    .visao-text { font-size: .9rem; color: rgba(255,255,255,.85); line-height: 1.5; font-weight: 500; }
 
-    /* ══ VÍDEO ══ */
-    .sec-video { background: var(--cinza); text-align: center; }
-    .sec-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(2rem, 6vw, 3.8rem); line-height: 1.1; letter-spacing: .03em; margin-bottom: 10px;
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--verde-bg); border: 1px solid rgba(15,110,86,.2);
+      color: var(--verde); border-radius: 999px;
+      padding: 6px 16px; font-size: .76rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 28px;
     }
-    .sec-title .red { color: var(--vermelho); }
-    .sec-title .green { color: var(--verde); }
-    .sec-title .gold { color: var(--amarelo); }
-    .sec-sub { color: var(--texto); font-size: 1rem; margin-bottom: 32px; }
+
+    h1.hero-h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 900; line-height: 1.12; letter-spacing: -.01em;
+      color: var(--preto); margin-bottom: 22px;
+      max-width: 760px; margin-left: auto; margin-right: auto;
+    }
+    h1.hero-h1 em { font-style: italic; color: var(--verde); }
+
+    .hero-sub {
+      font-size: clamp(.95rem, 2.2vw, 1.1rem);
+      color: var(--cinza-esc); line-height: 1.7;
+      max-width: 600px; margin: 0 auto 36px;
+    }
+
+    /* Badges */
+    .badges-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+      margin-bottom: 40px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--branco); border: 1px solid var(--borda);
+      border-radius: 999px; padding: 7px 16px;
+      font-size: .78rem; font-weight: 600; color: var(--cinza-esc);
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .badge .b-icon { font-size: .9rem; }
+
+    /* CTA principal */
+    .btn-hero {
+      display: inline-block;
+      background: var(--verde); color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem; font-weight: 800; letter-spacing: .02em;
+      padding: 18px 48px; border-radius: 12px; text-decoration: none;
+      box-shadow: 0 4px 20px rgba(15,110,86,.35), 0 1px 4px rgba(15,110,86,.2);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(15,110,86,.45), 0 2px 8px rgba(15,110,86,.25);
+    }
+
+    .hero-micro {
+      margin-top: 16px; font-size: .82rem; color: var(--cinza-lt);
+      font-style: italic;
+    }
+    .hero-micro strong { color: var(--cinza); font-style: normal; }
+
+
+    /* ══════════════════════════════════
+       SEÇÃO 2 — VÍDEO
+    ══════════════════════════════════ */
+    .sec-video { background: var(--bg); padding: 80px 0; }
+
+    .sec-tag {
+      display: inline-block;
+      background: var(--ouro-bg); border: 1px solid rgba(184,134,42,.3);
+      color: var(--ouro); border-radius: 6px;
+      padding: 5px 14px; font-size: .72rem; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4.5vw, 2.8rem);
+      font-weight: 800; line-height: 1.2; letter-spacing: -.01em;
+      color: var(--preto); margin-bottom: 16px;
+    }
+    .sec-title em { font-style: italic; color: var(--verde); }
+
+    .sec-sub {
+      font-size: .97rem; color: var(--cinza); line-height: 1.65;
+      max-width: 600px; margin-bottom: 36px;
+    }
+
     .video-wrap {
-      max-width: 720px; margin: 0 auto; border-radius: 16px; overflow: hidden;
-      border: 2px solid rgba(0,230,0,.3); box-shadow: 0 0 40px rgba(0,230,0,.15); aspect-ratio: 16/9;
+      max-width: 760px; margin: 0 auto 44px;
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--borda);
+      box-shadow: 0 8px 40px rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.06);
+      aspect-ratio: 16/9;
     }
     .video-wrap iframe { width: 100%; height: 100%; display: block; border: none; }
 
-    /* ══ CHECKS ══ */
-    .sec-checks { background: var(--preto); }
-    .sec-checks .container { max-width: 760px; }
-    .checks-list { display: flex; flex-direction: column; gap: 14px; margin-top: 40px; }
-    .check-item {
-      display: flex; align-items: center; gap: 16px;
-      background: var(--cinza2); border: 1px solid rgba(255,255,255,.07);
-      border-radius: 14px; padding: 18px 20px;
-      font-size: 1rem; font-weight: 600;
+    /* Bullets */
+    .bullets-list {
+      display: flex; flex-direction: column; gap: 12px;
+      max-width: 660px; margin: 0 auto 28px;
+    }
+    .bullet-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: var(--branco); border: 1px solid var(--borda);
+      border-radius: 12px; padding: 16px 18px;
+      font-size: .92rem; color: var(--cinza-esc); line-height: 1.5;
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
       transition: border-color .2s, transform .2s;
     }
-    .check-item:hover { border-color: rgba(0,230,0,.35); transform: translateX(4px); }
-    .check-icon {
-      width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .9rem; font-weight: 900;
+    .bullet-item:hover { border-color: rgba(15,110,86,.3); transform: translateX(3px); }
+    .bullet-num {
+      width: 28px; height: 28px; flex-shrink: 0;
+      background: var(--verde); color: #fff;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 800; margin-top: 1px;
     }
-    .check-icon.yes { background: var(--verde); color: #000; }
-    .check-icon.no  { background: var(--vermelho); color: #fff; }
-    .check-item.no-item { border-color: rgba(255,32,32,.15); }
-    .check-item.no-item:hover { border-color: rgba(255,32,32,.4); transform: translateX(4px); }
+    .bullet-item strong { color: var(--preto); font-weight: 700; }
 
-    /* ══ DEPOIMENTOS ══ */
-    .sec-depo { background: var(--cinza); }
-    .depo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 24px; margin-top: 40px; }
-    .depo-card {
-      background: var(--cinza2); border: 1px solid rgba(0,230,0,.2);
-      border-radius: 16px; overflow: hidden; box-shadow: 0 0 20px rgba(0,230,0,.08);
+    .video-micro {
+      text-align: center; font-size: .88rem;
+      color: var(--cinza); font-style: italic;
+      border-top: 1px solid var(--borda);
+      padding-top: 24px; margin-top: 4px;
+      max-width: 500px; margin-left: auto; margin-right: auto;
     }
-    .depo-video { aspect-ratio: 16/9; overflow: hidden; }
-    .depo-video iframe { width: 100%; height: 100%; display: block; border: none; }
-    .depo-body { padding: 20px; }
-    .depo-quote { font-style: italic; color: rgba(255,255,255,.85); font-size: .9rem; line-height: 1.55; margin-bottom: 12px; }
-    .depo-name { color: var(--verde); font-weight: 800; font-size: .85rem; }
+    .video-micro strong { color: var(--preto); font-style: normal; }
 
-    /* ══ CREDENCIAIS — chamativo ══ */
-    .sec-lorena {
-      background: var(--preto);
-      position: relative; overflow: hidden;
-    }
-    .sec-lorena::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(201,150,58,.07), transparent);
-      pointer-events: none;
-    }
-    .lorena-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 48px; align-items: center;
-    }
-    @media (max-width: 640px) {
-      .lorena-grid { grid-template-columns: 1fr; }
-      .lorena-photo { max-width: 300px; margin: 0 auto; }
-    }
-    .lorena-photo {
-      border-radius: 20px; overflow: hidden;
-      border: 2px solid rgba(201,150,58,.35);
-      box-shadow: 0 0 40px rgba(201,150,58,.18), 0 0 80px rgba(201,150,58,.08);
-    }
-    .lorena-photo img { width: 100%; display: block; object-fit: cover; }
-    .cred-label {
-      font-size: .75rem; font-weight: 800; letter-spacing: .14em;
-      text-transform: uppercase; color: var(--ouro);
-      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
-    }
-    .cred-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(201,150,58,.4), transparent); }
-    .cred-title {
-      font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 5vw, 3rem);
-      letter-spacing: .03em; margin-bottom: 6px; color: #fff; line-height: 1.05;
-    }
-    .cred-sub { font-size: .88rem; color: var(--texto); margin-bottom: 24px; line-height: 1.5; }
-    .cred-list { display: flex; flex-direction: column; gap: 10px; }
-    .cred-item {
-      display: flex; align-items: flex-start; gap: 12px;
-      font-size: .92rem; color: rgba(255,255,255,.85); line-height: 1.4;
-      padding: 10px 14px; border-radius: 10px;
-      background: rgba(201,150,58,.05); border: 1px solid rgba(201,150,58,.1);
-      transition: border-color .2s, background .2s;
-    }
-    .cred-item:hover { border-color: rgba(201,150,58,.3); background: rgba(201,150,58,.09); }
-    .cred-dot {
-      width: 22px; height: 22px; flex-shrink: 0; margin-top: 1px;
-      background: var(--ouro); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .65rem; color: #000; font-weight: 900;
-    }
-    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 24px; }
-    @media(max-width:480px) { .stats-row { grid-template-columns: 1fr; } }
-    .stat-box {
-      background: var(--cinza2); border: 1px solid rgba(201,150,58,.15);
-      border-radius: 14px; padding: 18px; text-align: center;
-    }
-    .stat-box .num { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--ouro); line-height: 1; }
-    .stat-box .lbl { font-size: .72rem; color: var(--texto); margin-top: 4px; line-height: 1.3; }
 
-    /* ══ BÔNUS ══ */
-    .sec-bonus { background: var(--cinza); text-align: center; }
-    .bonus-month { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem,5vw,3.2rem); letter-spacing: .04em; margin-bottom: 8px; }
-    .bonus-month .red { color: var(--vermelho); }
-    .bonus-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr));
-      gap: 16px; margin-top: 36px; text-align: left;
+    /* ══════════════════════════════════
+       SEÇÃO 3 — OFERTA DUPLA
+    ══════════════════════════════════ */
+    .sec-oferta {
+      background: var(--branco);
+      border-top: 1px solid var(--borda);
+      padding: 80px 0;
     }
-    .bonus-card {
-      background: var(--cinza2); border: 1px solid rgba(255,255,255,.08);
-      border-radius: 16px; padding: 24px 20px; position: relative;
-      transition: border-color .2s, transform .2s;
-    }
-    .bonus-card:hover { transform: translateY(-3px); }
-    .bonus-card.destaque { border-color: rgba(255,32,32,.35); box-shadow: 0 0 20px rgba(255,32,32,.12); }
-    .bonus-badge-lim {
-      position: absolute; top: -10px; right: 14px;
-      background: var(--vermelho); color: #fff; font-size: .6rem; font-weight: 800;
-      padding: 3px 10px; border-radius: 999px; letter-spacing: .06em; text-transform: uppercase;
-    }
-    .bonus-icon {
-      width: 50px; height: 50px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem; margin-bottom: 14px;
-    }
-    .bi-azul    { background: rgba(59,130,246,.25); border: 1px solid rgba(59,130,246,.3); }
-    .bi-roxo    { background: rgba(139,92,246,.25); border: 1px solid rgba(139,92,246,.3); }
-    .bi-laranja { background: rgba(255,122,0,.22);  border: 1px solid rgba(255,122,0,.3);  }
-    .bi-ciano   { background: rgba(0,200,200,.2);   border: 1px solid rgba(0,200,200,.3);  }
-    .bi-rosa    { background: rgba(236,72,153,.2);  border: 1px solid rgba(236,72,153,.3); }
-    .bi-ouro    { background: rgba(201,150,58,.2);  border: 1px solid rgba(201,150,58,.3); }
-    .bi-vermelho{ background: rgba(255,32,32,.2);   border: 1px solid rgba(255,32,32,.3);  }
-    .bonus-name { font-weight: 800; font-size: 1rem; margin-bottom: 6px; color: #fff; }
-    .bonus-desc { font-size: .8rem; color: var(--texto); line-height: 1.45; }
+    .sec-oferta .sec-title { text-align: center; }
+    .sec-oferta .sec-sub   { text-align: center; margin-left: auto; margin-right: auto; }
 
-    /* ══ PREÇO ══ */
-    .sec-preco { background: var(--preto); text-align: center; }
-    .preco-includes { max-width: 580px; margin: 32px auto 0; text-align: left; }
-    .preco-includes .inc-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.06);
-      font-size: .92rem; color: rgba(255,255,255,.85);
+    .oferta-wrap {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 0; align-items: start;
+      max-width: 780px; margin: 48px auto 0;
     }
-    .inc-arrow {
-      width: 26px; height: 26px; flex-shrink: 0;
-      background: var(--ouro); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #000; font-weight: 900; font-size: .8rem;
-    }
-    .preco-box {
-      max-width: 520px; margin: 40px auto 0;
-      background: var(--cinza2); border: 1px solid rgba(0,230,0,.2);
-      border-radius: 20px; padding: 36px 28px;
-      box-shadow: 0 0 40px rgba(0,230,0,.08);
-    }
-    .preco-label { font-size: .85rem; color: var(--texto); margin-bottom: 8px; }
-    .preco-principal {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(2.5rem, 8vw, 4.2rem);
-      color: var(--verde); line-height: 1; letter-spacing: .02em;
-    }
-    .preco-parcel { color: var(--texto); font-size: .95rem; margin-top: 8px; }
-    .preco-parcel strong { color: #fff; font-size: 1.3rem; }
-    .preco-contraste {
-      margin-top: 16px; padding: 12px 16px;
-      background: rgba(0,230,0,.06); border: 1px dashed rgba(0,230,0,.2);
-      border-radius: 10px; font-size: .82rem; color: rgba(255,255,255,.6); line-height: 1.5;
-    }
-    .preco-contraste strong { color: var(--verde); font-size: .95rem; }
-
-    .btn-checkout {
-      display: block; width: 100%; margin-top: 24px;
-      background: var(--verde); color: #000;
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .06em;
-      padding: 18px 24px; border-radius: 14px; text-decoration: none; text-align: center;
-      box-shadow: 0 0 35px rgba(0,230,0,.55), 0 4px 18px rgba(0,230,0,.3);
-      transition: transform .2s, box-shadow .2s;
-    }
-    .btn-checkout:hover { transform: scale(1.02); box-shadow: 0 0 50px rgba(0,230,0,.75), 0 6px 24px rgba(0,230,0,.4); }
-    .preco-seguro { font-size: .72rem; color: rgba(255,255,255,.25); margin-top: 10px; }
-
-    /* ══ ESCASSEZ ══ */
-    .sec-escassez {
-      background: linear-gradient(135deg, rgba(255,32,32,.08), rgba(0,0,0,0));
-      border-top: 1px solid rgba(255,32,32,.2); border-bottom: 1px solid rgba(255,32,32,.2);
-      text-align: center; padding: 40px 20px;
-    }
-    .escassez-titulo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.8rem, 5vw, 2.8rem); color: var(--vermelho); letter-spacing: .04em;
-    }
-    .escassez-sub { color: rgba(255,255,255,.65); font-size: .9rem; margin-top: 8px; }
-    .vagas-bar { max-width: 480px; margin: 20px auto 0; }
-    .vagas-bar-track {
-      background: rgba(255,255,255,.08); border-radius: 999px; height: 14px;
-      overflow: hidden; margin-bottom: 8px;
-    }
-    .vagas-bar-fill {
-      background: linear-gradient(90deg, var(--vermelho), #ff6060);
-      height: 100%; border-radius: 999px; width: 76%;
-      box-shadow: 0 0 10px rgba(255,32,32,.5);
-      animation: fillPulse 1.5s ease-in-out infinite;
-    }
-    @keyframes fillPulse { 0%,100%{opacity:1} 50%{opacity:.8} }
-    .vagas-bar-label { display: none; } /* comunicado pelo popup flutuante */
-
-    /* ══ OPCOES DE PAGAMENTO (unificado) ══ */
-    .escolha-label {
-      font-size: .75rem; font-weight: 800; letter-spacing: .18em;
-      text-transform: uppercase; color: rgba(255,255,255,.35);
-      margin: 36px 0 0; text-align: center;
-    }
-    .opcoes-wrap {
-      display: flex; flex-direction: column; gap: 0;
-      margin: 16px auto 0; max-width: 560px;
-    }
-    .opcao-card {
-      border-radius: 20px; padding: 28px 24px;
-      position: relative; text-align: center;
-    }
-    .opcao-zap {
-      background: linear-gradient(145deg, rgba(0,230,0,.1), rgba(0,230,0,.04));
-      border: 1.5px solid rgba(0,230,0,.5);
-      box-shadow: 0 0 45px rgba(0,230,0,.18), inset 0 1px 0 rgba(0,230,0,.15);
-    }
-    .opcao-normal {
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.1);
-    }
-    .opcao-badge {
-      display: inline-block; background: var(--verde); color: #000;
-      font-size: .65rem; font-weight: 900; padding: 5px 14px;
-      border-radius: 999px; letter-spacing: .08em;
-      margin-bottom: 14px; text-transform: uppercase;
-    }
-    .opcao-tag {
-      font-size: .72rem; color: rgba(255,255,255,.4);
-      letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px;
-    }
-    .opcao-riscado {
-      font-size: .9rem; color: rgba(255,255,255,.3);
-      text-decoration: line-through; margin-bottom: 6px;
-    }
-    .opcao-desconto {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.8rem, 6vw, 2.6rem);
-      color: var(--amarelo); letter-spacing: .04em;
-      text-shadow: 0 0 24px rgba(255,214,0,.45); line-height: 1;
-    }
-    .opcao-sub {
-      font-size: .82rem; color: rgba(255,255,255,.5);
-      margin: 6px 0 22px; line-height: 1.4;
-    }
-    .opcao-ou {
-      text-align: center; padding: 14px 0;
-      position: relative; color: rgba(255,255,255,.2);
-      font-size: .72rem; font-weight: 800; letter-spacing: .2em;
-    }
-    .opcao-ou::before, .opcao-ou::after {
-      content: ''; position: absolute; top: 50%;
-      height: 1px; width: 43%; background: rgba(255,255,255,.07);
-    }
-    .opcao-ou::before { left: 0; }
-    .opcao-ou::after  { right: 0; }
-
-    /* ══ WHATSAPP BUTTON ══ */
-    .btn-whatsapp {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; background: var(--verde); color: #000;
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: .04em;
-      padding: 18px 20px; border-radius: 14px; text-decoration: none;
-      box-shadow: 0 0 30px rgba(0,230,0,.4), 0 4px 16px rgba(0,230,0,.25);
-      transition: transform .2s, box-shadow .2s; margin-bottom: 10px; line-height: 1.2;
-      text-align: center; position: relative; overflow: hidden;
-    }
-    .btn-whatsapp:hover { transform: scale(1.02); box-shadow: 0 0 44px rgba(0,230,0,.6), 0 6px 22px rgba(0,230,0,.35); }
-    .btn-whatsapp svg { width: 24px; height: 24px; fill: #000; flex-shrink: 0; }
-    .btn-hint { font-size: .75rem; color: rgba(255,255,255,.4); margin-top: 6px; }
-
-    /* ══ GARANTIA ══ */
-    .sec-garantia { background: var(--preto); text-align: center; }
-    .garantia-badge {
-      width: 110px; height: 110px; background: var(--verde); border-radius: 50%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      margin: 0 auto 28px; box-shadow: 0 0 50px rgba(0,230,0,.45);
-    }
-    .garantia-badge .num { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: #000; line-height: 1; }
-    .garantia-badge .label { font-size: .65rem; color: #000; font-weight: 800; letter-spacing: .08em; margin-top: -2px; }
-    .garantia-desc { max-width: 560px; margin: 16px auto 36px; color: var(--texto); line-height: 1.65; font-size: .95rem; }
-    .garantia-desc strong { color: var(--verde); }
-    .garantia-icons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-    .g-icon {
-      background: var(--cinza2); border: 1px solid rgba(255,255,255,.08);
-      border-radius: 14px; width: 80px; height: 80px;
-      display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+    @media (max-width: 680px) {
+      .oferta-wrap { grid-template-columns: 1fr; }
+      .oferta-sep  { padding: 20px 0; }
     }
 
-    /* ══ CTA FINAL ══ */
-    .sec-cta-final {
-      background: linear-gradient(160deg, rgba(0,230,0,.08) 0%, var(--preto) 60%);
-      text-align: center; border-top: 1px solid rgba(0,230,0,.15);
+    /* Card base */
+    .oferta-card {
+      border-radius: 20px; padding: 32px 28px;
+      position: relative;
     }
 
-    /* ══ SCARCITY BADGE ══ */
-    .viewers-badge {
+    /* Card 1 — Normal */
+    .card-normal {
+      background: var(--branco);
+      border: 1.5px solid var(--borda);
+      box-shadow: 0 2px 16px rgba(0,0,0,.06);
+    }
+    .card-normal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; font-weight: 800; color: var(--preto);
+      margin-bottom: 8px;
+    }
+    .card-vagas-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
-      border-radius: 999px; padding: 6px 14px;
-      font-size: .75rem; color: rgba(255,255,255,.5); margin-bottom: 24px;
+      font-size: .72rem; font-weight: 700; color: var(--vermelho);
+      margin-bottom: 22px;
     }
-    .viewers-dot { width: 7px; height: 7px; background: var(--verde); border-radius: 50%; animation: blink 1.2s ease-in-out infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+    .preco-riscado {
+      font-size: .88rem; color: var(--cinza-lt);
+      text-decoration: line-through; margin-bottom: 4px;
+    }
+    .preco-principal {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem; font-weight: 900;
+      color: var(--preto); line-height: 1; margin-bottom: 6px;
+    }
+    .preco-detalhe {
+      font-size: .8rem; color: var(--cinza); margin-bottom: 22px; line-height: 1.4;
+    }
+    .preco-contexto {
+      font-size: .8rem; color: var(--cinza);
+      background: #F5F5F5; border-radius: 8px;
+      padding: 10px 14px; margin-bottom: 24px; line-height: 1.45;
+    }
 
-    /* ══ BADGE FLUTUANTE DE VISITANTES ══ */
-    .floating-viewers {
-      position: fixed; bottom: 24px; left: 16px; z-index: 9998;
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(8,12,20,.93); border: 1px solid rgba(0,230,0,.4);
-      border-radius: 999px; padding: 10px 14px 10px 12px;
-      font-size: .78rem; color: rgba(255,255,255,.85);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 4px 24px rgba(0,0,0,.55), 0 0 14px rgba(0,230,0,.12);
-      transition: opacity .35s, transform .35s;
+    .btn-normal {
+      display: block; width: 100%;
+      background: var(--preto); color: #fff;
+      font-size: .88rem; font-weight: 700; letter-spacing: .02em;
+      padding: 15px 20px; border-radius: 10px; text-decoration: none;
+      text-align: center; transition: background .2s, transform .2s;
     }
-    .floating-viewers.hidden { opacity: 0; pointer-events: none; transform: translateY(14px); }
-    .fv-dot { width: 9px; height: 9px; flex-shrink: 0; background: var(--verde);
-      border-radius: 50%; box-shadow: 0 0 7px rgba(0,230,0,.8);
-      animation: blink 1.2s ease-in-out infinite; }
-    .fv-close { margin-left: 6px; cursor: pointer; color: rgba(255,255,255,.25);
-      font-size: .75rem; line-height: 1; padding: 2px 4px; }
-    .fv-close:hover { color: rgba(255,255,255,.55); }
+    .btn-normal:hover { background: #333; transform: translateY(-1px); }
 
-    /* ══ POPUP DE COMPRA ══ */
-    .purchase-popup {
-      position: fixed; bottom: 24px; right: 16px; z-index: 9999;
-      background: rgba(8,12,20,.95); border: 1px solid rgba(255,214,0,.3);
-      border-radius: 16px; padding: 14px 16px; max-width: 270px; width: calc(100vw - 32px);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 8px 32px rgba(0,0,0,.6), 0 0 18px rgba(255,214,0,.08);
-      transform: translateX(calc(100% + 24px));
-      transition: transform .5s cubic-bezier(.34,1.56,.64,1);
+    /* Separador */
+    .oferta-sep {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 24px; padding-top: 140px;
     }
-    .purchase-popup.show { transform: translateX(0); }
-    .pp-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .pp-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#8B5CF6,#EC4899); display:flex; align-items:center; justify-content:center; font-size:.95rem; flex-shrink:0; }
-    .pp-name { font-size:.78rem; color: rgba(255,255,255,.5); }
-    .pp-name strong { color: #fff; display:block; font-size:.82rem; }
-    .pp-msg { font-size: .82rem; color: rgba(255,255,255,.75); line-height: 1.4; }
-    .pp-vagas { margin-top: 8px; font-size: .75rem; font-weight: 700;
-      color: var(--amarelo); display:flex; align-items:center; gap:5px; }
-    .pp-progress { height: 3px; background: rgba(255,255,255,.08); border-radius: 999px; margin-top: 10px; overflow:hidden; }
-    .pp-progress-fill { height: 100%; background: var(--amarelo); border-radius: 999px; width: 100%; transition: width linear; }
+    @media (max-width: 680px) {
+      .oferta-sep { padding: 16px 0; }
+    }
+    .sep-text {
+      font-size: .78rem; font-weight: 700; color: var(--cinza-lt);
+      letter-spacing: .15em;
+    }
+
+    /* Card 2 — Cupom (destaque) */
+    .card-cupom {
+      background: var(--ouro-bg);
+      border: 2px solid var(--ouro);
+      box-shadow: 0 8px 40px rgba(184,134,42,.18), 0 2px 10px rgba(184,134,42,.1);
+    }
+    .cupom-badge {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--ouro); color: #fff;
+      font-size: .65rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+      padding: 5px 18px; border-radius: 999px;
+      white-space: nowrap;
+      box-shadow: 0 2px 10px rgba(184,134,42,.4);
+    }
+    .card-cupom-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 900;
+      color: var(--preto); margin-bottom: 4px; margin-top: 6px;
+    }
+    .cupom-sub {
+      font-size: .8rem; color: var(--cinza); margin-bottom: 16px; line-height: 1.45;
+    }
+    .cupom-vagas-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .72rem; font-weight: 700; color: #16A34A;
+      margin-bottom: 20px;
+    }
+    .preco-cupom {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem; font-weight: 900;
+      color: var(--verde); line-height: 1; margin-bottom: 4px;
+    }
+    .preco-cupom-detalhe {
+      font-size: .8rem; color: var(--cinza); margin-bottom: 6px;
+    }
+
+    /* Contador */
+    .countdown-label {
+      font-size: .7rem; font-weight: 700; color: var(--ouro);
+      letter-spacing: .08em; text-transform: uppercase;
+      margin: 18px 0 8px;
+    }
+    .countdown {
+      display: flex; gap: 8px; margin-bottom: 24px;
+    }
+    .cd-block {
+      flex: 1; background: var(--branco);
+      border: 1px solid rgba(184,134,42,.25);
+      border-radius: 10px; padding: 10px 4px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+    .cd-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem; font-weight: 900;
+      color: var(--preto); line-height: 1; display: block;
+    }
+    .cd-label {
+      font-size: .58rem; font-weight: 700;
+      color: var(--cinza-lt); letter-spacing: .08em;
+      text-transform: uppercase; margin-top: 3px; display: block;
+    }
+
+    .btn-telegram {
+      display: block; width: 100%;
+      background: var(--verde); color: #fff;
+      font-size: .95rem; font-weight: 800; letter-spacing: .02em;
+      padding: 17px 20px; border-radius: 12px; text-decoration: none;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(15,110,86,.35);
+      transition: transform .2s, box-shadow .2s;
+      margin-bottom: 12px;
+    }
+    .btn-telegram:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(15,110,86,.45);
+    }
+    .cupom-micro {
+      font-size: .72rem; color: var(--cinza); text-align: center;
+      line-height: 1.45;
+    }
+    .cupom-micro strong { color: var(--cinza-esc); }
+
+    /* ══ GARANTIA faixa ══ */
+    .faixa-garantia {
+      background: var(--verde-bg);
+      border-top: 1px solid rgba(15,110,86,.12);
+      border-bottom: 1px solid rgba(15,110,86,.12);
+      padding: 20px;
+      text-align: center;
+      margin-top: 48px;
+      border-radius: 12px;
+      max-width: 560px; margin-left: auto; margin-right: auto;
+    }
+    .faixa-garantia p {
+      font-size: .83rem; color: var(--cinza-esc); line-height: 1.55;
+    }
+    .faixa-garantia strong { color: var(--verde); }
 
     /* ══ FOOTER ══ */
     footer {
-      background: var(--cinza); border-top: 1px solid rgba(255,255,255,.05);
-      text-align: center; padding: 28px 20px; font-size: .75rem; color: rgba(255,255,255,.2);
+      background: var(--branco);
+      border-top: 1px solid var(--borda);
+      padding: 32px 20px;
+      text-align: center;
     }
-    footer a { color: rgba(255,255,255,.3); text-decoration: none; }
-    footer span { color: var(--verde); opacity: .6; }
+    .footer-curso {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700;
+      color: var(--preto); margin-bottom: 10px;
+    }
+    .footer-links {
+      display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: .75rem; color: var(--cinza-lt);
+      text-decoration: none; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--verde); }
+    .footer-copy {
+      margin-top: 14px; font-size: .72rem; color: var(--cinza-lt);
+    }
 
-    @media (max-width: 480px) {
-      section { padding: 50px 16px; }
-      .btn-hero { padding: 15px 28px; }
-      .trust-row { gap: 14px; }
+    /* ══ MOBILE ══ */
+    @media (max-width: 640px) {
+      section { padding: 56px 0; }
+      .sec-hero { padding: 60px 0 50px; }
+      .btn-hero { padding: 16px 32px; font-size: .97rem; }
+      .sec-oferta { padding: 56px 0; }
+      .oferta-card { padding: 28px 20px; }
+      .cd-num { font-size: 1.4rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- BARRA URGÊNCIA -->
-<div class="topbar">⏳ Turma de maio — Apenas <strong><span id="vagasTopbar">12</span> vagas restantes</strong>. Fecha quando lotar!</div>
+<!-- ══ TOPBAR ══ -->
+<div class="topbar">
+  <span class="tag">Turma Maio</span>
+  <strong>60 vagas abertas</strong> — 50 normais + <strong>10 com cupom de 70% off no dia 20/05</strong>
+</div>
 
-<!-- ══ HERO ══ -->
-<section class="hero">
-  <div class="container">
-    <div class="viewers-badge">
-      <div class="viewers-dot"></div>
-      <span id="viewerCount">31</span> pessoas estão vendo essa página agora
+<!-- ══════════════════════════════════
+     SEÇÃO 1 — HERO
+══════════════════════════════════ -->
+<section class="sec-hero">
+  <div class="container-sm">
+
+    <div class="hero-eyebrow">
+      <span>🤟</span> Método de 15 anos — exclusivo no Brasil
     </div>
-    <h1 class="hero-headline">
-      Aprenda a se comunicar com<br/>
-      <span class="destaque">pessoas surdas</span><br/>
-      em até 30 dias
+
+    <h1 class="hero-h1">
+      Aprenda a se comunicar com surdos<br/>
+      <em>em até 30 dias</em>
     </h1>
+
     <p class="hero-sub">
-      Com o método <strong>Input Compreensível</strong>, você aprende de forma
-      natural e começa a se comunicar de verdade —
-      <b>mesmo começando do zero e sem decorar sinais</b>
+      Mesmo sem saber nada de língua de sinais — com um método construído ao longo de 15 anos
+      que nenhuma faculdade do Brasil ensina.
     </p>
-    <a href="#comprar" class="btn-hero">ACEITO DAR ESSE PASSO RUMO A LIBRAS</a>
-    <p class="vagas-pill">🔥 Vagas limitadas — turma fecha quando lotar</p>
-    <div class="trust-row">
-      <div class="trust-item"><div class="icon">✓</div> Método comprovado</div>
-      <div class="trust-item"><div class="icon">✓</div> 15 dias de garantia</div>
-      <div class="trust-item"><div class="icon">✓</div> 1 ano de acesso</div>
+
+    <div class="badges-row">
+      <div class="badge"><span class="b-icon">🏅</span> 15 anos de experiência</div>
+      <div class="badge"><span class="b-icon">💻</span> 100% online</div>
+      <div class="badge"><span class="b-icon">⚡</span> Acesso imediato</div>
+      <div class="badge"><span class="b-icon">🔑</span> Método exclusivo</div>
     </div>
+
+    <a href="#oferta" class="btn-hero btn-shimmer">Quero aprender Libras agora</a>
+
+    <p class="hero-micro">
+      ↓ <strong>Role a página e assista ao vídeo</strong> — o que você vai descobrir vai mudar tudo
+    </p>
+
   </div>
 </section>
 
-<!-- ══ VISÃO DO FUTURO (Desejo) ══ -->
-<section class="sec-visao">
-  <div class="container">
-    <p class="visao-intro">✨ Imagine sua vida daqui a 30 dias...</p>
-    <h2 class="sec-title">Você acorda e <span class="green">tudo mudou</span></h2>
-    <p class="sec-sub">Essa habilidade abre portas que você nem imaginava que existiam</p>
-    <div class="visao-grid">
-      <div class="visao-item">
-        <span class="visao-emoji">🤝</span>
-        <div class="visao-text">Você conversa com uma pessoa surda <strong style="color:#fff">sem travar</strong>, com confiança e naturalidade</div>
-      </div>
-      <div class="visao-item">
-        <span class="visao-emoji">💼</span>
-        <div class="visao-text">Você se <strong style="color:#fff">destaca no trabalho</strong> com uma habilidade que menos de 1% das pessoas tem</div>
-      </div>
-      <div class="visao-item">
-        <span class="visao-emoji">❤️</span>
-        <div class="visao-text">Você <strong style="color:#fff">conecta com pessoas surdas</strong> — família, colegas, clientes — que antes ficavam isoladas</div>
-      </div>
-      <div class="visao-item">
-        <span class="visao-emoji">🏆</span>
-        <div class="visao-text">Você se torna uma das <strong style="color:#fff">poucas pessoas ouvintes</strong> que realmente inclui e transforma vidas</div>
-      </div>
-    </div>
-    <a href="#comprar" class="btn-hero" style="margin-top:40px; display:inline-block;">QUERO ESSA TRANSFORMAÇÃO →</a>
-  </div>
-</section>
 
-<!-- ══ VÍDEO (Reciprocidade) ══ -->
+<!-- ══════════════════════════════════
+     SEÇÃO 2 — VÍDEO
+══════════════════════════════════ -->
 <section class="sec-video">
   <div class="container">
-    <h2 class="sec-title">Assista e Descubra Como<br/><span class="red">Transformar sua Carreira</span></h2>
-    <p class="sec-sub">🎁 Antes de qualquer coisa — um presente. Veja o método funcionando na prática, <strong style="color:#fff">de graça</strong>.</p>
+
+    <div style="text-align:center; margin-bottom:10px;">
+      <span class="sec-tag">Assista antes de continuar</span>
+    </div>
+
+    <div class="container-sm" style="padding:0 20px">
+      <h2 class="sec-title" style="text-align:center">
+        O segredo que levei 15 anos para descobrir —<br/>
+        <em>e que nenhuma faculdade vai te contar</em>
+      </h2>
+      <p class="sec-sub" style="text-align:center; margin-left:auto; margin-right:auto;">
+        A maioria das pessoas aprende Libras do jeito errado e nunca consegue uma conversa real com um surdo.
+        Neste vídeo eu mostro exatamente o que muda tudo.
+      </p>
+    </div>
+
     <div class="video-wrap">
-      <iframe src="https://www.youtube.com/embed/wflnMJjVeAM?rel=0" allowfullscreen loading="lazy" title="Como funciona o método Input Compreensível"></iframe>
+      <iframe src="https://www.youtube.com/embed/wflnMJjVeAM?rel=0" allowfullscreen loading="lazy" title="O segredo para aprender Libras — Prof. Lorena"></iframe>
     </div>
+
+    <div class="bullets-list">
+      <div class="bullet-item">
+        <div class="bullet-num">1</div>
+        <div>Por que <strong>90% das pessoas travam</strong> na hora de sinalizar — e o que fazer para nunca mais travar</div>
+      </div>
+      <div class="bullet-item">
+        <div class="bullet-num">2</div>
+        <div>O <strong>erro que a maioria dos cursos ensina</strong> que faz você parecer robótico para qualquer surdo</div>
+      </div>
+      <div class="bullet-item">
+        <div class="bullet-num">3</div>
+        <div>A <strong>sequência correta</strong> para aprender sinais e ter fluidez em semanas, não em anos</div>
+      </div>
+      <div class="bullet-item">
+        <div class="bullet-num">4</div>
+        <div>O que surdos <strong>realmente observam</strong> para saber se um ouvinte está se comunicando de verdade</div>
+      </div>
+    </div>
+
+    <p class="video-micro">
+      Se você assistiu o vídeo, já sabe o que os outros não sabem.<br/>
+      <strong>Agora escolha como entrar.</strong>
+    </p>
+
   </div>
 </section>
 
-<!-- ══ PARA VOCÊ QUE ══ -->
-<section class="sec-checks">
-  <div class="container">
-    <h2 class="sec-title" style="text-align:center">Esse curso é <span class="red">para você que...</span></h2>
-    <div class="checks-list">
-      <div class="check-item"><div class="check-icon yes">✓</div>Trava na frente de uma pessoa surda e não sabe o que fazer</div>
-      <div class="check-item"><div class="check-icon yes">✓</div>Quer se comunicar com um familiar, colega ou cliente surdo</div>
-      <div class="check-item"><div class="check-icon yes">✓</div>Quer aprender Libras de verdade, sem enrolação</div>
-      <div class="check-item"><div class="check-icon yes">✓</div>Busca uma nova habilidade profissional valorizada no mercado</div>
-      <div class="check-item"><div class="check-icon yes">✓</div>Quer incluir pessoas surdas no seu trabalho, escola ou vida pessoal</div>
-    </div>
-  </div>
-</section>
 
-<!-- ══ NÃO É PARA VOCÊ ══ -->
-<section class="sec-checks" style="background: var(--cinza);">
+<!-- ══════════════════════════════════
+     SEÇÃO 3 — OFERTA DUPLA
+══════════════════════════════════ -->
+<section class="sec-oferta" id="oferta">
   <div class="container">
-    <h2 class="sec-title" style="text-align:center">Esse curso <span class="red">NÃO</span> é para você, se...</h2>
-    <div class="checks-list">
-      <div class="check-item no-item"><div class="check-icon no">✕</div>Você quer apenas decorar sinais sem se preocupar em comunicar de verdade</div>
-      <div class="check-item no-item"><div class="check-icon no">✕</div>Você não está disposto a praticar pelo menos alguns minutos por dia</div>
-      <div class="check-item no-item"><div class="check-icon no">✕</div>Você quer resultados sem nenhum esforço</div>
-    </div>
-  </div>
-</section>
 
-<!-- ══ DEPOIMENTOS (Prova Social) ══ -->
-<section class="sec-depo">
-  <div class="container">
-    <h2 class="sec-title" style="text-align:center">Vidas que já foram <span class="green">transformadas</span></h2>
-    <p class="sec-sub">Não acredite em nós — acredite em quem já viveu isso</p>
-    <div class="depo-grid">
-      <div class="depo-card">
-        <div class="depo-video">
-          <iframe src="https://www.youtube.com/embed/J8PmzP_MJ04?rel=0" allowfullscreen loading="lazy" title="Depoimento Sthefanie"></iframe>
+    <h2 class="sec-title">Escolha como garantir sua vaga</h2>
+    <p class="sec-sub">
+      60 vagas no total. Quando fecharem, a página sai do ar.
+    </p>
+
+    <div class="oferta-wrap">
+
+      <!-- ── CARD 1: ACESSO IMEDIATO ── -->
+      <div class="oferta-card card-normal">
+        <div class="card-normal-title">Acesso imediato</div>
+        <div class="card-vagas-badge">
+          <div class="dot-pulse dot-red"></div>
+          50 vagas — sem espera
         </div>
-        <div class="depo-body">
-          <p class="depo-quote">"Aprendi a me comunicar com os surdos por apenas editar alguns vídeos da Lorena"</p>
-          <p class="depo-name">— Sthefanie</p>
+        <div class="preco-riscado">R$ 1.500,00</div>
+        <div class="preco-principal">R$ 1.500</div>
+        <p class="preco-detalhe">ou em até 12x de R$ 155,14</p>
+        <div class="preco-contexto">
+          50 vagas — sem cupom, sem espera.<br/>Acesso liberado na hora da compra.
         </div>
-      </div>
-      <div class="depo-card">
-        <div class="depo-video">
-          <iframe src="https://www.youtube.com/embed/dxF8nDqelns?rel=0" allowfullscreen loading="lazy" title="Depoimento Jefersson"></iframe>
-        </div>
-        <div class="depo-body">
-          <p class="depo-quote">"Sou intérprete de Libras há alguns anos e o método da Lorena para ensinar Libras é realmente revolucionário, você aprende mesmo"</p>
-          <p class="depo-name">— Jefersson · Intérprete de Libras</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CREDENCIAIS ══ -->
-<section class="sec-lorena">
-  <div class="container">
-    <div class="lorena-grid">
-      <div class="lorena-photo">
-        <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena — Fundadora da Nerds da Libras"/>
-      </div>
-      <div>
-        <p class="cred-label">Quem vai te ensinar</p>
-        <h2 class="cred-title">Prof. Lorena<br/>A maior referência<br/>em Libras do Brasil</h2>
-        <p class="cred-sub">Ela não só ensina Libras — ela <strong style="color:#fff">revolucionou o método</strong> de como ouvintes aprendem a língua dos surdos.</p>
-        <div class="cred-list">
-          <div class="cred-item"><div class="cred-dot">★</div>Formada em Letras pela UFTM e Letras Libras pela IBRA</div>
-          <div class="cred-item"><div class="cred-dot">★</div>Palestrante em eventos nacionais</div>
-          <div class="cred-item"><div class="cred-dot">★</div>Especialista em Ensino da Libras no Brasil</div>
-          <div class="cred-item"><div class="cred-dot">★</div>Única no Brasil a aplicar o método Krashen à Libras</div>
-          <div class="cred-item"><div class="cred-dot">★</div>Fundadora da Nerds da Libras LTDA — presente em todo o Brasil</div>
-        </div>
-        <div class="stats-row">
-          <div class="stat-box"><div class="num">15+</div><div class="lbl">Anos de experiência em Libras</div></div>
-          <div class="stat-box"><div class="num">⭐ 4.9</div><div class="lbl">Avaliação média dos alunos</div></div>
-          <div class="stat-box"><div class="num">🇧🇷</div><div class="lbl">Presente em todo o Brasil</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ BÔNUS ══ -->
-<section class="sec-bonus">
-  <div class="container">
-    <h2 class="bonus-month">BÔNUS EXCLUSIVOS AO ENTRAR NO <span class="red">MÊS DE MAIO</span></h2>
-    <p class="sec-sub">Tudo o que você precisa para dominar a Libras e transformar sua carreira</p>
-    <div class="bonus-grid">
-      <div class="bonus-card">
-        <div class="bonus-icon bi-azul">👥</div>
-        <div class="bonus-name">Acesso à nossa comunidade</div>
-        <div class="bonus-desc">Tire dúvidas, pratique e evolua junto com outros alunos todos os dias.</div>
-      </div>
-      <div class="bonus-card">
-        <div class="bonus-icon bi-roxo">🎥</div>
-        <div class="bonus-name">Lives Mensais com a Lorena</div>
-        <div class="bonus-desc">Sessões ao vivo mensais para praticar conversação real com feedback direto.</div>
-      </div>
-      <div class="bonus-card destaque">
-        <span class="bonus-badge-lim">🔥 Bônus Limitado</span>
-        <div class="bonus-icon bi-vermelho">🤖</div>
-        <div class="bonus-name">IA Lorena Tradutora de Libras</div>
-        <div class="bonus-desc">Transforme qualquer frase em português em estrutura gramatical de Libras na hora.</div>
-      </div>
-      <div class="bonus-card">
-        <div class="bonus-icon bi-ciano">✋</div>
-        <div class="bonus-name">Mini Curso de Datilologia</div>
-        <div class="bonus-desc">Domine o alfabeto manual de Libras de forma rápida e precisa.</div>
-      </div>
-      <div class="bonus-card">
-        <div class="bonus-icon bi-rosa">🎵</div>
-        <div class="bonus-name">Mini Curso de Interpretação de Música</div>
-        <div class="bonus-desc">Aprenda a interpretar músicas em Libras e encante qualquer plateia.</div>
-      </div>
-      <div class="bonus-card" style="border-color:rgba(201,150,58,.3); box-shadow:0 0 16px rgba(201,150,58,.08)">
-        <div class="bonus-icon bi-ouro">🏅</div>
-        <div class="bonus-name">Certificado de 100hs</div>
-        <div class="bonus-desc">Certificado reconhecido para apresentar no emprego e se destacar profissionalmente.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ ESCASSEZ ══ -->
-<section class="sec-escassez">
-  <div class="container">
-    <h2 class="escassez-titulo">⚡ ATENÇÃO — VAGAS ACABANDO</h2>
-    <p class="escassez-sub">Quando as vagas acabarem, a turma fecha. Não tem lista de espera.</p>
-    <div class="vagas-bar">
-      <div class="vagas-bar-track"><div class="vagas-bar-fill" id="vagasBarFill"></div></div>
-      <p class="vagas-bar-label" id="vagasBarLabel"><strong>38 de 50 vagas preenchidas</strong> — restam apenas 12</p>
-    </div>
-  </div>
-</section>
-
-<!-- ══ PREÇO (Contraste + Urgência) ══ -->
-<section class="sec-preco" id="comprar">
-  <div class="container">
-    <h2 class="sec-title">Invista no que vai <span class="green">transformar sua vida</span> com a Libras</h2>
-    <div class="preco-includes">
-      <div class="inc-item"><div class="inc-arrow">→</div>Curso completo Do Zero a Libras (1 ano de acesso)</div>
-      <div class="inc-item"><div class="inc-arrow">→</div>IA Lorena Tradutora de Libras</div>
-      <div class="inc-item"><div class="inc-arrow">→</div>Acesso à comunidade de alunos</div>
-      <div class="inc-item"><div class="inc-arrow">→</div>Lives mensais com a Lorena</div>
-      <div class="inc-item"><div class="inc-arrow">→</div>Mini Curso de Datilologia</div>
-      <div class="inc-item"><div class="inc-arrow">→</div>Mini Curso de Interpretação de Música</div>
-      <div class="inc-item"><div class="inc-arrow">→</div>Certificado de 100hs</div>
-    </div>
-
-    <p class="escolha-label">↓ escolha como quer pagar ↓</p>
-
-    <div class="opcoes-wrap">
-
-      <!-- ── OPÇÃO 1: WHATSAPP (destaque) ── -->
-      <div class="opcao-card opcao-zap">
-        <div class="opcao-badge">🔥 MELHOR OPÇÃO</div>
-        <div class="opcao-tag">preço especial via whatsapp</div>
-        <div class="opcao-riscado">de R$ 1.500,00</div>
-        <div class="opcao-desconto">MAIS DE 70% OFF</div>
-        <p class="opcao-sub">Chame agora e receba o preço especial<br>direto com o João Neto</p>
-        <a href="https://wa.me/message/43QHURBUBKEMP1" target="_blank" class="btn-whatsapp">
-          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          FALE COMIGO NO WHATSAPP<br/>
-          <span style="font-size:.85rem; font-weight:600; letter-spacing:.02em">te darei um desconto e entendo melhor sua situação atual</span>
+        <a href="https://pay.kiwify.com.br/1sIyvVL" target="_blank" class="btn-normal btn-shimmer">
+          Garantir minha vaga por R$ 1.500
         </a>
-        <p class="btn-hint">👆 Clique — a mensagem já vai pré-preenchida</p>
+        <p style="font-size:.7rem; color:var(--cinza-lt); text-align:center; margin-top:10px;">🔒 Pagamento seguro · 15 dias de garantia</p>
       </div>
 
-      <!-- ── OU ── -->
-      <div class="opcao-ou">OU</div>
+      <!-- ── SEPARADOR ── -->
+      <div class="oferta-sep">
+        <span class="sep-text">— ou —</span>
+      </div>
 
-      <!-- ── OPÇÃO 2: PREÇO CHEIO ── -->
-      <div class="opcao-card opcao-normal">
-        <div class="opcao-tag">preço cheio — sem desconto</div>
-        <p class="preco-label">💰 Investimento:</p>
-        <div class="preco-principal">R$ 1.500,00</div>
-        <p class="preco-parcel">ou em até <strong>12x R$ 155,14</strong></p>
-        <div class="preco-contraste">
-          Isso é <strong>menos de R$ 5 por dia</strong> — o preço de um café.<br/>
-          Mas o valor de uma habilidade que dura a vida toda.
+      <!-- ── CARD 2: CUPOM (DESTAQUE) ── -->
+      <div class="oferta-card card-cupom">
+        <div class="cupom-badge">⭐ Oferta especial com cupom</div>
+
+        <div class="card-cupom-title">70% de desconto</div>
+        <p class="cupom-sub">
+          Cupom liberado no Telegram junto com um e-book gratuito exclusivo
+        </p>
+
+        <div class="cupom-vagas-badge">
+          <div class="dot-pulse dot-green"></div>
+          apenas 10 vagas com desconto
         </div>
-        <a href="https://pay.kiwify.com.br/1sIyvVL" target="_blank" class="btn-checkout">QUERO GARANTIR MINHA VAGA →</a>
-        <p class="preco-seguro">🔒 Pagamento 100% seguro · Kiwify · 15 dias de garantia</p>
+
+        <div class="preco-riscado">R$ 1.500,00</div>
+        <div class="preco-cupom">R$ 450</div>
+        <p class="preco-cupom-detalhe">Cupom disponível apenas no dia <strong style="color:var(--ouro)">20 de maio</strong></p>
+
+        <div class="countdown-label">⏳ Cupom liberado em</div>
+        <div class="countdown">
+          <div class="cd-block"><span class="cd-num" id="cd-days">--</span><span class="cd-label">Dias</span></div>
+          <div class="cd-block"><span class="cd-num" id="cd-hours">--</span><span class="cd-label">Horas</span></div>
+          <div class="cd-block"><span class="cd-num" id="cd-min">--</span><span class="cd-label">Min</span></div>
+          <div class="cd-block"><span class="cd-num" id="cd-sec">--</span><span class="cd-label">Seg</span></div>
+        </div>
+
+        <a href="https://t.me/lorenanerddalibras" target="_blank" class="btn-telegram btn-shimmer">
+          Entrar no Telegram e garantir o cupom →
+        </a>
+        <p class="cupom-micro">
+          O e-book gratuito também será liberado no grupo<br/><strong>no dia 20 de maio</strong>
+        </p>
       </div>
 
     </div>
-  </div>
-</section>
 
-<!-- ══ GARANTIA ══ -->
-<section class="sec-garantia">
-  <div class="container">
-    <div class="garantia-badge"><div class="num">15</div><div class="label">DIAS</div></div>
-    <h2 class="sec-title">Garantia <span style="color:var(--vermelho)">Incondicional</span> de 15 Dias</h2>
-    <p class="garantia-desc">
-      Você tem <strong>15 dias completos</strong> para testar o curso sem risco nenhum.
-      Se por qualquer motivo não ficar satisfeito(a), basta enviar um único e-mail e
-      eu devolvo <strong>100% do seu investimento</strong>. Sem perguntas.
-    </p>
-    <div class="garantia-icons">
-      <div class="g-icon">💯</div>
-      <div class="g-icon">⚡</div>
-      <div class="g-icon" style="border-color:rgba(0,230,0,.3)">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#00E600" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
+    <!-- Garantia faixa -->
+    <div class="faixa-garantia">
+      <p>
+        ✅ <strong>15 dias de garantia incondicional</strong> — se por qualquer motivo não ficar satisfeito(a),
+        basta enviar um e-mail e devolvemos <strong>100% do seu investimento</strong>. Sem perguntas.
+      </p>
     </div>
+
   </div>
 </section>
 
-<!-- ══ CTA FINAL ══ -->
-<section class="sec-cta-final">
-  <div class="container">
-    <h2 class="sec-title">Pronto para<br/><span class="green">mudar sua história?</span></h2>
-    <p style="color:var(--texto); margin:16px auto 36px; max-width:500px; font-size:.95rem; line-height:1.6">
-      Daqui a 30 dias você pode estar se comunicando com surdos.<br/>
-      Ou pode estar exatamente onde está hoje.<br/>
-      <strong style="color:#fff">A diferença é uma decisão.</strong>
-    </p>
-    <a href="#comprar" class="btn-hero">GARANTIR MINHA VAGA AGORA →</a>
-    <p class="vagas-pill" style="display:block; margin-top:14px;">⏳ Apenas <span id="vagasPill">12</span> vagas restantes para maio</p>
-  </div>
-</section>
 
+<!-- ══ FOOTER ══ -->
 <footer>
-  <p>© 2026 <span>Nerds da Libras LTDA</span> · Prof. Lorena</p>
-  <p style="margin-top:6px"><a href="/">← Voltar para a página principal</a></p>
+  <div class="footer-curso">Do Zero a Libras — Prof. Lorena · Nerds da Libras</div>
+  <div class="footer-links">
+    <a href="#">Política de Privacidade</a>
+    <a href="#">Termos de Uso</a>
+    <a href="https://wa.me/5534996608012" target="_blank">Contato</a>
+    <a href="/">← Página principal</a>
+  </div>
+  <p class="footer-copy">© 2026 Nerds da Libras LTDA · Todos os direitos reservados</p>
 </footer>
 
-<!-- ══ BADGE FLUTUANTE VISITANTES ══ -->
-<div class="floating-viewers" id="floatingViewers">
-  <div class="fv-dot"></div>
-  <span><strong id="floatingCount">24</strong> aqui agora</span>
-  <span class="fv-close" onclick="document.getElementById('floatingViewers').classList.add('hidden')" title="Fechar">✕</span>
-</div>
-
-<!-- ══ POPUP DE COMPRA ══ -->
-<div class="purchase-popup" id="purchasePopup">
-  <div class="pp-head">
-    <div class="pp-avatar">🎓</div>
-    <div class="pp-name"><strong id="ppNome">Alguém</strong> acaba de comprar</div>
-  </div>
-  <div class="pp-msg">✅ <em>Do Zero a Libras</em> — acesso liberado!</div>
-  <div class="pp-vagas">⏳ Restam apenas <span id="ppVagas">11</span> vagas</div>
-  <div class="pp-progress"><div class="pp-progress-fill" id="ppFill"></div></div>
-</div>
 
 <script>
 (function () {
 
-  /* ══════════════════════════════════════
-     1. VAGAS DINÂMICAS (−1 a cada 2 dias)
-  ══════════════════════════════════════ */
-  var INICIO    = new Date('2026-04-29T00:00:00');
-  var TOTAL     = 50;
-  var BASE_PRCH = 38;
-  var MIN_REST  = 3;
+  /* ── COUNTDOWN até 20/05/2026 ── */
+  function updateCountdown() {
+    var target = new Date('2026-05-20T00:00:00');
+    var now    = new Date();
+    var diff   = target - now;
 
-  var hoje         = new Date();
-  var diasPass     = Math.max(0, Math.floor((hoje - INICIO) / 86400000));
-  var preenchidas  = Math.min(TOTAL - MIN_REST, BASE_PRCH + Math.floor(diasPass / 2));
-  var restantes    = TOTAL - preenchidas;
-  var pct          = Math.round(preenchidas / TOTAL * 100);
+    var el = {
+      days:  document.getElementById('cd-days'),
+      hours: document.getElementById('cd-hours'),
+      min:   document.getElementById('cd-min'),
+      sec:   document.getElementById('cd-sec')
+    };
 
-  // Topbar
-  var elTop = document.getElementById('vagasTopbar');
-  if (elTop) elTop.textContent = restantes;
-
-  // Barra visual (sem label — comunicado pelo popup)
-  var fill = document.getElementById('vagasBarFill');
-  if (fill) fill.style.width = pct + '%';
-
-  // Pill CTA final
-  var pill = document.getElementById('vagasPill');
-  if (pill) pill.textContent = restantes;
-
-
-  /* ══════════════════════════════════════
-     2. BADGE FLUTUANTE — visitantes ao vivo
-  ══════════════════════════════════════ */
-  var viewers  = 20 + Math.floor(Math.random() * 18);
-  var elHero   = document.getElementById('viewerCount');
-  var elFloat  = document.getElementById('floatingCount');
-
-  function setViewers(v) {
-    if (elHero)  elHero.textContent  = v;
-    if (elFloat) elFloat.textContent = v;
-  }
-  setViewers(viewers);
-
-  setInterval(function () {
-    viewers += Math.random() > .5 ? 1 : -1;
-    viewers = Math.max(13, Math.min(54, viewers));
-    setViewers(viewers);
-  }, 7000);
-
-
-  /* ══════════════════════════════════════
-     3. POPUP DE COMPRA (aparece 2× por visita)
-  ══════════════════════════════════════ */
-  var nomes = ['Ana P.','Carlos M.','Juliana R.','Rodrigo S.',
-               'Fernanda L.','Diego T.','Camila O.','Marcos V.',
-               'Patricia N.','Lucas A.','Beatriz F.','Rafael C.'];
-
-  var popup     = document.getElementById('purchasePopup');
-  var ppNome    = document.getElementById('ppNome');
-  var ppVagas   = document.getElementById('ppVagas');
-  var ppFill    = document.getElementById('ppFill');
-  var vagasAtual = restantes;
-
-  function showPurchase() {
-    if (!popup) return;
-    // Diminui 1 vaga nesta sessão
-    vagasAtual = Math.max(MIN_REST, vagasAtual - 1);
-    var nome = nomes[Math.floor(Math.random() * nomes.length)];
-    if (ppNome)  ppNome.textContent  = nome;
-    if (ppVagas) ppVagas.textContent = vagasAtual;
-
-    // Mostra popup
-    popup.classList.add('show');
-
-    // Barra de progresso drenando em 5s
-    if (ppFill) {
-      ppFill.style.transition = 'none';
-      ppFill.style.width = '100%';
-      setTimeout(function () {
-        ppFill.style.transition = 'width 5s linear';
-        ppFill.style.width = '0%';
-      }, 30);
+    if (diff <= 0) {
+      if (el.days)  el.days.textContent  = '00';
+      if (el.hours) el.hours.textContent = '00';
+      if (el.min)   el.min.textContent   = '00';
+      if (el.sec)   el.sec.textContent   = '00';
+      return;
     }
 
-    // Auto-fecha após 5.5s
-    setTimeout(function () {
-      popup.classList.remove('show');
-    }, 5500);
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000)  / 60000);
+    var s = Math.floor((diff % 60000)    / 1000);
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    if (el.days)  el.days.textContent  = pad(d);
+    if (el.hours) el.hours.textContent = pad(h);
+    if (el.min)   el.min.textContent   = pad(m);
+    if (el.sec)   el.sec.textContent   = pad(s);
   }
-
-  // 1ª aparição: 5 segundos após entrada
-  setTimeout(showPurchase, 5000);
-
-  // 2ª aparição: 2 minutos depois (se ainda na página)
-  setTimeout(showPurchase, 120000);
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 
 })();
 </script>
