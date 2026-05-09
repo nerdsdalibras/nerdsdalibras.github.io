@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Qual curso de Libras é pra mim? — Nerds da Libras</title>
+  <meta name="description" content="Descubra em qual nível você está em Libras e qual curso é ideal para você. Quiz rápido com a Profa. Ana."/>
+  <meta property="og:title" content="Quiz — Qual nível de Libras é você?"/>
+  <meta property="og:description" content="Responda 5 perguntas e descubra qual produto da Nerds da Libras é ideal para o seu momento."/>
+  <meta property="og:image" content="https://nerdsdalibras.github.io/fotos/IMG_4952.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde:    #0F6E56;
+      --verde-lt: #12856A;
+      --ouro:     #B8862A;
+      --ouro-lt:  #D4A017;
+      --rosa:     #C8186F;
+      --rosa-lt:  #E83A8A;
+      --preto:    #111111;
+      --cinza:    #444444;
+      --branco:   #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: linear-gradient(160deg,
+        #080005 0%,
+        #1E0012 18%,
+        #3D0025 35%,
+        #6B0040 52%,
+        #940858 68%,
+        #B51268 82%,
+        #C8186F 100%
+      );
+      background-attachment: fixed;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: linear-gradient(90deg, #1E0012, #5C0038, #940858, #5C0038, #1E0012);
+      background-size: 200% auto;
+      animation: shimmerBg 4s linear infinite;
+      color: #fff;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: .8rem; font-weight: 600;
+      letter-spacing: .02em;
+      position: sticky; top: 0; z-index: 200;
+    }
+    @keyframes shimmerBg {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+    .topbar a { color: #FFD6EA; text-decoration: none; }
+
+    /* ── WRAPPER ── */
+    .wrapper {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── HEADER ── */
+    .quiz-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .quiz-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #FFD6EA; border-radius: 999px;
+      padding: 6px 16px; font-size: .74rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .quiz-eyebrow span { font-size: 1rem; }
+    .quiz-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      font-weight: 900; line-height: 1.15; color: #fff;
+      text-shadow: 0 2px 20px rgba(0,0,0,.3);
+      margin-bottom: 14px;
+    }
+    .quiz-title em { font-style: italic; color: #FFB3D4; }
+    .quiz-sub {
+      font-size: .95rem; color: rgba(255,255,255,0.75); line-height: 1.65;
+    }
+
+    /* ── CARD PRINCIPAL ── */
+    .chat-card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.3);
+    }
+
+    /* ── PERFIL ANA ── */
+    .ana-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .ana-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--ouro), #E8B96A);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(184,134,42,.4);
+    }
+    .ana-info { flex: 1; }
+    .ana-name { font-weight: 700; color: #fff; font-size: .95rem; }
+    .ana-role { font-size: .77rem; color: rgba(255,255,255,0.55); }
+    .ana-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 999px; padding: 3px 10px;
+      font-size: .72rem; font-weight: 600; color: #4ADE80;
+    }
+    .dot-green {
+      width: 7px; height: 7px; border-radius: 50%; background: #22C55E;
+      box-shadow: 0 0 6px rgba(34,197,94,.6);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.6} }
+
+    /* ── MENSAGEM DA ANA ── */
+    .ana-bubble {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 0 16px 16px 16px;
+      padding: 14px 18px;
+      font-size: .92rem; color: rgba(255,255,255,0.9); line-height: 1.6;
+      margin-bottom: 24px;
+      animation: fadeIn .4s ease;
+    }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .ana-bubble strong { color: #FFD6EA; }
+
+    /* ── PROGRESSO ── */
+    .progress-area {
+      margin-bottom: 20px;
+    }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: .75rem; color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+    .progress-bar-track {
+      height: 4px; background: rgba(255,255,255,0.12); border-radius: 999px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--ouro), var(--ouro-lt));
+      transition: width .5s ease;
+    }
+
+    /* ── PERGUNTA ── */
+    .question-text {
+      font-weight: 700; font-size: 1rem; color: #fff;
+      margin-bottom: 16px; line-height: 1.5;
+    }
+
+    /* ── OPÇÕES ── */
+    .options-list {
+      display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 8px;
+    }
+    .option-btn {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px; padding: 14px 16px;
+      cursor: pointer; text-align: left;
+      transition: all .2s; color: rgba(255,255,255,0.88);
+      font-family: 'Inter', sans-serif; font-size: .9rem; line-height: 1.45;
+      width: 100%;
+    }
+    .option-btn:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.3);
+      transform: translateX(3px);
+    }
+    .option-btn.selected {
+      background: rgba(184,134,42,0.2);
+      border-color: rgba(184,134,42,0.6);
+      color: #FFD6EA;
+    }
+    .option-letter {
+      width: 28px; height: 28px; flex-shrink: 0;
+      border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .73rem; font-weight: 700; color: rgba(255,255,255,0.5);
+      transition: all .2s;
+    }
+    .option-btn.selected .option-letter {
+      background: var(--ouro); border-color: var(--ouro); color: #fff;
+    }
+
+    /* ── BOTÃO PRÓXIMA ── */
+    .btn-next {
+      width: 100%; margin-top: 18px;
+      background: linear-gradient(135deg, var(--verde), var(--verde-lt));
+      color: #fff; border: none; border-radius: 12px;
+      padding: 15px 24px; font-size: .95rem; font-weight: 700;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 4px 20px rgba(15,110,86,.35);
+    }
+    .btn-next::after {
+      content: '';
+      position: absolute; top: -20%; left: -80%;
+      width: 50%; height: 140%;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
+      transform: skewX(-15deg);
+      animation: shimmerBtn 2.8s ease-in-out infinite;
+    }
+    @keyframes shimmerBtn {
+      0%   { left: -80%; opacity: 1; }
+      55%  { left: 130%; opacity: 1; }
+      56%  { opacity: 0; }
+      100% { left: 130%; opacity: 0; }
+    }
+    .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(15,110,86,.45); }
+    .btn-next:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    /* ── DIGITANDO ── */
+    .typing-indicator {
+      display: none; align-items: center; gap: 6px;
+      padding: 10px 0 4px;
+      color: rgba(255,255,255,0.5); font-size: .82rem;
+    }
+    .typing-indicator.show { display: flex; }
+    .typing-dots span {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes typingBounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+    /* ── RESULTADO ── */
+    #result-screen { display: none; }
+    #result-screen.show { display: block; animation: fadeIn .5s ease; }
+
+    .result-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px; padding: 28px 24px;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,.3);
+    }
+    .result-emoji { font-size: 3rem; margin-bottom: 14px; display: block; }
+    .result-nivel {
+      display: inline-block;
+      background: rgba(184,134,42,0.2); border: 1px solid rgba(184,134,42,0.5);
+      color: var(--ouro-lt); border-radius: 999px;
+      padding: 5px 18px; font-size: .78rem; font-weight: 800;
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 16px;
+    }
+    .result-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 900; color: #fff; line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .result-title em { font-style: italic; color: #FFB3D4; }
+    .result-desc {
+      font-size: .92rem; color: rgba(255,255,255,0.78); line-height: 1.65;
+      margin-bottom: 28px;
+    }
+
+    /* ── CARD PRODUTO ── */
+    .produto-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 16px; padding: 22px 20px;
+      margin-bottom: 14px;
+      text-align: left;
+      transition: border-color .2s;
+    }
+    .produto-card:hover { border-color: rgba(255,255,255,0.35); }
+    .produto-card.destaque {
+      border-color: rgba(184,134,42,0.6);
+      background: rgba(184,134,42,0.08);
+    }
+    .produto-tag {
+      font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ouro-lt); margin-bottom: 8px;
+    }
+    .produto-nome {
+      font-weight: 800; font-size: 1.05rem; color: #fff; margin-bottom: 6px;
+    }
+    .produto-desc {
+      font-size: .85rem; color: rgba(255,255,255,0.65); line-height: 1.55; margin-bottom: 16px;
+    }
+    .btn-produto {
+      display: block; text-align: center;
+      padding: 13px 20px; border-radius: 10px;
+      font-weight: 700; font-size: .9rem; text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-produto.verde {
+      background: linear-gradient(135deg, var(--verde), var(--verde-lt));
+      color: #fff; box-shadow: 0 4px 16px rgba(15,110,86,.35);
+    }
+    .btn-produto.rosa {
+      background: linear-gradient(135deg, var(--rosa), var(--rosa-lt));
+      color: #fff; box-shadow: 0 4px 16px rgba(200,24,111,.35);
+    }
+    .btn-produto:hover { transform: translateY(-2px); }
+
+    /* ── AI ANALYSIS BOX ── */
+    .ai-analysis {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,179,212,0.2);
+      border-radius: 14px; padding: 18px 20px;
+      margin-top: 20px;
+      font-size: .88rem; color: rgba(255,255,255,0.8); line-height: 1.65;
+    }
+    .ai-analysis-header {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .75rem; color: #FFB3D4; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em;
+      margin-bottom: 10px;
+    }
+    .ai-analysis-header span { font-size: 1rem; }
+    #ai-text { min-height: 60px; }
+    .ai-loading {
+      display: flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.45); font-size: .85rem;
+    }
+
+    /* ── RECOMEÇAR ── */
+    .btn-restart {
+      background: transparent; border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.55); border-radius: 10px;
+      padding: 10px 20px; font-size: .82rem; font-weight: 600;
+      cursor: pointer; width: 100%; margin-top: 16px;
+      font-family: 'Inter', sans-serif; transition: all .2s;
+    }
+    .btn-restart:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); }
+
+    /* ── INPUT NOME ── */
+    .name-input-wrap { margin-bottom: 12px; }
+    .name-input {
+      width: 100%; padding: 13px 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px; color: #fff;
+      font-family: 'Inter', sans-serif; font-size: .95rem;
+      outline: none; transition: border-color .2s;
+    }
+    .name-input::placeholder { color: rgba(255,255,255,0.35); }
+    .name-input:focus { border-color: rgba(184,134,42,0.6); }
+
+    /* ── RODAPÉ ── */
+    .quiz-footer {
+      text-align: center; margin-top: 28px;
+      font-size: .78rem; color: rgba(255,255,255,0.35);
+    }
+    .quiz-footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    .quiz-footer a:hover { color: rgba(255,255,255,0.8); }
+
+    @media (max-width: 480px) {
+      .wrapper { padding: 24px 16px 60px; }
+      .chat-card { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  🤟 <strong>Nerds da Libras</strong> — Descubra qual curso é ideal para você
+  &nbsp;|&nbsp; <a href="https://nerdsdalibras.github.io">← Voltar ao site</a>
+</div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="quiz-header">
+    <div class="quiz-eyebrow"><span>🎯</span> Quiz de Nivelamento</div>
+    <h1 class="quiz-title">Qual curso de Libras<br><em>é pra você?</em></h1>
+    <p class="quiz-sub">5 perguntas rápidas e a Ana te indica o caminho certo 👇</p>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <div class="chat-card">
+
+      <!-- PERFIL ANA -->
+      <div class="ana-row">
+        <div class="ana-avatar">🤟</div>
+        <div class="ana-info">
+          <div class="ana-name">Ana — Consultora Nerds da Libras</div>
+          <div class="ana-role">Especialista em cursos de Libras</div>
+        </div>
+        <div class="ana-badge"><div class="dot-green"></div> Online</div>
+      </div>
+
+      <!-- MENSAGEM ANA -->
+      <div class="ana-bubble" id="ana-bubble">
+        Olá! 👋 Vou te ajudar a encontrar o curso ideal.<br><br>
+        <strong>Qual é o seu nome?</strong>
+      </div>
+
+      <!-- PROGRESSO -->
+      <div class="progress-area" id="progress-area" style="display:none">
+        <div class="progress-label">
+          <span id="progress-text">Pergunta 1 de 5</span>
+          <span id="progress-pct">20%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-fill" style="width:20%"></div>
+        </div>
+      </div>
+
+      <!-- CONTEÚDO DINÂMICO -->
+      <div id="quiz-content">
+        <!-- Step 0: nome -->
+        <div class="name-input-wrap">
+          <input type="text" class="name-input" id="name-input"
+            placeholder="Digite seu nome aqui..." maxlength="40"
+            autocomplete="off"/>
+        </div>
+        <button class="btn-next" id="btn-next" onclick="nextStep()">
+          Começar o Quiz →
+        </button>
+      </div>
+
+      <!-- DIGITANDO -->
+      <div class="typing-indicator" id="typing">
+        <div class="typing-dots">
+          <span></span><span></span><span></span>
+        </div>
+        Ana está digitando...
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div id="result-screen">
+    <div class="result-card">
+      <span class="result-emoji" id="result-emoji">🌱</span>
+      <div class="result-nivel" id="result-nivel">Nível Iniciante</div>
+      <h2 class="result-title" id="result-title">Você está no começo<br><em>e isso é ótimo!</em></h2>
+      <p class="result-desc" id="result-desc"></p>
+
+      <div id="produtos-wrap"></div>
+
+      <!-- ANÁLISE DA IA -->
+      <div class="ai-analysis" id="ai-analysis" style="display:none">
+        <div class="ai-analysis-header">
+          <span>✨</span> Análise personalizada da Ana
+        </div>
+        <div id="ai-text">
+          <div class="ai-loading">
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+            Gerando sua análise...
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-restart" onclick="restart()">↩ Refazer o quiz</button>
+    </div>
+  </div>
+
+  <div class="quiz-footer">
+    <a href="https://nerdsdalibras.github.io">nerdsdalibras.github.io</a>
+    &nbsp;·&nbsp; Quiz desenvolvido com IA
+  </div>
+
+</div>
+
+<script>
+  // ══════════════════════════════════════════
+  //  CONFIGURAÇÃO — preencha antes de publicar
+  // ══════════════════════════════════════════
+  const CONFIG = {
+    ANTHROPIC_API_KEY: 'SUA_CHAVE_AQUI',  // sk-ant-...
+    LINK_CURSO: 'https://pay.kiwify.com.br/1sIyvVL',
+    LINK_MENTORIA: 'LINK_DA_MENTORIA_AQUI', // cole o link aqui
+  };
+
+  // ══════════════════════════════════════════
+  //  PERGUNTAS
+  // ══════════════════════════════════════════
+  const PERGUNTAS = [
+    {
+      texto: 'Qual é o seu nível de contato com Libras até hoje?',
+      opcoes: [
+        { letra: 'A', texto: 'Nunca tive contato — começo do zero mesmo', pts: 0 },
+        { letra: 'B', texto: 'Já vi alguns sinais em vídeos e redes sociais', pts: 1 },
+        { letra: 'C', texto: 'Fiz uma aula ou cursinho introdutório', pts: 2 },
+        { letra: 'D', texto: 'Estudei por algum tempo e sei sinais básicos', pts: 3 },
+      ]
+    },
+    {
+      texto: 'Se uma pessoa surda te abordasse agora, como você reagiria?',
+      opcoes: [
+        { letra: 'A', texto: 'Ficaria completamente perdido(a)', pts: 0 },
+        { letra: 'B', texto: 'Tentaria com gestos e palavras muito básicas', pts: 1 },
+        { letra: 'C', texto: 'Me viraria com alguns sinais e expressões', pts: 2 },
+        { letra: 'D', texto: 'Conseguiria manter uma conversa simples', pts: 3 },
+      ]
+    },
+    {
+      texto: 'Como está seu conhecimento do alfabeto manual?',
+      opcoes: [
+        { letra: 'A', texto: 'Não sei nenhuma letra', pts: 0 },
+        { letra: 'B', texto: 'Sei algumas letras mas não o alfabeto todo', pts: 1 },
+        { letra: 'C', texto: 'Sei a maioria das letras', pts: 2 },
+        { letra: 'D', texto: 'Sei o alfabeto inteiro com facilidade', pts: 3 },
+      ]
+    },
+    {
+      texto: 'Você já teve contato direto com pessoas surdas?',
+      opcoes: [
+        { letra: 'A', texto: 'Nunca', pts: 0 },
+        { letra: 'B', texto: 'Uma ou duas vezes na vida', pts: 1 },
+        { letra: 'C', texto: 'Algumas vezes, de vez em quando', pts: 2 },
+        { letra: 'D', texto: 'Com frequência — tenho surdos próximos', pts: 3 },
+      ]
+    },
+    {
+      texto: 'Qual é o seu objetivo com Libras?',
+      opcoes: [
+        { letra: 'A', texto: 'Quero aprender do zero e me comunicar no básico', pts: 0 },
+        { letra: 'B', texto: 'Quero me sentir confortável em situações simples', pts: 1 },
+        { letra: 'C', texto: 'Quero me aprofundar e ampliar meu vocabulário', pts: 2 },
+        { letra: 'D', texto: 'Quero fluência — usar Libras no dia a dia com confiança', pts: 3 },
+      ]
+    },
+  ];
+
+  const MENSAGENS_ANA = [
+    '', // step 0 = nome (sem mensagem extra)
+    (nome) => `Boa, ${nome}! 😊 Vamos descobrir seu nível.\n\nPrimeira pergunta:`,
+    (nome) => `Ótimo! Continuando...`,
+    (nome) => `Quase na metade!`,
+    (nome) => `Você tá indo bem! Mais uma...`,
+    (nome) => `Última pergunta! 🎯`,
+  ];
+
+  // ══════════════════════════════════════════
+  //  ESTADO
+  // ══════════════════════════════════════════
+  let step = 0;          // 0 = nome, 1-5 = perguntas
+  let userName = '';
+  let totalPts = 0;
+  let selectedIdx = null;
+  let respostas = [];
+
+  // ── DOM refs ──
+  const anaBubble    = document.getElementById('ana-bubble');
+  const quizContent  = document.getElementById('quiz-content');
+  const progressArea = document.getElementById('progress-area');
+  const progressText = document.getElementById('progress-text');
+  const progressPct  = document.getElementById('progress-pct');
+  const progressFill = document.getElementById('progress-fill');
+  const typingEl     = document.getElementById('typing');
+
+  // ──────────────────────────────────────────
+  function nextStep() {
+    // Step 0: capturar nome
+    if (step === 0) {
+      const input = document.getElementById('name-input');
+      const nome = (input.value || '').trim();
+      if (!nome) { input.focus(); input.style.borderColor = 'rgba(220,50,50,.6)'; return; }
+      userName = nome;
+      step = 1;
+      showTyping(1200, () => renderQuestion(step));
+      return;
+    }
+
+    // Steps 1-5: registrar resposta
+    if (selectedIdx === null) return;
+    const q = PERGUNTAS[step - 1];
+    totalPts += q.opcoes[selectedIdx].pts;
+    respostas.push({ pergunta: q.texto, resposta: q.opcoes[selectedIdx].texto });
+    selectedIdx = null;
+
+    if (step < 5) {
+      step++;
+      showTyping(900, () => renderQuestion(step));
+    } else {
+      showTyping(1000, showResult);
+    }
+  }
+
+  function showTyping(ms, cb) {
+    typingEl.classList.add('show');
+    quizContent.style.opacity = '0.3';
+    quizContent.style.pointerEvents = 'none';
+    setTimeout(() => {
+      typingEl.classList.remove('show');
+      quizContent.style.opacity = '1';
+      quizContent.style.pointerEvents = 'auto';
+      cb();
+    }, ms);
+  }
+
+  function renderQuestion(n) {
+    // Atualiza mensagem da ana
+    const msg = MENSAGENS_ANA[n];
+    const texto = typeof msg === 'function' ? msg(userName) : msg;
+    anaBubble.innerHTML = texto.replace(/\n/g, '<br>');
+    anaBubble.style.animation = 'none';
+    void anaBubble.offsetWidth;
+    anaBubble.style.animation = '';
+
+    // Progresso
+    progressArea.style.display = 'block';
+    progressText.textContent = `Pergunta ${n} de 5`;
+    const pct = Math.round((n / 5) * 100);
+    progressPct.textContent = pct + '%';
+    progressFill.style.width = pct + '%';
+
+    // Renderiza opções
+    const q = PERGUNTAS[n - 1];
+    let html = `<p class="question-text">${q.texto}</p><div class="options-list">`;
+    q.opcoes.forEach((op, i) => {
+      html += `
+        <button class="option-btn" onclick="selectOption(${i})">
+          <span class="option-letter">${op.letra}</span>
+          <span>${op.texto}</span>
+        </button>`;
+    });
+    html += `</div>`;
+    html += `<button class="btn-next" id="btn-next" onclick="nextStep()" disabled>
+               Próxima pergunta →
+             </button>`;
+    quizContent.innerHTML = html;
+    quizContent.style.animation = 'none';
+    void quizContent.offsetWidth;
+    quizContent.style.animation = 'fadeIn .35s ease';
+  }
+
+  function selectOption(idx) {
+    selectedIdx = idx;
+    document.querySelectorAll('.option-btn').forEach((btn, i) => {
+      btn.classList.toggle('selected', i === idx);
+    });
+    document.getElementById('btn-next').disabled = false;
+  }
+
+  // ──────────────────────────────────────────
+  //  RESULTADO
+  // ──────────────────────────────────────────
+  function showResult() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    const rs = document.getElementById('result-screen');
+    rs.classList.add('show');
+
+    const nivel = calcNivel(totalPts);
+    renderResultCard(nivel);
+
+    if (CONFIG.ANTHROPIC_API_KEY !== 'SUA_CHAVE_AQUI') {
+      fetchAIAnalysis(nivel);
+    }
+  }
+
+  function calcNivel(pts) {
+    if (pts <= 4)  return 'iniciante';
+    if (pts <= 9)  return 'intermediario';
+    return 'avancado';
+  }
+
+  function renderResultCard(nivel) {
+    const data = {
+      iniciante: {
+        emoji: '🌱',
+        label: 'Nível Iniciante',
+        title: `${userName}, você está<br><em>no lugar certo!</em>`,
+        desc: `Você está começando sua jornada em Libras — e isso é incrível! O curso <strong style="color:#FFD6EA">Do Zero a Libras</strong> foi criado exatamente para quem está no seu momento: sem pré-requisitos, passo a passo, com o método de 15 anos da Profa. Lorena.`,
+        produtos: [
+          {
+            destaque: true,
+            tag: '⭐ Recomendado para você',
+            nome: 'Do Zero a Libras',
+            desc: 'Método exclusivo i+1 | Aprenda a se comunicar em até 30 dias | Sem pré-requisitos.',
+            link: CONFIG.LINK_CURSO,
+            btn: 'verde',
+            cta: 'Quero o Do Zero a Libras →',
+          }
+        ]
+      },
+      intermediario: {
+        emoji: '🚀',
+        label: 'Nível Intermediário',
+        title: `${userName}, você já<br><em>tem uma base!</em>`,
+        desc: `Você já sabe alguma coisa — agora é hora de estruturar e avançar. O curso <strong style="color:#FFD6EA">Do Zero a Libras</strong> vai consolidar sua base e acelerar seu aprendizado. Se quiser ir além ainda mais rápido, a Mentoria é a opção certa.`,
+        produtos: [
+          {
+            destaque: true,
+            tag: '✅ Ideal para sua fase',
+            nome: 'Do Zero a Libras',
+            desc: 'Consolide sua base e avance com o método i+1. Ideal para organizar o que você já sabe.',
+            link: CONFIG.LINK_CURSO,
+            btn: 'verde',
+            cta: 'Quero o Do Zero a Libras →',
+          },
+          {
+            destaque: false,
+            tag: '⚡ Para acelerar mais',
+            nome: 'Mentoria Individual',
+            desc: 'Acompanhamento direto com a Profa. Lorena — personalizado para o seu ritmo e objetivo.',
+            link: CONFIG.LINK_MENTORIA !== 'LINK_DA_MENTORIA_AQUI' ? CONFIG.LINK_MENTORIA : '#',
+            btn: 'rosa',
+            cta: 'Conhecer a Mentoria →',
+          }
+        ]
+      },
+      avancado: {
+        emoji: '⚡',
+        label: 'Nível Avançado',
+        title: `${userName}, você precisa<br><em>de uma mentoria!</em>`,
+        desc: `Você já tem experiência em Libras — o próximo passo é aprofundar e dominar. A <strong style="color:#FFD6EA">Mentoria Individual</strong> com a Profa. Lorena é personalizada para o seu nível e seus objetivos específicos.`,
+        produtos: [
+          {
+            destaque: true,
+            tag: '⭐ Recomendado para você',
+            nome: 'Mentoria Individual',
+            desc: 'Acompanhamento direto com a Profa. Lorena — 15 anos de experiência ao seu serviço.',
+            link: CONFIG.LINK_MENTORIA !== 'LINK_DA_MENTORIA_AQUI' ? CONFIG.LINK_MENTORIA : '#',
+            btn: 'rosa',
+            cta: 'Quero a Mentoria →',
+          },
+          {
+            destaque: false,
+            tag: '📚 Também vale conhecer',
+            nome: 'Do Zero a Libras',
+            desc: 'Revise os fundamentos e amplie vocabulário de forma estruturada.',
+            link: CONFIG.LINK_CURSO,
+            btn: 'verde',
+            cta: 'Ver o curso →',
+          }
+        ]
+      }
+    };
+
+    const d = data[nivel];
+    document.getElementById('result-emoji').textContent = d.emoji;
+    document.getElementById('result-nivel').textContent = d.label;
+    document.getElementById('result-title').innerHTML = d.title;
+    document.getElementById('result-desc').innerHTML = d.desc;
+
+    let html = '';
+    d.produtos.forEach(p => {
+      const destaqueClass = p.destaque ? ' destaque' : '';
+      const linkAttr = p.link === '#' ? 'onclick="alertMentoria()" href="#"' : `href="${p.link}" target="_blank" rel="noopener"`;
+      html += `
+        <div class="produto-card${destaqueClass}">
+          <div class="produto-tag">${p.tag}</div>
+          <div class="produto-nome">${p.nome}</div>
+          <div class="produto-desc">${p.desc}</div>
+          <a class="btn-produto ${p.btn}" ${linkAttr}>${p.cta}</a>
+        </div>`;
+    });
+    document.getElementById('produtos-wrap').innerHTML = html;
+
+    if (CONFIG.ANTHROPIC_API_KEY !== 'SUA_CHAVE_AQUI') {
+      document.getElementById('ai-analysis').style.display = 'block';
+    }
+  }
+
+  function alertMentoria() {
+    alert('O link da mentoria ainda não foi configurado. Entre em contato pelo Instagram @nerdsdalibras.');
+  }
+
+  // ──────────────────────────────────────────
+  //  IA — análise personalizada
+  // ──────────────────────────────────────────
+  async function fetchAIAnalysis(nivel) {
+    const aiBox = document.getElementById('ai-analysis');
+    const aiText = document.getElementById('ai-text');
+    aiBox.style.display = 'block';
+
+    const resumoRespostas = respostas.map((r, i) =>
+      `Pergunta ${i+1}: "${r.pergunta}" → Respondeu: "${r.resposta}"`
+    ).join('\n');
+
+    const prompt = `Você é Ana, consultora da Nerds da Libras, escola de Libras da Profa. Lorena com 15 anos de experiência.
+
+O lead se chama ${userName} e acabou de fazer o quiz de nivelamento. Pontuação total: ${totalPts}/15 pontos. Nível calculado: ${nivel}.
+
+Respostas do quiz:
+${resumoRespostas}
+
+Escreva uma mensagem CURTA e PESSOAL (máximo 3 frases) parabenizando ${userName} pelo nível e reforçando por que o produto recomendado é ideal para ela/ele. Tom: caloroso, direto, motivador. Sem emojis excessivos. Escreva na segunda pessoa (você).`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': CONFIG.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 200,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      const text = data.content[0].text;
+
+      aiText.innerHTML = '';
+      typeWriter(aiText, text);
+    } catch (e) {
+      aiText.textContent = 'Análise indisponível no momento. Entre em contato pelo Instagram @nerdsdalibras para uma orientação personalizada!';
+    }
+  }
+
+  function typeWriter(el, text, i = 0) {
+    if (i < text.length) {
+      el.textContent += text[i];
+      setTimeout(() => typeWriter(el, text, i + 1), 22);
+    }
+  }
+
+  // ──────────────────────────────────────────
+  function restart() {
+    step = 0; userName = ''; totalPts = 0; selectedIdx = null; respostas = [];
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('result-screen').classList.remove('show');
+    anaBubble.innerHTML = 'Olá! 👋 Vou te ajudar a encontrar o curso ideal.<br><br><strong>Qual é o seu nome?</strong>';
+    progressArea.style.display = 'none';
+    quizContent.innerHTML = `
+      <div class="name-input-wrap">
+        <input type="text" class="name-input" id="name-input"
+          placeholder="Digite seu nome aqui..." maxlength="40" autocomplete="off"/>
+      </div>
+      <button class="btn-next" id="btn-next" onclick="nextStep()">
+        Começar o Quiz →
+      </button>`;
+  }
+</script>
+
+</body>
+</html>
