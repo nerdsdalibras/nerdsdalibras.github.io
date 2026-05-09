@@ -328,41 +328,85 @@
     /* ── CARD MENTORIA ── */
     .card-mentoria {
       border-radius: 16px; overflow: hidden;
-      border: 1px solid rgba(200,24,111,.3);
-      box-shadow: 0 8px 32px rgba(0,0,0,.5);
-      background: #0D0D0D;
+      border: 1px solid rgba(139,92,246,.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,.55);
+      background: #09060F;
     }
-    .card-mentoria-header {
-      background: linear-gradient(135deg, #2D0A1A, #4D0F2E);
-      padding: 24px 20px 20px;
-      text-align: center;
-      border-bottom: 1px solid rgba(200,24,111,.2);
+
+    /* foto topo */
+    .card-mentoria-photo {
+      position: relative; height: 210px; overflow: hidden;
     }
-    .card-mentoria-emoji { font-size: 2.5rem; margin-bottom: 8px; }
-    .card-mentoria-tag {
-      display: inline-block;
-      background: rgba(200,24,111,.15); border: 1px solid rgba(200,24,111,.4);
-      color: #F78EC0; border-radius: 999px;
-      padding: 4px 14px; font-size: .72rem; font-weight: 800;
-      letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px;
+    .card-mentoria-photo img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center;
+    }
+    .card-mentoria-photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 45%, #09060F 100%);
+    }
+    .card-mentoria-pill-top {
+      position: absolute; top: 12px;
+      left: 50%; transform: translateX(-50%);
+      white-space: nowrap;
+      background: linear-gradient(135deg, #d63384, #9b27af);
+      color: #fff; border-radius: 999px;
+      padding: 6px 16px; font-size: .72rem; font-weight: 800;
+      letter-spacing: .04em; text-transform: uppercase;
+      box-shadow: 0 2px 12px rgba(155,39,175,.5);
+    }
+
+    /* corpo */
+    .card-body-mentoria { padding: 14px 20px 20px; }
+
+    .card-mentoria-tipo {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(139,92,246,.15); border: 1px solid rgba(139,92,246,.35);
+      color: #C4B5FD; border-radius: 999px;
+      padding: 5px 14px; font-size: .72rem; font-weight: 800;
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 10px;
     }
     .card-mentoria-titulo {
-      font-weight: 900; font-size: 1.25rem; color: #fff; line-height: 1.2;
-    }
-    .card-body-mentoria {
-      padding: 18px 20px 20px;
+      font-weight: 900; font-size: 1.4rem; color: #fff; line-height: 1.15;
+      margin-bottom: 8px;
     }
     .card-mentoria-desc {
-      font-size: .85rem; color: rgba(255,255,255,.7); line-height: 1.6;
+      font-size: .85rem; color: rgba(255,255,255,.68); line-height: 1.6;
       margin-bottom: 14px;
+      text-align: center;
     }
+    .card-mentoria-desc strong { color: #C4B5FD; }
+    .card-mentoria-desc strong.branco { color: #fff; }
+
+    /* pill método i+1 */
+    .card-mentoria-metodo {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(139,92,246,.1); border: 1px solid rgba(139,92,246,.25);
+      border-radius: 12px; padding: 12px 16px;
+      font-size: .83rem; color: rgba(255,255,255,.8);
+      line-height: 1.4; margin-bottom: 16px; text-align: center;
+      justify-content: center;
+    }
+    .pill-i1 {
+      background: linear-gradient(135deg, #7C3AED, #9B27AF);
+      color: #fff; border-radius: 8px;
+      padding: 4px 10px; font-size: .75rem; font-weight: 800;
+      flex-shrink: 0; letter-spacing: .02em;
+    }
+
+    /* botão roxo */
+    .btn-roxo {
+      background: linear-gradient(135deg, #5B21B6, #7C3AED, #9B27AF);
+      color: #fff; box-shadow: 0 4px 20px rgba(124,58,237,.45);
+    }
+    .btn-roxo:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,.55); }
+
     .card-mentoria-date {
-      background: rgba(200,24,111,.08); border: 1px solid rgba(200,24,111,.2);
+      background: rgba(139,92,246,.08); border: 1px solid rgba(139,92,246,.2);
       border-radius: 10px; padding: 10px 14px;
-      font-size: .8rem; color: rgba(255,140,200,.85); line-height: 1.5;
-      margin-bottom: 16px;
+      font-size: .79rem; color: rgba(196,181,253,.85); line-height: 1.5;
+      margin-bottom: 16px; text-align: center;
     }
-    .card-mentoria-date strong { color: #F78EC0; }
+    .card-mentoria-date strong { color: #C4B5FD; }
 
     /* ── RODAPÉ ── */
     .chat-footer {
@@ -484,22 +528,30 @@
     <!-- CARD MENTORIA -->
     <div class="card-produto-wrap" id="card-mentoria-wrap">
       <div class="card-mentoria">
-        <div class="card-mentoria-header">
-          <div class="card-mentoria-emoji">🎯</div>
-          <div class="card-mentoria-tag">Acompanhamento Individual</div>
-          <div class="card-mentoria-titulo">Mentoria com a Lorena</div>
+        <!-- FOTO TOPO -->
+        <div class="card-mentoria-photo">
+          <img src="fotos/image-1777403006556.jpg" alt="Prof. Lorena — Mentoria Profissional"/>
+          <div class="card-mentoria-photo-overlay"></div>
+          <div class="card-mentoria-pill-top">💜 O Mais Desejado pelos Intérpretes</div>
         </div>
+        <!-- CORPO -->
         <div class="card-body-mentoria">
+          <div class="card-mentoria-tipo">🎯 Mentoria Profissional</div>
+          <div class="card-mentoria-titulo">Destrava Libras</div>
           <div class="card-mentoria-desc">
-            Acompanhamento direto comigo — personalizado para o seu nível, ritmo e objetivo.
-            Seja fluência no dia a dia, interpretação ou uso profissional da Libras.
+            Para intérpretes que querem <strong>avançar de verdade</strong>.
+            Mentoria direta com a Profa. Lorena — <strong class="branco">vagas limitadas.</strong>
+          </div>
+          <div class="card-mentoria-metodo">
+            <span class="pill-i1">i+1</span>
+            Método exclusivo da Profa. Lorena aplicado à Mentoria
           </div>
           <div class="card-mentoria-date">
             📅 <strong>Lançamento: 10 de junho de 2026</strong><br/>
-            Vagas muito limitadas. Entre no grupo para receber as informações com antecedência e as condições especiais.
+            Entre no grupo para receber as condições especiais antes de todo mundo.
           </div>
-          <a class="btn-card btn-rosa" href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" rel="noopener">
-            <span>💬</span> Entrar no grupo da Mentoria
+          <a class="btn-card btn-roxo" href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" rel="noopener">
+            Lorena, quero saber como funciona →
           </a>
         </div>
       </div>
