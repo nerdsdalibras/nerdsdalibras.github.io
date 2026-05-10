@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Avaliação Gratuita — Prof. Lorena | Nerds da Libras</title>
+  <meta name="description" content="Avaliação gratuita com a Prof. Lorena. Descubra o melhor caminho para você em Libras."/>
+  <meta property="og:title" content="Sua Avaliação Gratuita — Prof. Lorena"/>
+  <meta property="og:description" content="Descobrindo qual caminho é ideal para você em Libras. Conversa direta com a Lorena."/>
+  <meta property="og:image" content="https://nerdsdalibras.github.io/fotos/IMG_4952.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde:     #25D366;
+      --verde-esc: #075E54;
+      --verde-mid: #128C7E;
+      --bg-page:   #0D1117;
+      --bg-chat:   #111B21;
+      --bg-lorena: #1F2C34;
+      --bolha-in:  #202C33;
+      --bolha-brd: rgba(37,211,102,.18);
+      --text-main: #E9EDEF;
+      --text-sub:  rgba(233,237,239,0.55);
+      --text-time: rgba(233,237,239,0.4);
+      --ouro:      #C9963A;
+      --pink:      #D63384;
+      --preto:     #000000;
+      --borda:     rgba(255,255,255,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-page);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── TOPO ── */
+    .page-top {
+      width: 100%; background: var(--verde-esc);
+      text-align: center; padding: 8px 16px;
+      font-size: .76rem; color: rgba(255,255,255,0.75);
+      letter-spacing: .02em;
+    }
+    .page-top a { color: rgba(255,255,255,0.9); text-decoration: none; }
+
+    /* ── PHONE FRAME ── */
+    .phone {
+      width: 100%; max-width: 430px;
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+      background: var(--bg-chat);
+    }
+
+    /* ── HEADER CHAT ── */
+    .chat-header {
+      background: var(--bg-lorena);
+      padding: 10px 16px 10px 12px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--borda);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .header-back {
+      color: var(--verde); font-size: 1.3rem; cursor: pointer;
+      text-decoration: none; line-height: 1;
+    }
+    .header-avatar {
+      width: 42px; height: 42px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      border: 2px solid rgba(37,211,102,.5);
+    }
+    .header-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .header-info { flex: 1; }
+    .header-name { font-weight: 700; color: var(--text-main); font-size: .95rem; }
+    .header-status {
+      font-size: .72rem; color: var(--verde);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .dot-online {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--verde);
+      box-shadow: 0 0 6px rgba(37,211,102,.7);
+      animation: pulseDot 1.8s ease-in-out infinite;
+    }
+    @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.6} }
+
+    .header-badge {
+      background: rgba(37,211,102,.12); border: 1px solid rgba(37,211,102,.25);
+      border-radius: 999px; padding: 4px 10px;
+      font-size: .68rem; font-weight: 700; color: var(--verde);
+      letter-spacing: .04em; text-transform: uppercase;
+    }
+
+    /* ── ÁREA DE MENSAGENS ── */
+    .chat-body {
+      flex: 1;
+      padding: 16px 12px 24px;
+      display: flex; flex-direction: column; gap: 4px;
+      overflow-y: auto;
+    }
+
+    /* ── DATA SEPARADOR ── */
+    .date-sep {
+      text-align: center; margin: 8px 0;
+    }
+    .date-sep span {
+      background: rgba(0,0,0,.3); border-radius: 8px;
+      padding: 3px 12px; font-size: .7rem; color: var(--text-time);
+    }
+
+    /* ── BOLHA LORENA ── */
+    .bubble-wrap {
+      display: flex; align-items: flex-end; gap: 8px;
+      max-width: 88%;
+      animation: fadeUp .3s ease;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    .bubble-avatar {
+      width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      border: 1.5px solid rgba(37,211,102,.4);
+      margin-bottom: 2px;
+    }
+    .bubble-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .bubble-avatar.hidden { visibility: hidden; }
+
+    .bubble {
+      background: var(--bolha-in);
+      border: 1px solid var(--bolha-brd);
+      border-radius: 4px 16px 16px 16px;
+      padding: 10px 14px;
+      font-size: .88rem; color: var(--text-main); line-height: 1.55;
+      position: relative;
+    }
+    .bubble strong { color: #a8efca; font-weight: 700; }
+    .bubble em { font-style: normal; color: var(--verde); font-weight: 600; }
+    .bubble-time {
+      font-size: .65rem; color: var(--text-time);
+      text-align: right; margin-top: 4px;
+    }
+
+    /* ── DIGITANDO ── */
+    .typing-wrap {
+      display: none;
+      align-items: flex-end; gap: 8px;
+      max-width: 88%;
+    }
+    .typing-wrap.show { display: flex; animation: fadeUp .3s ease; }
+    .typing-bubble {
+      background: var(--bolha-in); border: 1px solid var(--bolha-brd);
+      border-radius: 4px 16px 16px 16px;
+      padding: 12px 18px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .typing-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(37,211,102,.5);
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: .2s; }
+    .typing-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+    /* ── ESPAÇADOR ENTRE GRUPOS ── */
+    .msg-gap { height: 6px; }
+
+    /* ── BOTÕES DE ESCOLHA ── */
+    .choices-wrap {
+      display: none;
+      flex-direction: column; gap: 10px;
+      margin: 16px 0 8px 36px;
+      animation: fadeUp .4s ease;
+    }
+    .choices-wrap.show { display: flex; }
+
+    .choice-btn {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(37,211,102,.08);
+      border: 1.5px solid rgba(37,211,102,.35);
+      border-radius: 14px; padding: 14px 18px;
+      cursor: pointer; text-align: left;
+      font-family: 'Inter', sans-serif; color: var(--text-main);
+      font-size: .88rem; font-weight: 600; line-height: 1.4;
+      transition: all .2s; width: 100%;
+    }
+    .choice-btn:hover {
+      background: rgba(37,211,102,.18);
+      border-color: rgba(37,211,102,.6);
+      transform: translateX(3px);
+    }
+    .choice-btn:disabled {
+      opacity: .4; cursor: not-allowed; transform: none;
+    }
+    .choice-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .choice-label { font-weight: 700; font-size: .92rem; }
+    .choice-sub { font-size: .78rem; color: var(--text-sub); margin-top: 2px; font-weight: 400; }
+
+    /* ── MENSAGEM DO USUÁRIO (resposta dele) ── */
+    .user-bubble-wrap {
+      display: flex; justify-content: flex-end;
+      animation: fadeUp .3s ease;
+      margin-left: auto;
+    }
+    .user-bubble {
+      background: #005C4B;
+      border-radius: 16px 4px 16px 16px;
+      padding: 10px 14px;
+      font-size: .88rem; color: var(--text-main); line-height: 1.5;
+      max-width: 80%;
+    }
+    .user-bubble-time {
+      font-size: .65rem; color: rgba(37,211,102,.5);
+      text-align: right; margin-top: 4px;
+      display: flex; align-items: center; justify-content: flex-end; gap: 4px;
+    }
+    .check-icon { color: var(--verde); font-size: .75rem; }
+
+    /* ── CARD CURSO ── */
+    .card-produto-wrap {
+      display: none;
+      margin: 12px 0 8px 36px;
+      animation: fadeUp .5s ease;
+    }
+    .card-produto-wrap.show { display: block; }
+
+    .card-curso {
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid rgba(37,211,102,.25);
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+      background: #0D0D0D;
+    }
+
+    .card-photo-area {
+      position: relative; height: 200px; overflow: hidden;
+    }
+    .card-photo-area img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center;
+    }
+    .card-photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, #0D0D0D 100%);
+    }
+    .card-mais-vendido {
+      position: absolute; top: 12px; right: 12px;
+      background: linear-gradient(135deg, #e91e8c, #c2185b);
+      color: #fff; border-radius: 999px;
+      padding: 5px 14px; font-size: .72rem; font-weight: 800;
+      letter-spacing: .04em; text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(233,30,140,.4);
+    }
+
+    .card-body-curso {
+      padding: 16px 20px 20px;
+    }
+    .card-badge-tipo {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15);
+      border-radius: 999px; padding: 4px 12px;
+      font-size: .72rem; font-weight: 700; color: rgba(255,255,255,.8);
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .card-titulo {
+      font-weight: 900; font-size: 1.35rem; color: #fff; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .card-desc {
+      font-size: .85rem; color: rgba(255,255,255,.7); line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .card-desc strong { color: #fff; }
+    .card-desc .green { color: var(--verde); font-weight: 700; }
+
+    .card-info-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+    }
+    .card-info-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,.05); border-radius: 8px;
+      padding: 5px 10px; font-size: .75rem; color: rgba(255,255,255,.65);
+    }
+    .card-info-pill span { font-size: .85rem; }
+
+    .card-urgencia {
+      background: rgba(255,180,0,.08); border: 1px solid rgba(255,180,0,.2);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: .8rem; color: rgba(255,200,0,.85); line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .card-urgencia strong { color: #FFD600; }
+
+    .btn-card {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 15px 20px;
+      border-radius: 12px; text-decoration: none;
+      font-weight: 800; font-size: .95rem; letter-spacing: .01em;
+      transition: transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
+    }
+    .btn-card::after {
+      content: '';
+      position: absolute; top: -20%; left: -80%;
+      width: 50%; height: 140%;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.25) 50%, transparent 70%);
+      transform: skewX(-15deg);
+      animation: shimmerBtn 2.6s ease-in-out infinite;
+    }
+    @keyframes shimmerBtn {
+      0%   { left: -80%; opacity: 1; }
+      55%  { left: 130%; opacity: 1; }
+      56%  { opacity: 0; }
+      100% { left: 130%; opacity: 0; }
+    }
+    .btn-verde {
+      background: linear-gradient(135deg, #22C55E, #16a34a);
+      color: #fff; box-shadow: 0 4px 20px rgba(34,197,94,.4);
+    }
+    .btn-verde:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(34,197,94,.5); }
+    .btn-rosa {
+      background: linear-gradient(135deg, #C8186F, #E83A8A);
+      color: #fff; box-shadow: 0 4px 20px rgba(200,24,111,.4);
+    }
+    .btn-rosa:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,24,111,.5); }
+
+    /* ── CARD MENTORIA ── */
+    .card-mentoria {
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid rgba(139,92,246,.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,.55);
+      background: #09060F;
+    }
+
+    /* foto topo */
+    .card-mentoria-photo {
+      position: relative; height: 210px; overflow: hidden;
+    }
+    .card-mentoria-photo img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center;
+    }
+    .card-mentoria-photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 45%, #09060F 100%);
+    }
+    .card-mentoria-pill-top {
+      position: absolute; top: 12px;
+      left: 50%; transform: translateX(-50%);
+      white-space: nowrap;
+      background: linear-gradient(135deg, #d63384, #9b27af);
+      color: #fff; border-radius: 999px;
+      padding: 6px 16px; font-size: .72rem; font-weight: 800;
+      letter-spacing: .04em; text-transform: uppercase;
+      box-shadow: 0 2px 12px rgba(155,39,175,.5);
+    }
+
+    /* corpo */
+    .card-body-mentoria { padding: 14px 20px 20px; }
+
+    .card-mentoria-tipo {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(139,92,246,.15); border: 1px solid rgba(139,92,246,.35);
+      color: #C4B5FD; border-radius: 999px;
+      padding: 5px 14px; font-size: .72rem; font-weight: 800;
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .card-mentoria-titulo {
+      font-weight: 900; font-size: 1.4rem; color: #fff; line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .card-mentoria-desc {
+      font-size: .85rem; color: rgba(255,255,255,.68); line-height: 1.6;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .card-mentoria-desc strong { color: #C4B5FD; }
+    .card-mentoria-desc strong.branco { color: #fff; }
+
+    /* pill método i+1 */
+    .card-mentoria-metodo {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(139,92,246,.1); border: 1px solid rgba(139,92,246,.25);
+      border-radius: 12px; padding: 12px 16px;
+      font-size: .83rem; color: rgba(255,255,255,.8);
+      line-height: 1.4; margin-bottom: 16px; text-align: center;
+      justify-content: center;
+    }
+    .pill-i1 {
+      background: linear-gradient(135deg, #7C3AED, #9B27AF);
+      color: #fff; border-radius: 8px;
+      padding: 4px 10px; font-size: .75rem; font-weight: 800;
+      flex-shrink: 0; letter-spacing: .02em;
+    }
+
+    /* botão roxo */
+    .btn-roxo {
+      background: linear-gradient(135deg, #5B21B6, #7C3AED, #9B27AF);
+      color: #fff; box-shadow: 0 4px 20px rgba(124,58,237,.45);
+    }
+    .btn-roxo:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,.55); }
+
+    .card-mentoria-date {
+      background: rgba(139,92,246,.08); border: 1px solid rgba(139,92,246,.2);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: .79rem; color: rgba(196,181,253,.85); line-height: 1.5;
+      margin-bottom: 16px; text-align: center;
+    }
+    .card-mentoria-date strong { color: #C4B5FD; }
+
+    /* ── ANCORAGEM DE PREÇO ── */
+    .card-preco-ancora {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: .82rem; color: rgba(255,255,255,.75); line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .card-preco-ancora .preco-normal {
+      text-decoration: line-through; color: rgba(255,255,255,.4);
+      font-weight: 600;
+    }
+    .card-preco-ancora strong { color: #FFD700; font-weight: 800; }
+
+    /* ── VAGAS COUNTER ── */
+    .card-vagas-counter {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: .82rem; color: rgba(255,180,180,.9); line-height: 1.4;
+      margin-bottom: 14px; font-weight: 600;
+    }
+    .vagas-dot {
+      width: 9px; height: 9px; border-radius: 50%; background: #EF4444;
+      flex-shrink: 0;
+      box-shadow: 0 0 7px rgba(239,68,68,.7);
+      animation: pulseDot 1.4s ease-in-out infinite;
+    }
+    @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.6} }
+    .card-vagas-counter strong { color: #FCA5A5; }
+
+    /* ── BÔNUS MENTORIA ── */
+    .card-bonus {
+      background: rgba(251,191,36,.07); border: 1px solid rgba(251,191,36,.22);
+      border-radius: 10px; padding: 12px 14px;
+      font-size: .82rem; color: rgba(255,230,150,.9); line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .card-bonus strong { color: #FCD34D; font-weight: 800; }
+
+    /* ── RODAPÉ ── */
+    .chat-footer {
+      padding: 12px 16px 20px;
+      text-align: center;
+      border-top: 1px solid var(--borda);
+    }
+    .chat-footer-text {
+      font-size: .7rem; color: var(--text-time);
+    }
+    .chat-footer-text a { color: rgba(37,211,102,.6); text-decoration: none; }
+
+    /* ── SCROLL TO BOTTOM ── */
+    #scroll-anchor { height: 1px; }
+
+    /* ── INPUT BAR ── */
+    .input-bar {
+      display: none;
+      padding: 8px 12px 14px;
+      background: var(--bg-lorena);
+      border-top: 1px solid rgba(255,255,255,.06);
+      align-items: flex-end; gap: 10px;
+      flex-shrink: 0;
+    }
+    .input-bar.show { display: flex; }
+
+    .input-field {
+      flex: 1; background: var(--bolha-in);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 22px; padding: 10px 16px;
+      color: var(--text-main); font-family: 'Inter', sans-serif;
+      font-size: .88rem; outline: none; resize: none;
+      min-height: 42px; max-height: 120px;
+      overflow-y: auto; line-height: 1.45;
+    }
+    .input-field::placeholder { color: rgba(233,237,239,.32); }
+    .input-field:focus { border-color: rgba(37,211,102,.35); }
+
+    .btn-send {
+      width: 42px; height: 42px; border-radius: 50%; border: none; flex-shrink: 0;
+      background: var(--verde); color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: transform .2s, box-shadow .2s;
+    }
+    .btn-send:hover { transform: scale(1.08); box-shadow: 0 4px 14px rgba(37,211,102,.45); }
+    .btn-send:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-send svg { width: 18px; height: 18px; fill: #fff; }
+
+    .ai-hint {
+      text-align: center; font-size: .68rem;
+      color: rgba(233,237,239,.28); padding: 4px 0 0;
+    }
+
+    @media (min-width: 430px) {
+      body { background: #060C10; }
+      .phone {
+        margin: 0 auto;
+        box-shadow: 0 0 80px rgba(0,0,0,.8);
+        min-height: 100dvh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-top">
+  🤟 Nerds da Libras — <a href="https://nerdsdalibras.github.io">nerdsdalibras.github.io</a>
+</div>
+
+<div class="phone">
+
+  <!-- HEADER -->
+  <div class="chat-header">
+    <a class="header-back" href="https://nerdsdalibras.github.io">‹</a>
+    <div class="header-avatar">
+      <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena"/>
+    </div>
+    <div class="header-info">
+      <div class="header-name">Prof. Lorena</div>
+      <div class="header-status">
+        <div class="dot-online"></div>
+        online agora
+      </div>
+    </div>
+    <div class="header-badge">Nerds da Libras</div>
+  </div>
+
+  <!-- MENSAGENS -->
+  <div class="chat-body" id="chat-body">
+
+    <div class="date-sep"><span>hoje</span></div>
+
+    <!-- Mensagens serão injetadas aqui pelo JS -->
+
+    <!-- INDICADOR DE DIGITAÇÃO -->
+    <div class="typing-wrap" id="typing-wrap">
+      <div class="bubble-avatar">
+        <img src="fotos/IMG_4952.jpg" alt="Lorena"/>
+      </div>
+      <div class="typing-bubble">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+
+    <!-- ESCOLHAS (2 opções) -->
+    <div class="choices-wrap" id="choices-wrap">
+      <button class="choice-btn" id="btn-curso" onclick="escolher('curso')">
+        <div class="choice-icon">🌱</div>
+        <div>
+          <div class="choice-label">Quero aprender Libras</div>
+          <div class="choice-sub">do zero ou estruturar o que já sei</div>
+        </div>
+      </button>
+      <button class="choice-btn" id="btn-mentoria" onclick="escolher('mentoria')">
+        <div class="choice-icon">⚡</div>
+        <div>
+          <div class="choice-label">Já tenho uma base e quero ir além</div>
+          <div class="choice-sub">acompanhamento personalizado e profundo</div>
+        </div>
+      </button>
+    </div>
+
+    <!-- CARD CURSO -->
+    <div class="card-produto-wrap" id="card-curso-wrap">
+      <div class="card-curso">
+        <div class="card-photo-area">
+          <img src="fotos/IMG_4977.jpg" alt="Prof. Lorena — Do Zero a Libras"
+               onerror="this.src='fotos/IMG_4952.jpg'"/>
+          <div class="card-photo-overlay"></div>
+          <div class="card-mais-vendido">🔥 MAIS VENDIDO</div>
+        </div>
+        <div class="card-body-curso">
+          <div class="card-badge-tipo">🖥️ CURSO ONLINE</div>
+          <div class="card-titulo">Do ZERO a LIBRAS</div>
+          <div class="card-desc">
+            Do <strong>absoluto zero</strong> à comunicação com surdos em 30 dias.
+            <span class="green">Sem decorar sinais.</span>
+          </div>
+          <div class="card-preco-ancora">
+            💰 Valor normal: <span class="preco-normal">R$&nbsp;1.500</span>
+            &nbsp;→&nbsp; <strong>oferta exclusiva para membros do grupo no dia 20/05</strong>
+          </div>
+          <div class="card-info-row">
+            <div class="card-info-pill"><span>👥</span> Turma de 50 pessoas</div>
+            <div class="card-info-pill"><span>⚡</span> Apenas 24h de carrinho</div>
+            <div class="card-info-pill"><span>📅</span> Abertura: 20/05</div>
+          </div>
+          <div class="card-urgencia">
+            ⏰ <strong>Atenção:</strong> o valor e o link de pagamento só aparecem dia 20 de maio, dentro do grupo.
+            O carrinho fica aberto por apenas <strong>24 horas</strong> — depois encerra sem exceção.
+          </div>
+          <a class="btn-card btn-verde" href="https://wa.me/message/43QHURBUBKEMP1" target="_blank" rel="noopener">
+            <span>💬</span> Entrar no grupo e garantir minha oferta
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD MENTORIA -->
+    <div class="card-produto-wrap" id="card-mentoria-wrap">
+      <div class="card-mentoria">
+        <!-- FOTO TOPO -->
+        <div class="card-mentoria-photo">
+          <img src="fotos/image-1777403006556.jpg" alt="Prof. Lorena — Mentoria Profissional"/>
+          <div class="card-mentoria-photo-overlay"></div>
+          <div class="card-mentoria-pill-top">💜 O Mais Desejado pelos Intérpretes</div>
+        </div>
+        <!-- CORPO -->
+        <div class="card-body-mentoria">
+          <div class="card-mentoria-tipo">🎯 Mentoria Profissional</div>
+          <div class="card-mentoria-titulo">Destrava Libras</div>
+          <div class="card-mentoria-desc">
+            Acompanhamento direto com a Profa. Lorena — <strong>100% personalizado</strong>
+            para o seu nível, objetivo e ritmo. <strong class="branco">Apenas 15 vagas.</strong>
+          </div>
+          <div class="card-vagas-counter">
+            <div class="vagas-dot"></div>
+            <span>Turma restrita: <strong>apenas 15 mentorados</strong> para garantir atenção individual</span>
+          </div>
+          <div class="card-preco-ancora">
+            💰 Investimento: <span class="preco-normal">R$&nbsp;5.000</span>
+            &nbsp;→&nbsp; <strong>oferta especial + bônus exclusivo para membros do grupo</strong>
+          </div>
+          <div class="card-bonus">
+            🎁 <strong>Bônus exclusivo:</strong> quem entrar na mentoria recebe um bônus especial desenhado para você recuperar o investimento rapidinho — a Lorena pensou em cada detalhe.
+          </div>
+          <div class="card-mentoria-metodo">
+            <span class="pill-i1">i+1</span>
+            Método exclusivo da Profa. Lorena aplicado individualmente
+          </div>
+          <div class="card-mentoria-date">
+            📅 <strong>Lançamento: 10 de junho de 2026</strong><br/>
+            Membros do grupo recebem a oferta especial antes de todo mundo.
+          </div>
+          <a class="btn-card btn-roxo" href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" rel="noopener">
+            💜 Quero garantir minha vaga na mentoria →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="scroll-anchor"></div>
+  </div>
+
+  <!-- INPUT BAR (aparece após o fluxo roteirizado) -->
+  <div class="input-bar" id="input-bar">
+    <textarea class="input-field" id="input-field"
+      placeholder="Manda sua dúvida pra mim 💬"
+      rows="1"
+      onkeydown="handleKey(event)"
+      oninput="autoResize(this)"></textarea>
+    <button class="btn-send" id="btn-send" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+
+  <!-- RODAPÉ -->
+  <div class="chat-footer">
+    <div class="chat-footer-text">
+      🔒 Conversa segura · <a href="https://nerdsdalibras.github.io">Nerds da Libras</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════
+  //  CONFIGURAÇÃO
+  //  Após criar o Cloudflare Worker, cole a URL abaixo
+  // ═══════════════════════════════════════════════
+  const WORKER_URL = 'https://SEU_WORKER.workers.dev'; // ← cole aqui
+
+  // ═══════════════════════════════════════════════
+  //  SYSTEM PROMPT DA LORENA
+  // ═══════════════════════════════════════════════
+  const SYSTEM_BASE = `Você é a Profa. Lorena, fundadora da Nerds da Libras, com 15 anos de experiência ensinando Libras. Está conversando com um lead pelo site — ele chegou pedindo uma avaliação gratuita.
+
+IDENTIDADE:
+- Nome: Lorena
+- Escola: Nerds da Libras
+- Método exclusivo: i+1 (raciocínio visual, não decoreba de sinais)
+- Experiência: 15 anos ensinando Libras
+
+REGRAS DE COMUNICAÇÃO:
+- Mensagens CURTAS: máximo 3-4 frases por resposta
+- Tom: amiga especialista — calorosa, próxima, verdadeira
+- Sem bullet points ou listas formatadas
+- Use emojis com moderação (1-2 por mensagem)
+- Sempre termine com uma pergunta ou chamada para ação clara
+- NUNCA invente informações, preços ou garantias não listadas abaixo
+
+OBJEÇÕES — como responder com empatia:
+- "Já tentei e não aprendi" → o problema foi o método, não você
+- "Não tenho tempo" → os módulos são curtos, feitos para quem trabalha
+- "Será que consigo?" → todo mundo começa sem saber nada, o i+1 parte do que você já tem
+- "É caro?" → o valor aparece dia 20/05 no grupo, não foi divulgado ainda
+- "Tenho vergonha de sinalizar" → super normal, a confiança vem com a prática`;
+
+  const SYSTEM_CURSO = SYSTEM_BASE + `
+
+CONTEXTO: o lead escolheu o caminho do CURSO.
+
+PRODUTO — Do Zero a Libras:
+- Para quem: iniciantes E intermediários (quem quer estruturar o que já sabe)
+- Diferencial: aprende pelo raciocínio visual, não lista de sinais
+- Abertura: 20 de maio de 2026
+- Vagas: apenas 50 por turma (para garantir atenção individual)
+- Carrinho: fica aberto APENAS 24 horas e fecha sem exceção — não há reabertura
+- Valor normal: R$1.500 — o valor real da oferta é divulgado SOMENTE no dia 20/05 dentro do grupo
+- AÇÃO: convidar para o grupo → https://wa.me/message/43QHURBUBKEMP1
+
+GATILHOS A USAR:
+- Ancoragem: valor normal R$1.500, oferta exclusiva para membros do grupo
+- Escassez real: 50 vagas, só 24h de carrinho (não 48h — são apenas 24 horas!)
+- Urgência real: abertura dia 20/05, quem não está no grupo não recebe o link
+- Autoridade: 15 anos, método exclusivo, centenas de alunos
+- Redução de risco: método diferente de tudo que a pessoa já tentou
+- FOMO: quem não entrou no grupo antes não tem acesso à oferta
+
+Quando a pessoa estiver pronta, envie: "Entra no grupo agora 👉 https://wa.me/message/43QHURBUBKEMP1 — lá você recebe a oferta e o link de pagamento assim que abrir no dia 20. O carrinho só fica aberto 24h!"`;
+
+  const SYSTEM_MENTORIA = SYSTEM_BASE + `
+
+CONTEXTO: o lead escolheu o caminho da MENTORIA.
+
+PRODUTO — Destrava Libras (Mentoria Individual):
+- Para quem: quem já tem base e quer avançar (intérpretes, fluência, uso profissional)
+- Diferencial: 100% personalizado, método i+1 aplicado individualmente
+- Lançamento: 10 de junho de 2026
+- Vagas: APENAS 15 mentorados por turma — número restrito para garantir atenção real
+- Valor normal: R$5.000
+- Bônus exclusivo: quem entrar na mentoria recebe um bônus especial para recuperar o investimento rapidinho (não detalhe o bônus — gere curiosidade)
+- AÇÃO: convidar para o grupo → https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe
+
+GATILHOS A USAR:
+- Ancoragem: investimento de R$5.000 com bônus que ajuda a recuperar rapidinho
+- Escassez extrema: apenas 15 vagas no total — quando fechar, fecha
+- Urgência real: lançamento 10/06/2026, oferta especial só para membros do grupo
+- Autoridade: 15 anos, acompanhamento direto com a Lorena
+- Personalização: não é curso com roteiro fixo, é feito para o momento e objetivo exato da pessoa
+- Bônus: desperte curiosidade sobre o bônus, diga que foi pensado para a pessoa recuperar o investimento
+
+Quando a pessoa estiver pronta, envie: "Entra no grupo exclusivo da mentoria 👉 https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe — lá você recebe a oferta especial e descobre o bônus antes de todo mundo. São só 15 vagas!"`;
+
+  // ═══════════════════════════════════════════════
+  //  ESTADO GLOBAL
+  // ═══════════════════════════════════════════════
+  let caminhoEscolhido = null;   // 'curso' | 'mentoria'
+  let historico        = [];     // mensagens para a API
+  let aguardandoIA     = false;
+
+  // ═══════════════════════════════════════════════
+  //  ROTEIROS FIXOS
+  // ═══════════════════════════════════════════════
+  const ROTEIRO_INTRO = [
+    { delay: 1200, text: "Oi! 👋" },
+    { delay: 3200, text: "Que bom te ver por aqui. Você pediu a avaliação gratuita, né?\n\nSou a Lorena, fundadora da <strong>Nerds da Libras</strong> 🤟" },
+    { delay: 4000, text: "Tenho <strong>15 anos de experiência</strong> ensinando Libras e já ajudei centenas de pessoas a se comunicar com o mundo surdo — do absoluto zero até a fluência." },
+    { delay: 3500, text: "Antes de qualquer coisa, deixa eu te dar algo de valor... <em>sem te pedir nada em troca</em> 💙" },
+    { delay: 4200, text: "A maioria das pessoas que chegam até mim já tentou aprender Libras antes — e não evoluiu. Sabe por quê?\n\nPorque aprenderam <strong>sinais soltos</strong>, como se fosse vocabulário de inglês. Mas Libras não funciona assim." },
+    { delay: 3800, text: "O problema nunca foi você. Foi o método.\n\nE agora você está no lugar certo. 🎯" },
+    { delay: 2500, text: "Me conta uma coisa:" },
+    { delay: 0,    type: 'choices' },
+  ];
+
+  const ROTEIRO_CURSO = [
+    { delay: 1600, user: true, text: "Quero aprender Libras 🌱" },
+    { delay: 2800, text: "Que ótimo! Já consigo te ajudar com mais clareza 😊" },
+    { delay: 4200, text: "O <strong>Do Zero a Libras</strong> foi feito exatamente pra isso.\n\nNão importa se você está começando do zero ou se já sabe um pouco e quer estruturar — aqui você aprende o <em>raciocínio visual</em> da língua, não decoreba de sinais." },
+    { delay: 3800, text: "Muita gente me diz: \"já tentei e desisti\". E eu entendo. O método errado trava qualquer pessoa com boa vontade.\n\nNo Do Zero a Libras a gente trabalha por <strong>contexto, cenas visuais e situações reais</strong>. É diferente de tudo que você provavelmente já viu." },
+    { delay: 4500, text: "📅 <strong>Dia 20 de maio</strong> vou abrir uma nova turma. São apenas <strong>50 vagas</strong> — preciso desse número pra garantir atenção real a cada aluno.\n\nO valor e o link de pagamento só aparecem no dia 20, dentro do grupo. O carrinho fica aberto por apenas <strong>24 horas</strong>. Depois a turma fecha, sem exceção." },
+    { delay: 3200, text: "Para você não perder a oferta — e tirar qualquer dúvida antes de decidir — entra no nosso grupo 👇" },
+    { delay: 0,    type: 'card-curso' },
+  ];
+
+  const ROTEIRO_MENTORIA = [
+    { delay: 1600, user: true, text: "Já tenho uma base e quero ir além ⚡" },
+    { delay: 2800, text: "Que ótimo! Então você já tem uma fundação e quer avançar com profundidade 🚀" },
+    { delay: 4500, text: "A <strong>Mentoria Individual</strong> foi criada pro seu exato momento.\n\nA gente trabalha juntos no seu objetivo — seja fluência, interpretação ou uso profissional. É <em>100% personalizado</em> pra você." },
+    { delay: 3800, text: "É diferente de qualquer curso porque não tem roteiro fixo. A gente parte do que você já sabe, identifica o que trava e traça o caminho mais curto até onde você quer chegar." },
+    { delay: 4000, text: "📅 Nossa próxima turma de mentoria será lançada em <strong>10 de junho de 2026</strong>.\n\nSão <strong>apenas 15 vagas</strong> — esse número é intencional: é o máximo que consigo atender com atenção real. E vai ter um <em>bônus especial</em> para os mentorados recuperarem o investimento rapidinho 🎁" },
+    { delay: 3000, text: "Quem está no grupo recebe a oferta especial e descobre o bônus antes de todo mundo 👇" },
+    { delay: 0,    type: 'card-mentoria' },
+  ];
+
+  // ═══════════════════════════════════════════════
+  //  ENGINE DE CHAT
+  // ═══════════════════════════════════════════════
+  const chatBody   = document.getElementById('chat-body');
+  const typingWrap = document.getElementById('typing-wrap');
+  const anchor     = document.getElementById('scroll-anchor');
+
+  function hora() {
+    const d = new Date();
+    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+  }
+
+  function scrollDown() {
+    anchor.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  function addBubble(text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'bubble-wrap';
+    wrap.innerHTML = `
+      <div class="bubble-avatar">
+        <img src="fotos/IMG_4952.jpg" alt="Lorena"/>
+      </div>
+      <div class="bubble">
+        ${text.replace(/\n/g, '<br/>')}
+        <div class="bubble-time">${hora()}</div>
+      </div>`;
+    chatBody.insertBefore(wrap, typingWrap);
+    scrollDown();
+  }
+
+  function addUserBubble(text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'user-bubble-wrap';
+    wrap.innerHTML = `
+      <div class="user-bubble">
+        ${text}
+        <div class="user-bubble-time">${hora()} <span class="check-icon">✓✓</span></div>
+      </div>`;
+    chatBody.insertBefore(wrap, typingWrap);
+    scrollDown();
+  }
+
+  function showTyping() {
+    typingWrap.classList.add('show');
+    scrollDown();
+  }
+
+  function hideTyping() {
+    typingWrap.classList.remove('show');
+  }
+
+  function playSequence(roteiro, idx = 0) {
+    if (idx >= roteiro.length) return;
+    const item = roteiro[idx];
+
+    if (item.delay === 0) { handleAction(item); return; }
+
+    if (item.user) {
+      addUserBubble(item.text);
+      setTimeout(() => playSequence(roteiro, idx + 1), 600);
+      return;
+    }
+
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addBubble(item.text);
+      // adiciona ao histórico para contexto da IA
+      historico.push({ role: 'assistant', content: item.text.replace(/<[^>]+>/g, '') });
+      setTimeout(() => playSequence(roteiro, idx + 1), 350);
+    }, item.delay);
+  }
+
+  function handleAction(item) {
+    if (item.type === 'choices') {
+      document.getElementById('choices-wrap').classList.add('show');
+      scrollDown();
+    } else if (item.type === 'auto-curso') {
+      // Vindo do quiz via ?caminho=curso
+      setTimeout(() => escolher('curso'), 500);
+    } else if (item.type === 'auto-mentoria') {
+      // Vindo do quiz via ?caminho=mentoria
+      setTimeout(() => escolher('mentoria'), 500);
+    } else if (item.type === 'card-curso') {
+      document.getElementById('card-curso-wrap').classList.add('show');
+      scrollDown();
+      setTimeout(showInputBar, 800);
+    } else if (item.type === 'card-mentoria') {
+      document.getElementById('card-mentoria-wrap').classList.add('show');
+      scrollDown();
+      setTimeout(showInputBar, 800);
+    }
+  }
+
+  function showInputBar() {
+    const bar = document.getElementById('input-bar');
+    bar.classList.add('show');
+    // mensagem convidando para perguntar
+    setTimeout(() => {
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addBubble('Ficou alguma dúvida? Pode me perguntar aqui mesmo 😊');
+        historico.push({ role: 'assistant', content: 'Ficou alguma dúvida? Pode me perguntar aqui mesmo.' });
+        scrollDown();
+      }, 2000);
+    }, 600);
+  }
+
+  let escolheu = false;
+
+  function escolher(opcao) {
+    if (escolheu) return;
+    escolheu = true;
+    caminhoEscolhido = opcao;
+    document.getElementById('btn-curso').disabled    = true;
+    document.getElementById('btn-mentoria').disabled = true;
+    playSequence(opcao === 'curso' ? ROTEIRO_CURSO : ROTEIRO_MENTORIA);
+  }
+
+  // ═══════════════════════════════════════════════
+  //  IA — LORENA RESPONDE PERGUNTAS LIVRES
+  // ═══════════════════════════════════════════════
+  async function sendMessage() {
+    if (aguardandoIA) return;
+
+    const field = document.getElementById('input-field');
+    const texto = field.value.trim();
+    if (!texto) return;
+
+    // Mostra mensagem do usuário
+    addUserBubble(texto);
+    historico.push({ role: 'user', content: texto });
+    field.value = '';
+    field.style.height = 'auto';
+
+    aguardandoIA = true;
+    document.getElementById('btn-send').disabled = true;
+
+    // Delay humanizado antes de "digitar"
+    const thinkDelay = 1200 + Math.random() * 1000;
+    await sleep(thinkDelay);
+
+    showTyping();
+
+    try {
+      const systemPrompt = caminhoEscolhido === 'mentoria' ? SYSTEM_MENTORIA : SYSTEM_CURSO;
+
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model:      'claude-haiku-4-5-20251001',
+          max_tokens: 300,
+          system:     systemPrompt,
+          messages:   historico,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) throw new Error(data.error?.message || 'Erro na API');
+
+      const resposta = data.content[0].text;
+
+      // Delay extra proporcional ao tamanho da resposta (simula digitação)
+      const typeDelay = Math.min(1000 + resposta.length * 18, 4000);
+      await sleep(typeDelay);
+
+      hideTyping();
+      addBubble(resposta);
+      historico.push({ role: 'assistant', content: resposta });
+
+    } catch (err) {
+      hideTyping();
+      addBubble('Opa, tive uma instabilidade aqui 😅 Me chama no grupo que respondo com mais calma!');
+    }
+
+    aguardandoIA = false;
+    document.getElementById('btn-send').disabled = false;
+    document.getElementById('input-field').focus();
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  // ── INICIAR ──
+  window.addEventListener('DOMContentLoaded', () => {
+    const params  = new URLSearchParams(window.location.search);
+    const caminho = params.get('caminho'); // 'curso' | 'mentoria' (vindo do quiz)
+
+    if (caminho === 'curso' || caminho === 'mentoria') {
+      // Substitui o passo de escolha manual por auto-seleção
+      const roteiro = ROTEIRO_INTRO.map(item =>
+        item.type === 'choices' ? { delay: 0, type: 'auto-' + caminho } : item
+      );
+      playSequence(roteiro);
+    } else {
+      playSequence(ROTEIRO_INTRO);
+    }
+  });
+</script>
+
+</body>
+</html>
