@@ -812,6 +812,12 @@ Quando a pessoa estiver pronta, envie: "Entra no grupo exclusivo da mentoria �
     if (item.type === 'choices') {
       document.getElementById('choices-wrap').classList.add('show');
       scrollDown();
+    } else if (item.type === 'auto-curso') {
+      // Vindo do quiz via ?caminho=curso
+      setTimeout(() => escolher('curso'), 500);
+    } else if (item.type === 'auto-mentoria') {
+      // Vindo do quiz via ?caminho=mentoria
+      setTimeout(() => escolher('mentoria'), 500);
     } else if (item.type === 'card-curso') {
       document.getElementById('card-curso-wrap').classList.add('show');
       scrollDown();
@@ -928,7 +934,18 @@ Quando a pessoa estiver pronta, envie: "Entra no grupo exclusivo da mentoria �
 
   // ── INICIAR ──
   window.addEventListener('DOMContentLoaded', () => {
-    playSequence(ROTEIRO_INTRO);
+    const params  = new URLSearchParams(window.location.search);
+    const caminho = params.get('caminho'); // 'curso' | 'mentoria' (vindo do quiz)
+
+    if (caminho === 'curso' || caminho === 'mentoria') {
+      // Substitui o passo de escolha manual por auto-seleção
+      const roteiro = ROTEIRO_INTRO.map(item =>
+        item.type === 'choices' ? { delay: 0, type: 'auto-' + caminho } : item
+      );
+      playSequence(roteiro);
+    } else {
+      playSequence(ROTEIRO_INTRO);
+    }
   });
 </script>
 
