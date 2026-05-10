@@ -422,6 +422,44 @@
     /* ── SCROLL TO BOTTOM ── */
     #scroll-anchor { height: 1px; }
 
+    /* ── INPUT BAR ── */
+    .input-bar {
+      display: none;
+      padding: 8px 12px 14px;
+      background: var(--bg-lorena);
+      border-top: 1px solid rgba(255,255,255,.06);
+      align-items: flex-end; gap: 10px;
+      flex-shrink: 0;
+    }
+    .input-bar.show { display: flex; }
+
+    .input-field {
+      flex: 1; background: var(--bolha-in);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 22px; padding: 10px 16px;
+      color: var(--text-main); font-family: 'Inter', sans-serif;
+      font-size: .88rem; outline: none; resize: none;
+      min-height: 42px; max-height: 120px;
+      overflow-y: auto; line-height: 1.45;
+    }
+    .input-field::placeholder { color: rgba(233,237,239,.32); }
+    .input-field:focus { border-color: rgba(37,211,102,.35); }
+
+    .btn-send {
+      width: 42px; height: 42px; border-radius: 50%; border: none; flex-shrink: 0;
+      background: var(--verde); color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: transform .2s, box-shadow .2s;
+    }
+    .btn-send:hover { transform: scale(1.08); box-shadow: 0 4px 14px rgba(37,211,102,.45); }
+    .btn-send:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-send svg { width: 18px; height: 18px; fill: #fff; }
+
+    .ai-hint {
+      text-align: center; font-size: .68rem;
+      color: rgba(233,237,239,.28); padding: 4px 0 0;
+    }
+
     @media (min-width: 430px) {
       body { background: #060C10; }
       .phone {
@@ -560,6 +598,18 @@
     <div id="scroll-anchor"></div>
   </div>
 
+  <!-- INPUT BAR (aparece após o fluxo roteirizado) -->
+  <div class="input-bar" id="input-bar">
+    <textarea class="input-field" id="input-field"
+      placeholder="Manda sua dúvida pra mim 💬"
+      rows="1"
+      onkeydown="handleKey(event)"
+      oninput="autoResize(this)"></textarea>
+    <button class="btn-send" id="btn-send" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+
   <!-- RODAPÉ -->
   <div class="chat-footer">
     <div class="chat-footer-text">
@@ -571,44 +621,122 @@
 
 <script>
   // ═══════════════════════════════════════════════
-  //  ROTEIRO DE MENSAGENS
+  //  CONFIGURAÇÃO
+  //  Após criar o Cloudflare Worker, cole a URL abaixo
   // ═══════════════════════════════════════════════
+  const WORKER_URL = 'https://SEU_WORKER.workers.dev'; // ← cole aqui
 
+  // ═══════════════════════════════════════════════
+  //  SYSTEM PROMPT DA LORENA
+  // ═══════════════════════════════════════════════
+  const SYSTEM_BASE = `Você é a Profa. Lorena, fundadora da Nerds da Libras, com 15 anos de experiência ensinando Libras. Está conversando com um lead pelo site — ele chegou pedindo uma avaliação gratuita.
+
+IDENTIDADE:
+- Nome: Lorena
+- Escola: Nerds da Libras
+- Método exclusivo: i+1 (raciocínio visual, não decoreba de sinais)
+- Experiência: 15 anos ensinando Libras
+
+REGRAS DE COMUNICAÇÃO:
+- Mensagens CURTAS: máximo 3-4 frases por resposta
+- Tom: amiga especialista — calorosa, próxima, verdadeira
+- Sem bullet points ou listas formatadas
+- Use emojis com moderação (1-2 por mensagem)
+- Sempre termine com uma pergunta ou chamada para ação clara
+- NUNCA invente informações, preços ou garantias não listadas abaixo
+
+OBJEÇÕES — como responder com empatia:
+- "Já tentei e não aprendi" → o problema foi o método, não você
+- "Não tenho tempo" → os módulos são curtos, feitos para quem trabalha
+- "Será que consigo?" → todo mundo começa sem saber nada, o i+1 parte do que você já tem
+- "É caro?" → o valor aparece dia 20/05 no grupo, não foi divulgado ainda
+- "Tenho vergonha de sinalizar" → super normal, a confiança vem com a prática`;
+
+  const SYSTEM_CURSO = SYSTEM_BASE + `
+
+CONTEXTO: o lead escolheu o caminho do CURSO.
+
+PRODUTO — Do Zero a Libras:
+- Para quem: iniciantes E intermediários (quem quer estruturar o que já sabe)
+- Diferencial: aprende pelo raciocínio visual, não lista de sinais
+- Abertura: 20 de maio de 2026
+- Vagas: apenas 50 por turma (para garantir atenção individual)
+- Carrinho: fica aberto 48 horas e fecha sem exceção
+- Valor: divulgado somente no dia 20/05 dentro do grupo
+- AÇÃO: convidar para o grupo → https://wa.me/message/43QHURBUBKEMP1
+
+GATILHOS A USAR:
+- Reciprocidade: você já deu a avaliação gratuita, agora ajude a decidir
+- Escassez real: 50 vagas, só 48h de carrinho
+- Urgência real: abertura dia 20/05
+- Autoridade: 15 anos, método exclusivo, centenas de alunos
+- Redução de risco: método diferente de tudo que a pessoa já tentou
+
+Quando a pessoa estiver pronta, envie: "Entra no grupo agora 👉 https://wa.me/message/43QHURBUBKEMP1 — lá você recebe o link de pagamento assim que abrir no dia 20!"`;
+
+  const SYSTEM_MENTORIA = SYSTEM_BASE + `
+
+CONTEXTO: o lead escolheu o caminho da MENTORIA.
+
+PRODUTO — Destrava Libras (Mentoria Individual):
+- Para quem: quem já tem base e quer avançar (intérpretes, fluência, uso profissional)
+- Diferencial: 100% personalizado, método i+1 aplicado individualmente
+- Lançamento: 10 de junho de 2026
+- Vagas: muito limitadas pelo acompanhamento personalizado
+- AÇÃO: convidar para o grupo → https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe
+
+GATILHOS A USAR:
+- Escassez real: vagas muito limitadas
+- Urgência real: lançamento 10/06/2026
+- Autoridade: 15 anos, acompanhamento direto com a Lorena
+- Personalização: não é um curso com roteiro fixo, é feito para o momento e objetivo da pessoa
+
+Quando a pessoa estiver pronta, envie: "Entra no grupo exclusivo da mentoria 👉 https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe — vou postar lá todas as informações antes de todo mundo!"`;
+
+  // ═══════════════════════════════════════════════
+  //  ESTADO GLOBAL
+  // ═══════════════════════════════════════════════
+  let caminhoEscolhido = null;   // 'curso' | 'mentoria'
+  let historico        = [];     // mensagens para a API
+  let aguardandoIA     = false;
+
+  // ═══════════════════════════════════════════════
+  //  ROTEIROS FIXOS
+  // ═══════════════════════════════════════════════
   const ROTEIRO_INTRO = [
-    { delay: 1200,  text: "Oi! 👋" },
-    { delay: 3200,  text: "Que bom te ver por aqui. Você pediu a avaliação gratuita, né?\n\nSou a Lorena, fundadora da <strong>Nerds da Libras</strong> 🤟" },
-    { delay: 4000,  text: "Tenho <strong>15 anos de experiência</strong> ensinando Libras e já ajudei centenas de pessoas a se comunicar com o mundo surdo — do absoluto zero até a fluência." },
-    { delay: 3500,  text: "Antes de qualquer coisa, deixa eu te dar algo de valor... <em>sem te pedir nada em troca</em> 💙" },
-    { delay: 4200,  text: "A maioria das pessoas que chegam até mim já tentou aprender Libras antes — e não evoluiu. Sabe por quê?\n\nPorque aprenderam <strong>sinais soltos</strong>, como se fosse vocabulário de inglês. Mas Libras não funciona assim." },
-    { delay: 3800,  text: "O problema nunca foi você. Foi o método.\n\nE agora você está no lugar certo. 🎯" },
-    { delay: 2500,  text: "Me conta uma coisa:" },
-    { delay: 0,     type: 'choices' },
+    { delay: 1200, text: "Oi! 👋" },
+    { delay: 3200, text: "Que bom te ver por aqui. Você pediu a avaliação gratuita, né?\n\nSou a Lorena, fundadora da <strong>Nerds da Libras</strong> 🤟" },
+    { delay: 4000, text: "Tenho <strong>15 anos de experiência</strong> ensinando Libras e já ajudei centenas de pessoas a se comunicar com o mundo surdo — do absoluto zero até a fluência." },
+    { delay: 3500, text: "Antes de qualquer coisa, deixa eu te dar algo de valor... <em>sem te pedir nada em troca</em> 💙" },
+    { delay: 4200, text: "A maioria das pessoas que chegam até mim já tentou aprender Libras antes — e não evoluiu. Sabe por quê?\n\nPorque aprenderam <strong>sinais soltos</strong>, como se fosse vocabulário de inglês. Mas Libras não funciona assim." },
+    { delay: 3800, text: "O problema nunca foi você. Foi o método.\n\nE agora você está no lugar certo. 🎯" },
+    { delay: 2500, text: "Me conta uma coisa:" },
+    { delay: 0,    type: 'choices' },
   ];
 
   const ROTEIRO_CURSO = [
-    { delay: 1600,  user: true, text: "Quero aprender Libras 🌱" },
-    { delay: 2800,  text: "Que ótimo! Já consigo te ajudar com mais clareza 😊" },
-    { delay: 4200,  text: "O <strong>Do Zero a Libras</strong> foi feito exatamente pra isso.\n\nNão importa se você está começando do zero ou se já sabe um pouco mas quer estruturar de verdade — aqui você aprende o <em>raciocínio visual</em> da língua, não decoreba de sinais." },
-    { delay: 3800,  text: "Muita gente me diz: \"já tentei aprender antes e desisti\". E eu entendo. O método errado trava qualquer pessoa com boa vontade.\n\nNo Do Zero a Libras a gente trabalha por <strong>contexto, cenas visuais e situações reais</strong>. É diferente de tudo que você provavelmente já viu." },
-    { delay: 4500,  text: "Aqui vai uma novidade importante:\n\n📅 <strong>Dia 20 de maio</strong> vou abrir uma nova turma especial. São apenas <strong>50 vagas</strong> — preciso desse número pra garantir atenção real a cada aluno.\n\nO valor e o link de pagamento só aparecem no dia 20. O carrinho fica aberto por <strong>48 horas</strong>, depois a turma encerra. Não tem como entrar depois." },
-    { delay: 3200,  text: "Para você não perder — e ainda tirar qualquer dúvida comigo antes de decidir — entra no nosso grupo de ofertas 👇" },
-    { delay: 0,     type: 'card-curso' },
+    { delay: 1600, user: true, text: "Quero aprender Libras 🌱" },
+    { delay: 2800, text: "Que ótimo! Já consigo te ajudar com mais clareza 😊" },
+    { delay: 4200, text: "O <strong>Do Zero a Libras</strong> foi feito exatamente pra isso.\n\nNão importa se você está começando do zero ou se já sabe um pouco e quer estruturar — aqui você aprende o <em>raciocínio visual</em> da língua, não decoreba de sinais." },
+    { delay: 3800, text: "Muita gente me diz: \"já tentei e desisti\". E eu entendo. O método errado trava qualquer pessoa com boa vontade.\n\nNo Do Zero a Libras a gente trabalha por <strong>contexto, cenas visuais e situações reais</strong>. É diferente de tudo que você provavelmente já viu." },
+    { delay: 4500, text: "📅 <strong>Dia 20 de maio</strong> vou abrir uma nova turma. São apenas <strong>50 vagas</strong> — preciso desse número pra garantir atenção real a cada aluno.\n\nO valor e o link de pagamento só aparecem no dia 20. O carrinho fica aberto por <strong>48 horas</strong>. Depois a turma fecha, sem exceção." },
+    { delay: 3200, text: "Para você não perder — e tirar qualquer dúvida antes de decidir — entra no nosso grupo de ofertas 👇" },
+    { delay: 0,    type: 'card-curso' },
   ];
 
   const ROTEIRO_MENTORIA = [
-    { delay: 1600,  user: true, text: "Já tenho uma base e quero ir além ⚡" },
-    { delay: 2800,  text: "Que ótimo! Então você já tem uma fundação e quer avançar com profundidade 🚀" },
-    { delay: 4500,  text: "A <strong>Mentoria Individual</strong> foi criada pro seu exato momento.\n\nA gente trabalha juntos no seu objetivo específico — seja fluência no dia a dia, interpretação, uso profissional ou até preparação para provas. É <em>100% personalizado</em> pra você." },
-    { delay: 3800,  text: "É diferente de qualquer curso online porque não tem roteiro fixo. A gente parte do que você já sabe, identifica o que está travando e traça o caminho mais curto até onde você quer chegar." },
-    { delay: 4000,  text: "📅 Nossa próxima turma de mentoria será lançada em <strong>10 de junho de 2026</strong>.\n\nAs vagas são muito limitadas por causa do acompanhamento personalizado. Quem está no grupo recebe as condições especiais de lançamento antes de todo mundo." },
-    { delay: 3000,  text: "Entre no grupo exclusivo da mentoria 👇 Vou postar lá a data exata, as condições e tudo que você precisa saber." },
-    { delay: 0,     type: 'card-mentoria' },
+    { delay: 1600, user: true, text: "Já tenho uma base e quero ir além ⚡" },
+    { delay: 2800, text: "Que ótimo! Então você já tem uma fundação e quer avançar com profundidade 🚀" },
+    { delay: 4500, text: "A <strong>Mentoria Individual</strong> foi criada pro seu exato momento.\n\nA gente trabalha juntos no seu objetivo — seja fluência, interpretação ou uso profissional. É <em>100% personalizado</em> pra você." },
+    { delay: 3800, text: "É diferente de qualquer curso porque não tem roteiro fixo. A gente parte do que você já sabe, identifica o que trava e traça o caminho mais curto até onde você quer chegar." },
+    { delay: 4000, text: "📅 Nossa próxima turma de mentoria será lançada em <strong>10 de junho de 2026</strong>.\n\nAs vagas são muito limitadas pelo acompanhamento personalizado. Quem está no grupo recebe as condições especiais antes de todo mundo." },
+    { delay: 3000, text: "Entra no grupo exclusivo da mentoria 👇 Vou postar lá a data exata e tudo que você precisa saber." },
+    { delay: 0,    type: 'card-mentoria' },
   ];
 
   // ═══════════════════════════════════════════════
-  //  ENGINE
+  //  ENGINE DE CHAT
   // ═══════════════════════════════════════════════
-
   const chatBody   = document.getElementById('chat-body');
   const typingWrap = document.getElementById('typing-wrap');
   const anchor     = document.getElementById('scroll-anchor');
@@ -622,24 +750,19 @@
     anchor.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }
 
-  function addBubble(text, showAvatar = true) {
+  function addBubble(text) {
     const wrap = document.createElement('div');
     wrap.className = 'bubble-wrap';
-
-    const avatarDiv = document.createElement('div');
-    avatarDiv.className = 'bubble-avatar' + (showAvatar ? '' : ' hidden');
-    avatarDiv.innerHTML = '<img src="fotos/IMG_4952.jpg" alt="Lorena"/>';
-
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.innerHTML = text.replace(/\n/g, '<br/>') +
-      `<div class="bubble-time">${hora()}</div>`;
-
-    wrap.appendChild(avatarDiv);
-    wrap.appendChild(bubble);
+    wrap.innerHTML = `
+      <div class="bubble-avatar">
+        <img src="fotos/IMG_4952.jpg" alt="Lorena"/>
+      </div>
+      <div class="bubble">
+        ${text.replace(/\n/g, '<br/>')}
+        <div class="bubble-time">${hora()}</div>
+      </div>`;
     chatBody.insertBefore(wrap, typingWrap);
     scrollDown();
-    return wrap;
   }
 
   function addUserBubble(text) {
@@ -648,41 +771,39 @@
     wrap.innerHTML = `
       <div class="user-bubble">
         ${text}
-        <div class="user-bubble-time">
-          ${hora()} <span class="check-icon">✓✓</span>
-        </div>
+        <div class="user-bubble-time">${hora()} <span class="check-icon">✓✓</span></div>
       </div>`;
     chatBody.insertBefore(wrap, typingWrap);
     scrollDown();
   }
 
-  let lastHadAvatar = false;
+  function showTyping() {
+    typingWrap.classList.add('show');
+    scrollDown();
+  }
+
+  function hideTyping() {
+    typingWrap.classList.remove('show');
+  }
 
   function playSequence(roteiro, idx = 0) {
     if (idx >= roteiro.length) return;
-
     const item = roteiro[idx];
 
-    // Ação imediata (sem digitando)
-    if (item.delay === 0) {
-      handleAction(item);
-      return;
-    }
+    if (item.delay === 0) { handleAction(item); return; }
 
-    // Mensagem do usuário — sem digitando
     if (item.user) {
       addUserBubble(item.text);
       setTimeout(() => playSequence(roteiro, idx + 1), 600);
       return;
     }
 
-    // Mensagem da Lorena — mostra digitando primeiro
-    typingWrap.classList.add('show');
-    scrollDown();
-
+    showTyping();
     setTimeout(() => {
-      typingWrap.classList.remove('show');
-      addBubble(item.text, true);
+      hideTyping();
+      addBubble(item.text);
+      // adiciona ao histórico para contexto da IA
+      historico.push({ role: 'assistant', content: item.text.replace(/<[^>]+>/g, '') });
       setTimeout(() => playSequence(roteiro, idx + 1), 350);
     }, item.delay);
   }
@@ -694,10 +815,27 @@
     } else if (item.type === 'card-curso') {
       document.getElementById('card-curso-wrap').classList.add('show');
       scrollDown();
+      setTimeout(showInputBar, 800);
     } else if (item.type === 'card-mentoria') {
       document.getElementById('card-mentoria-wrap').classList.add('show');
       scrollDown();
+      setTimeout(showInputBar, 800);
     }
+  }
+
+  function showInputBar() {
+    const bar = document.getElementById('input-bar');
+    bar.classList.add('show');
+    // mensagem convidando para perguntar
+    setTimeout(() => {
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addBubble('Ficou alguma dúvida? Pode me perguntar aqui mesmo 😊');
+        historico.push({ role: 'assistant', content: 'Ficou alguma dúvida? Pode me perguntar aqui mesmo.' });
+        scrollDown();
+      }, 2000);
+    }, 600);
   }
 
   let escolheu = false;
@@ -705,16 +843,87 @@
   function escolher(opcao) {
     if (escolheu) return;
     escolheu = true;
-
-    // Desabilita botões
-    document.getElementById('btn-curso').disabled = true;
+    caminhoEscolhido = opcao;
+    document.getElementById('btn-curso').disabled    = true;
     document.getElementById('btn-mentoria').disabled = true;
+    playSequence(opcao === 'curso' ? ROTEIRO_CURSO : ROTEIRO_MENTORIA);
+  }
 
-    if (opcao === 'curso') {
-      playSequence(ROTEIRO_CURSO);
-    } else {
-      playSequence(ROTEIRO_MENTORIA);
+  // ═══════════════════════════════════════════════
+  //  IA — LORENA RESPONDE PERGUNTAS LIVRES
+  // ═══════════════════════════════════════════════
+  async function sendMessage() {
+    if (aguardandoIA) return;
+
+    const field = document.getElementById('input-field');
+    const texto = field.value.trim();
+    if (!texto) return;
+
+    // Mostra mensagem do usuário
+    addUserBubble(texto);
+    historico.push({ role: 'user', content: texto });
+    field.value = '';
+    field.style.height = 'auto';
+
+    aguardandoIA = true;
+    document.getElementById('btn-send').disabled = true;
+
+    // Delay humanizado antes de "digitar"
+    const thinkDelay = 1200 + Math.random() * 1000;
+    await sleep(thinkDelay);
+
+    showTyping();
+
+    try {
+      const systemPrompt = caminhoEscolhido === 'mentoria' ? SYSTEM_MENTORIA : SYSTEM_CURSO;
+
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model:      'claude-haiku-4-5-20251001',
+          max_tokens: 300,
+          system:     systemPrompt,
+          messages:   historico,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) throw new Error(data.error?.message || 'Erro na API');
+
+      const resposta = data.content[0].text;
+
+      // Delay extra proporcional ao tamanho da resposta (simula digitação)
+      const typeDelay = Math.min(1000 + resposta.length * 18, 4000);
+      await sleep(typeDelay);
+
+      hideTyping();
+      addBubble(resposta);
+      historico.push({ role: 'assistant', content: resposta });
+
+    } catch (err) {
+      hideTyping();
+      addBubble('Opa, tive uma instabilidade aqui 😅 Me chama no grupo que respondo com mais calma!');
     }
+
+    aguardandoIA = false;
+    document.getElementById('btn-send').disabled = false;
+    document.getElementById('input-field').focus();
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
   }
 
   // ── INICIAR ──
