@@ -1,14 +1,20 @@
 # Netlify Redirects — Nerds da Libras
-# Formato: /link-curto   https://destino-externo   302
+# Formato: /link-curto   destino   302
 
-# Cursos
-/zero-a-libras        https://SEU-LINK-HOTMART-AQUI     302
-/mentoria             https://SEU-LINK-MENTORIA-AQUI    302
+# ── FUNIL DE VENDAS ──
+/quiz                 /quiz-libras.html                                          302
+/avaliacao            /avaliacao.html                                            302
+/curso                /avaliacao.html?caminho=curso                              302
+/mentoria-ia          /avaliacao.html?caminho=mentoria                           302
 
-# Redes Sociais
+# ── GRUPOS WHATSAPP ──
+/grupo-curso          https://wa.me/message/43QHURBUBKEMP1                       302
+/grupo-mentoria       https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe          302
+
+# ── REDES SOCIAIS ──
 /youtube              https://www.youtube.com/@nerdsdalibras?sub_confirmation=1  302
-/tiktok               https://www.tiktok.com/@nerds.da.libras  302
-/telegram             https://t.me/SEU-CANAL-AQUI            302
+/tiktok               https://www.tiktok.com/@nerds.da.libras                   302
 
-# App
-/app                  https://play.google.com/store/apps/details?id=SEU-APP  302
+# ── PRODUTOS (preencher quando tiver os links) ──
+/zero-a-libras        https://SEU-LINK-HOTMART-AQUI                             302
+/mentoria             https://SEU-LINK-MENTORIA-AQUI                            302
