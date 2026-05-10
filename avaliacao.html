@@ -408,6 +408,45 @@
     }
     .card-mentoria-date strong { color: #C4B5FD; }
 
+    /* ── ANCORAGEM DE PREÇO ── */
+    .card-preco-ancora {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: .82rem; color: rgba(255,255,255,.75); line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .card-preco-ancora .preco-normal {
+      text-decoration: line-through; color: rgba(255,255,255,.4);
+      font-weight: 600;
+    }
+    .card-preco-ancora strong { color: #FFD700; font-weight: 800; }
+
+    /* ── VAGAS COUNTER ── */
+    .card-vagas-counter {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: .82rem; color: rgba(255,180,180,.9); line-height: 1.4;
+      margin-bottom: 14px; font-weight: 600;
+    }
+    .vagas-dot {
+      width: 9px; height: 9px; border-radius: 50%; background: #EF4444;
+      flex-shrink: 0;
+      box-shadow: 0 0 7px rgba(239,68,68,.7);
+      animation: pulseDot 1.4s ease-in-out infinite;
+    }
+    @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.6} }
+    .card-vagas-counter strong { color: #FCA5A5; }
+
+    /* ── BÔNUS MENTORIA ── */
+    .card-bonus {
+      background: rgba(251,191,36,.07); border: 1px solid rgba(251,191,36,.22);
+      border-radius: 10px; padding: 12px 14px;
+      font-size: .82rem; color: rgba(255,230,150,.9); line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .card-bonus strong { color: #FCD34D; font-weight: 800; }
+
     /* ── RODAPÉ ── */
     .chat-footer {
       padding: 12px 16px 20px;
@@ -547,17 +586,21 @@
             Do <strong>absoluto zero</strong> à comunicação com surdos em 30 dias.
             <span class="green">Sem decorar sinais.</span>
           </div>
+          <div class="card-preco-ancora">
+            💰 Valor normal: <span class="preco-normal">R$&nbsp;1.500</span>
+            &nbsp;→&nbsp; <strong>oferta exclusiva para membros do grupo no dia 20/05</strong>
+          </div>
           <div class="card-info-row">
             <div class="card-info-pill"><span>👥</span> Turma de 50 pessoas</div>
-            <div class="card-info-pill"><span>🕐</span> 48h de carrinho</div>
+            <div class="card-info-pill"><span>⚡</span> Apenas 24h de carrinho</div>
             <div class="card-info-pill"><span>📅</span> Abertura: 20/05</div>
           </div>
           <div class="card-urgencia">
-            ⏰ <strong>Atenção:</strong> o valor e o link de pagamento só aparecem dia 20 de maio.
-            O carrinho fecha em <strong>48 horas</strong> — depois disso a turma encerra.
+            ⏰ <strong>Atenção:</strong> o valor e o link de pagamento só aparecem dia 20 de maio, dentro do grupo.
+            O carrinho fica aberto por apenas <strong>24 horas</strong> — depois encerra sem exceção.
           </div>
           <a class="btn-card btn-verde" href="https://wa.me/message/43QHURBUBKEMP1" target="_blank" rel="noopener">
-            <span>💬</span> Entrar no grupo de ofertas
+            <span>💬</span> Entrar no grupo e garantir minha oferta
           </a>
         </div>
       </div>
@@ -577,19 +620,30 @@
           <div class="card-mentoria-tipo">🎯 Mentoria Profissional</div>
           <div class="card-mentoria-titulo">Destrava Libras</div>
           <div class="card-mentoria-desc">
-            Para intérpretes que querem <strong>avançar de verdade</strong>.
-            Mentoria direta com a Profa. Lorena — <strong class="branco">vagas limitadas.</strong>
+            Acompanhamento direto com a Profa. Lorena — <strong>100% personalizado</strong>
+            para o seu nível, objetivo e ritmo. <strong class="branco">Apenas 15 vagas.</strong>
+          </div>
+          <div class="card-vagas-counter">
+            <div class="vagas-dot"></div>
+            <span>Turma restrita: <strong>apenas 15 mentorados</strong> para garantir atenção individual</span>
+          </div>
+          <div class="card-preco-ancora">
+            💰 Investimento: <span class="preco-normal">R$&nbsp;5.000</span>
+            &nbsp;→&nbsp; <strong>oferta especial + bônus exclusivo para membros do grupo</strong>
+          </div>
+          <div class="card-bonus">
+            🎁 <strong>Bônus exclusivo:</strong> quem entrar na mentoria recebe um bônus especial desenhado para você recuperar o investimento rapidinho — a Lorena pensou em cada detalhe.
           </div>
           <div class="card-mentoria-metodo">
             <span class="pill-i1">i+1</span>
-            Método exclusivo da Profa. Lorena aplicado à Mentoria
+            Método exclusivo da Profa. Lorena aplicado individualmente
           </div>
           <div class="card-mentoria-date">
             📅 <strong>Lançamento: 10 de junho de 2026</strong><br/>
-            Entre no grupo para receber as condições especiais antes de todo mundo.
+            Membros do grupo recebem a oferta especial antes de todo mundo.
           </div>
           <a class="btn-card btn-roxo" href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" rel="noopener">
-            Lorena, quero saber como funciona →
+            💜 Quero garantir minha vaga na mentoria →
           </a>
         </div>
       </div>
@@ -661,18 +715,19 @@ PRODUTO — Do Zero a Libras:
 - Diferencial: aprende pelo raciocínio visual, não lista de sinais
 - Abertura: 20 de maio de 2026
 - Vagas: apenas 50 por turma (para garantir atenção individual)
-- Carrinho: fica aberto 48 horas e fecha sem exceção
-- Valor: divulgado somente no dia 20/05 dentro do grupo
+- Carrinho: fica aberto APENAS 24 horas e fecha sem exceção — não há reabertura
+- Valor normal: R$1.500 — o valor real da oferta é divulgado SOMENTE no dia 20/05 dentro do grupo
 - AÇÃO: convidar para o grupo → https://wa.me/message/43QHURBUBKEMP1
 
 GATILHOS A USAR:
-- Reciprocidade: você já deu a avaliação gratuita, agora ajude a decidir
-- Escassez real: 50 vagas, só 48h de carrinho
-- Urgência real: abertura dia 20/05
+- Ancoragem: valor normal R$1.500, oferta exclusiva para membros do grupo
+- Escassez real: 50 vagas, só 24h de carrinho (não 48h — são apenas 24 horas!)
+- Urgência real: abertura dia 20/05, quem não está no grupo não recebe o link
 - Autoridade: 15 anos, método exclusivo, centenas de alunos
 - Redução de risco: método diferente de tudo que a pessoa já tentou
+- FOMO: quem não entrou no grupo antes não tem acesso à oferta
 
-Quando a pessoa estiver pronta, envie: "Entra no grupo agora 👉 https://wa.me/message/43QHURBUBKEMP1 — lá você recebe o link de pagamento assim que abrir no dia 20!"`;
+Quando a pessoa estiver pronta, envie: "Entra no grupo agora 👉 https://wa.me/message/43QHURBUBKEMP1 — lá você recebe a oferta e o link de pagamento assim que abrir no dia 20. O carrinho só fica aberto 24h!"`;
 
   const SYSTEM_MENTORIA = SYSTEM_BASE + `
 
@@ -682,16 +737,20 @@ PRODUTO — Destrava Libras (Mentoria Individual):
 - Para quem: quem já tem base e quer avançar (intérpretes, fluência, uso profissional)
 - Diferencial: 100% personalizado, método i+1 aplicado individualmente
 - Lançamento: 10 de junho de 2026
-- Vagas: muito limitadas pelo acompanhamento personalizado
+- Vagas: APENAS 15 mentorados por turma — número restrito para garantir atenção real
+- Valor normal: R$5.000
+- Bônus exclusivo: quem entrar na mentoria recebe um bônus especial para recuperar o investimento rapidinho (não detalhe o bônus — gere curiosidade)
 - AÇÃO: convidar para o grupo → https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe
 
 GATILHOS A USAR:
-- Escassez real: vagas muito limitadas
-- Urgência real: lançamento 10/06/2026
+- Ancoragem: investimento de R$5.000 com bônus que ajuda a recuperar rapidinho
+- Escassez extrema: apenas 15 vagas no total — quando fechar, fecha
+- Urgência real: lançamento 10/06/2026, oferta especial só para membros do grupo
 - Autoridade: 15 anos, acompanhamento direto com a Lorena
-- Personalização: não é um curso com roteiro fixo, é feito para o momento e objetivo da pessoa
+- Personalização: não é curso com roteiro fixo, é feito para o momento e objetivo exato da pessoa
+- Bônus: desperte curiosidade sobre o bônus, diga que foi pensado para a pessoa recuperar o investimento
 
-Quando a pessoa estiver pronta, envie: "Entra no grupo exclusivo da mentoria 👉 https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe — vou postar lá todas as informações antes de todo mundo!"`;
+Quando a pessoa estiver pronta, envie: "Entra no grupo exclusivo da mentoria 👉 https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe — lá você recebe a oferta especial e descobre o bônus antes de todo mundo. São só 15 vagas!"`;
 
   // ═══════════════════════════════════════════════
   //  ESTADO GLOBAL
@@ -719,8 +778,8 @@ Quando a pessoa estiver pronta, envie: "Entra no grupo exclusivo da mentoria �
     { delay: 2800, text: "Que ótimo! Já consigo te ajudar com mais clareza 😊" },
     { delay: 4200, text: "O <strong>Do Zero a Libras</strong> foi feito exatamente pra isso.\n\nNão importa se você está começando do zero ou se já sabe um pouco e quer estruturar — aqui você aprende o <em>raciocínio visual</em> da língua, não decoreba de sinais." },
     { delay: 3800, text: "Muita gente me diz: \"já tentei e desisti\". E eu entendo. O método errado trava qualquer pessoa com boa vontade.\n\nNo Do Zero a Libras a gente trabalha por <strong>contexto, cenas visuais e situações reais</strong>. É diferente de tudo que você provavelmente já viu." },
-    { delay: 4500, text: "📅 <strong>Dia 20 de maio</strong> vou abrir uma nova turma. São apenas <strong>50 vagas</strong> — preciso desse número pra garantir atenção real a cada aluno.\n\nO valor e o link de pagamento só aparecem no dia 20. O carrinho fica aberto por <strong>48 horas</strong>. Depois a turma fecha, sem exceção." },
-    { delay: 3200, text: "Para você não perder — e tirar qualquer dúvida antes de decidir — entra no nosso grupo de ofertas 👇" },
+    { delay: 4500, text: "📅 <strong>Dia 20 de maio</strong> vou abrir uma nova turma. São apenas <strong>50 vagas</strong> — preciso desse número pra garantir atenção real a cada aluno.\n\nO valor e o link de pagamento só aparecem no dia 20, dentro do grupo. O carrinho fica aberto por apenas <strong>24 horas</strong>. Depois a turma fecha, sem exceção." },
+    { delay: 3200, text: "Para você não perder a oferta — e tirar qualquer dúvida antes de decidir — entra no nosso grupo 👇" },
     { delay: 0,    type: 'card-curso' },
   ];
 
@@ -729,8 +788,8 @@ Quando a pessoa estiver pronta, envie: "Entra no grupo exclusivo da mentoria �
     { delay: 2800, text: "Que ótimo! Então você já tem uma fundação e quer avançar com profundidade 🚀" },
     { delay: 4500, text: "A <strong>Mentoria Individual</strong> foi criada pro seu exato momento.\n\nA gente trabalha juntos no seu objetivo — seja fluência, interpretação ou uso profissional. É <em>100% personalizado</em> pra você." },
     { delay: 3800, text: "É diferente de qualquer curso porque não tem roteiro fixo. A gente parte do que você já sabe, identifica o que trava e traça o caminho mais curto até onde você quer chegar." },
-    { delay: 4000, text: "📅 Nossa próxima turma de mentoria será lançada em <strong>10 de junho de 2026</strong>.\n\nAs vagas são muito limitadas pelo acompanhamento personalizado. Quem está no grupo recebe as condições especiais antes de todo mundo." },
-    { delay: 3000, text: "Entra no grupo exclusivo da mentoria 👇 Vou postar lá a data exata e tudo que você precisa saber." },
+    { delay: 4000, text: "📅 Nossa próxima turma de mentoria será lançada em <strong>10 de junho de 2026</strong>.\n\nSão <strong>apenas 15 vagas</strong> — esse número é intencional: é o máximo que consigo atender com atenção real. E vai ter um <em>bônus especial</em> para os mentorados recuperarem o investimento rapidinho 🎁" },
+    { delay: 3000, text: "Quem está no grupo recebe a oferta especial e descobre o bônus antes de todo mundo 👇" },
     { delay: 0,    type: 'card-mentoria' },
   ];
 
