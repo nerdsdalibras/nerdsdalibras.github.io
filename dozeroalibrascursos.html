@@ -214,15 +214,6 @@
       max-width: 600px; margin-bottom: 36px;
     }
 
-    .video-wrap {
-      max-width: 760px; margin: 0 auto 44px;
-      border-radius: 16px; overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.6);
-      box-shadow: 0 12px 48px rgba(139,26,94,.18), 0 2px 8px rgba(255,255,255,0.4) inset;
-      aspect-ratio: 16/9;
-    }
-    .video-wrap iframe { width: 100%; height: 100%; display: block; border: none; }
-
     /* Bullets */
     .bullets-list {
       display: flex; flex-direction: column; gap: 12px;
@@ -513,6 +504,180 @@
     }
     .cupom-micro strong { color: var(--cinza-esc); }
 
+    /* ══════════════════════════════════
+       SEÇÃO PÚBLICOS — 3 CARDS
+    ══════════════════════════════════ */
+    .sec-publicos {
+      background: transparent;
+      padding: 64px 0 48px;
+    }
+    .publicos-intro {
+      text-align: center;
+      margin-bottom: 44px;
+    }
+    .publicos-intro .sec-title {
+      margin-bottom: 10px;
+    }
+    .publicos-intro .sec-sub {
+      margin: 0 auto;
+    }
+
+    .publicos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .pub-card {
+      background: #FFFFFF;
+      border-radius: 18px;
+      border: 1px solid rgba(15,110,86,.14);
+      box-shadow: 0 4px 18px rgba(0,0,0,.08);
+      padding: 0 0 24px;
+      display: flex;
+      flex-direction: column;
+      transition: transform .22s ease, box-shadow .22s ease;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .pub-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 36px rgba(0,0,0,.14);
+    }
+
+    .pub-card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      border-radius: 18px 18px 0 0;
+      margin-bottom: 22px;
+    }
+
+    .pub-card-content {
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .pub-icon {
+      font-size: 2rem;
+      margin-bottom: 14px;
+      line-height: 1;
+    }
+
+    .pub-tag {
+      display: inline-block;
+      background: #E6F5F1;
+      color: #0F6E56;
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+      width: fit-content;
+    }
+
+    .pub-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #111111;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+
+    .pub-body {
+      font-size: .83rem;
+      color: #555555;
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 24px;
+    }
+
+    .pub-btn {
+      display: block;
+      width: 100%;
+      background: #0F6E56;
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      text-align: center;
+      padding: 13px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background .2s, transform .15s;
+      margin-top: auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .pub-btn::after {
+      content: '';
+      position: absolute; top: -20%; left: -80%;
+      width: 50%; height: 140%;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
+      transform: skewX(-15deg);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    .pub-btn:nth-child(1)::after { animation-delay: 0s; }
+    .pub-btn:nth-child(2)::after { animation-delay: 1s; }
+    .pub-btn:nth-child(3)::after { animation-delay: 2s; }
+    .pub-btn:hover {
+      background: #0A5542;
+      transform: scale(1.02);
+    }
+
+    /* Texto unificador abaixo dos cards */
+    .publicos-unificador {
+      text-align: center;
+      max-width: 620px;
+      margin: 44px auto 0;
+      padding: 28px 28px;
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 16px;
+    }
+    .publicos-unificador .uni-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .publicos-unificador .uni-sub {
+      font-size: .84rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.65;
+    }
+    .publicos-unificador .uni-sub strong {
+      color: #FFD6A0;
+      font-weight: 700;
+    }
+
+    /* Mobile */
+    @media (max-width: 680px) {
+      .publicos-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .sec-publicos { padding: 40px 0 32px; }
+      .pub-card { padding: 22px 20px 20px; }
+      .pub-headline { font-size: .98rem; }
+      .pub-body { font-size: .8rem; }
+      .publicos-unificador { padding: 22px 20px; }
+      .publicos-unificador .uni-titulo { font-size: .98rem; }
+    }
+
     /* ══ GARANTIA faixa ══ */
     .faixa-garantia {
       background: rgba(255,255,255,0.65);
@@ -575,8 +740,6 @@
       .container    { padding: 0 16px; }
       .container-sm { padding: 0 16px; }
 
-      .video-wrap { border-radius: 12px; margin-bottom: 24px; }
-
       .bullets-list { gap: 8px; }
       .bullet-item  { padding: 12px 14px; font-size: .86rem; }
       .bullet-num   { width: 24px; height: 24px; font-size: .68rem; }
@@ -632,10 +795,6 @@
       <em>em até 30 dias</em>
     </h1>
 
-    <p class="hero-sub">
-      Mesmo sem saber nada de língua de sinais — com um método construído ao longo de 15 anos
-      que nenhuma faculdade do Brasil ensina.
-    </p>
 
 
   </div>
@@ -648,38 +807,6 @@
 <section class="sec-video">
   <div class="container">
 
-    <div class="container-sm" style="padding:0 20px">
-      <h2 class="sec-title" style="text-align:center">
-        O segredo que nenhuma faculdade vai te ensinar
-      </h2>
-      <p class="sec-sub" style="text-align:center; margin-left:auto; margin-right:auto;">
-        A maioria das pessoas aprende Libras do jeito errado e nunca consegue uma conversa real com um surdo.
-        Neste vídeo eu mostro exatamente o que muda tudo.
-      </p>
-    </div>
-
-    <div class="video-wrap">
-      <iframe src="https://www.youtube.com/embed/wflnMJjVeAM?rel=0" allowfullscreen loading="lazy" title="O segredo para aprender Libras — Prof. Lorena"></iframe>
-    </div>
-
-    <div class="bullets-list">
-      <div class="bullet-item">
-        <div class="bullet-num">1</div>
-        <div>Por que <strong>90% das pessoas travam</strong> na hora de sinalizar — e o que fazer para nunca mais travar</div>
-      </div>
-      <div class="bullet-item">
-        <div class="bullet-num">2</div>
-        <div>O <strong>erro que a maioria dos cursos ensina</strong> que faz você parecer robótico para qualquer surdo</div>
-      </div>
-      <div class="bullet-item">
-        <div class="bullet-num">3</div>
-        <div>A <strong>sequência correta</strong> para aprender sinais e ter fluidez em semanas, não em anos</div>
-      </div>
-      <div class="bullet-item">
-        <div class="bullet-num">4</div>
-        <div>O que surdos <strong>realmente observam</strong> para saber se um ouvinte está se comunicando de verdade</div>
-      </div>
-    </div>
 
 
   </div>
@@ -687,7 +814,60 @@
 
 
 <!-- ══════════════════════════════════
-     SEÇÃO 3 — OFERTA DUPLA
+     SEÇÃO 3 — PÚBLICOS
+══════════════════════════════════ -->
+<section class="sec-publicos">
+  <div class="container">
+
+    <div class="publicos-grid">
+
+      <!-- ── CARD 1: MÃES ── -->
+      <div class="pub-card">
+        <img src="fotos/mae.jpg.png" alt="Mãe se comunicando com filho surdo" class="pub-card-img">
+        <div class="pub-card-content">
+          <span class="pub-tag">Para mães</span>
+          <div class="pub-headline">Você ama seu filho surdo mais do que tudo — mas ainda não consegue ter uma conversa de verdade com ele.</div>
+          <p class="pub-body">Imagina poder contar uma história, dizer que está orgulhosa, consolar nos momentos difíceis — com as próprias mãos. Em 30 dias isso é possível.</p>
+          <a href="https://t.me/lorenanerddalibras" target="_blank" class="pub-btn">Quero me comunicar com meu filho →</a>
+        </div>
+      </div>
+
+      <!-- ── CARD 2: PROFESSORES ── -->
+      <div class="pub-card">
+        <img src="fotos/professora.jpg.png" alt="Professora com aluno surdo em sala de aula" class="pub-card-img">
+        <div class="pub-card-content">
+          <span class="pub-tag">Para professores</span>
+          <div class="pub-headline">Você tem um aluno surdo na sala e sente que está falhando com ele todo dia.</div>
+          <p class="pub-body">Nenhuma grade curricular te preparou para isso. Mas 30 dias com o método certo mudam completamente sua relação com a turma — e com você mesmo como educador.</p>
+          <a href="https://t.me/lorenanerddalibras" target="_blank" class="pub-btn">Quero fazer a diferença na minha sala →</a>
+        </div>
+      </div>
+
+      <!-- ── CARD 3: PROFISSIONAIS DA SAÚDE ── -->
+      <div class="pub-card">
+        <img src="fotos/profissionais.jpg.png" alt="Profissional da saúde atendendo paciente surdo" class="pub-card-img">
+        <div class="pub-card-content">
+          <span class="pub-tag">Para profissionais da saúde</span>
+          <div class="pub-headline">"Seu paciente está com dor, com medo, precisando de você — e não consegue te contar o que está sentindo."</div>
+          <p class="pub-body">Atender uma pessoa surda sem saber Libras não é só difícil — é uma barreira que compromete o seu cuidado e a segurança do seu paciente. Em 30 dias você aprende a se comunicar com eficiência e transforma completamente a qualidade do seu atendimento.</p>
+          <a href="https://t.me/lorenanerddalibras" target="_blank" class="pub-btn">Quero atender com mais eficiência →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Texto unificador -->
+    <div class="publicos-unificador">
+      <div class="uni-titulo">Se você se encaixa em uma dessas situações — essa transformação foi feita para você.</div>
+      <p class="uni-sub">Clique no seu perfil, entre no grupo e receba o e-book gratuito no dia 20 de maio junto com um <strong>cupom de 62% de desconto</strong>.</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     SEÇÃO 4 — OFERTA DUPLA
 ══════════════════════════════════ -->
 <section class="sec-oferta" id="oferta">
   <div class="container">
