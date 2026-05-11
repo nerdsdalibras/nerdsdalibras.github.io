@@ -416,10 +416,11 @@ const lead = {
   resultadoEnviado: false, entranúGrupo: false,
 };
 
-let quizStep    = 0;
-let quizScore   = 0;
-let q1Score     = null;
-let optSelected = null;
+let quizStep        = 0;
+let quizScore       = 0;
+let q1Score         = null;
+let optSelected     = null;
+let currentQuizWrap = null;
 
 // ═══════════════════════════════════════════════
 //  PERGUNTAS (12)
@@ -695,7 +696,6 @@ function renderPergunta() {
 
   const wrap = document.createElement('div');
   wrap.className = 'quiz-wrap show';
-  wrap.id = 'quiz-atual';
   wrap.innerHTML = `
     <div class="quiz-progress">
       <span>${n} / 12</span>
@@ -712,15 +712,17 @@ function renderPergunta() {
     <button class="btn-proximo" id="btn-prox" onclick="proximaPergunta()" disabled>
       ${quizStep < 11 ? 'Próxima →' : 'Ver meu resultado →'}
     </button>`;
+  currentQuizWrap = wrap;
   addElement(wrap);
 }
 
 function selecionarOpt(idx) {
   optSelected = idx;
-  document.querySelectorAll('.quiz-opt').forEach((b, i) => {
+  currentQuizWrap.querySelectorAll('.quiz-opt').forEach((b, i) => {
     b.classList.toggle('selected', i === idx);
   });
-  document.getElementById('btn-prox').disabled = false;
+  const btn = currentQuizWrap.querySelector('.btn-proximo');
+  if (btn) btn.disabled = false;
 }
 
 async function proximaPergunta() {
@@ -732,8 +734,8 @@ async function proximaPergunta() {
   quizScore += pts;
 
   const textoEscolhido = q.opts[optSelected].t;
-  document.getElementById('quiz-atual').style.opacity = '.3';
-  document.getElementById('quiz-atual').style.pointerEvents = 'none';
+  currentQuizWrap.style.opacity = '.3';
+  currentQuizWrap.style.pointerEvents = 'none';
   addUserBubble(textoEscolhido.replace(/"/g, ''));
   await sleep(400);
 
