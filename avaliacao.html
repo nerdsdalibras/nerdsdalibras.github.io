@@ -332,6 +332,42 @@
     }
     .bonus-row strong { color: #FCD34D; }
 
+    /* ── AGUARDANDO ANÁLISE ── */
+    .aguardando-wrap { margin: 8px 0 8px 36px; animation: fadeUp .4s ease; }
+    .aguardando-bubble {
+      background: var(--bolha-in); border: 1px solid var(--bolha-brd);
+      border-radius: 4px 16px 16px 16px;
+      padding: 14px 18px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .agu-title { font-size: .82rem; color: var(--text-main); font-weight: 600; display:flex; align-items:center; gap:8px; }
+    .agu-spinner {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid rgba(37,211,102,.25);
+      border-top-color: var(--verde);
+      animation: spin 1s linear infinite; flex-shrink:0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .agu-countdown { font-size: 1.6rem; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: .05em; }
+    .agu-sub { font-size: .72rem; color: var(--text-sub); text-align: center; }
+    .agu-bar-track { height: 3px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
+    .agu-bar-fill { height: 100%; background: var(--verde); border-radius: 999px; transition: width 1s linear; }
+
+    /* ── CLOSER BOX ── */
+    .closer-box {
+      margin: 16px 0 8px 36px;
+      background: rgba(37,211,102,.05); border: 1px solid rgba(37,211,102,.2);
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .closer-title { font-size: .75rem; font-weight: 800; color: rgba(37,211,102,.7); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; }
+    .closer-msg { font-size: .8rem; color: var(--text-sub); line-height: 1.6; white-space: pre-line; }
+    .closer-copy-btn {
+      margin-top: 10px; padding: 8px 14px; border-radius: 8px;
+      background: rgba(37,211,102,.1); border: 1px solid rgba(37,211,102,.25);
+      color: var(--verde); font-size: .76rem; font-weight: 700; cursor: pointer;
+      font-family: 'Inter', sans-serif; transition: background .2s;
+    }
+    .closer-copy-btn:hover { background: rgba(37,211,102,.18); }
+
     /* ── RODAPÉ ── */
     .chat-footer { padding: 10px 16px 18px; text-align: center; border-top: 1px solid var(--borda); }
     .chat-footer-text { font-size: .7rem; color: var(--text-time); }
@@ -407,13 +443,15 @@ const WA_MENTORIA = 'https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe';
 //  ESTADO DO LEAD
 // ═══════════════════════════════════════════════
 const lead = {
-  nome: '', whatsapp: '',
+  nome: '', whatsapp: '', instagram: '',
   origem: window.location.href,
   conheceuLorena: false,
   iniciouQuiz: false, concluiuQuiz: false,
   pontuacao: 0, q1Pontos: null,
   nivel: '', oferta: '',
-  resultadoEnviado: false, entranúGrupo: false,
+  resultadoEnviado: false,
+  clicouGrupo: false, entranúGrupo: false,
+  statusCloser: '', observacoes: '',
 };
 
 let quizStep        = 0;
@@ -671,6 +709,38 @@ async function confirmarWpp() {
   document.getElementById('form-wpp').style.display = 'none';
   addUserBubble(wpp);
   await sleep(400);
+  await addBubble(`Ótimo! Última coisa antes da avaliação: <strong>você tem Instagram?</strong> Se tiver, me passa o @ — a Lorena pode te marcar no resultado depois 😉`, 1200);
+
+  const formWrap = document.createElement('div');
+  formWrap.className = 'data-form-wrap show';
+  formWrap.id = 'form-ig';
+  formWrap.innerHTML = `
+    <input class="data-input" id="input-ig" type="text" placeholder="@seuinstagram (opcional)" maxlength="50" autocomplete="off"
+      onkeydown="if(event.key==='Enter')confirmarIg()"/>
+    <button class="btn-confirmar" onclick="confirmarIg()">Continuar →</button>
+    <button class="btn-confirmar" style="background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text-sub);font-weight:500" onclick="pularIg()">Não tenho / prefiro pular</button>`;
+  addElement(formWrap);
+  setTimeout(() => document.getElementById('input-ig')?.focus(), 200);
+}
+
+async function confirmarIg() {
+  const inp = document.getElementById('input-ig');
+  const ig = (inp?.value || '').trim();
+  lead.instagram = ig || '';
+  document.getElementById('form-ig').style.display = 'none';
+  if (ig) addUserBubble(ig);
+  await sleep(300);
+  await iniciarAposContato();
+}
+
+async function pularIg() {
+  document.getElementById('form-ig').style.display = 'none';
+  lead.instagram = '';
+  await sleep(200);
+  await iniciarAposContato();
+}
+
+async function iniciarAposContato() {
   await addBubble(`Perfeito, <strong>${lead.nome}</strong>! Agora vamos ao diagnóstico. São 12 perguntas rápidas — responde com honestidade que o resultado fica bem preciso 🎯`, 1500);
   await sleep(400);
   iniciarQuiz();
@@ -750,176 +820,210 @@ async function proximaPergunta() {
 // ═══════════════════════════════════════════════
 //  FINALIZAR QUIZ
 // ═══════════════════════════════════════════════
+const TEMPO_ESPERA_S = 5 * 60; // 5 minutos em segundos
+
 async function finalizarQuiz() {
   lead.concluiuQuiz = true;
   lead.pontuacao = quizScore;
   lead.q1Pontos = q1Score;
+  salvarPlanilha();
 
   await sleep(500);
-  await addBubble('Recebi suas respostas! 📋\n\nAgora vou calcular seu diagnóstico e em alguns instantes te envio o caminho mais indicado para o seu momento na Libras...', 2000);
+  await addBubble('Recebi suas respostas! 📋', 1000);
+  await addBubble('Estou passando tudo aqui para a Lorena analisar agora... Daqui uns 5 minutinhos ela já me envia o resultado e aviso você, tá?\n\n<strong>Porque ela quer avaliar cada resposta com a máxima atenção. 🙏</strong>', 2500);
+  await sleep(600);
 
-  // Barra de progresso "calculando"
-  const calcWrap = document.createElement('div');
-  calcWrap.className = 'calculating-wrap show';
-  calcWrap.innerHTML = `
-    <div class="calculating-bubble">
-      <div class="calc-text">Analisando suas respostas...</div>
-      <div class="calc-bar-track"><div class="calc-bar-fill" id="calc-fill"></div></div>
+  // Bloco de espera com countdown
+  const aguardandoWrap = document.createElement('div');
+  aguardandoWrap.className = 'aguardando-wrap';
+  aguardandoWrap.innerHTML = `
+    <div class="aguardando-bubble">
+      <div class="agu-title"><div class="agu-spinner"></div> Lorena está analisando suas respostas...</div>
+      <div class="agu-countdown" id="agu-timer">05:00</div>
+      <div class="agu-sub">Aguarde o resultado — não feche esta página</div>
+      <div class="agu-bar-track"><div class="agu-bar-fill" id="agu-fill" style="width:100%"></div></div>
     </div>`;
-  addElement(calcWrap);
+  addElement(aguardandoWrap);
   scrollDown();
 
-  // Anima a barra
-  await sleep(100);
-  document.getElementById('calc-fill').style.width = '100%';
-  await sleep(3200);
+  await contarRegressiva(TEMPO_ESPERA_S, aguardandoWrap);
 
-  calcWrap.style.display = 'none';
+  aguardandoWrap.style.display = 'none';
   await mostrarResultado();
+}
+
+function contarRegressiva(totalSeg, wrapEl) {
+  return new Promise(resolve => {
+    let restante = totalSeg;
+    const timerEl = document.getElementById('agu-timer');
+    const fillEl  = document.getElementById('agu-fill');
+
+    const tick = () => {
+      restante--;
+      const m = String(Math.floor(restante / 60)).padStart(2, '0');
+      const s = String(restante % 60).padStart(2, '0');
+      if (timerEl) timerEl.textContent = `${m}:${s}`;
+      if (fillEl)  fillEl.style.width  = `${(restante / totalSeg) * 100}%`;
+      if (restante <= 0) resolve();
+      else setTimeout(tick, 1000);
+    };
+    setTimeout(tick, 1000);
+  });
 }
 
 // ═══════════════════════════════════════════════
 //  RESULTADO
 // ═══════════════════════════════════════════════
 function calcularNivel() {
-  // Regra de corte: Q1 = A ou B → sempre Curso
   if (q1Score <= 1) return 'curso';
   if (quizScore <= 30) return 'curso';
-  if (quizScore <= 39) return 'mentoria-aval';
   return 'mentoria';
 }
 
 async function mostrarResultado() {
   const nivel = calcularNivel();
 
-  const dados = {
-    curso: {
-      nivel: 'Curso da Lorena',
-      oferta: 'Curso',
-      msg: `Seu resultado mostrou que o melhor caminho agora é o <strong>Curso da Lorena</strong>, ${lead.nome}.\n\nVocê ainda precisa fortalecer base, vocabulário, estrutura e comunicação prática antes de partir para algo mais personalizado.`,
-      pillClass: 'pill-verde',
-      pillTxt: '🌱 Curso da Lorena',
-      nivelClass: 'nivel-verde',
-      nivelTxt: 'Indicado para você',
-      titulo: 'Do ZERO a LIBRAS',
-      desc: `O curso foi pensado justamente para quem quer <strong>sair dos sinais soltos e começar a se comunicar de verdade.</strong>\n\nIdeal para: iniciantes, intermediários, <span class="highlight">graduandos em Letras Libras, funcionários públicos, profissionais da saúde</span>, professores, e qualquer pessoa que queira aprender do jeito certo.`,
-      foto: 'fotos/IMG_4977.jpg',
-      preco: 'R$&nbsp;1.500',
-      extra: `<div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>50 vagas</strong> · carrinho de <strong>24h</strong> · abertura <strong>20/05</strong></span></div>`,
-      btnClass: 'btn-rv', btnTxt: '💬 Entrar no grupo e garantir minha oferta', link: WA_CURSO,
-    },
-    'mentoria-aval': {
-      nivel: 'Avaliação para Mentoria',
-      oferta: 'Avaliação para Mentoria',
-      msg: `Seu resultado mostrou que você já tem uma base, ${lead.nome}, mas ainda pode estar travando na <strong>organização do pensamento, estrutura visual e clareza</strong> na sinalização.\n\nPor isso, o melhor caminho pode ser uma avaliação para a <strong>Mentoria da Lorena.</strong>`,
-      pillClass: 'pill-ouro',
-      pillTxt: '✨ Avaliação para Mentoria',
-      nivelClass: 'nivel-ouro',
-      nivelTxt: 'Intermediário / Avançado',
-      titulo: 'Avaliação para a Mentoria',
-      desc: `Se quiser, você pode <strong>enviar um vídeo curto sinalizando</strong> para a Lorena analisar e te direcionar melhor.\n\nÉ a forma mais precisa de descobrir o que está travando a sua sinalização.`,
-      foto: 'fotos/image-1777403006556.jpg',
-      preco: 'R$&nbsp;5.000',
-      extra: `<div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> na mentoria — turma pessoal</span></div><div class="bonus-row">🎁 <strong>Bônus exclusivo:</strong> pensado para você recuperar o investimento rapidinho.</div>`,
-      btnClass: 'btn-ro', btnTxt: '🎥 Enviar vídeo para avaliação', link: WA_MENTORIA,
-    },
-    mentoria: {
-      nivel: 'Mentoria da Lorena',
-      oferta: 'Mentoria',
-      msg: `Seu resultado mostrou que você já está pronta para um acompanhamento mais avançado, <strong>${lead.nome}</strong>.\n\nSeu desafio não parece ser apenas aprender sinais, mas <strong>lapidar processo tradutório, visualidade, fluência, expressão e segurança.</strong>`,
-      pillClass: 'pill-roxo',
-      pillTxt: '💜 Mentoria da Lorena',
-      nivelClass: 'nivel-roxo',
-      nivelTxt: 'Pronta para Mentoria',
-      titulo: 'Destrava Libras — Mentoria Individual',
-      desc: `A <strong>Mentoria da Lorena</strong> é o caminho mais indicado para esse momento. Acompanhamento direto, <strong>100% personalizado</strong> para o seu nível e objetivo.\n\nMétodo i+1 aplicado individualmente — a Lorena analisa sua sinalização e te direciona passo a passo.`,
-      foto: 'fotos/image-1777403006556.jpg',
-      preco: 'R$&nbsp;5.000',
-      extra: `<div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> · lançamento <strong>10 de junho de 2026</strong></span></div><div class="bonus-row">🎁 <strong>Bônus exclusivo:</strong> pensado para você recuperar o investimento rapidinho.</div>`,
-      btnClass: 'btn-rp', btnTxt: '💜 Falar com a Lorena sobre a mentoria', link: WA_MENTORIA,
-    },
-  };
+  const isCurso = nivel === 'curso';
 
-  const d = dados[nivel];
-  lead.nivel  = d.nivel;
-  lead.oferta = d.oferta;
+  const msgResultado = isCurso
+    ? `A Lorena analisou suas respostas com atenção e me passou seu resultado, <strong>${lead.nome}</strong>. 🙂\n\nPelo que você respondeu, fica claro que você ainda está <strong>construindo sua base em Libras</strong> — e isso é completamente normal.\n\nO desafio de quem está nessa fase não é falta de vontade. É que sem uma base sólida, você pode memorizar sinais e continuar travando na hora de conversar, porque falta estrutura, vocabulário ativo e segurança para montar frases de verdade.\n\nO caminho mais indicado para você agora é o <strong>Curso Do Zero à Libras.</strong>`
+    : `A Lorena analisou suas respostas com atenção e me passou seu resultado, <strong>${lead.nome}</strong>. 🙂\n\nVocê já tem uma base em Libras — isso é muito bom. Mas pelo que você respondeu, o seu desafio agora não é mais aprender sinais novos.\n\nO que está travando você é outra coisa: <strong>estrutura visual, organização do pensamento antes de sinalizar, processo tradutório, fluência, clareza e naturalidade.</strong>\n\nEsses elementos não se desenvolvem sozinhos com mais estudo em grupo. Eles precisam de direcionamento personalizado.\n\nO caminho mais indicado para você é a <strong>Mentoria Master Fluência by Lorena.</strong>`;
 
-  await addBubble(d.msg, 2500);
-  await sleep(400);
+  lead.nivel  = isCurso ? 'Curso da Lorena' : 'Mentoria Master Fluência';
+  lead.oferta = isCurso ? 'Curso' : 'Mentoria';
 
-  // Card de resultado
+  await addBubble(msgResultado, 3000);
+  await sleep(600);
+
+  // Card
+  const linkGrupo = isCurso ? WA_CURSO : WA_MENTORIA;
+
+  const extraCurso = `
+    <div class="vagas-row"><div class="vagas-dot"></div><span>Oferta por tempo limitado · <strong>bônus exclusivos</strong> para membros do grupo</span></div>`;
+
+  const extraMentoria = `
+    <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — acompanhamento personalizado</span></div>
+    <div class="bonus-row">🎁 <strong>Bônus exclusivo para quem estiver no grupo</strong> — pensado para você recuperar o investimento rapidinho.</div>`;
+
   const resultWrap = document.createElement('div');
   resultWrap.className = 'result-wrap show';
   resultWrap.innerHTML = `
-    <div class="result-card ${nivel === 'mentoria' ? 'mentoria-card' : nivel === 'mentoria-aval' ? 'aval-card' : ''}">
+    <div class="result-card ${isCurso ? '' : 'mentoria-card'}">
       <div class="result-photo">
-        <img src="${d.foto}" alt="Prof. Lorena" onerror="this.src='fotos/IMG_4952.jpg'"/>
+        <img src="${isCurso ? 'fotos/IMG_4977.jpg' : 'fotos/image-1777403006556.jpg'}" alt="Prof. Lorena" onerror="this.src='fotos/IMG_4952.jpg'"/>
         <div class="result-photo-overlay"></div>
-        <div class="result-pill-top ${d.pillClass}">${d.pillTxt}</div>
+        <div class="result-pill-top ${isCurso ? 'pill-verde' : 'pill-roxo'}">${isCurso ? '🌱 Curso da Lorena' : '💜 Mentoria da Lorena'}</div>
       </div>
       <div class="result-body">
-        <div class="result-nivel ${d.nivelClass}">${d.nivelTxt}</div>
-        <div class="result-titulo">${d.titulo}</div>
-        <div class="result-desc">${d.desc.replace(/\n/g,'<br/>')}</div>
-        <div class="preco-row">
-          💰 Valor normal: <span class="preco-riscado">${d.preco}</span>
-          &nbsp;→&nbsp;<span class="preco-oferta">oferta exclusiva para membros do grupo</span>
+        <div class="result-nivel ${isCurso ? 'nivel-verde' : 'nivel-roxo'}">${isCurso ? 'Indicado para você' : 'Pronta para Mentoria'}</div>
+        <div class="result-titulo">${isCurso ? 'Do Zero à Libras — Base e Intermediário' : 'Mentoria Master Fluência by Lorena'}</div>
+        <div class="result-desc">
+          ${isCurso
+            ? `Desenvolvido para quem quer <strong>sair dos sinais soltos e passar a se comunicar de verdade.</strong> Você vai construir base, vocabulário ativo, estrutura de frases e segurança para conversar com surdos.<br/><br/>Ideal para iniciantes e intermediários que querem aprender do jeito certo, com método.`
+            : `Acompanhamento <strong>100% personalizado</strong> com a Lorena. Ela analisa sua sinalização, identifica o que está travando e te direciona passo a passo para evoluir em <strong>estrutura visual, fluência, naturalidade e clareza.</strong><br/><br/>Para quem já tem base e quer chegar a um nível profissional ou de alta comunicação.`}
         </div>
-        ${d.extra}
-        <a class="btn-result ${d.btnClass}" href="${d.link}" target="_blank" rel="noopener" onclick="registrarClique()">
-          ${d.btnTxt}
+        <div class="preco-row">
+          💰 Valor normal: <span class="preco-riscado">${isCurso ? 'R$&nbsp;999,00' : 'R$&nbsp;3.999,00'}</span>
+          &nbsp;→&nbsp;<span class="preco-oferta">Oferta especial liberada dentro do grupo</span>
+        </div>
+        ${isCurso ? extraCurso : extraMentoria}
+        <a class="btn-result ${isCurso ? 'btn-rv' : 'btn-rp'}" href="${linkGrupo}" target="_blank" rel="noopener"
+          onclick="registrarClique('${linkGrupo}')">
+          💬 Entrar no grupo e receber a oferta
         </a>
       </div>
     </div>`;
   addElement(resultWrap);
 
   lead.resultadoEnviado = true;
+  lead.statusCloser = 'Aguardando entrada no grupo';
   salvarPlanilha();
 
-  // Convite para o grupo (após 2s)
-  await sleep(2000);
-  await addBubble('E para continuar recebendo conteúdos, aulas e avisos especiais, entra no nosso grupo. 🤟\n\nÉ por lá que a Lorena vai liberar materiais e oportunidades para quem quer evoluir na Libras.');
-
-  const grupoWrap = document.createElement('div');
-  grupoWrap.className = 'choices-wrap show';
-  grupoWrap.innerHTML = `
-    <button class="choice-btn" onclick="entrarGrupo('${d.link}')">
-      <div class="choice-icon">💬</div>
-      <div><div class="choice-label">Entrar no grupo</div></div>
-    </button>`;
-  addElement(grupoWrap);
+  // Mensagem do closer (aparece depois de 30s sem clicar no grupo)
+  await sleep(30000);
+  if (!lead.clicouGrupo) {
+    lead.statusCloser = 'Chamar no WhatsApp';
+    salvarPlanilha();
+    mostrarMensagemCloser(nivel, linkGrupo);
+  }
 }
 
-function registrarClique() {
+function registrarClique(link) {
+  lead.clicouGrupo = true;
   lead.entranúGrupo = true;
+  lead.statusCloser = 'Acompanhar no grupo';
   salvarPlanilha();
 }
 
-function entrarGrupo(link) {
-  lead.entranúGrupo = true;
-  salvarPlanilha();
-  window.open(link, '_blank', 'noopener');
+function mostrarMensagemCloser(nivel, linkGrupo) {
+  const isCurso = nivel === 'curso';
+  const produtoNome = isCurso ? 'Curso Do Zero à Libras' : 'Mentoria Master Fluência';
+  const closerTxt = `Oi, ${lead.nome || 'tudo bem'}! Vi aqui que você fez a avaliação da Lorena e o resultado indicou o ${produtoNome} como o melhor caminho para você agora.\n\nAinda não vi sua entrada no grupo onde a gente libera a condição especial e os bônus exclusivos. Queria te avisar antes de fechar as vagas. 😊\n\nQuando quiser entrar é só clicar aqui: ${linkGrupo}`;
+
+  const closerWrap = document.createElement('div');
+  closerWrap.className = 'closer-box';
+  closerWrap.innerHTML = `
+    <div class="closer-title">💼 Mensagem do closer — para enviar via WhatsApp</div>
+    <div class="closer-msg" id="closer-msg-txt">${closerTxt}</div>
+    <button class="closer-copy-btn" onclick="copiarCloser()">📋 Copiar mensagem</button>`;
+  addElement(closerWrap);
+  scrollDown();
+}
+
+function copiarCloser() {
+  const txt = document.getElementById('closer-msg-txt')?.innerText || '';
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.querySelector('.closer-copy-btn');
+    if (btn) { btn.textContent = '✅ Copiado!'; setTimeout(() => btn.textContent = '📋 Copiar mensagem', 2500); }
+  });
 }
 
 // ═══════════════════════════════════════════════
 //  GOOGLE SHEETS
 //
-//  Para ativar:
-//  1. Acesse sheets.google.com e crie uma planilha com as colunas abaixo
-//  2. Em Extensões > Apps Script, cole o código:
+//  COLUNAS DA ABA "Leads":
+//  A  Data e hora
+//  B  Nome
+//  C  WhatsApp
+//  D  Instagram
+//  E  Origem
+//  F  Conheceu a Lorena (Sim/Não)
+//  G  Iniciou o quiz (Sim/Não)
+//  H  Concluiu o quiz (Sim/Não)
+//  I  Pontuação total
+//  J  Nível identificado
+//  K  Resultado (Curso/Mentoria)
+//  L  Resultado enviado (Sim/Não)
+//  M  Clicou no link do grupo (Sim/Não)
+//  N  Entrou no grupo (Sim/Não)
+//  O  Status do closer
+//  P  Observações
+//
+//  APPS SCRIPT (Extensões > Apps Script):
 //
 //  function doPost(e) {
-//    const s = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Leads');
-//    const d = JSON.parse(e.postData.contents);
-//    s.appendRow([new Date(), d.nome, d.whatsapp, d.origem,
-//      d.conheceuLorena?'Sim':'Não', d.iniciouQuiz?'Sim':'Não',
-//      d.concluiuQuiz?'Sim':'Não', d.pontuacao, d.nivel, d.oferta,
-//      d.resultadoEnviado?'Sim':'Não', d.entranúGrupo?'Sim':'Não']);
+//    var ss = SpreadsheetApp.getActiveSpreadsheet();
+//    var s  = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
+//    var d  = JSON.parse(e.postData.contents);
+//    s.appendRow([
+//      new Date(),
+//      d.nome, d.whatsapp, d.instagram, d.origem,
+//      d.conheceuLorena  ? 'Sim' : 'Não',
+//      d.iniciouQuiz     ? 'Sim' : 'Não',
+//      d.concluiuQuiz    ? 'Sim' : 'Não',
+//      d.pontuacao, d.nivel, d.oferta,
+//      d.resultadoEnviado ? 'Sim' : 'Não',
+//      d.clicouGrupo     ? 'Sim' : 'Não',
+//      d.entranúGrupo    ? 'Sim' : 'Não',
+//      d.statusCloser, d.observacoes
+//    ]);
 //    return ContentService.createTextOutput('ok');
 //  }
 //
-//  3. Implante como Web App (qualquer pessoa pode acessar)
-//  4. Cole a URL gerada na variável SHEETS_URL no topo deste arquivo
+//  REGRAS DE STATUS DO CLOSER:
+//  "Aguardando entrada no grupo" → lead recebeu resultado, ainda não clicou
+//  "Acompanhar no grupo"         → lead clicou e entrou no grupo
+//  "Chamar no WhatsApp"          → 30s sem clicar — closer envia a mensagem
 // ═══════════════════════════════════════════════
 function salvarPlanilha() {
   if (!SHEETS_URL) return;
