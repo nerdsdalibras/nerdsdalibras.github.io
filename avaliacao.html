@@ -352,22 +352,6 @@
     .agu-bar-track { height: 3px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
     .agu-bar-fill { height: 100%; background: var(--verde); border-radius: 999px; transition: width 1s linear; }
 
-    /* ── CLOSER BOX ── */
-    .closer-box {
-      margin: 16px 0 8px 36px;
-      background: rgba(37,211,102,.05); border: 1px solid rgba(37,211,102,.2);
-      border-radius: 12px; padding: 14px 16px;
-    }
-    .closer-title { font-size: .75rem; font-weight: 800; color: rgba(37,211,102,.7); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; }
-    .closer-msg { font-size: .8rem; color: var(--text-sub); line-height: 1.6; white-space: pre-line; }
-    .closer-copy-btn {
-      margin-top: 10px; padding: 8px 14px; border-radius: 8px;
-      background: rgba(37,211,102,.1); border: 1px solid rgba(37,211,102,.25);
-      color: var(--verde); font-size: .76rem; font-weight: 700; cursor: pointer;
-      font-family: 'Inter', sans-serif; transition: background .2s;
-    }
-    .closer-copy-btn:hover { background: rgba(37,211,102,.18); }
-
     /* ── RODAPÉ ── */
     .chat-footer { padding: 10px 16px 18px; text-align: center; border-top: 1px solid var(--borda); }
     .chat-footer-text { font-size: .7rem; color: var(--text-time); }
@@ -939,12 +923,11 @@ async function mostrarResultado() {
   lead.statusCloser = 'Aguardando entrada no grupo';
   salvarPlanilha();
 
-  // Mensagem do closer (aparece depois de 30s sem clicar no grupo)
+  // Atualiza status na planilha após 30s se não clicou
   await sleep(30000);
   if (!lead.clicouGrupo) {
     lead.statusCloser = 'Chamar no WhatsApp';
     salvarPlanilha();
-    mostrarMensagemCloser(nivel, linkGrupo);
   }
 }
 
@@ -953,29 +936,6 @@ function registrarClique(link) {
   lead.entranúGrupo = true;
   lead.statusCloser = 'Acompanhar no grupo';
   salvarPlanilha();
-}
-
-function mostrarMensagemCloser(nivel, linkGrupo) {
-  const isCurso = nivel === 'curso';
-  const produtoNome = isCurso ? 'Curso Do Zero à Libras' : 'Mentoria Master Fluência';
-  const closerTxt = `Oi, ${lead.nome || 'tudo bem'}! Vi aqui que você fez a avaliação da Lorena e o resultado indicou o ${produtoNome} como o melhor caminho para você agora.\n\nAinda não vi sua entrada no grupo onde a gente libera a condição especial e os bônus exclusivos. Queria te avisar antes de fechar as vagas. 😊\n\nQuando quiser entrar é só clicar aqui: ${linkGrupo}`;
-
-  const closerWrap = document.createElement('div');
-  closerWrap.className = 'closer-box';
-  closerWrap.innerHTML = `
-    <div class="closer-title">💼 Mensagem do closer — para enviar via WhatsApp</div>
-    <div class="closer-msg" id="closer-msg-txt">${closerTxt}</div>
-    <button class="closer-copy-btn" onclick="copiarCloser()">📋 Copiar mensagem</button>`;
-  addElement(closerWrap);
-  scrollDown();
-}
-
-function copiarCloser() {
-  const txt = document.getElementById('closer-msg-txt')?.innerText || '';
-  navigator.clipboard.writeText(txt).then(() => {
-    const btn = document.querySelector('.closer-copy-btn');
-    if (btn) { btn.textContent = '✅ Copiado!'; setTimeout(() => btn.textContent = '📋 Copiar mensagem', 2500); }
-  });
 }
 
 // ═══════════════════════════════════════════════
