@@ -962,22 +962,28 @@ function registrarClique(link) {
 //  APPS SCRIPT (Extensões > Apps Script):
 //
 //  function doPost(e) {
-//    var ss = SpreadsheetApp.getActiveSpreadsheet();
-//    var s  = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
-//    var d  = JSON.parse(e.postData.contents);
-//    s.appendRow([
-//      new Date(),
-//      d.nome, d.whatsapp, d.instagram, d.origem,
-//      d.conheceuLorena  ? 'Sim' : 'Não',
-//      d.iniciouQuiz     ? 'Sim' : 'Não',
-//      d.concluiuQuiz    ? 'Sim' : 'Não',
-//      d.pontuacao, d.nivel, d.oferta,
-//      d.resultadoEnviado ? 'Sim' : 'Não',
-//      d.clicouGrupo     ? 'Sim' : 'Não',
-//      d.entranúGrupo    ? 'Sim' : 'Não',
-//      d.statusCloser, d.observacoes
-//    ]);
-//    return ContentService.createTextOutput('ok');
+//    try {
+//      var ss = SpreadsheetApp.getActiveSpreadsheet();
+//      var s  = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
+//      var raw = (e.postData && e.postData.contents) ? e.postData.contents : '{}';
+//      var d  = JSON.parse(raw);
+//      s.appendRow([
+//        new Date(),
+//        d.nome || '', d.whatsapp || '', d.instagram || '', d.origem || '',
+//        d.conheceuLorena  ? 'Sim' : 'Não',
+//        d.iniciouQuiz     ? 'Sim' : 'Não',
+//        d.concluiuQuiz    ? 'Sim' : 'Não',
+//        d.pontuacao || 0, d.nivel || '', d.oferta || '',
+//        d.resultadoEnviado ? 'Sim' : 'Não',
+//        d.clicouGrupo     ? 'Sim' : 'Não',
+//        d.entranúGrupo    ? 'Sim' : 'Não',
+//        d.statusCloser || '', d.observacoes || ''
+//      ]);
+//    } catch(err) {
+//      // ignora erros silenciosamente
+//    }
+//    return ContentService.createTextOutput('ok')
+//      .setMimeType(ContentService.MimeType.TEXT);
 //  }
 //
 //  REGRAS DE STATUS DO CLOSER:
@@ -989,10 +995,17 @@ function salvarPlanilha() {
   if (!SHEETS_URL) return;
   fetch(SHEETS_URL, {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ ...lead }),
   }).catch(() => {});
 }
+
+// Garante salvamento mesmo se o lead fechar a página
+window.addEventListener('beforeunload', () => {
+  if (!SHEETS_URL || !lead.nome) return;
+  navigator.sendBeacon(SHEETS_URL, JSON.stringify({ ...lead }));
+});
 
 // ── INICIAR ──
 window.addEventListener('DOMContentLoaded', startFlow);
