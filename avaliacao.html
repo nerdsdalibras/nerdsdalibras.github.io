@@ -816,24 +816,83 @@ async function finalizarQuiz() {
   await addBubble('Recebi suas respostas! 📋', 1000);
   await addBubble('Estou passando tudo aqui para a Lorena analisar agora... Daqui uns 5 minutinhos ela já me envia o resultado e aviso você, tá?\n\n<strong>Porque ela quer avaliar cada resposta com a máxima atenção. 🙏</strong>', 2500);
   await sleep(600);
+  await addBubble('Enquanto isso, <strong>pode minimizar esse app e fazer outras coisas</strong> normalmente. Quando a Lorena responder, eu te notifico aqui. 🔔', 2000);
+  await sleep(400);
 
-  // Bloco de espera com countdown
+  // Pedir permissão de notificação
+  if ('Notification' in window && Notification.permission === 'default') {
+    const notifWrap = document.createElement('div');
+    notifWrap.className = 'choices-wrap show';
+    notifWrap.id = 'notif-choices';
+    notifWrap.innerHTML = `
+      <button class="choice-btn" onclick="ativarNotificacao()">
+        <div class="choice-icon">🔔</div>
+        <div><div class="choice-label">Ativar notificação e minimizar</div></div>
+      </button>
+      <button class="choice-btn" style="opacity:.65" onclick="pularNotificacao()">
+        <div class="choice-icon">⏳</div>
+        <div><div class="choice-label">Vou aguardar aqui mesmo</div></div>
+      </button>`;
+    addElement(notifWrap);
+  } else {
+    iniciarContagem();
+  }
+}
+
+async function ativarNotificacao() {
+  document.getElementById('notif-choices')?.remove();
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    addUserBubble('Notificação ativada 🔔');
+    await sleep(300);
+    await addBubble('Perfeito! Pode ir fazer outras coisas. Assim que a Lorena terminar, apareço aqui para você. 😊', 900);
+    await agendarNotificacaoSW(TEMPO_ESPERA_S * 1000);
+  } else {
+    addUserBubble('Vou aguardar aqui');
+    await sleep(300);
+    await addBubble('Tudo bem! O resultado aparece aqui nessa tela quando ficar pronto. 😊', 800);
+  }
+  iniciarContagem();
+}
+
+async function pularNotificacao() {
+  document.getElementById('notif-choices')?.remove();
+  addUserBubble('Vou aguardar aqui');
+  await sleep(300);
+  await addBubble('Tudo bem! O resultado aparece aqui nessa tela quando ficar pronto. 😊', 800);
+  iniciarContagem();
+}
+
+async function agendarNotificacaoSW(delayMs) {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+    const sw = reg.active || reg.waiting || reg.installing;
+    if (sw) {
+      sw.postMessage({ type: 'AGENDAR_RESULTADO', delay: delayMs, nome: lead.nome });
+    }
+  } catch (e) {}
+}
+
+function iniciarContagem() {
   const aguardandoWrap = document.createElement('div');
   aguardandoWrap.className = 'aguardando-wrap';
   aguardandoWrap.innerHTML = `
     <div class="aguardando-bubble">
       <div class="agu-title"><div class="agu-spinner"></div> Lorena está analisando suas respostas...</div>
       <div class="agu-countdown" id="agu-timer">05:00</div>
-      <div class="agu-sub">Aguarde o resultado — não feche esta página</div>
+      <div class="agu-sub">Pode minimizar o app — te aviso quando o resultado chegar 🔔</div>
       <div class="agu-bar-track"><div class="agu-bar-fill" id="agu-fill" style="width:100%"></div></div>
     </div>`;
   addElement(aguardandoWrap);
   scrollDown();
 
-  await contarRegressiva(TEMPO_ESPERA_S, aguardandoWrap);
-
-  aguardandoWrap.style.display = 'none';
-  await mostrarResultado();
+  contarRegressiva(TEMPO_ESPERA_S, aguardandoWrap).then(async () => {
+    aguardandoWrap.style.display = 'none';
+    dispararNotificacaoLocal();
+    await mostrarResultado();
+  });
 }
 
 function contarRegressiva(totalSeg, wrapEl) {
@@ -841,7 +900,6 @@ function contarRegressiva(totalSeg, wrapEl) {
     let restante = totalSeg;
     const timerEl = document.getElementById('agu-timer');
     const fillEl  = document.getElementById('agu-fill');
-
     const tick = () => {
       restante--;
       const m = String(Math.floor(restante / 60)).padStart(2, '0');
@@ -853,6 +911,17 @@ function contarRegressiva(totalSeg, wrapEl) {
     };
     setTimeout(tick, 1000);
   });
+}
+
+function dispararNotificacaoLocal() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    new Notification('🤟 A Lorena respondeu!', {
+      body: `${lead.nome ? lead.nome + ', o' : 'O'} seu resultado está pronto. Toque para ver.`,
+      icon: '/fotos/IMG_4952.jpg',
+      tag: 'resultado-lorena',
+    });
+  } catch (e) {}
 }
 
 // ═══════════════════════════════════════════════
