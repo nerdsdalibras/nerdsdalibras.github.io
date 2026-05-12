@@ -537,7 +537,7 @@
       background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
       color: #fff; font-weight: 800; font-size: .92rem;
       text-align: center; border: none; cursor: pointer;
-      letter-spacing: .04em; display: block; text-decoration: none;
+      letter-spacing: .04em; display: flex; align-items: center; justify-content: center; text-decoration: none;
       box-shadow: 0 0 30px rgba(34,197,94,.5), 0 4px 18px rgba(34,197,94,.3);
       transition: box-shadow .3s, transform .2s;
       position: relative; z-index: 1; overflow: hidden;
@@ -888,91 +888,82 @@
 
     @keyframes ripple { to { transform:scale(1); opacity:0; } }
 
-    /* ══ CARD TELEGRAM DESTAQUE ══ */
-    .tg-destaque {
+    /* ══ CARD TELEGRAM BANNER ══ */
+    .tg-banner {
       width: 100%; margin-top: 20px;
       display: flex; flex-direction: column; gap: 0;
-      background: linear-gradient(135deg, #0A3D5C 0%, #0D5680 40%, #0E6FA3 100%);
+      background: linear-gradient(135deg, #0A1628 0%, #0D2140 50%, #0A2F5A 100%);
       border-radius: 18px;
-      border: 1.5px solid rgba(85,207,255,.35);
-      box-shadow: 0 6px 24px rgba(13,94,143,.5);
-      padding: 16px 18px 16px;
+      border: 1.5px solid rgba(34,158,217,.4);
+      box-shadow: 0 6px 28px rgba(10,33,80,.6), 0 0 0 1px rgba(255,255,255,.04) inset;
+      padding: 18px 18px 16px;
       text-decoration: none; color: #fff;
       position: relative; overflow: hidden;
       transition: transform .22s, box-shadow .22s;
     }
-    .tg-destaque:hover {
+    .tg-banner:hover {
       transform: translateY(-3px);
-      box-shadow: 0 12px 36px rgba(13,94,143,.65);
+      box-shadow: 0 14px 40px rgba(10,33,80,.75);
     }
-    /* ícone gigante watermark */
-    .tg-watermark {
-      position: absolute;
-      top: 50%; right: -20px;
-      transform: translateY(-50%);
-      width: 170px; height: 170px;
-      pointer-events: none; z-index: 0;
+    .tg-star {
+      position: absolute; pointer-events: none; color: #FFD700;
     }
 
-    .tg-top {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px; position: relative; z-index: 1;
+    .tg-banner-inner {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 14px; position: relative; z-index: 1;
     }
-    .tg-badge {
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.3);
-      border-radius: 999px;
-      font-size: .62rem; font-weight: 800;
-      letter-spacing: .1em; text-transform: uppercase;
-      padding: 3px 10px; color: #fff;
-    }
-    .tg-icone {
-      display: flex; align-items: center; gap: 6px;
-    }
-    .tg-canal-icon {
-      width: 22px; height: 22px; border-radius: 6px;
-      background: rgba(255,255,255,.2);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .tg-canal-nome {
-      font-size: .68rem; font-weight: 700;
-      color: rgba(255,255,255,.75);
-    }
-
-    .tg-headline {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.08rem; font-weight: 800;
-      line-height: 1.3; color: #fff;
-      margin-bottom: 10px;
-      position: relative; z-index: 1;
-    }
-
-    .tg-items {
-      display: flex; flex-direction: column; gap: 5px;
-      margin-bottom: 14px;
-      position: relative; z-index: 1;
-    }
-    .tg-item {
-      font-size: .78rem; color: rgba(255,255,255,.85);
-      line-height: 1.4;
-    }
-
-    .tg-cta-btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+    .tg-banner-icon {
+      flex-shrink: 0;
+      width: 64px; height: 64px;
       background: #229ED9;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(34,158,217,.55);
+    }
+    .tg-banner-text { flex: 1; }
+    .tg-banner-titulo {
+      font-size: 1.3rem; font-weight: 900;
+      letter-spacing: .04em; line-height: 1.1;
+      color: #fff; text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .tg-amarelo { color: #FFD700; }
+    .tg-banner-sub {
+      font-size: .76rem; color: rgba(255,255,255,.7);
+      line-height: 1.45;
+    }
+
+    .tg-banner-items {
+      display: flex; flex-wrap: wrap; gap: 7px;
+      margin-bottom: 14px; position: relative; z-index: 1;
+    }
+    .tg-banner-items span {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      font-size: .7rem; font-weight: 600;
+      padding: 4px 12px; color: rgba(255,255,255,.85);
+    }
+
+    .tg-banner-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #FFD700;
       border-radius: 12px;
       padding: 13px 16px;
-      font-size: .86rem; font-weight: 800;
-      color: #fff; text-align: center;
-      letter-spacing: .02em;
-      box-shadow: 0 4px 16px rgba(34,158,217,.55), inset 0 1px 0 rgba(255,255,255,.25);
+      font-size: .88rem; font-weight: 900;
+      color: #0A1628; text-align: center;
+      letter-spacing: .03em;
+      box-shadow: 0 4px 16px rgba(255,215,0,.4);
       position: relative; overflow: hidden; z-index: 1;
+      transition: opacity .2s, transform .15s;
     }
-    .tg-cta-btn::after {
+    .tg-banner-btn:hover { opacity: .92; transform: scale(1.02); }
+    .tg-banner-btn::after {
       content: '';
       position: absolute; top: -20%; left: -80%;
       width: 50%; height: 140%;
-      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%);
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%);
       transform: skewX(-15deg);
       animation: shimmerCta 2.5s ease-in-out infinite;
     }
@@ -1042,27 +1033,37 @@
 
   </div>
 
-  <!-- TELEGRAM DESTAQUE — logo abaixo das stats -->
-  <a href="https://t.me/lorenanerddalibras" target="_blank" class="tg-destaque" id="btn-telegram" data-aos="fade-up" data-aos-duration="600">
-    <div class="tg-top">
-      <div class="tg-badge">🎁 GRATUITO</div>
-      <div class="tg-icone">
-        <div class="tg-canal-icon"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="#fff" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></div>
-        <span class="tg-canal-nome">Canal da Prof. Lorena</span>
+  <!-- TELEGRAM BANNER — logo abaixo das stats -->
+  <a href="https://t.me/lorenanerddalibras" target="_blank" class="tg-banner" id="btn-telegram" data-aos="fade-up" data-aos-duration="600">
+
+    <!-- estrelas decorativas -->
+    <span class="tg-star" style="top:10px;left:14px;font-size:.85rem;opacity:.6">✦</span>
+    <span class="tg-star" style="top:18px;right:50px;font-size:.55rem;opacity:.4">✦</span>
+    <span class="tg-star" style="bottom:14px;left:38px;font-size:.5rem;opacity:.35">✦</span>
+
+    <div class="tg-banner-inner">
+      <!-- lado esquerdo: ícone Telegram grande -->
+      <div class="tg-banner-icon">
+        <svg viewBox="0 0 24 24" width="52" height="52"><path fill="#fff" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      </div>
+      <!-- lado direito: texto -->
+      <div class="tg-banner-text">
+        <div class="tg-banner-titulo">AULAS <span class="tg-amarelo">GRATUITAS</span></div>
+        <div class="tg-banner-sub">Aprenda Libras de um jeito direto,<br/>prático e acessível — todo dia.</div>
       </div>
     </div>
-    <div class="tg-headline">Aulas gratuitas de Libras<br/>todo dia no seu celular 🤟</div>
-    <div class="tg-items">
-      <div class="tg-item">✅ Sacadas diárias que nenhuma faculdade ensina</div>
-      <div class="tg-item">✅ Sinais do dia a dia — aprenda enquanto rola o feed</div>
-      <div class="tg-item">✅ Conteúdo exclusivo só para membros do canal</div>
+
+    <div class="tg-banner-items">
+      <span>🤟 Sacadas diárias</span>
+      <span>📲 Sinais do cotidiano</span>
+      <span>🎁 Conteúdo exclusivo</span>
     </div>
-    <div class="tg-cta-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#fff" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      Quero entrar no canal grátis →
+
+    <div class="tg-banner-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#0A2540" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      Entrar no canal grátis →
     </div>
-    <!-- ícone watermark -->
-    <svg class="tg-watermark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="rgba(255,255,255,0.07)" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+
   </a>
 
   <!-- CURSOS + MENTORIA -->
@@ -1077,7 +1078,10 @@
       <div class="card-type">📚 Curso Online</div>
       <div class="card-title">Do ZERO a LIBRAS</div>
       <div class="card-desc">Do <strong style="color:#fff">absoluto zero</strong> à comunicação com surdos em 30 dias. <strong style="color:#4ADE80">Sem decorar sinais.</strong></div>
-      <a href="https://www.clubedalibras.com/avaliacao.html" class="cta-verde" onclick="event.stopPropagation()">Quero saber se esse curso é para mim →</a>
+      <a href="https://wa.me/message/43QHURBUBKEMP1" target="_blank" class="cta-verde" onclick="event.stopPropagation()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0;vertical-align:middle;margin-right:6px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        Quero entrar na próxima turma →
+      </a>
     </a>
 
     <div class="card mentoria" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550" onclick="window.open('https://wa.me/5534996608012?text=Oi%20Lorena%20quero%20saber%20mais%20sobre%20sua%20mentoria','_blank')">
@@ -1093,8 +1097,9 @@
         Método exclusivo da Profa. Lorena aplicado à Mentoria
       </div>
     </div>
-    <a href="https://www.clubedalibras.com/avaliacao.html" target="_blank" class="cta-roxo" style="margin-top:10px;">
-      Quero saber se essa mentoria é para mim →
+    <a href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" class="cta-verde" style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Quero entrar na próxima turma →
     </a>
 
   </div>
