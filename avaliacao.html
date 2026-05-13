@@ -984,17 +984,18 @@ async function mostrarResultado() {
   await sleep(700);
 
   const extraCurso = `
-    <div class="vagas-row"><div class="vagas-dot"></div><span>Oferta por tempo limitado · <strong>bônus exclusivos</strong> para membros do grupo</span></div>`;
+    <div class="vagas-row"><div class="vagas-dot"></div><span>Vagas limitadas por turma · <strong>abertura anunciada no grupo</strong></span></div>
+    <div class="bonus-row">🔔 <strong>Quem está no grupo sabe primeiro</strong> quando a turma abre e recebe condições exclusivas.</div>`;
 
   const extraMentoria = `
-    <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — acompanhamento personalizado</span></div>
-    <div class="bonus-row">🎁 <strong>Bônus exclusivos para quem estiver no grupo</strong> — pensado para você evoluir e recuperar o investimento rapidinho.</div>`;
+    <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma · <strong>abertura anunciada no grupo</strong></span></div>
+    <div class="bonus-row">🔔 <strong>Quem está no grupo sabe primeiro</strong> quando a turma abre e recebe condições exclusivas.</div>`;
 
   const ctaTxt = isCurso
-    ? 'Entre no grupo especial para receber a oferta do Curso de Libras e começar sua evolução.'
+    ? 'Entre no grupo para ser avisada quando a turma abrir e ter acesso às condições exclusivas.'
     : nivel === 'intermediario'
-      ? 'Entre no grupo especial da Mentoria para destravar sua Libras e evoluir com mais segurança e naturalidade.'
-      : 'Entre no grupo especial da Mentoria para destravar sua interpretação e evoluir com mais segurança profissional.';
+      ? 'Entre no grupo para ser avisada quando a turma da Mentoria abrir e ter acesso às condições exclusivas.'
+      : 'Entre no grupo para ser avisada quando a turma da Mentoria abrir e ter acesso às condições exclusivas.';
 
   const resultWrap = document.createElement('div');
   resultWrap.className = 'result-wrap show';
@@ -1014,15 +1015,11 @@ async function mostrarResultado() {
             : `Acompanhamento <strong>100% personalizado</strong> com a Lorena. Ela identifica onde sua sinalização está travando e te direciona passo a passo em <strong>estrutura visual, fluência, naturalidade e segurança.</strong>`}
         </div>
         <div class="result-desc" style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:-10px;margin-bottom:14px;">${ctaTxt}</div>
-        <div class="preco-row">
-          💰 De: <span class="preco-riscado">${isCurso ? 'R$&nbsp;999,00' : 'R$&nbsp;3.999,00'}</span>
-          &nbsp;→&nbsp;<span class="preco-oferta">Oferta especial liberada dentro do grupo</span>
-        </div>
         ${isCurso ? extraCurso : extraMentoria}
         <a class="btn-result ${isCurso ? 'btn-rv' : nivel === 'intermediario' ? 'btn-ro' : 'btn-rp'}"
           href="${linkGrupo}" target="_blank" rel="noopener"
           onclick="registrarClique()">
-          💬 Entrar no grupo e receber a oferta
+          💬 Entrar no grupo e saber quando abre
         </a>
       </div>
     </div>`;
