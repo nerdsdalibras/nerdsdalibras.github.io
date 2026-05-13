@@ -431,8 +431,8 @@ const lead = {
   origem: window.location.href,
   conheceuLorena: false,
   iniciouQuiz: false, concluiuQuiz: false,
-  pontuacao: 0, q1Pontos: null,
-  nivel: '', oferta: '',
+  respostaDificuldade: '', respostaObjetivo: '',
+  pontuacao: 0, nivelIdentificado: '', resultado: '', grupoIndicado: '',
   resultadoEnviado: false,
   clicouGrupo: false, entranúGrupo: false,
   statusCloser: '', observacoes: '',
@@ -440,97 +440,114 @@ const lead = {
 
 let quizStep        = 0;
 let quizScore       = 0;
-let q1Score         = null;
+let q1DifIdx        = null; // índice da resposta da Q1 (dificuldade)
+let q2ObjIdx        = null; // índice da resposta da Q2 (objetivo)
 let optSelected     = null;
 let currentQuizWrap = null;
 
 // ═══════════════════════════════════════════════
 //  PERGUNTAS (12)
 // ═══════════════════════════════════════════════
+//  PESO DO OBJETIVO (Q2): bônus aplicado ao score base
+//  A(-4) B(0) C(+3) D(+7) E(+9)
+const OBJ_BONUS = [-4, 0, 3, 7, 9];
+
 const QUESTIONS = [
-  { text: 'Qual é o seu nível hoje em Libras?', opts: [
-    {l:'A', t:'Não sei nada ou sei só o alfabeto manual', p:0},
-    {l:'B', t:'Sei alguns sinais soltos', p:1},
-    {l:'C', t:'Consigo formar frases simples', p:2},
-    {l:'D', t:'Já consigo conversar um pouco com surdos', p:3},
-    {l:'E', t:'Já interpreto, estudo há anos ou atuo na área', p:4},
+  // Q1 — dificuldade principal (diagnóstico)
+  { text: 'Qual dessas dificuldades mais combina com você hoje?', opts: [
+    {l:'A', t:'Estou começando e ainda preciso aprender o básico', p:0},
+    {l:'B', t:'Sei alguns sinais, mas não consigo formar frases direito', p:1},
+    {l:'C', t:'Consigo me comunicar um pouco, mas travo na estrutura da Libras', p:2},
+    {l:'D', t:'Já sei Libras, mas tenho dificuldade para interpretar textos, vídeos ou falas', p:3},
+    {l:'E', t:'Já interpreto, mas quero melhorar fluência, clareza e segurança profissional', p:4},
   ]},
-  { text: 'Quando você tenta conversar em Libras, o que mais acontece?', opts: [
-    {l:'A', t:'Eu nem sei por onde começar', p:0},
-    {l:'B', t:'Eu lembro alguns sinais, mas travo muito', p:1},
-    {l:'C', t:'Consigo falar coisas simples, mas com insegurança', p:2},
-    {l:'D', t:'Consigo conversar, mas sinto que minha estrutura fica errada', p:3},
-    {l:'E', t:'Consigo sinalizar, mas quero melhorar fluência, clareza e naturalidade', p:4},
+  // Q2 — objetivo (peso alto no diagnóstico)
+  { text: 'Qual é seu principal objetivo com a Libras?', opts: [
+    {l:'A', t:'Começar a aprender do zero', p:0},
+    {l:'B', t:'Conversar melhor com pessoas surdas no dia a dia', p:1},
+    {l:'C', t:'Usar Libras no trabalho, igreja, escola ou atendimento', p:2},
+    {l:'D', t:'Melhorar minha sinalização e perder a insegurança', p:3},
+    {l:'E', t:'Atuar ou evoluir como intérprete/tradutora de Libras', p:4},
   ]},
-  { text: 'Qual é sua maior dificuldade hoje?', opts: [
-    {l:'A', t:'Aprender sinais básicos', p:0},
-    {l:'B', t:'Memorizar vocabulário', p:1},
-    {l:'C', t:'Montar frases simples', p:2},
-    {l:'D', t:'Organizar o pensamento antes de sinalizar', p:3},
-    {l:'E', t:'Traduzir ideias, interpretar textos e deixar a Libras mais visual', p:4},
+  // Q3
+  { text: 'Quando você tenta sinalizar, o que mais acontece?', opts: [
+    {l:'A', t:'Não sei nem por onde começar', p:0},
+    {l:'B', t:'Lembro alguns sinais isolados, mas travo muito', p:1},
+    {l:'C', t:'Me comunico, mas fico insegura e cometo muitos erros', p:2},
+    {l:'D', t:'Me comunico, mas sinto que falta estrutura e naturalidade', p:3},
+    {l:'E', t:'Me comunico bem, mas quero mais fluidez e precisão', p:4},
   ]},
-  { text: 'Você consegue entender surdos sinalizando?', opts: [
+  // Q4
+  { text: 'Você consegue entender surdos sinalizando naturalmente?', opts: [
     {l:'A', t:'Quase nada', p:0},
     {l:'B', t:'Entendo sinais isolados', p:1},
-    {l:'C', t:'Entendo quando a pessoa sinaliza devagar', p:2},
-    {l:'D', t:'Entendo parte da conversa, mas me perco na velocidade e estrutura', p:3},
+    {l:'C', t:'Entendo quando a pessoa sinaliza devagar ou em contexto', p:2},
+    {l:'D', t:'Entendo a maior parte, mas me perco quando acelera', p:3},
     {l:'E', t:'Entendo bem, mas quero melhorar minha resposta e interpretação', p:4},
   ]},
-  { text: 'Quando você sinaliza uma frase em Libras, você pensa mais em quê?', opts: [
-    {l:'A', t:'Ainda não consigo sinalizar frases', p:0},
-    {l:'B', t:'Penso palavra por palavra do português', p:1},
-    {l:'C', t:'Tento trocar as palavras por sinais', p:2},
-    {l:'D', t:'Tento organizar melhor, mas ainda fico presa ao português', p:3},
-    {l:'E', t:'Já tento pensar em imagem, contexto e estrutura visual', p:4},
+  // Q5
+  { text: 'Como você pensa quando tenta montar uma frase em Libras?', opts: [
+    {l:'A', t:'Ainda não consigo montar frases', p:0},
+    {l:'B', t:'Penso palavra por palavra em português', p:1},
+    {l:'C', t:'Troco palavras por sinais, mas a ordem fica errada', p:2},
+    {l:'D', t:'Tento seguir a estrutura visual, mas ainda fico presa ao português', p:3},
+    {l:'E', t:'Penso em imagem e contexto, mas quero mais precisão', p:4},
   ]},
-  { text: 'Você já estudou Libras antes?', opts: [
+  // Q6
+  { text: 'Você já estudou Libras formalmente?', opts: [
     {l:'A', t:'Nunca estudei', p:0},
-    {l:'B', t:'Vi vídeos soltos na internet', p:1},
+    {l:'B', t:'Vi vídeos e tutoriais soltos na internet', p:1},
     {l:'C', t:'Fiz curso básico', p:2},
-    {l:'D', t:'Fiz curso intermediário, faculdade, Letras Libras ou cursos longos', p:3},
-    {l:'E', t:'Já estudo há anos ou tenho contato profissional com Libras', p:4},
+    {l:'D', t:'Fiz curso intermediário, Letras Libras ou formação longa', p:3},
+    {l:'E', t:'Estudo há anos ou tenho contato profissional com Libras', p:4},
   ]},
-  { text: 'Você já precisou interpretar ou traduzir alguma mensagem para Libras?', opts: [
+  // Q7
+  { text: 'Você já precisou interpretar ou traduzir algo em Libras?', opts: [
     {l:'A', t:'Nunca', p:0},
     {l:'B', t:'Só frases muito simples', p:1},
     {l:'C', t:'Já tentei, mas fiquei muito insegura', p:2},
-    {l:'D', t:'Já traduzo ou interpreto, mas sinto dificuldade na estrutura', p:3},
-    {l:'E', t:'Já interpreto/traduzo e quero lapidar técnica, visualidade e fluência', p:4},
+    {l:'D', t:'Já interpreto, mas sinto dificuldade na estrutura e organização', p:3},
+    {l:'E', t:'Já interpreto com frequência e quero melhorar técnica e fluência', p:4},
   ]},
-  { text: 'O que você mais quer alcançar com a Libras?', opts: [
-    {l:'A', t:'Começar do zero', p:0},
-    {l:'B', t:'Aprender para conversar com surdos no dia a dia', p:1},
-    {l:'C', t:'Usar no trabalho, igreja, atendimento ou família', p:2},
-    {l:'D', t:'Me comunicar melhor e ter mais segurança', p:3},
-    {l:'E', t:'Atuar ou evoluir como intérprete/tradutora', p:4},
+  // Q8
+  { text: 'Como você se sente em relação à expressão facial e corporal na Libras?', opts: [
+    {l:'A', t:'Ainda não sei usar, estou no início', p:0},
+    {l:'B', t:'Sei que existe, mas não uso na prática', p:1},
+    {l:'C', t:'Uso um pouco, mas com muita dúvida', p:2},
+    {l:'D', t:'Uso, mas sinto que falta naturalidade', p:3},
+    {l:'E', t:'Uso bem, mas quero refinar para um nível mais profissional', p:4},
   ]},
-  { text: 'Como você se sente quando precisa sinalizar?', opts: [
-    {l:'A', t:'Perdida — não sei nem como começar', p:0},
-    {l:'B', t:'Travada — conheço sinais mas não saem na hora', p:1},
-    {l:'C', t:'Insegura — faço, mas com muita dúvida', p:2},
-    {l:'D', t:'Sei os sinais, mas sinto que falta organização', p:3},
-    {l:'E', t:'Quero refinamento, correção e direcionamento individual', p:4},
-  ]},
+  // Q9
   { text: 'Você sente que seu problema é mais falta de sinais ou falta de estrutura?', opts: [
-    {l:'A', t:'Falta de sinais básicos', p:0},
-    {l:'B', t:'Falta de vocabulário', p:1},
+    {l:'A', t:'Falta de sinais básicos — ainda estou no começo', p:0},
+    {l:'B', t:'Principalmente falta de vocabulário', p:1},
     {l:'C', t:'Um pouco dos dois', p:2},
     {l:'D', t:'Eu até sei sinais, mas não sei organizar direito', p:3},
-    {l:'E', t:'Preciso melhorar estrutura, tradução, expressão, visualidade e clareza', p:4},
+    {l:'E', t:'Preciso melhorar estrutura, tradução, expressão e clareza', p:4},
   ]},
-  { text: 'Você gostaria de receber uma análise personalizada da sua sinalização?', opts: [
-    {l:'A', t:'Ainda não, porque estou começando', p:0},
-    {l:'B', t:'Talvez mais pra frente', p:1},
-    {l:'C', t:'Tenho curiosidade', p:2},
-    {l:'D', t:'Sim, acho que isso me ajudaria muito', p:3},
-    {l:'E', t:'Sim, preciso de alguém olhando meus erros e me direcionando', p:4},
+  // Q10
+  { text: 'Com que frequência você pratica Libras?', opts: [
+    {l:'A', t:'Nunca pratiquei', p:0},
+    {l:'B', t:'Raramente, só quando preciso', p:1},
+    {l:'C', t:'Às vezes, mas sem orientação', p:2},
+    {l:'D', t:'Com regularidade, mas sinto que estagnei', p:3},
+    {l:'E', t:'Com frequência, inclusive em contextos profissionais', p:4},
   ]},
-  { text: 'Hoje, qual frase mais combina com você?', opts: [
-    {l:'A', t:'"Quero começar a aprender Libras do jeito certo."', p:0},
-    {l:'B', t:'"Sei pouco e quero criar uma base melhor."', p:1},
-    {l:'C', t:'"Já sei algumas coisas, mas ainda não consigo conversar bem."', p:2},
-    {l:'D', t:'"Sei sinais, mas erro na estrutura e travo para montar frases."', p:3},
-    {l:'E', t:'"Já tenho base, mas quero evoluir como intérprete e sinalizar com mais clareza."', p:4},
+  // Q11
+  { text: 'Qual frase mais combina com você hoje?', opts: [
+    {l:'A', t:'"Quero aprender Libras do zero, sem nenhuma base ainda."', p:0},
+    {l:'B', t:'"Sei poucos sinais e quero criar uma base melhor."', p:1},
+    {l:'C', t:'"Já sei algumas coisas, mas não consigo conversar com segurança."', p:2},
+    {l:'D', t:'"Sei Libras, mas erro na estrutura e travo para me expressar com clareza."', p:3},
+    {l:'E', t:'"Já tenho base, mas quero evoluir em fluência, interpretação e profissionalismo."', p:4},
+  ]},
+  // Q12
+  { text: 'O que mais te impede de se comunicar em Libras com confiança hoje?', opts: [
+    {l:'A', t:'Não ter aprendido ainda — estou começando', p:0},
+    {l:'B', t:'Ter poucos sinais e vocabulário limitado', p:1},
+    {l:'C', t:'Insegurança e medo de errar na hora de sinalizar', p:2},
+    {l:'D', t:'Dificuldade de organizar o raciocínio antes de sinalizar', p:3},
+    {l:'E', t:'Falta de refinamento, precisão e desenvoltura profissional', p:4},
   ]},
 ];
 
@@ -736,9 +753,10 @@ async function iniciarAposContato() {
 function iniciarQuiz() {
   lead.iniciouQuiz = true;
   salvarPlanilha();
-  quizStep = 0;
+  quizStep  = 0;
   quizScore = 0;
-  q1Score = null;
+  q1DifIdx  = null;
+  q2ObjIdx  = null;
   renderPergunta();
 }
 
@@ -784,7 +802,8 @@ async function proximaPergunta() {
   const q = QUESTIONS[quizStep];
   const pts = q.opts[optSelected].p;
 
-  if (quizStep === 0) q1Score = pts;
+  if (quizStep === 0) { q1DifIdx = optSelected; lead.respostaDificuldade = q.opts[optSelected].t; }
+  if (quizStep === 1) { q2ObjIdx = optSelected; lead.respostaObjetivo    = q.opts[optSelected].t; }
   quizScore += pts;
 
   const textoEscolhido = q.opts[optSelected].t;
@@ -809,12 +828,11 @@ const TEMPO_ESPERA_S = 5 * 60; // 5 minutos em segundos
 async function finalizarQuiz() {
   lead.concluiuQuiz = true;
   lead.pontuacao = quizScore;
-  lead.q1Pontos = q1Score;
   salvarPlanilha();
 
   await sleep(500);
   await addBubble('Recebi suas respostas! 📋', 1000);
-  await addBubble('Estou passando tudo aqui para a Lorena analisar agora... Daqui uns 5 minutinhos ela já me envia o resultado e aviso você, tá?\n\n<strong>Porque ela quer avaliar cada resposta com a máxima atenção. 🙏</strong>', 2500);
+  await addBubble('Vou analisar com atenção para te entregar um diagnóstico mais certeiro, tudo bem?\n\nEm alguns minutos eu te envio o caminho mais indicado para o seu momento na Libras. 🙏', 2500);
   await sleep(600);
   await addBubble('Enquanto isso, <strong>pode minimizar esse app e fazer outras coisas</strong> normalmente. Quando a Lorena responder, eu te notifico aqui. 🔔', 2000);
   await sleep(400);
@@ -925,38 +943,58 @@ function dispararNotificacaoLocal() {
 }
 
 // ═══════════════════════════════════════════════
-//  RESULTADO
+//  RESULTADO — 3 NÍVEIS
 // ═══════════════════════════════════════════════
+
+// Regras de diagnóstico:
+// Score base: soma das 12 questões (0–48)
+// Bônus objetivo Q2: OBJ_BONUS[q2ObjIdx]
+// Score ajustado = base + bônus
+// Segurança: se Q1=A (iniciante completo) E ajustado ≤ 22 → sempre Básico
+// ≤ 14 → Básico | 15-30 → Intermediário | > 30 → Avançado
 function calcularNivel() {
-  if (q1Score <= 1) return 'curso';
-  if (quizScore <= 30) return 'curso';
-  return 'mentoria';
+  const bonus    = (q2ObjIdx !== null) ? OBJ_BONUS[q2ObjIdx] : 0;
+  const adjusted = quizScore + bonus;
+  if (q1DifIdx === 0 && adjusted <= 22) return 'basico';
+  if (adjusted <= 14)  return 'basico';
+  if (adjusted <= 30)  return 'intermediario';
+  return 'avancado';
 }
 
 async function mostrarResultado() {
   const nivel = calcularNivel();
 
-  const isCurso = nivel === 'curso';
+  const msgs = {
+    basico: `A Lorena analisou suas respostas com atenção e me passou seu diagnóstico, <strong>${lead.nome}</strong>. 🙂\n\nCom base na sua avaliação, você está no nível <strong>BÁSICO</strong> em Libras.\n\nIsso significa que você ainda está construindo sua base. Pelas suas respostas, o seu maior desafio agora parece ser aprender sinais em contexto, formar frases simples, entender a lógica visual da Libras e ganhar segurança para começar a se comunicar.\n\nPor isso, o melhor caminho para você agora é o <strong>Curso Do Zero à Libras — Base e Intermediário.</strong>\n\nEle vai te ajudar a sair do começo com mais clareza, construir uma base real e evoluir rumo ao nível intermediário sem ficar apenas decorando sinais soltos.`,
 
-  const msgResultado = isCurso
-    ? `A Lorena analisou suas respostas com atenção e me passou seu resultado, <strong>${lead.nome}</strong>. 🙂\n\nPelo que você respondeu, fica claro que você ainda está <strong>construindo sua base em Libras</strong> — e isso é completamente normal.\n\nO desafio de quem está nessa fase não é falta de vontade. É que sem uma base sólida, você pode memorizar sinais e continuar travando na hora de conversar, porque falta estrutura, vocabulário ativo e segurança para montar frases de verdade.\n\nO caminho mais indicado para você agora é o <strong>Curso Do Zero à Libras.</strong>`
-    : `A Lorena analisou suas respostas com atenção e me passou seu resultado, <strong>${lead.nome}</strong>. 🙂\n\nVocê já tem uma base em Libras — isso é muito bom. Mas pelo que você respondeu, o seu desafio agora não é mais aprender sinais novos.\n\nO que está travando você é outra coisa: <strong>estrutura visual, organização do pensamento antes de sinalizar, processo tradutório, fluência, clareza e naturalidade.</strong>\n\nEsses elementos não se desenvolvem sozinhos com mais estudo em grupo. Eles precisam de direcionamento personalizado.\n\nO caminho mais indicado para você é a <strong>Mentoria Master Fluência by Lorena.</strong>`;
+    intermediario: `A Lorena analisou suas respostas com atenção e me passou seu diagnóstico, <strong>${lead.nome}</strong>. 🙂\n\nCom base na sua avaliação, você está no nível <strong>INTERMEDIÁRIO</strong> em Libras.\n\nIsso mostra que você já tem algum contato com a língua, mas ainda sente dificuldade para organizar frases, ganhar naturalidade, entender melhor a estrutura visual da Libras ou se sentir segura na hora de sinalizar.\n\nNesse ponto, apenas aprender mais sinais nem sempre resolve. Muitas vezes, o que falta é direcionamento, correção, organização do pensamento e prática guiada.\n\nPor isso, o melhor caminho para você agora é a <strong>Mentoria Master Fluência by Lorena.</strong>\n\nNa mentoria, a Lorena vai te ajudar a identificar onde sua sinalização está travando e como evoluir com mais clareza, segurança e fluência visual.`,
 
-  lead.nivel  = isCurso ? 'Curso da Lorena' : 'Mentoria Master Fluência';
-  lead.oferta = isCurso ? 'Curso' : 'Mentoria';
+    avancado: `A Lorena analisou suas respostas com atenção e me passou seu diagnóstico, <strong>${lead.nome}</strong>. 🙂\n\nCom base na sua avaliação, você já demonstra um nível <strong>AVANÇADO</strong> em Libras, com perfil para aprimoramento profissional.\n\nIsso mostra que você já tem uma boa base e provavelmente já consegue se comunicar ou até interpretar em alguns contextos. Mas pelas suas respostas, o próximo passo não é apenas aprender mais sinais.\n\nAgora o foco precisa ser fluência visual, processo tradutório, clareza, naturalidade, estrutura, expressão e segurança na hora de sinalizar ou interpretar.\n\nPor isso, o melhor caminho para você é a <strong>Mentoria Master Fluência by Lorena.</strong>\n\nA mentoria foi pensada para quem já tem base, mas quer destravar a interpretação, melhorar a entrega em Libras e evoluir para um nível mais profissional.`,
+  };
 
-  await addBubble(msgResultado, 3000);
-  await sleep(600);
-
-  // Card
+  const isCurso   = nivel === 'basico';
   const linkGrupo = isCurso ? WA_CURSO : WA_MENTORIA;
+
+  const nivelLabels = { basico: 'BÁSICO', intermediario: 'INTERMEDIÁRIO', avancado: 'AVANÇADO' };
+  lead.nivelIdentificado = nivelLabels[nivel];
+  lead.resultado         = isCurso ? 'Curso' : 'Mentoria';
+  lead.grupoIndicado     = isCurso ? 'Grupo do Curso' : 'Grupo da Mentoria';
+
+  await addBubble(msgs[nivel], 3500);
+  await sleep(700);
 
   const extraCurso = `
     <div class="vagas-row"><div class="vagas-dot"></div><span>Oferta por tempo limitado · <strong>bônus exclusivos</strong> para membros do grupo</span></div>`;
 
   const extraMentoria = `
     <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — acompanhamento personalizado</span></div>
-    <div class="bonus-row">🎁 <strong>Bônus exclusivo para quem estiver no grupo</strong> — pensado para você recuperar o investimento rapidinho.</div>`;
+    <div class="bonus-row">🎁 <strong>Bônus exclusivos para quem estiver no grupo</strong> — pensado para você evoluir e recuperar o investimento rapidinho.</div>`;
+
+  const ctaTxt = isCurso
+    ? 'Entre no grupo especial para receber a oferta do Curso de Libras e começar sua evolução.'
+    : nivel === 'intermediario'
+      ? 'Entre no grupo especial da Mentoria para destravar sua Libras e evoluir com mais segurança e naturalidade.'
+      : 'Entre no grupo especial da Mentoria para destravar sua interpretação e evoluir com mais segurança profissional.';
 
   const resultWrap = document.createElement('div');
   resultWrap.className = 'result-wrap show';
@@ -965,23 +1003,25 @@ async function mostrarResultado() {
       <div class="result-photo">
         <img src="${isCurso ? 'fotos/IMG_4977.jpg' : 'fotos/image-1777403006556.jpg'}" alt="Prof. Lorena" onerror="this.src='fotos/IMG_4952.jpg'"/>
         <div class="result-photo-overlay"></div>
-        <div class="result-pill-top ${isCurso ? 'pill-verde' : 'pill-roxo'}">${isCurso ? '🌱 Curso da Lorena' : '💜 Mentoria da Lorena'}</div>
+        <div class="result-pill-top ${isCurso ? 'pill-verde' : 'pill-roxo'}">${isCurso ? '🌱 Nível Básico' : nivel === 'intermediario' ? '✨ Nível Intermediário' : '💜 Nível Avançado'}</div>
       </div>
       <div class="result-body">
-        <div class="result-nivel ${isCurso ? 'nivel-verde' : 'nivel-roxo'}">${isCurso ? 'Indicado para você' : 'Pronta para Mentoria'}</div>
+        <div class="result-nivel ${isCurso ? 'nivel-verde' : nivel === 'intermediario' ? 'nivel-ouro' : 'nivel-roxo'}">${isCurso ? 'Indicado para você' : 'Pronta para Mentoria'}</div>
         <div class="result-titulo">${isCurso ? 'Do Zero à Libras — Base e Intermediário' : 'Mentoria Master Fluência by Lorena'}</div>
         <div class="result-desc">
           ${isCurso
-            ? `Desenvolvido para quem quer <strong>sair dos sinais soltos e passar a se comunicar de verdade.</strong> Você vai construir base, vocabulário ativo, estrutura de frases e segurança para conversar com surdos.<br/><br/>Ideal para iniciantes e intermediários que querem aprender do jeito certo, com método.`
-            : `Acompanhamento <strong>100% personalizado</strong> com a Lorena. Ela analisa sua sinalização, identifica o que está travando e te direciona passo a passo para evoluir em <strong>estrutura visual, fluência, naturalidade e clareza.</strong><br/><br/>Para quem já tem base e quer chegar a um nível profissional ou de alta comunicação.`}
+            ? `Criado para quem quer <strong>sair dos sinais soltos e começar a se comunicar de verdade.</strong> Você vai construir base, vocabulário ativo, estrutura de frases e segurança para conversar com surdos — do jeito certo, com método.`
+            : `Acompanhamento <strong>100% personalizado</strong> com a Lorena. Ela identifica onde sua sinalização está travando e te direciona passo a passo em <strong>estrutura visual, fluência, naturalidade e segurança.</strong>`}
         </div>
+        <div class="result-desc" style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:-10px;margin-bottom:14px;">${ctaTxt}</div>
         <div class="preco-row">
-          💰 Valor normal: <span class="preco-riscado">${isCurso ? 'R$&nbsp;999,00' : 'R$&nbsp;3.999,00'}</span>
+          💰 De: <span class="preco-riscado">${isCurso ? 'R$&nbsp;999,00' : 'R$&nbsp;3.999,00'}</span>
           &nbsp;→&nbsp;<span class="preco-oferta">Oferta especial liberada dentro do grupo</span>
         </div>
         ${isCurso ? extraCurso : extraMentoria}
-        <a class="btn-result ${isCurso ? 'btn-rv' : 'btn-rp'}" href="${linkGrupo}" target="_blank" rel="noopener"
-          onclick="registrarClique('${linkGrupo}')">
+        <a class="btn-result ${isCurso ? 'btn-rv' : nivel === 'intermediario' ? 'btn-ro' : 'btn-rp'}"
+          href="${linkGrupo}" target="_blank" rel="noopener"
+          onclick="registrarClique()">
           💬 Entrar no grupo e receber a oferta
         </a>
       </div>
@@ -992,7 +1032,6 @@ async function mostrarResultado() {
   lead.statusCloser = 'Aguardando entrada no grupo';
   salvarPlanilha();
 
-  // Atualiza status na planilha após 30s se não clicou
   await sleep(30000);
   if (!lead.clicouGrupo) {
     lead.statusCloser = 'Chamar no WhatsApp';
@@ -1000,7 +1039,7 @@ async function mostrarResultado() {
   }
 }
 
-function registrarClique(link) {
+function registrarClique() {
   lead.clicouGrupo = true;
   lead.entranúGrupo = true;
   lead.statusCloser = 'Acompanhar no grupo';
@@ -1019,16 +1058,25 @@ function registrarClique(link) {
 //  F  Conheceu a Lorena (Sim/Não)
 //  G  Iniciou o quiz (Sim/Não)
 //  H  Concluiu o quiz (Sim/Não)
-//  I  Pontuação total
-//  J  Nível identificado
-//  K  Resultado (Curso/Mentoria)
-//  L  Resultado enviado (Sim/Não)
-//  M  Clicou no link do grupo (Sim/Não)
-//  N  Entrou no grupo (Sim/Não)
-//  O  Status do closer
-//  P  Observações
+//  I  Resposta — principal dificuldade (Q1)
+//  J  Resposta — objetivo com a Libras (Q2)
+//  K  Pontuação total
+//  L  Nível identificado (Básico / Intermediário / Avançado)
+//  M  Resultado indicado (Curso / Mentoria)
+//  N  Grupo indicado
+//  O  Resultado enviado (Sim/Não)
+//  P  Clicou no link do grupo (Sim/Não)
+//  Q  Entrou no grupo (Sim/Não)
+//  R  Status do closer
+//  S  Observações
 //
-//  APPS SCRIPT (Extensões > Apps Script):
+//  MENSAGEM DO CLOSER (para leads que não entraram no grupo):
+//  "Oi, tudo bem? Vi que você fez a avaliação da Lorena e seu resultado
+//   indicou [CURSO/MENTORIA] como o melhor caminho para o seu momento na Libras.
+//   Percebi que você ainda não entrou no grupo onde vamos liberar a condição
+//   especial e os bônus. Quer que eu te envie o link por aqui?"
+//
+//  APPS SCRIPT — cole em Extensões > Apps Script e reimplante:
 //
 //  function doPost(e) {
 //    try {
@@ -1039,26 +1087,29 @@ function registrarClique(link) {
 //      s.appendRow([
 //        new Date(),
 //        d.nome || '', d.whatsapp || '', d.instagram || '', d.origem || '',
-//        d.conheceuLorena  ? 'Sim' : 'Não',
-//        d.iniciouQuiz     ? 'Sim' : 'Não',
-//        d.concluiuQuiz    ? 'Sim' : 'Não',
-//        d.pontuacao || 0, d.nivel || '', d.oferta || '',
-//        d.resultadoEnviado ? 'Sim' : 'Não',
-//        d.clicouGrupo     ? 'Sim' : 'Não',
-//        d.entranúGrupo    ? 'Sim' : 'Não',
-//        d.statusCloser || '', d.observacoes || ''
+//        d.conheceuLorena      ? 'Sim' : 'Não',
+//        d.iniciouQuiz         ? 'Sim' : 'Não',
+//        d.concluiuQuiz        ? 'Sim' : 'Não',
+//        d.respostaDificuldade || '',
+//        d.respostaObjetivo    || '',
+//        d.pontuacao           || 0,
+//        d.nivelIdentificado   || '',
+//        d.resultado           || '',
+//        d.grupoIndicado       || '',
+//        d.resultadoEnviado    ? 'Sim' : 'Não',
+//        d.clicouGrupo         ? 'Sim' : 'Não',
+//        d.entranúGrupo        ? 'Sim' : 'Não',
+//        d.statusCloser        || '',
+//        d.observacoes         || ''
 //      ]);
-//    } catch(err) {
-//      // ignora erros silenciosamente
-//    }
-//    return ContentService.createTextOutput('ok')
-//      .setMimeType(ContentService.MimeType.TEXT);
+//    } catch(err) {}
+//    return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
 //  }
 //
 //  REGRAS DE STATUS DO CLOSER:
-//  "Aguardando entrada no grupo" → lead recebeu resultado, ainda não clicou
-//  "Acompanhar no grupo"         → lead clicou e entrou no grupo
-//  "Chamar no WhatsApp"          → 30s sem clicar — closer envia a mensagem
+//  "Aguardando entrada no grupo" → recebeu resultado, ainda não clicou
+//  "Acompanhar no grupo"         → clicou no botão do grupo
+//  "Chamar no WhatsApp"          → 30s sem clicar → enviar mensagem do closer
 // ═══════════════════════════════════════════════
 function salvarPlanilha() {
   if (!SHEETS_URL) return;
