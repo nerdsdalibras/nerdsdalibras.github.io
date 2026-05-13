@@ -832,30 +832,10 @@ async function finalizarQuiz() {
   salvarPlanilha();
 
   await sleep(500);
-  await addBubble('Recebi suas respostas! 📋', 1000);
-  await addBubble('Vou analisar com atenção para te entregar um diagnóstico mais certeiro, tudo bem?\n\nEm alguns minutos eu te envio o caminho mais indicado para o seu momento na Libras. 🙏', 2500);
-  await sleep(600);
-  await addBubble('Enquanto isso, <strong>pode minimizar esse app e fazer outras coisas</strong> normalmente. Quando a Lorena responder, eu te notifico aqui. 🔔', 2000);
+  await addBubble('Recebi suas respostas! 📋', 800);
+  await addBubble('Aqui está o seu diagnóstico 🎯', 1000);
   await sleep(400);
-
-  // Pedir permissão de notificação
-  if ('Notification' in window && Notification.permission === 'default') {
-    const notifWrap = document.createElement('div');
-    notifWrap.className = 'choices-wrap show';
-    notifWrap.id = 'notif-choices';
-    notifWrap.innerHTML = `
-      <button class="choice-btn" onclick="ativarNotificacao()">
-        <div class="choice-icon">🔔</div>
-        <div><div class="choice-label">Ativar notificação e minimizar</div></div>
-      </button>
-      <button class="choice-btn" style="opacity:.65" onclick="pularNotificacao()">
-        <div class="choice-icon">⏳</div>
-        <div><div class="choice-label">Vou aguardar aqui mesmo</div></div>
-      </button>`;
-    addElement(notifWrap);
-  } else {
-    iniciarContagem();
-  }
+  iniciarContagem();
 }
 
 async function ativarNotificacao() {
@@ -907,11 +887,8 @@ function iniciarContagem() {
   addElement(aguardandoWrap);
   scrollDown();
 
-  contarRegressiva(TEMPO_ESPERA_S, aguardandoWrap).then(async () => {
-    aguardandoWrap.style.display = 'none';
-    dispararNotificacaoLocal();
-    await mostrarResultado();
-  });
+  aguardandoWrap.style.display = 'none';
+  await mostrarResultado();
 }
 
 function contarRegressiva(totalSeg, wrapEl) {
