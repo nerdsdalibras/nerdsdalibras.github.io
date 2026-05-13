@@ -427,6 +427,7 @@ const WA_MENTORIA = 'https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe';
 //  ESTADO DO LEAD
 // ═══════════════════════════════════════════════
 const lead = {
+  sessionId: Date.now() + '-' + Math.random().toString(36).substr(2, 9),
   nome: '', whatsapp: '', instagram: '',
   origem: window.location.href,
   conheceuLorena: false,
@@ -1073,15 +1074,15 @@ function registrarClique() {
 //   Percebi que você ainda não entrou no grupo onde vamos liberar a condição
 //   especial e os bônus. Quer que eu te envie o link por aqui?"
 //
-//  APPS SCRIPT — cole em Extensões > Apps Script e reimplante:
+//  APPS SCRIPT — cole em Extensões > Apps Script e reimplante como Nova Versão:
 //
 //  function doPost(e) {
 //    try {
-//      var ss = SpreadsheetApp.getActiveSpreadsheet();
-//      var s  = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
+//      var ss  = SpreadsheetApp.getActiveSpreadsheet();
+//      var s   = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
 //      var raw = (e.postData && e.postData.contents) ? e.postData.contents : '{}';
-//      var d  = JSON.parse(raw);
-//      s.appendRow([
+//      var d   = JSON.parse(raw);
+//      var row = [
 //        new Date(),
 //        d.nome || '', d.whatsapp || '', d.instagram || '', d.origem || '',
 //        d.conheceuLorena      ? 'Sim' : 'Não',
@@ -1097,8 +1098,20 @@ function registrarClique() {
 //        d.clicouGrupo         ? 'Sim' : 'Não',
 //        d.entranúGrupo        ? 'Sim' : 'Não',
 //        d.statusCloser        || '',
-//        d.observacoes         || ''
-//      ]);
+//        d.observacoes         || '',
+//        d.sessionId           || ''
+//      ];
+//      // Procura linha existente pelo sessionId (coluna T = índice 19)
+//      var dados = s.getDataRange().getValues();
+//      var linhaExistente = -1;
+//      for (var i = 1; i < dados.length; i++) {
+//        if (dados[i][19] === d.sessionId) { linhaExistente = i + 1; break; }
+//      }
+//      if (linhaExistente > 0) {
+//        s.getRange(linhaExistente, 1, 1, row.length).setValues([row]);
+//      } else {
+//        s.appendRow(row);
+//      }
 //    } catch(err) {}
 //    return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
 //  }
