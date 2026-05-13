@@ -610,7 +610,7 @@ function addElement(el) {
 async function startFlow() {
   await sleep(800);
   await addBubble('Oi! Que bom ter você aqui 😊', 1200);
-  await addBubble('Antes de começar sua avaliação, posso te apresentar rapidinho quem é a Lorena e por que esse diagnóstico pode te ajudar a escolher o <strong>melhor caminho na Libras?</strong>');
+  await addBubble('Antes de começar, posso te apresentar rapidinho quem é a Lorena e como ela vai identificar o seu <strong>nível atual em Libras</strong>?');
 
   // Botões de escolha
   const wrap = document.createElement('div');
@@ -645,11 +645,11 @@ async function escolherApresentacao(sim) {
     await addBubble('A Lorena atua há <strong>15 anos</strong> como tradutora e intérprete de Libras, com experiência na educação em Minas Gerais, universidades estaduais e particulares, órgãos públicos, prefeituras e eventos.');
     await addBubble('Ela é <strong>professora de Libras</strong>, formada em Letras Português/Literatura e em Letras Libras, sócia da Nerds da Libras LTDA e trabalha há 15 anos junto à comunidade surda.');
     await addBubble('Hoje, ela ensina Libras com um método visual inspirado no <em>Método Krashen aplicado à Libras</em>, ajudando o aluno a sair dos sinais soltos e desenvolver comunicação real. 🤟');
-    await addBubble('Agora vamos para sua avaliação. Responda com calma, porque suas respostas vão mostrar se o melhor caminho para você hoje é o <strong>Curso da Lorena</strong> ou a <strong>Mentoria personalizada.</strong>');
+    await addBubble('Agora vamos para sua avaliação. Com base nas suas respostas, a Lorena vai identificar o seu <strong>nível atual em Libras</strong> — Básico, Intermediário ou Avançado — e te mostrar o melhor caminho para evoluir. 🤟');
   } else {
     addUserBubble('Não, quero ir direto para a avaliação ⚡');
     await sleep(400);
-    await addBubble('Perfeito! Então vamos direto ao seu diagnóstico.\n\nResponda com calma, porque suas respostas vão mostrar se o melhor caminho para você hoje é o <strong>Curso da Lorena</strong> ou a <strong>Mentoria personalizada.</strong>');
+    await addBubble('Perfeito! Então vamos direto ao seu diagnóstico.\n\nCom base nas suas respostas, a Lorena vai identificar o seu <strong>nível atual em Libras</strong> — Básico, Intermediário ou Avançado — e te mostrar o melhor caminho para evoluir. 🤟');
   }
 
   // Botão iniciar
@@ -743,7 +743,7 @@ async function pularIg() {
 }
 
 async function iniciarAposContato() {
-  await addBubble(`Perfeito, <strong>${lead.nome}</strong>! Agora vamos ao diagnóstico. São 12 perguntas rápidas — responde com honestidade que o resultado fica bem preciso 🎯`, 1500);
+  await addBubble(`Perfeito, <strong>${lead.nome}</strong>! Agora vamos ao diagnóstico. São 12 perguntas rápidas — responde com honestidade e a Lorena vai identificar exatamente em qual nível você está hoje 🎯`, 1500);
   await sleep(400);
   iniciarQuiz();
 }
