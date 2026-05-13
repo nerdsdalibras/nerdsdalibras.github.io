@@ -833,43 +833,7 @@ async function finalizarQuiz() {
   await addBubble('Recebi suas respostas! 📋', 800);
   await addBubble('Aqui está o seu diagnóstico 🎯', 1000);
   await sleep(400);
-  iniciarContagem();
-}
-
-async function ativarNotificacao() {
-  document.getElementById('notif-choices')?.remove();
-  const perm = await Notification.requestPermission();
-  if (perm === 'granted') {
-    addUserBubble('Notificação ativada 🔔');
-    await sleep(300);
-    await addBubble('Perfeito! Pode ir fazer outras coisas. Assim que a Lorena terminar, apareço aqui para você. 😊', 900);
-    await agendarNotificacaoSW(TEMPO_ESPERA_S * 1000);
-  } else {
-    addUserBubble('Vou aguardar aqui');
-    await sleep(300);
-    await addBubble('Tudo bem! O resultado aparece aqui nessa tela quando ficar pronto. 😊', 800);
-  }
-  iniciarContagem();
-}
-
-async function pularNotificacao() {
-  document.getElementById('notif-choices')?.remove();
-  addUserBubble('Vou aguardar aqui');
-  await sleep(300);
-  await addBubble('Tudo bem! O resultado aparece aqui nessa tela quando ficar pronto. 😊', 800);
-  iniciarContagem();
-}
-
-async function agendarNotificacaoSW(delayMs) {
-  if (!('serviceWorker' in navigator)) return;
-  try {
-    const reg = await navigator.serviceWorker.register('/sw.js');
-    await navigator.serviceWorker.ready;
-    const sw = reg.active || reg.waiting || reg.installing;
-    if (sw) {
-      sw.postMessage({ type: 'AGENDAR_RESULTADO', delay: delayMs, nome: lead.nome });
-    }
-  } catch (e) {}
+  await mostrarResultado();
 }
 
 function iniciarContagem() {
