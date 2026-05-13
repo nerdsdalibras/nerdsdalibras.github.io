@@ -242,6 +242,19 @@
       border-radius: 999px; transition: width 3s linear;
     }
 
+    /* ── CERTIFICADO ── */
+    .cert-wrap { display: none; margin: 12px 0 8px 36px; animation: fadeUp .5s ease; }
+    .cert-wrap.show { display: block; }
+    .cert-card {
+      border-radius: 16px; padding: 22px 18px; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    .cert-logo { font-size: .72rem; color: rgba(255,255,255,.45); margin-bottom: 6px; letter-spacing: .08em; text-transform: uppercase; }
+    .cert-title { font-size: .8rem; color: rgba(255,255,255,.5); margin-bottom: 14px; }
+    .cert-nome { font-size: 1.25rem; font-weight: 800; color: #E9EDEF; margin-bottom: 16px; }
+    .cert-nivel { font-size: 1.5rem; font-weight: 900; border-radius: 12px; padding: 10px 22px; display: inline-block; margin-bottom: 14px; letter-spacing: .04em; }
+    .cert-sub { font-size: .7rem; color: rgba(255,255,255,.35); margin-top: 4px; }
+
     /* ── CARD RESULTADO ── */
     .result-wrap { display: none; margin: 12px 0 8px 36px; animation: fadeUp .5s ease; }
     .result-wrap.show { display: block; }
@@ -254,8 +267,8 @@
     .result-card.mentoria-card { border-color: rgba(124,58,237,.3); }
     .result-card.aval-card { border-color: rgba(201,150,58,.3); }
 
-    .result-photo { position: relative; height: 180px; overflow: hidden; }
-    .result-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+    .result-photo { position: relative; height: 230px; overflow: hidden; }
+    .result-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; }
     .result-photo-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, #0D0D0D 100%); }
     .result-pill-top {
       position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
@@ -903,25 +916,109 @@ function calcularNivel() {
 
 async function mostrarResultado() {
   const nivel = calcularNivel();
+  const nivelLabels = { basico: 'BÁSICO', intermediario: 'INTERMEDIÁRIO', avancado: 'AVANÇADO' };
 
-  const msgs = {
-    basico: `A Lorena analisou suas respostas com atenção e me passou seu diagnóstico, <strong>${lead.nome}</strong>. 🙂\n\nCom base na sua avaliação, você está no nível <strong>BÁSICO</strong> em Libras.\n\nIsso significa que você ainda está construindo sua base. Pelas suas respostas, o seu maior desafio agora parece ser aprender sinais em contexto, formar frases simples, entender a lógica visual da Libras e ganhar segurança para começar a se comunicar.\n\nPor isso, o melhor caminho para você agora é o <strong>Curso Do Zero à Libras — Base e Intermediário.</strong>\n\nEle vai te ajudar a sair do começo com mais clareza, construir uma base real e evoluir rumo ao nível intermediário sem ficar apenas decorando sinais soltos.`,
+  lead.nivelIdentificado = nivelLabels[nivel];
+  lead.resultado         = nivel === 'basico' ? 'Curso' : 'Mentoria';
+  lead.grupoIndicado     = nivel === 'basico' ? 'Grupo do Curso' : 'Grupo da Mentoria';
+  lead.resultadoEnviado  = true;
+  lead.statusCloser      = 'Aguardando resposta sobre próximo nível';
+  salvarPlanilha();
 
-    intermediario: `A Lorena analisou suas respostas com atenção e me passou seu diagnóstico, <strong>${lead.nome}</strong>. 🙂\n\nCom base na sua avaliação, você está no nível <strong>INTERMEDIÁRIO</strong> em Libras.\n\nIsso mostra que você já tem algum contato com a língua, mas ainda sente dificuldade para organizar frases, ganhar naturalidade, entender melhor a estrutura visual da Libras ou se sentir segura na hora de sinalizar.\n\nNesse ponto, apenas aprender mais sinais nem sempre resolve. Muitas vezes, o que falta é direcionamento, correção, organização do pensamento e prática guiada.\n\nPor isso, o melhor caminho para você agora é a <strong>Mentoria Master Fluência by Lorena.</strong>\n\nNa mentoria, a Lorena vai te ajudar a identificar onde sua sinalização está travando e como evoluir com mais clareza, segurança e fluência visual.`,
+  // 1. Certificado visual
+  mostrarCertificado(nivel);
+  await sleep(900);
 
-    avancado: `A Lorena analisou suas respostas com atenção e me passou seu diagnóstico, <strong>${lead.nome}</strong>. 🙂\n\nCom base na sua avaliação, você já demonstra um nível <strong>AVANÇADO</strong> em Libras, com perfil para aprimoramento profissional.\n\nIsso mostra que você já tem uma boa base e provavelmente já consegue se comunicar ou até interpretar em alguns contextos. Mas pelas suas respostas, o próximo passo não é apenas aprender mais sinais.\n\nAgora o foco precisa ser fluência visual, processo tradutório, clareza, naturalidade, estrutura, expressão e segurança na hora de sinalizar ou interpretar.\n\nPor isso, o melhor caminho para você é a <strong>Mentoria Master Fluência by Lorena.</strong>\n\nA mentoria foi pensada para quem já tem base, mas quer destravar a interpretação, melhorar a entrega em Libras e evoluir para um nível mais profissional.`,
+  // 2. Explicação rápida do resultado
+  const explicacoes = {
+    basico:        `<strong>${lead.nome}</strong>, com base nas suas respostas você está no nível <strong>BÁSICO</strong> em Libras. 🌱\n\nIsso significa que você ainda está construindo sua base — aprender sinais em contexto, formar frases simples e ganhar segurança para se comunicar são os seus próximos passos.`,
+    intermediario: `<strong>${lead.nome}</strong>, com base nas suas respostas você está no nível <strong>INTERMEDIÁRIO</strong> em Libras. ✨\n\nVocê já tem contato com a língua, mas ainda sente dificuldade para ganhar naturalidade e fluência. O que falta agora é direcionamento personalizado e prática guiada.`,
+    avancado:      `<strong>${lead.nome}</strong>, com base nas suas respostas você já está no nível <strong>AVANÇADO</strong> em Libras. 💜\n\nVocê já tem uma boa base e consegue se comunicar. O próximo passo é desenvolver fluência visual, naturalidade e segurança profissional.`,
   };
 
-  const isCurso   = nivel === 'basico';
-  const linkGrupo = isCurso ? WA_CURSO : WA_MENTORIA;
+  await addBubble(explicacoes[nivel], 2000);
+  await sleep(600);
 
-  const nivelLabels = { basico: 'BÁSICO', intermediario: 'INTERMEDIÁRIO', avancado: 'AVANÇADO' };
-  lead.nivelIdentificado = nivelLabels[nivel];
-  lead.resultado         = isCurso ? 'Curso' : 'Mentoria';
-  lead.grupoIndicado     = isCurso ? 'Grupo do Curso' : 'Grupo da Mentoria';
+  // 3. Pergunta de engajamento
+  await addBubble('Quer ir para o próximo nível? 🚀', 700);
+  await sleep(300);
 
-  await addBubble(msgs[nivel], 3500);
-  await sleep(700);
+  const wrap = document.createElement('div');
+  wrap.className = 'choices-wrap show';
+  wrap.id = 'choices-proximo-nivel';
+  wrap.innerHTML = `
+    <button class="choice-btn" onclick="querProximoNivel(true, '${nivel}')">
+      <div class="choice-icon">✅</div>
+      <div><div class="choice-label">Sim, quero saber como a Lorena pode me ajudar</div></div>
+    </button>
+    <button class="choice-btn" style="opacity:.65" onclick="querProximoNivel(false, '${nivel}')">
+      <div class="choice-icon">👋</div>
+      <div><div class="choice-label">Não, obrigado</div></div>
+    </button>`;
+  addElement(wrap);
+}
+
+function mostrarCertificado(nivel) {
+  const conf = {
+    basico:        { bg: 'rgba(34,197,94,.07)',    borda: 'rgba(34,197,94,.35)',    cor: '#4ADE80', emoji: '🌱', label: 'BÁSICO'        },
+    intermediario: { bg: 'rgba(201,150,58,.07)',   borda: 'rgba(201,150,58,.35)',   cor: '#E8B96A', emoji: '✨', label: 'INTERMEDIÁRIO' },
+    avancado:      { bg: 'rgba(124,58,237,.10)',   borda: 'rgba(124,58,237,.35)',   cor: '#C4B5FD', emoji: '💜', label: 'AVANÇADO'      },
+  };
+  const c = conf[nivel];
+  const certWrap = document.createElement('div');
+  certWrap.className = 'cert-wrap show';
+  certWrap.innerHTML = `
+    <div class="cert-card" style="background:${c.bg};border:1px solid ${c.borda}">
+      <div class="cert-logo">🤟 Nerds da Libras</div>
+      <div class="cert-title">Diagnóstico de Nível em Libras</div>
+      <div class="cert-nome">${lead.nome}</div>
+      <div class="cert-nivel" style="color:${c.cor};background:${c.bg};border:1.5px solid ${c.borda}">${c.emoji} ${c.label}</div>
+      <div class="cert-sub">Avaliado pela Prof. Lorena · Nerds da Libras</div>
+    </div>`;
+  addElement(certWrap);
+}
+
+async function querProximoNivel(sim, nivel) {
+  document.querySelectorAll('#choices-proximo-nivel .choice-btn').forEach(b => b.disabled = true);
+
+  if (!sim) {
+    addUserBubble('Não, obrigado 👋');
+    await sleep(400);
+    await addBubble(`Foi um prazer te conhecer, <strong>${lead.nome}</strong>! 😊\n\nObrigada por participar da avaliação. Quando quiser evoluir na Libras, a Lorena estará aqui. Nos vemos em breve! 🤟`);
+    lead.statusCloser = 'Não quis avançar';
+    salvarPlanilha();
+    return;
+  }
+
+  addUserBubble('Sim, quero saber como a Lorena pode me ajudar ✅');
+  await sleep(500);
+
+  const isCurso    = nivel === 'basico';
+  const linkGrupo  = isCurso ? WA_CURSO : WA_MENTORIA;
+
+  const transicoes = {
+    basico:        `Ótimo! Para você sair do nível <strong>Básico</strong> e chegar ao <strong>Intermediário</strong>, o caminho ideal é o <strong>Curso Do Zero à Libras</strong> da Lorena. 🌱➡️✨`,
+    intermediario: `Ótimo! Para você sair do nível <strong>Intermediário</strong> e chegar ao <strong>Avançado</strong>, o caminho ideal é a <strong>Mentoria Master Fluência</strong> da Lorena. ✨➡️💜`,
+    avancado:      `Ótimo! Para você conquistar a <strong>fluência profissional</strong> em Libras, o caminho ideal é a <strong>Mentoria Master Fluência</strong> da Lorena. 💜🚀`,
+  };
+
+  await addBubble(transicoes[nivel], 1200);
+  await sleep(400);
+
+  mostrarCard(nivel, linkGrupo);
+
+  lead.statusCloser = 'Viu o card';
+  salvarPlanilha();
+
+  await sleep(30000);
+  if (!lead.clicouGrupo) {
+    lead.statusCloser = 'Chamar no WhatsApp';
+    salvarPlanilha();
+  }
+}
+
+function mostrarCard(nivel, linkGrupo) {
+  const isCurso = nivel === 'basico';
 
   const extraCurso = `
     <div class="vagas-row"><div class="vagas-dot"></div><span>Vagas limitadas por turma · <strong>abertura anunciada no grupo</strong></span></div>
@@ -931,11 +1028,10 @@ async function mostrarResultado() {
     <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma · <strong>abertura anunciada no grupo</strong></span></div>
     <div class="bonus-row">🔔 <strong>Quem está no grupo sabe primeiro</strong> quando a turma abre e recebe condições exclusivas.</div>`;
 
-  const ctaTxt = isCurso
-    ? 'Entre no grupo para ser avisada quando a turma abrir e ter acesso às condições exclusivas.'
-    : nivel === 'intermediario'
-      ? 'Entre no grupo para ser avisada quando a turma da Mentoria abrir e ter acesso às condições exclusivas.'
-      : 'Entre no grupo para ser avisada quando a turma da Mentoria abrir e ter acesso às condições exclusivas.';
+  const pillLabel = isCurso ? '🌱➡️✨ Básico → Intermediário' : nivel === 'intermediario' ? '✨➡️💜 Intermediário → Avançado' : '💜🚀 Fluência Profissional';
+  const nivelBadge = isCurso ? 'nivel-verde' : nivel === 'intermediario' ? 'nivel-ouro' : 'nivel-roxo';
+  const btnClass   = isCurso ? 'btn-rv' : nivel === 'intermediario' ? 'btn-ro' : 'btn-rp';
+  const pillClass  = isCurso ? 'pill-verde' : 'pill-roxo';
 
   const resultWrap = document.createElement('div');
   resultWrap.className = 'result-wrap show';
@@ -944,36 +1040,24 @@ async function mostrarResultado() {
       <div class="result-photo">
         <img src="${isCurso ? 'fotos/IMG_4977.jpg' : 'fotos/image-1777403006556.jpg'}" alt="Prof. Lorena" onerror="this.src='fotos/IMG_4952.jpg'"/>
         <div class="result-photo-overlay"></div>
-        <div class="result-pill-top ${isCurso ? 'pill-verde' : 'pill-roxo'}">${isCurso ? '🌱 Nível Básico' : nivel === 'intermediario' ? '✨ Nível Intermediário' : '💜 Nível Avançado'}</div>
+        <div class="result-pill-top ${pillClass}">${pillLabel}</div>
       </div>
       <div class="result-body">
-        <div class="result-nivel ${isCurso ? 'nivel-verde' : nivel === 'intermediario' ? 'nivel-ouro' : 'nivel-roxo'}">${isCurso ? 'Indicado para você' : 'Pronta para Mentoria'}</div>
+        <div class="result-nivel ${nivelBadge}">${isCurso ? 'Próximo nível: Intermediário' : nivel === 'intermediario' ? 'Próximo nível: Avançado' : 'Objetivo: Fluência Profissional'}</div>
         <div class="result-titulo">${isCurso ? 'Do Zero à Libras — Base e Intermediário' : 'Mentoria Master Fluência by Lorena'}</div>
         <div class="result-desc">
           ${isCurso
             ? `Criado para quem quer <strong>sair dos sinais soltos e começar a se comunicar de verdade.</strong> Você vai construir base, vocabulário ativo, estrutura de frases e segurança para conversar com surdos — do jeito certo, com método.`
             : `Acompanhamento <strong>100% personalizado</strong> com a Lorena. Ela identifica onde sua sinalização está travando e te direciona passo a passo em <strong>estrutura visual, fluência, naturalidade e segurança.</strong>`}
         </div>
-        <div class="result-desc" style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:-10px;margin-bottom:14px;">${ctaTxt}</div>
         ${isCurso ? extraCurso : extraMentoria}
-        <a class="btn-result ${isCurso ? 'btn-rv' : nivel === 'intermediario' ? 'btn-ro' : 'btn-rp'}"
-          href="${linkGrupo}" target="_blank" rel="noopener"
-          onclick="registrarClique()">
+        <a class="btn-result ${btnClass}" href="${linkGrupo}" target="_blank" rel="noopener" onclick="registrarClique()">
           💬 Entrar no grupo e saber quando abre
         </a>
       </div>
     </div>`;
   addElement(resultWrap);
-
-  lead.resultadoEnviado = true;
-  lead.statusCloser = 'Aguardando entrada no grupo';
-  salvarPlanilha();
-
-  await sleep(30000);
-  if (!lead.clicouGrupo) {
-    lead.statusCloser = 'Chamar no WhatsApp';
-    salvarPlanilha();
-  }
+  scrollDown();
 }
 
 function registrarClique() {
