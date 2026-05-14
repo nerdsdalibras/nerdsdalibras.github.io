@@ -766,7 +766,6 @@ async function iniciarAposContato() {
 // ═══════════════════════════════════════════════
 function iniciarQuiz() {
   lead.iniciouQuiz = true;
-  salvarPlanilha();
   quizStep  = 0;
   quizScore = 0;
   q1DifIdx  = null;
@@ -840,7 +839,6 @@ async function proximaPergunta() {
 async function finalizarQuiz() {
   lead.concluiuQuiz = true;
   lead.pontuacao = quizScore;
-  salvarPlanilha();
 
   await sleep(500);
   await addBubble('Recebi suas respostas! 📋', 800);
@@ -985,11 +983,13 @@ async function querProximoNivel(sim, nivel) {
     addUserBubble('Não, obrigado 👋');
     await sleep(400);
     await addBubble(`Foi um prazer te conhecer, <strong>${lead.nome}</strong>! 😊\n\nObrigada por participar da avaliação. Quando quiser evoluir na Libras, a Lorena estará aqui. Nos vemos em breve! 🤟`);
+    lead.quisAvancar  = 'Não';
     lead.statusCloser = 'Não quis avançar';
     salvarPlanilha();
     return;
   }
 
+  lead.quisAvancar = 'Sim';
   addUserBubble('Sim, quero saber como a Lorena pode me ajudar ✅');
   await sleep(500);
 
@@ -1077,63 +1077,48 @@ function registrarClique() {
 //  B  Nome
 //  C  WhatsApp
 //  D  Instagram
-//  E  Origem
-//  F  Conheceu a Lorena (Sim/Não)
-//  G  Iniciou o quiz (Sim/Não)
-//  H  Concluiu o quiz (Sim/Não)
-//  I  Resposta — principal dificuldade (Q1)
-//  J  Resposta — objetivo com a Libras (Q2)
-//  K  Pontuação total
-//  L  Nível identificado (Básico / Intermediário / Avançado)
-//  M  Resultado indicado (Curso / Mentoria)
-//  N  Grupo indicado
-//  O  Resultado enviado (Sim/Não)
-//  P  Clicou no link do grupo (Sim/Não)
-//  Q  Entrou no grupo (Sim/Não)
-//  R  Status do closer
-//  S  Observações
+//  E  Nível (Básico / Intermediário / Avançado)
+//  F  Resultado (Curso / Mentoria)
+//  G  Quis Avançar (Sim / Não)
+//  H  Entrou no Grupo (Sim / Não)
+//  I  Status
+//  J  sessionId  ← chave de upsert (NÃO apagar)
 //
-//  MENSAGEM DO CLOSER (para leads que não entraram no grupo):
-//  "Oi, tudo bem? Vi que você fez a avaliação da Lorena e seu resultado
-//   indicou [CURSO/MENTORIA] como o melhor caminho para o seu momento na Libras.
-//   Percebi que você ainda não entrou no grupo onde vamos liberar a condição
-//   especial e os bônus. Quer que eu te envie o link por aqui?"
-//
-//  APPS SCRIPT — cole em Extensões > Apps Script e reimplante como Nova Versão:
+//  ── APPS SCRIPT ──────────────────────────────
+//  Extensões > Apps Script > cole e reimplante como Nova Versão:
 //
 //  function doPost(e) {
 //    try {
 //      var ss  = SpreadsheetApp.getActiveSpreadsheet();
 //      var s   = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
+//      // Cabeçalho automático na primeira vez
+//      if (s.getLastRow() === 0) {
+//        s.appendRow(['Data','Nome','WhatsApp','Instagram','Nível','Resultado','Quis Avançar','Entrou no Grupo','Status','sessionId']);
+//        s.setFrozenRows(1);
+//      }
 //      var raw = (e.postData && e.postData.contents) ? e.postData.contents : '{}';
 //      var d   = JSON.parse(raw);
+//      if (!d.nome || !d.sessionId) return ContentService.createTextOutput('skip');
 //      var row = [
 //        new Date(),
-//        d.nome || '', d.whatsapp || '', d.instagram || '', d.origem || '',
-//        d.conheceuLorena      ? 'Sim' : 'Não',
-//        d.iniciouQuiz         ? 'Sim' : 'Não',
-//        d.concluiuQuiz        ? 'Sim' : 'Não',
-//        d.respostaDificuldade || '',
-//        d.respostaObjetivo    || '',
-//        d.pontuacao           || 0,
-//        d.nivelIdentificado   || '',
-//        d.resultado           || '',
-//        d.grupoIndicado       || '',
-//        d.resultadoEnviado    ? 'Sim' : 'Não',
-//        d.clicouGrupo         ? 'Sim' : 'Não',
-//        d.entranúGrupo        ? 'Sim' : 'Não',
-//        d.statusCloser        || '',
-//        d.observacoes         || '',
-//        d.sessionId           || ''
+//        d.nome            || '',
+//        d.whatsapp        || '',
+//        d.instagram       || '',
+//        d.nivelIdentificado || '',
+//        d.resultado       || '',
+//        d.quisAvancar     || '',
+//        d.clicouGrupo     ? 'Sim' : 'Não',
+//        d.statusCloser    || '',
+//        d.sessionId
 //      ];
-//      // Procura linha existente pelo sessionId (coluna T = índice 19)
+//      // Upsert pelo sessionId (coluna J = índice 9)
 //      var dados = s.getDataRange().getValues();
-//      var linhaExistente = -1;
+//      var linha = -1;
 //      for (var i = 1; i < dados.length; i++) {
-//        if (dados[i][19] === d.sessionId) { linhaExistente = i + 1; break; }
+//        if (String(dados[i][9]) === String(d.sessionId)) { linha = i + 1; break; }
 //      }
-//      if (linhaExistente > 0) {
-//        s.getRange(linhaExistente, 1, 1, row.length).setValues([row]);
+//      if (linha > 0) {
+//        s.getRange(linha, 1, 1, row.length).setValues([row]);
 //      } else {
 //        s.appendRow(row);
 //      }
@@ -1141,10 +1126,12 @@ function registrarClique() {
 //    return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
 //  }
 //
-//  REGRAS DE STATUS DO CLOSER:
-//  "Aguardando entrada no grupo" → recebeu resultado, ainda não clicou
-//  "Acompanhar no grupo"         → clicou no botão do grupo
-//  "Chamar no WhatsApp"          → 30s sem clicar → enviar mensagem do closer
+//  STATUS DO CLOSER:
+//  "Aguardando resposta"  → recebeu resultado, não respondeu ainda
+//  "Não quis avançar"     → disse Não na pergunta de engajamento
+//  "Viu o card"           → disse Sim e viu o card do produto
+//  "Entrou no grupo"      → clicou no botão do grupo
+//  "Chamar no WhatsApp"   → 30s depois de ver o card sem clicar
 // ═══════════════════════════════════════════════
 function salvarPlanilha() {
   if (!SHEETS_URL) return;
