@@ -919,8 +919,8 @@ async function mostrarResultado() {
   const nivelLabels = { basico: 'BÁSICO', intermediario: 'INTERMEDIÁRIO', avancado: 'AVANÇADO' };
 
   lead.nivelIdentificado = nivelLabels[nivel];
-  lead.resultado         = nivel === 'basico' ? 'Curso' : 'Mentoria';
-  lead.grupoIndicado     = nivel === 'basico' ? 'Grupo do Curso' : 'Grupo da Mentoria';
+  lead.resultado         = nivel !== 'avancado' ? 'Curso' : 'Mentoria';
+  lead.grupoIndicado     = nivel !== 'avancado' ? 'Grupo do Curso' : 'Grupo da Mentoria';
   lead.resultadoEnviado  = true;
   lead.statusCloser      = 'Aguardando resposta sobre próximo nível';
   salvarPlanilha();
@@ -932,7 +932,7 @@ async function mostrarResultado() {
   // 2. Explicação rápida do resultado
   const explicacoes = {
     basico:        `<strong>${lead.nome}</strong>, com base nas suas respostas você está no nível <strong>BÁSICO</strong> em Libras. 🌱\n\nIsso significa que você ainda está construindo sua base — aprender sinais em contexto, formar frases simples e ganhar segurança para se comunicar são os seus próximos passos.`,
-    intermediario: `<strong>${lead.nome}</strong>, com base nas suas respostas você está no nível <strong>INTERMEDIÁRIO</strong> em Libras. ✨\n\nVocê já tem contato com a língua, mas ainda sente dificuldade para ganhar naturalidade e fluência. O que falta agora é direcionamento personalizado e prática guiada.`,
+    intermediario: `<strong>${lead.nome}</strong>, com base nas suas respostas você está no nível <strong>INTERMEDIÁRIO</strong> em Libras. ✨\n\nVocê já tem contato com a língua — e isso é muito! Mas para consolidar esse conhecimento do jeito certo e estar preparada para o próximo passo, você precisa de uma base estruturada. É exatamente aí que entra o próximo nível.`,
     avancado:      `<strong>${lead.nome}</strong>, com base nas suas respostas você já está no nível <strong>AVANÇADO</strong> em Libras. 💜\n\nVocê já tem uma boa base e consegue se comunicar. O próximo passo é desenvolver fluência visual, naturalidade e segurança profissional.`,
   };
 
@@ -993,12 +993,12 @@ async function querProximoNivel(sim, nivel) {
   addUserBubble('Sim, quero saber como a Lorena pode me ajudar ✅');
   await sleep(500);
 
-  const isCurso    = nivel === 'basico';
+  const isCurso    = nivel !== 'avancado';
   const linkGrupo  = isCurso ? WA_CURSO : WA_MENTORIA;
 
   const transicoes = {
-    basico:        `Ótimo! Para você sair do nível <strong>Básico</strong> e chegar ao <strong>Intermediário</strong>, o caminho ideal é o <strong>Curso Do Zero à Libras</strong> da Lorena. 🌱➡️✨`,
-    intermediario: `Ótimo! Para você sair do nível <strong>Intermediário</strong> e chegar ao <strong>Avançado</strong>, o caminho ideal é a <strong>Mentoria Master Fluência</strong> da Lorena. ✨➡️💜`,
+    basico:        `Ótimo! O <strong>Curso Do Zero à Libras</strong> da Lorena é o caminho certo para você construir uma base sólida e real em Libras — saindo dos sinais soltos para uma comunicação verdadeira. 🌱➡️✨`,
+    intermediario: `Ótimo! O <strong>Curso Do Zero à Libras</strong> da Lorena não é um curso básico — ele vai te ajudar a <strong>consolidar o que você já sabe do jeito certo</strong>, preencher as lacunas da sua base e te preparar para o próximo nível, inclusive se você quiser seguir carreira. ✨🎯`,
     avancado:      `Ótimo! Para você conquistar a <strong>fluência profissional</strong> em Libras, o caminho ideal é a <strong>Mentoria Master Fluência</strong> da Lorena. 💜🚀`,
   };
 
@@ -1018,7 +1018,7 @@ async function querProximoNivel(sim, nivel) {
 }
 
 function mostrarCard(nivel, linkGrupo) {
-  const isCurso = nivel === 'basico';
+  const isCurso = nivel !== 'avancado';
 
   const extraCurso = `
     <div class="vagas-row"><div class="vagas-dot"></div><span>Vagas limitadas por turma · <strong>abertura anunciada no grupo</strong></span></div>
@@ -1028,9 +1028,9 @@ function mostrarCard(nivel, linkGrupo) {
     <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma · <strong>abertura anunciada no grupo</strong></span></div>
     <div class="bonus-row">🔔 <strong>Quem está no grupo sabe primeiro</strong> quando a turma abre e recebe condições exclusivas.</div>`;
 
-  const pillLabel = isCurso ? '🌱➡️✨ Básico → Intermediário' : nivel === 'intermediario' ? '✨➡️💜 Intermediário → Avançado' : '💜🚀 Fluência Profissional';
-  const nivelBadge = isCurso ? 'nivel-verde' : nivel === 'intermediario' ? 'nivel-ouro' : 'nivel-roxo';
-  const btnClass   = isCurso ? 'btn-rv' : nivel === 'intermediario' ? 'btn-ro' : 'btn-rp';
+  const pillLabel  = nivel === 'basico' ? '🌱 Base sólida em Libras' : nivel === 'intermediario' ? '✨ Consolide e avance em Libras' : '💜🚀 Fluência Profissional';
+  const nivelBadge = isCurso ? (nivel === 'basico' ? 'nivel-verde' : 'nivel-ouro') : 'nivel-roxo';
+  const btnClass   = isCurso ? 'btn-rv' : 'btn-rp';
   const pillClass  = isCurso ? 'pill-verde' : 'pill-roxo';
 
   const resultWrap = document.createElement('div');
@@ -1043,11 +1043,13 @@ function mostrarCard(nivel, linkGrupo) {
         <div class="result-pill-top ${pillClass}">${pillLabel}</div>
       </div>
       <div class="result-body">
-        <div class="result-nivel ${nivelBadge}">${isCurso ? 'Próximo nível: Intermediário' : nivel === 'intermediario' ? 'Próximo nível: Avançado' : 'Objetivo: Fluência Profissional'}</div>
+        <div class="result-nivel ${nivelBadge}">${nivel === 'basico' ? 'Construa sua base em Libras' : isCurso ? 'Consolide e avance em Libras' : 'Objetivo: Fluência Profissional'}</div>
         <div class="result-titulo">${isCurso ? 'Do Zero à Libras — Base e Intermediário' : 'Mentoria Master Fluência by Lorena'}</div>
         <div class="result-desc">
           ${isCurso
-            ? `Criado para quem quer <strong>sair dos sinais soltos e começar a se comunicar de verdade.</strong> Você vai construir base, vocabulário ativo, estrutura de frases e segurança para conversar com surdos — do jeito certo, com método.`
+            ? nivel === 'basico'
+              ? `Criado para quem quer <strong>sair dos sinais soltos e começar a se comunicar de verdade.</strong> Você vai construir base, vocabulário ativo, estrutura de frases e segurança para conversar com surdos — do jeito certo, com método.`
+              : `O Curso Do Zero à Libras <strong>não é apenas para iniciantes.</strong> Ele vai te ajudar a consolidar o que você já sabe de forma estruturada, preencher as lacunas da sua base e te preparar para evoluir — inclusive se você quiser seguir carreira em Libras.`
             : `Acompanhamento <strong>100% personalizado</strong> com a Lorena. Ela identifica onde sua sinalização está travando e te direciona passo a passo em <strong>estrutura visual, fluência, naturalidade e segurança.</strong>`}
         </div>
         ${isCurso ? extraCurso : extraMentoria}
