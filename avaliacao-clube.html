@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Descubra Seu Nível em Libras — Clube da Libras</title>
+  <meta name="description" content="Faça a avaliação gratuita e descubra exatamente onde você está em Libras. Resultado em 2 minutos."/>
+  <meta property="og:title" content="Descubra Seu Nível em Libras — Avaliação Gratuita"/>
+  <meta property="og:description" content="Faça a avaliação gratuita e descubra exatamente onde você está em Libras. Resultado em 2 minutos."/>
+  <meta property="og:image" content="https://nerdsdalibras.github.io/fotos/IMG_4952.jpg"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde:     #25D366;
+      --verde-esc: #075E54;
+      --roxo:      #7C3AED;
+      --roxo-light:#A855F7;
+      --ouro:      #F59E0B;
+      --bg:        #070B14;
+      --card:      #0E1420;
+      --borda:     rgba(255,255,255,0.08);
+      --text:      #F0F4F8;
+      --text-sub:  rgba(240,244,248,0.6);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* ── GRADIENT BG ── */
+    .bg-glow {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,58,237,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 100% 80%, rgba(37,211,102,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 0% 60%, rgba(168,85,247,0.06) 0%, transparent 60%);
+    }
+
+    /* ── WRAPPER ── */
+    .page {
+      position: relative; z-index: 1;
+      max-width: 680px; margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── BARRA URGÊNCIA ── */
+    .urgency-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: linear-gradient(90deg, #7C3AED 0%, #A855F7 50%, #7C3AED 100%);
+      background-size: 200% 100%;
+      animation: shimmerBar 3s linear infinite;
+      text-align: center; padding: 11px 16px;
+      font-size: .78rem; font-weight: 700; letter-spacing: .04em;
+      color: #fff;
+    }
+    @keyframes shimmerBar {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    .urgency-bar .pulse-dot {
+      display: inline-block; width: 7px; height: 7px;
+      border-radius: 50%; background: #fff;
+      margin-right: 6px; vertical-align: middle;
+      animation: pulseDot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 104px 0 0;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(168,85,247,0.35);
+      border-radius: 999px; padding: 7px 18px;
+      font-size: .75rem; font-weight: 700;
+      color: var(--roxo-light);
+      letter-spacing: .08em; text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .badge .icon { font-size: .9rem; }
+
+    .hero-title {
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -.03em;
+      margin-bottom: 22px;
+    }
+    .hero-title .highlight {
+      background: linear-gradient(135deg, #25D366 0%, #A855F7 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.08rem; color: var(--text-sub);
+      line-height: 1.65; max-width: 520px; margin: 0 auto 38px;
+    }
+    .hero-sub strong { color: var(--text); font-weight: 700; }
+
+    /* ── CTA BUTTON ── */
+    .cta-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      background: linear-gradient(135deg, #25D366 0%, #1aa854 100%);
+      color: #fff; font-weight: 800; font-size: 1.05rem;
+      text-decoration: none; border: none; cursor: pointer;
+      border-radius: 16px; padding: 20px 40px;
+      box-shadow:
+        0 0 0 0 rgba(37,211,102,0.5),
+        0 8px 32px rgba(37,211,102,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: transform .15s ease, box-shadow .15s ease;
+      animation: ctaPulse 2.5s ease-in-out infinite;
+      letter-spacing: -.01em;
+    }
+    .cta-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow:
+        0 0 0 8px rgba(37,211,102,0.12),
+        0 16px 48px rgba(37,211,102,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      animation: none;
+    }
+    .cta-btn:active { transform: scale(0.98); }
+    @keyframes ctaPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.4), 0 8px 32px rgba(37,211,102,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+      50% { box-shadow: 0 0 0 12px rgba(37,211,102,0.05), 0 8px 32px rgba(37,211,102,0.2), inset 0 1px 0 rgba(255,255,255,0.2); }
+    }
+    .cta-btn .arrow { font-size: 1.2rem; transition: transform .15s; }
+    .cta-btn:hover .arrow { transform: translateX(4px); }
+
+    .cta-note {
+      margin-top: 14px;
+      font-size: .76rem; color: var(--text-sub);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .cta-note .check { color: var(--verde); font-weight: 700; }
+
+    /* ── PROVA SOCIAL ── */
+    .social-proof {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; margin: 40px 0 0;
+      flex-wrap: wrap;
+    }
+    .avatars {
+      display: flex;
+    }
+    .avatar-item {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--bg);
+      margin-left: -10px; overflow: hidden;
+      background: linear-gradient(135deg, #7C3AED, #25D366);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700; color: #fff;
+    }
+    .avatar-item:first-child { margin-left: 0; }
+    .avatar-item img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .social-text { font-size: .82rem; color: var(--text-sub); }
+    .social-text strong { color: var(--verde); font-weight: 700; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--borda), transparent);
+      margin: 56px 0;
+    }
+
+    /* ── BENEFITS ── */
+    .section-label {
+      text-align: center;
+      font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--roxo-light);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 800; line-height: 1.2;
+      letter-spacing: -.02em; margin-bottom: 36px;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 480px) { .benefits-grid { grid-template-columns: 1fr; } }
+
+    .benefit-card {
+      background: var(--card);
+      border: 1px solid var(--borda);
+      border-radius: 20px;
+      padding: 24px 22px;
+      transition: border-color .2s, transform .2s;
+    }
+    .benefit-card:hover {
+      border-color: rgba(168,85,247,0.3);
+      transform: translateY(-2px);
+    }
+    .benefit-icon {
+      font-size: 2rem; margin-bottom: 14px;
+      display: block;
+    }
+    .benefit-title {
+      font-size: .95rem; font-weight: 700;
+      margin-bottom: 8px; line-height: 1.3;
+    }
+    .benefit-desc {
+      font-size: .82rem; color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* ── STATS ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 14px; margin: 48px 0;
+    }
+    @media (max-width: 400px) { .stats-row { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--card); border: 1px solid var(--borda);
+      border-radius: 20px; padding: 24px 16px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 2rem; font-weight: 900;
+      letter-spacing: -.03em;
+      background: linear-gradient(135deg, #25D366, #A855F7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block; margin-bottom: 6px;
+    }
+    .stat-label { font-size: .75rem; color: var(--text-sub); line-height: 1.4; }
+
+    /* ── DEPOIMENTOS ── */
+    .testimonials {
+      display: grid; grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .testimonial {
+      background: var(--card); border: 1px solid var(--borda);
+      border-radius: 20px; padding: 24px;
+    }
+    .testimonial .stars {
+      color: var(--ouro); font-size: .9rem; margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+    .testimonial .quote {
+      font-size: .9rem; color: var(--text-sub);
+      line-height: 1.65; margin-bottom: 16px;
+      font-style: italic;
+    }
+    .testimonial .quote strong { color: var(--text); font-style: normal; }
+    .testimonial .author {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #7C3AED, #25D366);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+      border: 2px solid rgba(37,211,102,.3);
+    }
+    .author-name { font-size: .85rem; font-weight: 700; }
+    .author-detail { font-size: .72rem; color: var(--text-sub); margin-top: 2px; }
+
+    /* ── COMO FUNCIONA ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex; gap: 20px; align-items: flex-start;
+      position: relative; padding-bottom: 32px;
+    }
+    .step:last-child { padding-bottom: 0; }
+    .step-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(37,211,102,0.2));
+      border: 1.5px solid rgba(168,85,247,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; font-weight: 800; color: var(--roxo-light);
+    }
+    .step-line {
+      width: 2px; flex: 1; min-height: 24px;
+      background: linear-gradient(180deg, rgba(168,85,247,0.3), transparent);
+      margin-top: 6px;
+    }
+    .step:last-child .step-line { display: none; }
+    .step-content { padding-top: 10px; }
+    .step-title { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+    .step-desc { font-size: .83rem; color: var(--text-sub); line-height: 1.6; }
+
+    /* ── CTA FINAL ── */
+    .cta-final {
+      background: linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(37,211,102,0.08) 100%);
+      border: 1px solid rgba(168,85,247,0.25);
+      border-radius: 28px; padding: 48px 32px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 200px;
+      background: radial-gradient(ellipse, rgba(124,58,237,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-final-title {
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 900; line-height: 1.15;
+      letter-spacing: -.03em; margin-bottom: 16px;
+    }
+    .cta-final-sub {
+      font-size: .95rem; color: var(--text-sub);
+      line-height: 1.6; margin-bottom: 36px;
+    }
+    .cta-final-sub strong { color: var(--text); }
+
+    /* ── PROF PHOTO ── */
+    .prof-section {
+      display: flex; align-items: center; gap: 20px;
+      background: var(--card); border: 1px solid var(--borda);
+      border-radius: 20px; padding: 24px;
+      margin-bottom: 48px;
+    }
+    .prof-photo {
+      width: 72px; height: 72px; border-radius: 50%;
+      overflow: hidden; flex-shrink: 0;
+      border: 3px solid rgba(37,211,102,.4);
+    }
+    .prof-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .prof-info {}
+    .prof-name { font-size: .95rem; font-weight: 800; margin-bottom: 4px; }
+    .prof-title { font-size: .78rem; color: var(--verde); font-weight: 600; margin-bottom: 8px; }
+    .prof-bio { font-size: .8rem; color: var(--text-sub); line-height: 1.6; }
+    .prof-bio strong { color: var(--text); }
+
+    /* ── FLOATING CTA (mobile) ── */
+    .floating-cta {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+      padding: 14px 20px;
+      background: linear-gradient(180deg, transparent 0%, rgba(7,11,20,0.95) 30%, rgba(7,11,20,1) 100%);
+    }
+    @media (max-width: 600px) { .floating-cta { display: block; } }
+    .floating-cta .cta-btn { width: 100%; }
+
+    /* ── TIMER ── */
+    .timer-wrap {
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 12px; padding: 12px 20px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 20px;
+    }
+    .timer-icon { font-size: 1.1rem; }
+    .timer-text { font-size: .82rem; color: var(--ouro); font-weight: 600; }
+    #countdown { font-weight: 800; font-size: .9rem; }
+
+    /* ── ANIMATIONS ── */
+    [data-aos] { opacity: 0; transform: translateY(24px); transition: opacity .5s ease, transform .5s ease; }
+    [data-aos].visible { opacity: 1; transform: translateY(0); }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center; padding: 32px 0 20px;
+      font-size: .72rem; color: rgba(255,255,255,.2);
+    }
+    .footer a { color: rgba(255,255,255,.3); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<!-- BARRA DE URGÊNCIA -->
+<div class="urgency-bar">
+  <span class="pulse-dot"></span>
+  Vagas limitadas para avaliação gratuita — garante a sua agora
+</div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <section class="hero" data-aos>
+    <div class="badge"><span class="icon">🎯</span> Avaliação Gratuita · 2 minutos</div>
+
+    <h1 class="hero-title">
+      Descubra <span class="highlight">exatamente</span> onde você está em Libras
+    </h1>
+
+    <p class="hero-sub">
+      Faça a avaliação e receba um <strong>diagnóstico personalizado</strong> do seu nível — do zero ao avançado. Sem enrolação, sem taxa.
+    </p>
+
+    <a href="https://clubedalibras.com/quis" class="cta-btn" target="_blank" rel="noopener">
+      Quero fazer minha avaliação <span class="arrow">→</span>
+    </a>
+
+    <p class="cta-note">
+      <span class="check">✓</span> 100% gratuito &nbsp;·&nbsp;
+      <span class="check">✓</span> Resultado imediato &nbsp;·&nbsp;
+      <span class="check">✓</span> Sem cadastro
+    </p>
+
+    <!-- PROVA SOCIAL -->
+    <div class="social-proof">
+      <div class="avatars">
+        <div class="avatar-item"><img src="fotos/IMG_4977.jpg" alt="" onerror="this.style.display='none'"></div>
+        <div class="avatar-item"><img src="fotos/IMG_4993.jpg" alt="" onerror="this.style.display='none'"></div>
+        <div class="avatar-item"><img src="fotos/IMG_4910.jpg" alt="" onerror="this.style.display='none'"></div>
+        <div class="avatar-item" style="font-size:.65rem">+</div>
+      </div>
+      <p class="social-text"><strong>+4.800 pessoas</strong> já fizeram a avaliação esse mês</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- STATS -->
+  <div class="stats-row" data-aos>
+    <div class="stat-card">
+      <span class="stat-num">4.8★</span>
+      <span class="stat-label">Avaliação média das alunas</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">12k+</span>
+      <span class="stat-label">Alunos transformados</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">2min</span>
+      <span class="stat-label">Para ter seu resultado</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- BENEFITS -->
+  <section data-aos>
+    <p class="section-label">O que você descobre</p>
+    <h2 class="section-title">Com a avaliação, você vai saber:</h2>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <span class="benefit-icon">📊</span>
+        <p class="benefit-title">Seu nível real em Libras</p>
+        <p class="benefit-desc">Do iniciante ao avançado — sem achismo, com base em critérios reais.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-icon">🗺️</span>
+        <p class="benefit-title">O próximo passo certo</p>
+        <p class="benefit-desc">Exatamente o que estudar agora para evoluir mais rápido.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-icon">⚠️</span>
+        <p class="benefit-title">O que está te travando</p>
+        <p class="benefit-desc">Os gaps que impedem sua fluência — e como eliminar cada um.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-icon">🎯</span>
+        <p class="benefit-title">Seu plano personalizado</p>
+        <p class="benefit-desc">Um caminho feito pro seu perfil, não um curso genérico para todo mundo.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- COMO FUNCIONA -->
+  <section data-aos>
+    <p class="section-label">Simples assim</p>
+    <h2 class="section-title">Como funciona em 3 passos</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <p class="step-title">Responde as perguntas rápidas</p>
+          <p class="step-desc">São poucas questões sobre o seu contato com Libras até hoje. Leva menos de 2 minutos.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <p class="step-title">Recebe seu diagnóstico na hora</p>
+          <p class="step-desc">Resultado imediato com seu nível real e os pontos mais importantes para evoluir.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <p class="step-title">Pega seu plano de evolução</p>
+          <p class="step-desc">Com base no seu perfil, você descobre o caminho exato para a fluência em Libras.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SOBRE A PROF -->
+  <section data-aos>
+    <p class="section-label">Quem fez a avaliação</p>
+    <div class="prof-section">
+      <div class="prof-photo">
+        <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena"/>
+      </div>
+      <div class="prof-info">
+        <p class="prof-name">Prof. Lorena</p>
+        <p class="prof-title">Fundadora do Clube da Libras</p>
+        <p class="prof-bio">Intérprete de Libras com <strong>+15 anos</strong> de experiência. Já ajudou <strong>+12 mil alunos</strong> em todo o Brasil a aprender Libras de verdade.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section data-aos>
+    <p class="section-label">Quem já fez</p>
+    <h2 class="section-title">O que dizem depois da avaliação</h2>
+
+    <div class="testimonials">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Fiz sem expectativa e me surpreendi. O resultado foi <strong>cirúrgico</strong> — mostrou exatamente por que eu trava na hora de me comunicar. Em 2 minutos eu entendi o que 1 ano de estudo sozinha não me deu."</p>
+        <div class="author">
+          <div class="author-avatar">MC</div>
+          <div>
+            <p class="author-name">Mariana C.</p>
+            <p class="author-detail">Professora · São Paulo, SP</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Achei que era mais um quiz qualquer. Mas o <strong>diagnóstico foi absurdamente preciso</strong>. Indicou o nível certo e o próximo passo — segui o plano e em 3 semanas já sentia a diferença."</p>
+        <div class="author">
+          <div class="author-avatar">RF</div>
+          <div>
+            <p class="author-name">Ricardo F.</p>
+            <p class="author-detail">Intérprete em formação · BH, MG</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Eu tentei aprender Libras em 3 cursos diferentes e sempre travava no mesmo ponto. A avaliação mostrou <strong>exatamente qual era o buraco</strong> — e como tapar. Mudou tudo."</p>
+        <div class="author">
+          <div class="author-avatar">JS</div>
+          <div>
+            <p class="author-name">Julia S.</p>
+            <p class="author-detail">Estudante · Curitiba, PR</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final" data-aos>
+
+    <div class="timer-wrap">
+      <span class="timer-icon">⏱️</span>
+      <span class="timer-text">Leva só <span id="countdown">2:00</span> — começa agora</span>
+    </div>
+
+    <h2 class="cta-final-title">Pronto para saber onde você<br>realmente está?</h2>
+    <p class="cta-final-sub">
+      É gratuito. É rápido. E pode ser <strong>o diagnóstico que faltava</strong> para você finalmente avançar em Libras.
+    </p>
+
+    <a href="https://clubedalibras.com/quis" class="cta-btn" target="_blank" rel="noopener">
+      Fazer minha avaliação gratuita <span class="arrow">→</span>
+    </a>
+
+    <p class="cta-note" style="margin-top:20px">
+      <span class="check">✓</span> Sem cartão &nbsp;·&nbsp;
+      <span class="check">✓</span> Sem e-mail obrigatório &nbsp;·&nbsp;
+      <span class="check">✓</span> Resultado imediato
+    </p>
+  </section>
+
+</div><!-- /page -->
+
+<!-- FLOATING CTA (mobile) -->
+<div class="floating-cta">
+  <a href="https://clubedalibras.com/quis" class="cta-btn" target="_blank" rel="noopener">
+    Fazer avaliação gratuita <span class="arrow">→</span>
+  </a>
+</div>
+
+<div class="page">
+  <div class="footer">
+    © 2025 Clube da Libras · <a href="https://nerdsdalibras.github.io/">Nerds da Libras</a>
+  </div>
+</div>
+
+<script>
+  /* AOS simples */
+  const aosEls = document.querySelectorAll('[data-aos]');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  aosEls.forEach(el => io.observe(el));
+
+  /* Countdown timer visual */
+  let total = 120;
+  const el = document.getElementById('countdown');
+  setInterval(() => {
+    if (total <= 0) { total = 120; return; }
+    total--;
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    el.textContent = m + ':' + String(s).padStart(2, '0');
+  }, 1000);
+
+  /* Track clique no CTA */
+  document.querySelectorAll('.cta-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (window.gtag) gtag('event', 'cta_click', { event_category: 'conversion', event_label: 'avaliacao_clube' });
+      if (window.fbq) fbq('track', 'Lead');
+    });
+  });
+</script>
+</body>
+</html>
