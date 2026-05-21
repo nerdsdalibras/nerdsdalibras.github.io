@@ -496,7 +496,16 @@ function _mostrarCardMentoria() {
           <div class="offer-item"><span class="offer-item-icon">🔒</span> Conteúdo exclusivo e estratégico</div>
           <div class="offer-item"><span class="offer-item-icon">⭐</span> Suporte personalizado para intérpretes</div>
         </div>
-        <div class="vagas-row" style="margin-top:14px"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — vagas limitadas</span></div>
+        <div class="offer-includes" style="margin-top:4px">
+          <div class="offer-includes-title">Bônus exclusivo</div>
+          ${CONFIG.MENTORIA_BONUS.map(b => `<div class="offer-item"><span class="offer-item-icon">🎁</span> ${b}</div>`).join('')}
+        </div>
+        <div class="offer-price-row">
+          <div class="offer-price-from">De <span class="offer-price-strike">${CONFIG.MENTORIA_PRECO_CHEIO}</span></div>
+          <div class="offer-price-current" style="color:#C4B5FD">${CONFIG.MENTORIA_PRECO_OFERTA}</div>
+          <div class="offer-price-installment">${CONFIG.MENTORIA_PARCELAS}</div>
+        </div>
+        <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — vagas limitadas</span></div>
         <a class="btn-kiwify" href="${CONFIG.EDUZZ_URL}" target="_blank" rel="noopener"
           style="background:linear-gradient(135deg,#7C3AED,#9B27AF);box-shadow:0 4px 20px rgba(124,58,237,.4)"
           onclick="registrarCompra('eduzz')">

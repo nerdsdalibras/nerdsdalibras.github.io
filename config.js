@@ -6,9 +6,9 @@ const CONFIG = {
   // ── CURSO: Do Zero a Libras ──
   KIWIFY_URL:       'https://pay.kiwify.com.br/1sIyvVL',
   CURSO_NOME:       'Do Zero a Libras',
-  PRECO_CHEIO:      'R$497',
-  PRECO_OFERTA:     'R$297',
-  PARCELAS:         '12x de R$29,70',
+  PRECO_CHEIO:      'R$999,00',
+  PRECO_OFERTA:     'R$397,00',
+  PARCELAS:         '12x de R$41,06',
   GARANTIA_DIAS:    7,
   CURSO_MODULOS: [
     '1º Nível BASE — Alfabeto, Números, Cumprimentos e Frases do Dia a Dia',
@@ -17,16 +17,19 @@ const CONFIG = {
     'Acesso vitalício — estude no seu ritmo e onde quiser',
   ],
   CURSO_BONUS: [
-    'BÔNUS 1 — preencher',
-    'BÔNUS 2 — preencher',
+    'Curso Extra de Datilologia',
+    'Curso Extra de Tradução em Música',
   ],
 
   // ── MENTORIA: Destrava Libras ──
-  EDUZZ_URL:            'https://chk.eduzz.com/G96RXVVEW1',
-  MENTORIA_NOME:        'Destrava Libras',
-  MENTORIA_PRECO_CHEIO:  'R$X.XXX',   // ← preencher
-  MENTORIA_PRECO_OFERTA: 'R$X.XXX',   // ← preencher
-  MENTORIA_PARCELAS:     'X x de R$XXX', // ← preencher
+  EDUZZ_URL:             'https://chk.eduzz.com/G96RXVVEW1',
+  MENTORIA_NOME:         'Destrava Libras',
+  MENTORIA_PRECO_CHEIO:  'R$2.499,00',
+  MENTORIA_PRECO_OFERTA: 'R$1.997,00',
+  MENTORIA_PARCELAS:     '12x de R$166,42 sem juros',
+  MENTORIA_BONUS: [
+    'Mentoria individual com João Neto (CEO da Nerds da Libras) para nivelamento de carreira',
+  ],
 
   // ── DASHBOARD ──
   DASHBOARD_PASSWORD: 'lorena2025',
