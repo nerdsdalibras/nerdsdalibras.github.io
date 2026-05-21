@@ -387,8 +387,8 @@ function _mostrarDepoimento({ texto, nome, nivel, foto }) {
 
 function _mostrarOfertaCurso(nivel) {
   const subtitulo = nivel === 'basico'
-    ? 'Construa sua base sólida em Libras do jeito certo'
-    : 'Consolide o que você já sabe e avance com estrutura';
+    ? 'Do absoluto zero à comunicação com surdos em 30 dias. Sem decorar sinais.'
+    : 'Consolide o que você já sabe, preencha as lacunas e avance com estrutura real.';
 
   const modulos = CONFIG.CURSO_MODULOS.map(m => `<div class="offer-item"><span class="offer-item-icon">✅</span> ${m}</div>`).join('');
   const bonus   = CONFIG.CURSO_BONUS.map(b => `<div class="offer-item"><span class="offer-item-icon">🎁</span> ${b}</div>`).join('');
@@ -398,8 +398,8 @@ function _mostrarOfertaCurso(nivel) {
   el.innerHTML = `
     <div class="offer-card">
       <div class="offer-header">
-        <div class="offer-badge">🏷 Condição especial de hoje</div>
-        <div class="offer-title">Do Zero à Libras</div>
+        <div class="offer-badge">🔥 MAIS VENDIDO · Condição especial de hoje</div>
+        <div class="offer-title">${CONFIG.CURSO_NOME}</div>
         <div class="offer-subtitle">${subtitulo}</div>
       </div>
       <div class="offer-body">
@@ -416,11 +416,11 @@ function _mostrarOfertaCurso(nivel) {
           <div class="offer-guarantee-icon">🛡</div>
           <div>Garantia de <strong>${CONFIG.GARANTIA_DIAS} dias</strong> — se não gostar por qualquer motivo, devolvemos 100% do valor. Sem perguntas.</div>
         </div>
-        <a class="btn-kiwify" href="${CONFIG.KIWIFY_URL}" target="_blank" rel="noopener" onclick="registrarCompra()">
+        <a class="btn-kiwify" href="${CONFIG.KIWIFY_URL}" target="_blank" rel="noopener" onclick="registrarCompra('kiwify')">
           🔓 Quero começar agora →
         </a>
         <div class="offer-fallback">
-          Ainda com dúvidas? <a href="${CONFIG.WA_CURSO}" target="_blank" rel="noopener" onclick="registrarClique()">Entre no grupo e tire com a Lorena</a>
+          Ainda com dúvidas? <a href="${CONFIG.WA_CURSO}" target="_blank" rel="noopener" onclick="registrarClique()">Fale com a Lorena antes de decidir</a>
         </div>
       </div>
     </div>`;
@@ -464,7 +464,7 @@ async function querMentoria(sim) {
   lead.quisAvancar = 'Sim';
   addUserBubble('Sim, quero saber como a Lorena pode me ajudar ✅');
   await sleep(500);
-  await addBubble(`Ótimo! Para você conquistar a <strong>fluência profissional</strong> em Libras, o caminho ideal é a <strong>Mentoria Master Fluência</strong> da Lorena. 💜🚀`, 1200);
+  await addBubble(`Ótimo! Para intérpretes que querem avançar de verdade, a Lorena criou a <strong>${CONFIG.MENTORIA_NOME}</strong> — mentoria direta, personalizada, com vagas limitadas. 💜🚀`, 1200);
   await sleep(400);
 
   _mostrarCardMentoria();
@@ -480,25 +480,31 @@ async function querMentoria(sim) {
 
 function _mostrarCardMentoria() {
   const el = document.createElement('div');
-  el.className = 'result-wrap show';
+  el.className = 'offer-wrap show';
   el.innerHTML = `
-    <div class="result-card mentoria-card">
-      <div class="result-photo">
-        <img src="fotos/image-1777403006556.jpg" alt="Prof. Lorena" onerror="this.src='fotos/IMG_4952.jpg'"/>
-        <div class="result-photo-overlay"></div>
-        <div class="result-pill-top pill-roxo">💜🚀 Fluência Profissional</div>
+    <div class="offer-card" style="border-color:rgba(124,58,237,.35)">
+      <div class="offer-header" style="background:linear-gradient(135deg,#3b0764,#6d28d9)">
+        <div class="offer-badge">💜 MENTORIA PROFISSIONAL · O mais desejado pelos intérpretes</div>
+        <div class="offer-title">${CONFIG.MENTORIA_NOME}</div>
+        <div class="offer-subtitle">Para intérpretes que querem avançar de verdade. Mentoria direta com a Profa. Lorena.</div>
       </div>
-      <div class="result-body">
-        <div class="result-nivel nivel-roxo">Objetivo: Fluência Profissional</div>
-        <div class="result-titulo">Mentoria Master Fluência by Lorena</div>
-        <div class="result-desc">
-          Acompanhamento <strong>100% personalizado</strong> com a Lorena. Ela identifica onde sua sinalização está travando e te direciona passo a passo em <strong>estrutura visual, fluência, naturalidade e segurança.</strong>
+      <div class="offer-body">
+        <div class="offer-includes">
+          <div class="offer-includes-title">O que você recebe</div>
+          <div class="offer-item"><span class="offer-item-icon">🎯</span> Mentoria direta com a Profa. Lorena</div>
+          <div class="offer-item"><span class="offer-item-icon">📈</span> Evolução acelerada na prática</div>
+          <div class="offer-item"><span class="offer-item-icon">🔒</span> Conteúdo exclusivo e estratégico</div>
+          <div class="offer-item"><span class="offer-item-icon">⭐</span> Suporte personalizado para intérpretes</div>
         </div>
-        <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma · abertura anunciada no grupo</span></div>
-        <div class="bonus-row">🔔 <strong>Quem está no grupo sabe primeiro</strong> quando a turma abre e recebe condições exclusivas.</div>
-        <a class="btn-result btn-rp" href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">
-          💬 Entrar no grupo e saber quando abre
+        <div class="vagas-row" style="margin-top:14px"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — vagas limitadas</span></div>
+        <a class="btn-kiwify" href="${CONFIG.EDUZZ_URL}" target="_blank" rel="noopener"
+          style="background:linear-gradient(135deg,#7C3AED,#9B27AF);box-shadow:0 4px 20px rgba(124,58,237,.4)"
+          onclick="registrarCompra('eduzz')">
+          💜 Quero entrar na Destrava Libras →
         </a>
+        <div class="offer-fallback">
+          Tem dúvidas? <a href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">Fale com a Lorena antes de decidir</a>
+        </div>
       </div>
     </div>`;
   addElement(el);
@@ -512,10 +518,10 @@ function registrarClique() {
   Storage.upsert({ ...lead });
 }
 
-function registrarCompra() {
+function registrarCompra(plataforma) {
   lead.comprouKiwify = true;
   lead.status        = 'comprou';
-  lead.statusCloser  = 'Clicou comprar (Kiwify)';
+  lead.statusCloser  = `Clicou comprar (${plataforma === 'eduzz' ? 'Eduzz — Destrava Libras' : 'Kiwify — Do Zero a Libras'})`;
   Storage.upsert({ ...lead });
 }
 

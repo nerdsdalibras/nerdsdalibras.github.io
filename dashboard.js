@@ -116,9 +116,9 @@ function gerarMensagem(l) {
   const nome  = l.nome || 'você';
   const nivel = l.nivelIdentificado || 'esse nível';
   if (l.resultado === 'Mentoria') {
-    return `Oi ${nome}! 🤟 Vi que você fez a avaliação da Lorena e seu nível é ${nivel}. Você tinha interesse na Mentoria Master Fluência — posso te passar mais detalhes sobre as vagas?`;
+    return `Oi ${nome}! 🤟 Vi que você fez a avaliação da Lorena e seu nível é ${nivel}. Você tinha interesse na Destrava Libras — posso te passar mais detalhes sobre as vagas da mentoria?`;
   }
-  return `Oi ${nome}! 🤟 Vi que você fez a avaliação da Lorena e seu nível é ${nivel}. Gostaria de te ajudar a dar o próximo passo no curso. Você ainda tem interesse?`;
+  return `Oi ${nome}! 🤟 Vi que você fez a avaliação da Lorena e seu nível é ${nivel}. Você estava interessada no Do Zero a Libras — ainda posso te ajudar a dar o próximo passo?`;
 }
 
 function copiarMensagem(sessionId) {
