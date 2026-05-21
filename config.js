@@ -32,5 +32,5 @@ const CONFIG = {
   ],
 
   // ── DASHBOARD ──
-  DASHBOARD_PASSWORD: 'lorena2025',
+  DASHBOARD_PASSWORD: 'lorena',
 };
