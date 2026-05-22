@@ -124,10 +124,23 @@ async function confirmarNome() {
   addUserBubble(nome);
 
   const genero = detectarGenero(nome);
-  aplicarTema(genero);
 
   await sleep(400);
-  await addBubble(`Que nome lindo, <strong>${nome}</strong>! 😊 E qual é o seu <strong>WhatsApp</strong>? (com DDD)`, 1200);
+  await addBubble(`Que nome lindo, <strong>${nome}</strong>! 😍`, 900);
+
+  if (genero === 'feminino') {
+    await addBubble('Espera um pouquinho... vou deixar esse espaço do jeitinho certo pra você ✨', 1200);
+  } else {
+    await addBubble('Espera aí... vou mudar o visual aqui pra você 🎨', 1000);
+  }
+
+  // Inicia a transição de tema — bot aguarda 5s enquanto as cores mudam
+  aplicarTema(genero);
+  await sleep(5000);
+
+  await addBubble('Agora podemos conversar! 😊', 700);
+  await sleep(300);
+  await addBubble(`E qual é o seu <strong>WhatsApp</strong>? (com DDD)`, 1000);
 
   const formWrap = document.createElement('div');
   formWrap.className = 'data-form-wrap show';
