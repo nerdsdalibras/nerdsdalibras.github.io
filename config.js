@@ -5,7 +5,7 @@ const CONFIG = {
 
   // ── CURSO: Do Zero a Libras ──
   KIWIFY_URL:       'https://pay.kiwify.com.br/1sIyvVL',
-  CURSO_NOME:       'Do Zero a Libras',
+  CURSO_NOME:       'Curso do Zero à Libras — Base e Intermediário',
   PRECO_CHEIO:      'R$999,00',
   PRECO_OFERTA:     'R$397,00',
   PARCELAS:         '12x de R$41,06',
@@ -21,9 +21,8 @@ const CONFIG = {
     'Curso Extra de Tradução em Música',
   ],
 
-  // ── MENTORIA: Destrava Libras ──
-  EDUZZ_URL:             'https://chk.eduzz.com/G96RXVVEW1',
-  MENTORIA_NOME:         'Destrava Libras',
+  // ── MENTORIA: Ciclo da Fluência ──
+  MENTORIA_NOME:         'Mentoria Ciclo da Fluência',
   MENTORIA_PRECO_CHEIO:  'R$2.499,00',
   MENTORIA_PRECO_OFERTA: 'R$1.997,00',
   MENTORIA_PARCELAS:     '12x de R$166,42 sem juros',
