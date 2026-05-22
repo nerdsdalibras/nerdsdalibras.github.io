@@ -1,12 +1,13 @@
 const DecisionEngine = (() => {
   const OBJ_BONUS = [-4, 0, 3, 7, 9];
 
+  // 7 perguntas × 4 pts = 28 pts máx
   function calcularNivel(quizScore, q1DifIdx, q2ObjIdx) {
     const bonus    = q2ObjIdx !== null ? OBJ_BONUS[q2ObjIdx] : 0;
     const adjusted = quizScore + bonus;
-    if (q1DifIdx === 0 && adjusted <= 22) return 'basico';
-    if (adjusted <= 14)  return 'basico';
-    if (adjusted <= 30)  return 'intermediario';
+    if (q1DifIdx === 0 && adjusted <= 13) return 'basico';
+    if (adjusted <= 8)   return 'basico';
+    if (adjusted <= 17)  return 'intermediario';
     return 'avancado';
   }
 
@@ -19,9 +20,16 @@ const DecisionEngine = (() => {
 
   function getOferta(nivel, q2ObjIdx) {
     if (nivel === 'avancado') return 'mentoria';
-    // intermediário + objetivo intérprete/tradutora (idx 4) → mentoria
     if (nivel === 'intermediario' && q2ObjIdx >= 4) return 'mentoria';
     return 'curso';
+  }
+
+  function classificarLead(nivel, q2ObjIdx, score) {
+    if (nivel === 'avancado') return 'QUENTE';
+    if (nivel === 'intermediario' && score >= 14) return 'QUENTE';
+    if (nivel === 'intermediario') return 'MORNO';
+    if (nivel === 'basico' && q2ObjIdx !== null && q2ObjIdx >= 2) return 'MORNO';
+    return 'FRIO';
   }
 
   function getLinkGrupo(nivel) {
@@ -35,15 +43,15 @@ const DecisionEngine = (() => {
   };
 
   const STATUS_LABELS = {
-    novo:             'Novo',
-    quente:           '🔥 Quente',
-    muito_quente:     '🔥🔥 Muito Quente',
-    prioridade_maxima:'⭐ Prioridade Máxima',
-    morno:            '🌡 Morno',
-    comprou:          '✅ Comprou',
-    nao_quis:         '❌ Não Quis',
-    aguardando:       '⏳ Aguardando',
+    novo:              'Novo',
+    quente:            '🔥 Quente',
+    muito_quente:      '🔥🔥 Muito Quente',
+    prioridade_maxima: '⭐ Prioridade Máxima',
+    morno:             '🌡 Morno',
+    comprou:           '✅ Comprou',
+    nao_quis:          '❌ Não Quis',
+    aguardando:        '⏳ Aguardando',
   };
 
-  return { calcularNivel, calcularStatus, getOferta, getLinkGrupo, LABELS, STATUS_LABELS, OBJ_BONUS };
+  return { calcularNivel, calcularStatus, getOferta, getLinkGrupo, classificarLead, LABELS, STATUS_LABELS, OBJ_BONUS };
 })();

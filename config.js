@@ -24,7 +24,7 @@ const CONFIG = {
   // ── MENTORIA: Ciclo da Fluência ──
   MENTORIA_NOME:         'Mentoria Ciclo da Fluência',
   MENTORIA_PRECO_CHEIO:  'R$2.499,00',
-  MENTORIA_PRECO_OFERTA: 'R$1.997,00',
+  MENTORIA_PRECO_OFERTA: 'R$2.997,00',
   MENTORIA_PARCELAS:     '12x de R$166,42 sem juros',
   MENTORIA_BONUS: [
     'Mentoria individual com João Neto (CEO da Nerds da Libras) para nivelamento de carreira',

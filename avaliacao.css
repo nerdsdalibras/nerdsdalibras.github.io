@@ -458,6 +458,19 @@ body {
 }
 .btn-mentoria-grupo:hover { box-shadow: 0 8px 28px rgba(124,58,237,.5) !important; }
 
+/* ── BOTÃO SECUNDÁRIO (CTA alternativo do curso) ── */
+.btn-secundario {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 13px 18px; border-radius: 12px; margin-top: 10px;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.8); text-decoration: none;
+  font-weight: 600; font-size: .9rem; font-family: 'Inter', sans-serif;
+  transition: background-color .2s, border-color .2s;
+  cursor: pointer; text-align: center;
+}
+.btn-secundario:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.3); }
+
 .offer-fallback { text-align: center; margin-top: 12px; font-size: .76rem; color: rgba(255,255,255,.4); }
 .offer-fallback a { color: var(--th-accent); text-decoration: none; opacity: .7; }
 .offer-fallback a:hover { opacity: 1; }

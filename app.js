@@ -1,23 +1,36 @@
 // ── ESTADO ──
 const lead = {
-  sessionId:   Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+  sessionId:         Date.now() + '-' + Math.random().toString(36).substr(2, 9),
   nome: '', whatsapp: '',
-  origem:      window.location.href,
-  genero:      '',
-  iniciouQuiz: false, concluiuQuiz: false,
-  respostaDificuldade: '', respostaObjetivo: '',
-  objetivo:    '',
-  pontuacao:   0, nivelIdentificado: '', resultado: '', oferta: '',
-  grupoIndicado: '',
-  status:      'novo',
-  quisAvancar: '', comprouKiwify: false, clicouCheckout: false, clicouGrupo: false,
-  statusCloser: '', observacoes: '',
-  timestamp:   new Date().toISOString(),
+  origem:            window.location.href,
+  genero:            '',
+  iniciouQuiz:       false,
+  concluiuQuiz:      false,
+  respostaDificuldade: '',
+  respostaObjetivo:    '',
+  objetivo:          '',
+  pontuacao:         0,
+  nivelIdentificado: '',
+  resultado:         '',
+  oferta:            '',
+  grupoIndicado:     '',
+  status:            'novo',
+  classificacaoLead: '',
+  tempoNoQuiz:       0,
+  quisAvancar:       '',
+  comprouKiwify:     false,
+  clicouCheckout:    false,
+  clicouGrupo:       false,
+  statusCloser:      '',
+  observacoes:       '',
+  createdAt:         new Date().toISOString(),
+  timestamp:         new Date().toISOString(),
 };
 
 let quizStep = 0, quizScore = 0;
 let q1DifIdx = null, q2ObjIdx = null;
 let optSelected = null, currentQuizWrap = null;
+let quizStartTime = null;
 
 // ── DETECÇÃO DE GÊNERO ──
 const MASCULINOS_EXCECAO = ['luca', 'nicola', 'joshua', 'elijah', 'ezra'];
@@ -110,7 +123,7 @@ async function startFlow() {
   setTimeout(() => document.getElementById('input-nome')?.focus(), 200);
 }
 
-// ── CAPTURA DE DADOS ──
+// ── CAPTURA DE NOME ──
 async function confirmarNome() {
   const inp  = document.getElementById('input-nome');
   const nome = (inp?.value || '').trim();
@@ -134,7 +147,6 @@ async function confirmarNome() {
     await addBubble('Espera aí... vou mudar o visual aqui pra você 🎨', 1000);
   }
 
-  // Inicia a transição de tema — bot aguarda 5s enquanto as cores mudam
   aplicarTema(genero);
   await sleep(5000);
 
@@ -153,6 +165,7 @@ async function confirmarNome() {
   setTimeout(() => document.getElementById('input-wpp')?.focus(), 200);
 }
 
+// ── CAPTURA DE WHATSAPP ──
 async function confirmarWpp() {
   const inp = document.getElementById('input-wpp');
   const wpp = (inp?.value || '').trim();
@@ -194,14 +207,14 @@ async function microCompromisso(sim) {
   if (sim) {
     addUserBubble('Sim, pode começar! ✅');
     await sleep(400);
-    await addBubble(`Ótimo, <strong>${lead.nome}</strong>! São 12 perguntas rápidas — responde com honestidade e identifico exatamente onde você está em Libras hoje 🎯`, 1500);
+    await addBubble(`Ótimo, <strong>${lead.nome}</strong>! São 7 perguntas rápidas — responde com honestidade e identifico exatamente onde você está em Libras hoje 🎯`, 1500);
     await sleep(400);
     iniciarQuiz();
   } else {
     addUserBubble('Quero entender melhor 🤔');
     await sleep(400);
     await addBubble('Claro! 😊', 600);
-    await addBubble('Vou te fazer <strong>12 perguntas rápidas</strong> sobre sua experiência com Libras.\n\nCom base nas suas respostas, identifico seu nível atual e te mostro o melhor caminho para evoluir de verdade.', 1800);
+    await addBubble('Vou te fazer <strong>7 perguntas rápidas</strong> sobre sua experiência com Libras.\n\nCom base nas suas respostas, identifico seu nível atual e te mostro o melhor caminho para evoluir de verdade.', 1800);
     await sleep(400);
     await addBubble('Não tem resposta certa ou errada — só responda o que é verdadeiro pra você. 🤟', 1200);
     await sleep(400);
@@ -229,6 +242,7 @@ async function iniciarQuizDireto() {
 function iniciarQuiz() {
   lead.iniciouQuiz = true;
   quizStep = 0; quizScore = 0; q1DifIdx = null; q2ObjIdx = null;
+  quizStartTime = Date.now();
   renderPergunta();
 }
 
@@ -236,13 +250,14 @@ function renderPergunta() {
   optSelected = null;
   const q   = QUESTIONS[quizStep];
   const n   = quizStep + 1;
-  const pct = Math.round((n / 12) * 100);
+  const tot = QUESTIONS.length;
+  const pct = Math.round((n / tot) * 100);
 
   const wrap = document.createElement('div');
   wrap.className = 'quiz-wrap show';
   wrap.innerHTML = `
     <div class="quiz-progress">
-      <span>${n} / 12</span>
+      <span>${n} / ${tot}</span>
       <div class="quiz-bar-track"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
     </div>
     <div class="quiz-question">${q.text}</div>
@@ -254,7 +269,7 @@ function renderPergunta() {
         </button>`).join('')}
     </div>
     <button class="btn-proximo" id="btn-prox" onclick="proximaPergunta()" disabled>
-      ${quizStep < 11 ? 'Próxima →' : 'Ver meu resultado →'}
+      ${quizStep < tot - 1 ? 'Próxima →' : 'Ver meu resultado →'}
     </button>`;
   currentQuizWrap = wrap;
   addElement(wrap);
@@ -277,48 +292,73 @@ async function proximaPergunta() {
   currentQuizWrap.style.opacity = '.3';
   currentQuizWrap.style.pointerEvents = 'none';
   addUserBubble(q.opts[optSelected].t.replace(/"/g, ''));
-  await sleep(400);
 
-  if (quizStep < 11) { quizStep++; renderPergunta(); }
-  else await finalizarQuiz();
+  await sleep(400);
+  await addBubble(q.micro[optSelected], 900);
+
+  if (q.depositoEmocional) {
+    await sleep(400);
+    const sfx = lead.genero === 'feminino' ? 'a' : 'o';
+    await addBubble(`${lead.nome}, isso que você está sentindo é muito mais comum do que imagina...\n\nA maioria das pessoas que estudam Libras chega nesse ponto. A diferença entre quem evolui e quem fica parad${sfx} é o <strong>método certo</strong>. 🔑`, 2200);
+    await sleep(300);
+  }
+
+  await sleep(300);
+
+  if (quizStep < QUESTIONS.length - 1) {
+    quizStep++;
+    renderPergunta();
+  } else {
+    await finalizarQuiz();
+  }
 }
 
-// ── INSIGHT OBRIGATÓRIO ANTES DO RESULTADO ──
+// ── LOADING / TENSÃO ──
 async function finalizarQuiz() {
   lead.concluiuQuiz = true;
   lead.pontuacao    = quizScore;
-  await sleep(500);
-  await addBubble('Recebi suas respostas! 📋', 800);
+  if (quizStartTime) lead.tempoNoQuiz = Math.round((Date.now() - quizStartTime) / 1000);
+
+  await sleep(600);
+  await addBubble('Recebi tudo! 📋', 700);
   await sleep(400);
+  await addBubble('Deixa eu analisar suas respostas...', 2200);
+  await sleep(500);
+  await addBubble('Cruzando com o perfil de mais de 3.000 alunos...', 2500);
+  await sleep(600);
+  await addBubble('Identificando o seu nível exato...', 2000);
+  await sleep(600);
   await insightSequence();
   await mostrarResultado();
 }
 
+// ── INSIGHT SEQUENCE ──
 async function insightSequence() {
-  await addBubble('Analisando suas respostas...', 2000);
-  await sleep(600);
-  await addBubble('Existe um padrão muito claro aqui...', 2000);
-  await sleep(600);
-  const travado = lead.genero === 'feminino' ? 'travada' : 'travado';
-  await addBubble(`Você não está ${travado} por falta de sinais...`, 2000);
-  await sleep(600);
-  await addBubble('Você está pensando em português e tentando traduzir para Libras', 2500);
-  await sleep(800);
-  await addBubble('💡 <strong>Fluência em Libras é pensamento visual, não tradução</strong>', 2000);
+  const travad = lead.genero === 'feminino' ? 'travada' : 'travado';
+
+  await addBubble('Existe um padrão muito claro aqui...', 1800);
+  await sleep(400);
+  await addBubble(`Você não está ${travad} por falta de sinais. Não é isso.`, 1800);
+  await sleep(400);
+  await addBubble('O problema real é que a maioria dos cursos ensina Libras como se fosse português com as mãos. E isso trava tudo.', 2200);
+  await sleep(500);
+  await addBubble('💡 <strong>Libras tem uma estrutura visual própria.</strong> Quando você aprende pelo caminho certo — o pensamento muda, e a fluência vem naturalmente.', 2400);
   await sleep(600);
 }
 
 // ── RESULTADO ──
 async function mostrarResultado() {
-  const nivel  = DecisionEngine.calcularNivel(quizScore, q1DifIdx, q2ObjIdx);
-  const status = DecisionEngine.calcularStatus(nivel, q2ObjIdx);
-  const oferta = DecisionEngine.getOferta(nivel, q2ObjIdx);
+  const nivel   = DecisionEngine.calcularNivel(quizScore, q1DifIdx, q2ObjIdx);
+  const status  = DecisionEngine.calcularStatus(nivel, q2ObjIdx);
+  const oferta  = DecisionEngine.getOferta(nivel, q2ObjIdx);
+  const classif = DecisionEngine.classificarLead(nivel, q2ObjIdx, quizScore);
 
   lead.nivelIdentificado = DecisionEngine.LABELS[nivel];
   lead.resultado         = oferta === 'curso' ? CONFIG.CURSO_NOME : CONFIG.MENTORIA_NOME;
   lead.oferta            = oferta;
   lead.grupoIndicado     = oferta === 'curso' ? 'Grupo do Curso' : 'Grupo da Mentoria';
   lead.status            = status;
+  lead.classificacaoLead = classif;
   lead.statusCloser      = 'Aguardando resposta sobre próximo nível';
   Storage.upsert({ ...lead });
 
@@ -361,11 +401,15 @@ function mostrarCertificado(nivel) {
   addElement(el);
 }
 
-// ── FUNIL CURSO (BÁSICO / INTERMEDIÁRIO) ──
+// ── FUNIL CURSO ──
 async function mostrarFluxoCurso(nivel) {
-  await addBubble('Você ainda precisa construir uma <strong>base sólida em Libras</strong>. 💪', 900);
+  const ref = nivel === 'basico'
+    ? 'construir uma base sólida do jeito certo'
+    : 'consolidar seu conhecimento e avançar de verdade';
+
+  await addBubble(`Você precisa de <strong>${ref}</strong>. E tenho pessoas que estavam exatamente onde você está hoje... 👇`, 1200);
   await sleep(300);
-  await addBubble('Posso te mostrar como outras alunas que estavam exatamente no seu lugar conseguiram avançar? 👇', 1000);
+  await addBubble('Quer ver o que acontece com quem usa o método certo? 👇', 900);
   await sleep(300);
 
   const wrap = document.createElement('div');
@@ -374,11 +418,7 @@ async function mostrarFluxoCurso(nivel) {
   wrap.innerHTML = `
     <button class="choice-btn" onclick="avancarFunilCurso('${nivel}')">
       <div class="choice-icon">✅</div>
-      <div><div class="choice-label">Sim, quero ver</div></div>
-    </button>
-    <button class="choice-btn" style="opacity:.65" onclick="recusarFunilCurso()">
-      <div class="choice-icon">👋</div>
-      <div><div class="choice-label">Não, obrigado</div></div>
+      <div><div class="choice-label">Quero ver pessoas nesse nível</div></div>
     </button>`;
   addElement(wrap);
 }
@@ -386,7 +426,7 @@ async function mostrarFluxoCurso(nivel) {
 async function avancarFunilCurso(nivel) {
   document.querySelectorAll('#choices-funil-curso .choice-btn').forEach(b => b.disabled = true);
   lead.quisAvancar = 'Sim';
-  addUserBubble('Sim, quero ver ✅');
+  addUserBubble('Quero ver pessoas nesse nível ✅');
   await sleep(400);
 
   await addBubble('Olha o que a <strong>Carla</strong> me mandou depois de algumas semanas no curso... 🥹', 1000);
@@ -401,22 +441,14 @@ async function avancarFunilCurso(nivel) {
   await sleep(1000);
   await addBubble('Ela estava exatamente onde você está hoje. 💚', 700);
   await sleep(500);
+  await addBubble('Agora que você viu isso...', 800);
+  await sleep(400);
   await addBubble('Por isso preparei uma condição especial para você começar agora 👇', 900);
   await sleep(400);
 
   _mostrarOfertaCurso(nivel);
   lead.statusCloser = 'Viu a oferta do curso';
   Storage.upsert({ ...lead });
-}
-
-async function recusarFunilCurso() {
-  document.querySelectorAll('#choices-funil-curso .choice-btn').forEach(b => b.disabled = true);
-  addUserBubble('Não, obrigado 👋');
-  lead.quisAvancar  = 'Não';
-  lead.statusCloser = 'Não quis avançar';
-  Storage.upsert({ ...lead });
-  await sleep(400);
-  await addBubble(`Foi um prazer te conhecer, <strong>${lead.nome}</strong>! 😊\n\nObrigada por participar da avaliação. Quando quiser evoluir na Libras, estarei aqui. 🤟`);
 }
 
 function _mostrarDepoimento({ texto, nome, nivel, foto }) {
@@ -470,56 +502,56 @@ function _mostrarOfertaCurso(nivel) {
           <div>Garantia de <strong>${CONFIG.GARANTIA_DIAS} dias</strong> — se não gostar por qualquer motivo, devolvemos 100% do valor. Sem perguntas.</div>
         </div>
         <a class="btn-kiwify" href="${CONFIG.KIWIFY_URL}" target="_blank" rel="noopener" onclick="registrarCompra('kiwify')">
-          🔓 Comprar agora →
+          🔓 Quero começar agora →
         </a>
-        <div class="offer-fallback">
-          Ainda com dúvidas? <a href="${CONFIG.WA_CURSO}" target="_blank" rel="noopener" onclick="registrarClique()">Fale com a Lorena antes de decidir</a>
-        </div>
+        <a class="btn-secundario" href="${CONFIG.WA_CURSO}" target="_blank" rel="noopener" onclick="registrarClique()">
+          💬 Falar com a Lorena antes
+        </a>
       </div>
     </div>`;
   addElement(el);
   scrollDown();
 }
 
-// ── FUNIL MENTORIA (AVANÇADO / INTERMEDIÁRIO INTÉRPRETE) ──
+// ── FUNIL MENTORIA ──
 async function mostrarFluxoMentoria() {
   await addBubble('Você já tem base, mas precisa <strong>destravar fluência e interpretação</strong>. 💜', 1000);
   await sleep(400);
-  await addBubble('Quer ir para o próximo nível? 🚀', 700);
+  await addBubble('Posso te mostrar como outras pessoas nesse nível avançaram de verdade? 👇', 900);
   await sleep(300);
 
   const wrap = document.createElement('div');
   wrap.className = 'choices-wrap show';
   wrap.id = 'choices-mentoria';
   wrap.innerHTML = `
-    <button class="choice-btn" onclick="querMentoria(true)">
+    <button class="choice-btn" onclick="querMentoria()">
       <div class="choice-icon">✅</div>
-      <div><div class="choice-label">Sim, quero saber como a Lorena pode me ajudar</div></div>
-    </button>
-    <button class="choice-btn" style="opacity:.65" onclick="querMentoria(false)">
-      <div class="choice-icon">👋</div>
-      <div><div class="choice-label">Não, obrigado</div></div>
+      <div><div class="choice-label">Quero ver pessoas nesse nível</div></div>
     </button>`;
   addElement(wrap);
 }
 
-async function querMentoria(sim) {
+async function querMentoria() {
   document.querySelectorAll('#choices-mentoria .choice-btn').forEach(b => b.disabled = true);
-
-  if (!sim) {
-    addUserBubble('Não, obrigado 👋');
-    lead.quisAvancar  = 'Não';
-    lead.statusCloser = 'Não quis avançar';
-    Storage.upsert({ ...lead });
-    await sleep(400);
-    await addBubble(`Foi um prazer te conhecer, <strong>${lead.nome}</strong>! 😊\n\nObrigada por participar da avaliação. Quando quiser evoluir na Libras, estarei aqui. 🤟`);
-    return;
-  }
-
   lead.quisAvancar = 'Sim';
-  addUserBubble('Sim, quero saber como a Lorena pode me ajudar ✅');
+  addUserBubble('Quero ver pessoas nesse nível ✅');
   await sleep(500);
-  await addBubble(`Para quem quer avançar de verdade, criei a <strong>${CONFIG.MENTORIA_NOME}</strong> — mentoria direta, personalizada, com vagas limitadas. 💜🚀`, 1200);
+
+  await addBubble('Olha o que a <strong>Juliana</strong> me mandou depois de entrar na mentoria... 🥹', 1000);
+  await sleep(300);
+
+  _mostrarDepoimento({
+    texto: '"Eu achava que já sabia tudo de Libras. Mas com a Lorena descobri lacunas que nem sabia que tinha. Em 3 meses minha interpretação mudou completamente."',
+    nome: 'Juliana R.',
+    nivel: 'Intermediário → Fluência profissional',
+  });
+
+  await sleep(1000);
+  await addBubble('Ela estava exatamente no seu nível. 💜', 700);
+  await sleep(500);
+  await addBubble('Agora que você viu isso...', 800);
+  await sleep(400);
+  await addBubble(`Para quem já tem base e quer avançar de verdade, criei a <strong>${CONFIG.MENTORIA_NOME}</strong> — mentoria direta, personalizada, com vagas limitadas. 💜🚀`, 1400);
   await sleep(400);
 
   _mostrarCardMentoria();
@@ -551,11 +583,8 @@ function _mostrarCardMentoria() {
         </div>
         <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — vagas limitadas</span></div>
         <a class="btn-kiwify btn-mentoria-grupo" href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">
-          💬 Entrar no grupo →
+          💬 Entrar no grupo agora →
         </a>
-        <div class="offer-fallback">
-          Tem dúvidas? <a href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">Fale com a Lorena</a>
-        </div>
       </div>
     </div>`;
   addElement(el);
