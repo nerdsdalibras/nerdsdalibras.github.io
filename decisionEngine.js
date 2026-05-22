@@ -17,8 +17,11 @@ const DecisionEngine = (() => {
     return 'morno';
   }
 
-  function getOferta(nivel) {
-    return nivel !== 'avancado' ? 'curso' : 'mentoria';
+  function getOferta(nivel, q2ObjIdx) {
+    if (nivel === 'avancado') return 'mentoria';
+    // intermediário + objetivo intérprete/tradutora (idx 4) → mentoria
+    if (nivel === 'intermediario' && q2ObjIdx >= 4) return 'mentoria';
+    return 'curso';
   }
 
   function getLinkGrupo(nivel) {

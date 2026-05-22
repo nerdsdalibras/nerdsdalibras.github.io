@@ -115,10 +115,10 @@ function renderLeadCard(l, idx) {
 function gerarMensagem(l) {
   const nome  = l.nome || 'você';
   const nivel = l.nivelIdentificado || 'esse nível';
-  if (l.resultado === 'Mentoria') {
-    return `Oi ${nome}! 🤟 Vi que você fez a avaliação da Lorena e seu nível é ${nivel}. Você tinha interesse na Destrava Libras — posso te passar mais detalhes sobre as vagas da mentoria?`;
+  if (l.oferta === 'mentoria' || l.resultado === 'Mentoria') {
+    return `Oi, ${nome}! 🤟 Vi sua avaliação com a Lorena — seu nível é ${nivel}. Você tinha interesse na Mentoria Ciclo da Fluência. Posso te passar mais detalhes sobre as vagas?`;
   }
-  return `Oi ${nome}! 🤟 Vi que você fez a avaliação da Lorena e seu nível é ${nivel}. Você estava interessada no Do Zero a Libras — ainda posso te ajudar a dar o próximo passo?`;
+  return `Oi, ${nome}! 🤟 Vi sua avaliação com a Lorena — seu nível é ${nivel}. Você estava interessad${l.genero === 'masculino' ? 'o' : 'a'} no Curso do Zero à Libras. Ainda posso te ajudar a dar o próximo passo?`;
 }
 
 function copiarMensagem(sessionId) {
