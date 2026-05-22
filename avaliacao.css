@@ -303,6 +303,7 @@ body {
 .choice-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
 .choice-icon { font-size: 1.3rem; flex-shrink: 0; }
 .choice-label { font-weight: 700; font-size: .92rem; }
+.choice-desc  { font-size: .75rem; color: var(--text-sub); margin-top: 3px; font-weight: 400; }
 
 /* ── QUIZ ── */
 .quiz-wrap { display: none; flex-direction: column; gap: 8px; margin: 10px 0 6px 36px; animation: fadeUp .4s ease; }

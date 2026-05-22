@@ -28,9 +28,86 @@ const lead = {
 };
 
 let quizStep = 0, quizScore = 0;
-let q1DifIdx = null, q2ObjIdx = null;
+let q1DifIdx = null, q2ObjIdx = null, q6EstudoIdx = null;
 let optSelected = null, currentQuizWrap = null;
 let quizStartTime = null;
+let nomeSignificado = null;
+let nivelCalculado = null;
+
+// ── SIGNIFICADOS DE NOMES ──
+const NAME_SIGNIFICADOS = {
+  // Masculinos
+  joao:      { sig: 'João significa "Deus é misericordioso" — o nome do mensageiro da graça', prop: 'você está aqui para levar graça e cura às pessoas ao seu redor' },
+  pedro:     { sig: 'Pedro significa "rocha, fundamento firme"', prop: 'você tem a missão de ser apoio e firmeza para quem está ao seu lado' },
+  paulo:     { sig: 'Paulo significa "pequeno e humilde" — mas sua missão é enorme', prop: 'quem chega com humildade transforma muito mais do que quem chega com orgulho' },
+  lucas:     { sig: 'Lucas significa "o que ilumina"', prop: 'você está aqui para trazer luz ao que outras pessoas ainda não conseguem ver' },
+  marcos:    { sig: 'Marcos significa "o guerreiro dedicado"', prop: 'você tem garra e propósito — e isso se reflete em tudo que vai construir' },
+  jose:      { sig: 'José significa "Deus acrescentará"', prop: 'tudo que você tocar vai crescer e abençoar quem está ao seu redor' },
+  mateus:    { sig: 'Mateus significa "dom de Deus"', prop: 'você é um presente para as pessoas que te cercam — e para a comunidade surda' },
+  gabriel:   { sig: 'Gabriel significa "Deus é minha força" — o nome do mensageiro divino', prop: 'você nasceu para ser uma ponte entre dois mundos' },
+  rafael:    { sig: 'Rafael significa "Deus cura"', prop: 'seu caminho com a Libras pode ser um instrumento de cura e inclusão' },
+  daniel:    { sig: 'Daniel significa "Deus é meu juiz" — o nome do homem de caráter inabalável', prop: 'você tem convicção e firmeza, e isso vai te levar longe' },
+  davi:      { sig: 'Davi significa "o amado de Deus"', prop: 'os amados de Deus têm um propósito que vai além do que imaginam' },
+  david:     { sig: 'David significa "o amado de Deus"', prop: 'os amados de Deus têm um propósito que vai além do que imaginam' },
+  felipe:    { sig: 'Felipe significa "aquele que ama com liberdade"', prop: 'sua trajetória vai impactar muitas vidas — com amor e generosidade' },
+  thiago:    { sig: 'Thiago vem de Tiago — "o que caminha ao lado de Deus"', prop: 'você nunca está sozinho nessa jornada, e sua missão tem propósito' },
+  carlos:    { sig: 'Carlos significa "homem livre e forte"', prop: 'sua força vai abrir portas que outros não conseguem nem ver' },
+  anderson:  { sig: 'Anderson significa "filho do homem — aquele que carrega herança e propósito"', prop: 'você tem algo para deixar de legado no mundo' },
+  gustavo:   { sig: 'Gustavo significa "a vara de Deus — o escolhido"', prop: 'você foi escolhido para fazer diferença em tudo que tocar' },
+  leonardo:  { sig: 'Leonardo significa "corajoso como um leão"', prop: 'a coragem é o seu maior dom — e ela vai transformar o que você aprender' },
+  rodrigo:   { sig: 'Rodrigo significa "famoso pela glória"', prop: 'seu nome já anuncia que você foi feito para brilhar' },
+  victor:    { sig: 'Victor significa "vitorioso"', prop: 'sua natureza é vencer, superar e inspirar quem está ao redor' },
+  arthur:    { sig: 'Arthur significa "nobre e forte como um urso"', prop: 'nobreza de caráter é o que te move — e vai mover quem você impactar' },
+  miguel:    { sig: 'Miguel significa "Quem é como Deus?" — o nome do anjo guerreiro', prop: 'você tem uma força espiritual que vai além do que imagina' },
+  henrique:  { sig: 'Henrique significa "chefe do lar, o líder nato"', prop: 'liderança está no seu nome — e vai se manifestar em cada pessoa que você alcançar' },
+  matheus:   { sig: 'Matheus significa "dom de Deus"', prop: 'você é um presente para as pessoas que te cercam — e para a comunidade surda' },
+  luan:      { sig: 'Luan significa "guerreiro luminoso"', prop: 'você carrega luz e força — e vai iluminar o caminho de quem estiver ao seu redor' },
+  // Femininos
+  maria:     { sig: 'Maria significa "a amada de Deus" e "senhora soberana"', prop: 'você carrega um nome que atravessou séculos — e seu propósito é eterno' },
+  ana:       { sig: 'Ana significa "cheia de graça de Deus"', prop: 'você irradia graça naturalmente, e isso vai tocar quem você ensinar' },
+  julia:     { sig: 'Júlia significa "jovem, cheia de energia e propósito"', prop: 'sua energia é um combustível para transformar a vida de quem está ao redor' },
+  juliana:   { sig: 'Juliana significa "jovem de espírito, cheia de propósito"', prop: 'sua energia é um combustível para transformar a vida de quem está ao redor' },
+  sofia:     { sig: 'Sofia significa "sabedoria" — o dom mais precioso', prop: 'você foi chamada para usar seu conhecimento para iluminar outros' },
+  isabela:   { sig: 'Isabela significa "consagrada a Deus"', prop: 'o que você faz com propósito, Deus multiplica — e sua jornada é prova disso' },
+  isabel:    { sig: 'Isabel significa "consagrada a Deus"', prop: 'o que você faz com propósito, Deus multiplica — e sua jornada é prova disso' },
+  camila:    { sig: 'Camila significa "a que serve com devoção"', prop: 'servir é o seu maior talento — e a Libras vai ampliar esse serviço' },
+  fernanda:  { sig: 'Fernanda significa "guerreira corajosa e ousada"', prop: 'você não desiste — e é exatamente isso que vai te fazer avançar' },
+  beatriz:   { sig: 'Beatriz significa "a que traz alegria e bênção"', prop: 'onde você chega, o ambiente muda — e a comunidade surda vai sentir isso' },
+  larissa:   { sig: 'Larissa significa "a alegre, a radiante"', prop: 'sua alegria é contagiante e vai abrir o coração de quem você se comunicar' },
+  amanda:    { sig: 'Amanda significa "digna de ser amada"', prop: 'você foi feita para conexões verdadeiras — e a Libras vai ampliar isso' },
+  priscila:  { sig: 'Priscila significa "a honrada" — nome de uma das primeiras líderes cristãs', prop: 'você tem liderança e propósito — e vai marcar quem te conhecer' },
+  leticia:   { sig: 'Letícia significa "alegria, júbilo"', prop: 'você espalha leveza onde vai — isso é um dom raro e poderoso' },
+  patricia:  { sig: 'Patrícia significa "a nobre, de família ilustre"', prop: 'sua nobreza de caráter é o que vai distinguir tudo que você fizer' },
+  carla:     { sig: 'Carla significa "mulher forte e livre"', prop: 'você tem força de sobra — e a Libras vai ser mais um capítulo da sua história' },
+  bruna:     { sig: 'Bruna significa "forte e firme como a terra"', prop: 'você tem raízes profundas e um propósito sólido nessa jornada' },
+  viviane:   { sig: 'Viviane significa "cheia de vida"', prop: 'sua vitalidade é o que vai fazer cada sinal, cada conversa ganhar vida' },
+  simone:    { sig: 'Simone significa "a que ouve" — um dom precioso', prop: 'quem sabe ouvir sabe se comunicar de verdade — e você já tem isso' },
+  lorena:    { sig: 'Lorena significa "glória" e vem de uma região conhecida pela nobreza', prop: 'você carrega glória no nome — e isso se reflete no impacto que você causa' },
+  claudia:   { sig: 'Cláudia significa "a que zela, a guardiã"', prop: 'você protege e cuida com o coração — e isso vai transformar quem você tocar' },
+  sara:      { sig: 'Sara significa "princesa" — a matriarca que mudou a história', prop: 'você tem autoridade e propósito, e seu caminho vai impactar gerações' },
+  laura:     { sig: 'Laura significa "vitoriosa, coroada de louros"', prop: 'você nasceu para vencer — e cada passo na Libras é uma prova disso' },
+  raquel:    { sig: 'Raquel significa "a de coração puro"', prop: 'sua pureza de intenção vai tocar fundo em quem você se comunicar' },
+  rachel:    { sig: 'Rachel significa "a de coração puro"', prop: 'sua pureza de intenção vai tocar fundo em quem você se comunicar' },
+  alice:     { sig: 'Alice significa "a verdadeira, a autêntica"', prop: 'autenticidade é rara — e você vai conectar de verdade com a comunidade surda' },
+  rebeca:    { sig: 'Rebeca significa "a que prende o coração"', prop: 'você tem o dom de criar laços verdadeiros — e a Libras vai ampliar isso' },
+  valentina: { sig: 'Valentina significa "forte, saudável, plena"', prop: 'você tem força interior que vai mover montanhas nessa jornada' },
+  gabriela:  { sig: 'Gabriela significa "Deus é minha força" — versão feminina do arcanjo mensageiro', prop: 'você foi chamada para ser mensageira — e a Libras é o idioma do seu propósito' },
+  renata:    { sig: 'Renata significa "a que renasceu" — a renovada', prop: 'você está num momento de renovação, e o que vem aí vai transformar tudo' },
+  natalia:   { sig: 'Natália significa "nascida no Natal, abençoada"', prop: 'você carrega uma bênção especial — e seu caminho vai refletir isso' },
+  adriana:   { sig: 'Adriana significa "a que vem das águas profundas"', prop: 'você tem profundidade e calma — qualidades raras que vão te destacar' },
+  jessica:   { sig: 'Jéssica significa "a que enxerga além — a visionária"', prop: 'você vê o que outros não veem — e isso vai guiar seu caminho na Libras' },
+  aline:     { sig: 'Aline significa "a nobre, a preciosa"', prop: 'sua nobreza de espírito vai marcar quem tiver o prazer de te conhecer' },
+  bianca:    { sig: 'Bianca significa "a pura, a luminosa"', prop: 'você traz luz e clareza onde chega — isso é um dom valioso' },
+  vanessa:   { sig: 'Vanessa significa "a borboleta — a que se transforma"', prop: 'transformação é o seu maior dom — e você está no momento exato de voar' },
+  elaine:    { sig: 'Elaine significa "a luminosa, a que brilha"', prop: 'você brilha de forma única — e a Libras vai ampliar essa luz' },
+};
+
+function getSignificadoNome(nome) {
+  const key = nome.trim().split(/\s+/)[0]
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '');
+  return NAME_SIGNIFICADOS[key] || null;
+}
 
 // ── DETECÇÃO DE GÊNERO ──
 const MASCULINOS_EXCECAO = ['luca', 'nicola', 'joshua', 'elijah', 'ezra'];
@@ -107,9 +184,11 @@ function addElement(el) {
 async function startFlow() {
   await sleep(800);
   await addBubble('Oi 👋', 1200);
+  await sleep(4000);
   await addBubble('Sou a Lorena', 1000);
+  await sleep(4000);
   await addBubble('Vou te ajudar a descobrir seu nível em Libras 🤟', 1200);
-  await sleep(400);
+  await sleep(4000);
   await addBubble('Antes de começar, me conta: <strong>qual é o seu nome?</strong>', 1000);
 
   const formWrap = document.createElement('div');
@@ -137,9 +216,23 @@ async function confirmarNome() {
   addUserBubble(nome);
 
   const genero = detectarGenero(nome);
+  nomeSignificado = getSignificadoNome(nome);
 
-  await sleep(400);
-  await addBubble(`Que nome lindo, <strong>${nome}</strong>! 😍`, 900);
+  await sleep(2000);
+  await addBubble(`<strong>${nome.toUpperCase()}</strong>... ✨`, 700);
+  await sleep(3000);
+  await addBubble('Espera um segundo... 🤔', 900);
+  await sleep(3500);
+  await addBubble('Seu nome tem algo muito importante...', 1200);
+  await sleep(3500);
+
+  if (nomeSignificado) {
+    await addBubble(`${nomeSignificado.sig}.\n\nIsso significa que <strong>${nomeSignificado.prop}</strong>. 🙏`, 2500);
+  } else {
+    await addBubble(`<strong>${nome}</strong> é um nome único — e quem chega até aqui tem um propósito que vai além do que imagina. 🙏`, 2000);
+  }
+
+  await sleep(4000);
 
   if (genero === 'feminino') {
     await addBubble('Espera um pouquinho... vou deixar esse espaço do jeitinho certo pra você ✨', 1200);
@@ -150,9 +243,9 @@ async function confirmarNome() {
   aplicarTema(genero);
   await sleep(5000);
 
-  await addBubble('Agora podemos conversar! 😊', 700);
-  await sleep(300);
-  await addBubble(`E qual é o seu <strong>WhatsApp</strong>? (com DDD)`, 1000);
+  await addBubble('Bora para a avaliação! Quero muito saber seu nível em Libras 🤟', 1000);
+  await sleep(4000);
+  await addBubble(`Mas primeiro: qual é o seu <strong>WhatsApp</strong>? (com DDD)`, 1000);
 
   const formWrap = document.createElement('div');
   formWrap.className = 'data-form-wrap show';
@@ -180,9 +273,9 @@ async function confirmarWpp() {
   addUserBubble(wpp);
   Storage.upsert({ ...lead });
 
-  await sleep(400);
+  await sleep(2000);
   await addBubble('Perfeito! 🤟', 600);
-  await sleep(200);
+  await sleep(4000);
   await addBubble('Posso começar seu diagnóstico agora?', 800);
 
   const wrap = document.createElement('div');
@@ -206,18 +299,19 @@ async function microCompromisso(sim) {
 
   if (sim) {
     addUserBubble('Sim, pode começar! ✅');
-    await sleep(400);
+    await sleep(2000);
     await addBubble(`Ótimo, <strong>${lead.nome}</strong>! São 12 perguntas rápidas — responde com honestidade e identifico exatamente onde você está em Libras hoje 🎯`, 1500);
-    await sleep(400);
+    await sleep(4000);
     iniciarQuiz();
   } else {
     addUserBubble('Quero entender melhor 🤔');
-    await sleep(400);
+    await sleep(2000);
     await addBubble('Claro! 😊', 600);
+    await sleep(4000);
     await addBubble('Vou te fazer <strong>12 perguntas rápidas</strong> sobre sua experiência com Libras.\n\nCom base nas suas respostas, identifico seu nível atual e te mostro o melhor caminho para evoluir de verdade.', 1800);
-    await sleep(400);
+    await sleep(4000);
     await addBubble('Não tem resposta certa ou errada — só responda o que é verdadeiro pra você. 🤟', 1200);
-    await sleep(400);
+    await sleep(4000);
 
     const wrap = document.createElement('div');
     wrap.className = 'choices-wrap show';
@@ -234,14 +328,15 @@ async function microCompromisso(sim) {
 async function iniciarQuizDireto() {
   document.querySelectorAll('#choices-micro2 .choice-btn').forEach(b => b.disabled = true);
   addUserBubble('Entendi! Pode começar →');
-  await sleep(400);
+  await sleep(2000);
   iniciarQuiz();
 }
 
 // ── QUIZ ──
 function iniciarQuiz() {
   lead.iniciouQuiz = true;
-  quizStep = 0; quizScore = 0; q1DifIdx = null; q2ObjIdx = null;
+  quizStep = 0; quizScore = 0;
+  q1DifIdx = null; q2ObjIdx = null; q6EstudoIdx = null;
   quizStartTime = Date.now();
   renderPergunta();
 }
@@ -287,23 +382,23 @@ async function proximaPergunta() {
   const q = QUESTIONS[quizStep];
   if (quizStep === 0) { q1DifIdx = optSelected; lead.respostaDificuldade = q.opts[optSelected].t; }
   if (quizStep === 1) { q2ObjIdx = optSelected; lead.respostaObjetivo = q.opts[optSelected].t; lead.objetivo = q.opts[optSelected].t; }
+  if (quizStep === 5) { q6EstudoIdx = optSelected; }
   quizScore += q.opts[optSelected].p;
 
   currentQuizWrap.style.opacity = '.3';
   currentQuizWrap.style.pointerEvents = 'none';
   addUserBubble(q.opts[optSelected].t.replace(/"/g, ''));
 
-  await sleep(400);
+  await sleep(2000);
   await addBubble(q.micro[optSelected], 900);
 
   if (q.depositoEmocional) {
-    await sleep(400);
+    await sleep(3000);
     const sfx = lead.genero === 'feminino' ? 'a' : 'o';
     await addBubble(`${lead.nome}, isso que você está sentindo é muito mais comum do que imagina...\n\nA maioria das pessoas que estudam Libras chega nesse ponto. A diferença entre quem evolui e quem fica parad${sfx} é o <strong>método certo</strong>. 🔑`, 2200);
-    await sleep(300);
   }
 
-  await sleep(300);
+  await sleep(2000);
 
   if (quizStep < QUESTIONS.length - 1) {
     quizStep++;
@@ -319,15 +414,15 @@ async function finalizarQuiz() {
   lead.pontuacao    = quizScore;
   if (quizStartTime) lead.tempoNoQuiz = Math.round((Date.now() - quizStartTime) / 1000);
 
-  await sleep(600);
+  await sleep(3000);
   await addBubble('Recebi tudo! 📋', 700);
-  await sleep(400);
+  await sleep(4000);
   await addBubble('Deixa eu analisar suas respostas...', 2200);
-  await sleep(500);
+  await sleep(4000);
   await addBubble('Cruzando com o perfil de mais de 3.000 alunos...', 2500);
-  await sleep(600);
+  await sleep(4000);
   await addBubble('Identificando o seu nível exato...', 2000);
-  await sleep(600);
+  await sleep(4000);
   await insightSequence();
   await mostrarResultado();
 }
@@ -337,13 +432,13 @@ async function insightSequence() {
   const travad = lead.genero === 'feminino' ? 'travada' : 'travado';
 
   await addBubble('Existe um padrão muito claro aqui...', 1800);
-  await sleep(400);
+  await sleep(4000);
   await addBubble(`Você não está ${travad} por falta de sinais. Não é isso.`, 1800);
-  await sleep(400);
+  await sleep(4000);
   await addBubble('O problema real é que a maioria dos cursos ensina Libras como se fosse português com as mãos. E isso trava tudo.', 2200);
-  await sleep(500);
+  await sleep(4000);
   await addBubble('💡 <strong>Libras tem uma estrutura visual própria.</strong> Quando você aprende pelo caminho certo — o pensamento muda, e a fluência vem naturalmente.', 2400);
-  await sleep(600);
+  await sleep(4000);
 }
 
 // ── RESULTADO ──
@@ -353,20 +448,21 @@ async function mostrarResultado() {
   const oferta  = DecisionEngine.getOferta(nivel, q2ObjIdx);
   const classif = DecisionEngine.classificarLead(nivel, q2ObjIdx, quizScore);
 
+  nivelCalculado = nivel;
   lead.nivelIdentificado = DecisionEngine.LABELS[nivel];
   lead.resultado         = oferta === 'curso' ? CONFIG.CURSO_NOME : CONFIG.MENTORIA_NOME;
   lead.oferta            = oferta;
   lead.grupoIndicado     = oferta === 'curso' ? 'Grupo do Curso' : 'Grupo da Mentoria';
   lead.status            = status;
   lead.classificacaoLead = classif;
-  lead.statusCloser      = 'Aguardando resposta sobre próximo nível';
+  lead.statusCloser      = 'Viu o resultado do diagnóstico';
   Storage.upsert({ ...lead });
 
   await addBubble('Aqui está o seu diagnóstico 🎯', 1000);
-  await sleep(400);
+  await sleep(3000);
 
   mostrarCertificado(nivel);
-  await sleep(900);
+  await sleep(4000);
 
   const explicacoes = {
     basico:        `<strong>${lead.nome}</strong>, com base nas suas respostas você está no nível <strong>BÁSICO</strong> em Libras. 🌱\n\nVocê ainda está construindo sua base — aprender sinais em contexto, formar frases simples e ganhar segurança são os seus próximos passos.`,
@@ -375,10 +471,8 @@ async function mostrarResultado() {
   };
 
   await addBubble(explicacoes[nivel], 2000);
-  await sleep(600);
-
-  if (oferta === 'mentoria') await mostrarFluxoMentoria();
-  else await mostrarFluxoCurso(nivel);
+  await sleep(5000);
+  await iniciarFluxoOferta();
 }
 
 function mostrarCertificado(nivel) {
@@ -401,56 +495,161 @@ function mostrarCertificado(nivel) {
   addElement(el);
 }
 
-// ── FUNIL CURSO ──
-async function mostrarFluxoCurso(nivel) {
-  const ref = nivel === 'basico'
-    ? 'construir uma base sólida do jeito certo'
-    : 'consolidar seu conhecimento e avançar de verdade';
+// ── FLUXO DE OFERTA UNIFICADO ──
+async function iniciarFluxoOferta() {
+  const prop = nomeSignificado
+    ? nomeSignificado.prop
+    : 'seu propósito aqui vai além de você';
 
-  await addBubble(`Você precisa de <strong>${ref}</strong>. E tenho pessoas que estavam exatamente onde você está hoje... 👇`, 1200);
-  await sleep(300);
-  await addBubble('Quer ver o que acontece com quem usa o método certo? 👇', 900);
-  await sleep(300);
+  await addBubble(`Quer dar o próximo passo, <strong>${lead.nome}</strong>? 🌟\n\nLembra: <em>${prop}</em>...\n\nEssa atitude pode transformar não só a sua vida, mas a de quem você vai alcançar. 💜`, 2800);
+  await sleep(4000);
 
   const wrap = document.createElement('div');
   wrap.className = 'choices-wrap show';
-  wrap.id = 'choices-funil-curso';
+  wrap.id = 'choices-proximo-passo';
   wrap.innerHTML = `
-    <button class="choice-btn" onclick="avancarFunilCurso('${nivel}')">
+    <button class="choice-btn" onclick="escolherProximoPasso(true)">
       <div class="choice-icon">✅</div>
-      <div><div class="choice-label">Quero ver pessoas nesse nível</div></div>
+      <div><div class="choice-label">Sim, quero dar o próximo passo!</div></div>
+    </button>
+    <button class="choice-btn" style="opacity:.65" onclick="escolherProximoPasso(false)">
+      <div class="choice-icon">👋</div>
+      <div><div class="choice-label">Não, obrigado</div></div>
     </button>`;
   addElement(wrap);
 }
 
-async function avancarFunilCurso(nivel) {
-  document.querySelectorAll('#choices-funil-curso .choice-btn').forEach(b => b.disabled = true);
+async function escolherProximoPasso(sim) {
+  document.querySelectorAll('#choices-proximo-passo .choice-btn').forEach(b => b.disabled = true);
+
+  if (!sim) {
+    addUserBubble('Não, obrigado 👋');
+    lead.quisAvancar  = 'Não';
+    lead.statusCloser = 'Não quis avançar';
+    Storage.upsert({ ...lead });
+    await sleep(3000);
+    await addBubble(`Foi um prazer te conhecer, <strong>${lead.nome}</strong>! 😊\n\nObrigada por participar da avaliação. Quando quiser evoluir na Libras, estarei aqui. 🤟`);
+    return;
+  }
+
   lead.quisAvancar = 'Sim';
-  addUserBubble('Quero ver pessoas nesse nível ✅');
-  await sleep(400);
+  addUserBubble('Sim, quero dar o próximo passo! ✅');
+  await sleep(3000);
 
-  await addBubble('Olha o que a <strong>Carla</strong> me mandou depois de algumas semanas no curso... 🥹', 1000);
-  await sleep(300);
-
-  _mostrarDepoimento({
-    texto: '"Eu não acreditava que conseguia me comunicar em Libras. Depois do curso da Lorena, consigo ter conversas reais com surdos. Foi transformador."',
-    nome: 'Carla M.',
-    nivel: 'Era Básico → hoje Intermediário',
-  });
-
-  await sleep(1000);
-  await addBubble('Ela estava exatamente onde você está hoje. 💚', 700);
-  await sleep(500);
-  await addBubble('Agora que você viu isso...', 800);
-  await sleep(400);
-  await addBubble('Por isso preparei uma condição especial para você começar agora 👇', 900);
-  await sleep(400);
-
-  _mostrarOfertaCurso(nivel);
-  lead.statusCloser = 'Viu a oferta do curso';
-  Storage.upsert({ ...lead });
+  const temFormacao = q6EstudoIdx !== null && q6EstudoIdx >= 3;
+  await mostrarSelecaoOferta(temFormacao);
 }
 
+async function mostrarSelecaoOferta(temFormacao) {
+  if (temFormacao) {
+    await addBubble(`Como você já tem formação em Libras, o próximo passo natural é a <strong>${CONFIG.MENTORIA_NOME}</strong> — para se profissionalizar ainda mais e ter clareza total sobre seu caminho. 💜`, 2500);
+    await sleep(4000);
+    await addBubble(`Mas também tenho o <strong>${CONFIG.CURSO_NOME}</strong> — com certificação de <strong>300 horas</strong> — para quem quer consolidar a base com uma formação reconhecida. 📜`, 2000);
+  } else {
+    await addBubble(`Como você ainda está construindo sua base, o <strong>${CONFIG.CURSO_NOME}</strong> é o caminho ideal — com certificação de <strong>300 horas</strong> e metodologia visual de verdade. 📜`, 2500);
+    await sleep(4000);
+    await addBubble(`Mas se você sente que já tem base e quer acelerar sua profissionalização, também tenho a <strong>${CONFIG.MENTORIA_NOME}</strong>. 💜`, 2000);
+  }
+
+  await sleep(4000);
+  await addBubble('Qual faz mais sentido para você agora? 👇', 900);
+  await sleep(3000);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'choices-wrap show';
+  wrap.id = 'choices-selecao-oferta';
+  wrap.innerHTML = `
+    <button class="choice-btn" onclick="escolherOferta('curso')">
+      <div class="choice-icon">📜</div>
+      <div>
+        <div class="choice-label">${CONFIG.CURSO_NOME}</div>
+        <div class="choice-desc">Certificação 300h · Base e Intermediário</div>
+      </div>
+    </button>
+    <button class="choice-btn" onclick="escolherOferta('mentoria')">
+      <div class="choice-icon">💜</div>
+      <div>
+        <div class="choice-label">${CONFIG.MENTORIA_NOME}</div>
+        <div class="choice-desc">Profissionalização · Para o próximo nível</div>
+      </div>
+    </button>`;
+  addElement(wrap);
+}
+
+async function escolherOferta(tipo) {
+  document.querySelectorAll('#choices-selecao-oferta .choice-btn').forEach(b => b.disabled = true);
+
+  const label = tipo === 'curso' ? `${CONFIG.CURSO_NOME} 📜` : `${CONFIG.MENTORIA_NOME} 💜`;
+  addUserBubble(label);
+
+  lead.oferta    = tipo;
+  lead.resultado = tipo === 'curso' ? CONFIG.CURSO_NOME : CONFIG.MENTORIA_NOME;
+  Storage.upsert({ ...lead });
+
+  await sleep(3000);
+  await addBubble(`Ótima escolha! 🎯\n\nVou fazer uma oferta especial para você, <strong>${lead.nome}</strong>. Quer ver? 👇`, 1500);
+  await sleep(4000);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'choices-wrap show';
+  wrap.id = 'choices-ver-oferta';
+  wrap.innerHTML = `
+    <button class="choice-btn" onclick="verOferta('${tipo}')">
+      <div class="choice-icon">✅</div>
+      <div><div class="choice-label">Sim, quero ver!</div></div>
+    </button>
+    <button class="choice-btn" style="opacity:.65" onclick="recusarOferta()">
+      <div class="choice-icon">👋</div>
+      <div><div class="choice-label">Não, obrigado</div></div>
+    </button>`;
+  addElement(wrap);
+}
+
+async function verOferta(tipo) {
+  document.querySelectorAll('#choices-ver-oferta .choice-btn').forEach(b => b.disabled = true);
+  addUserBubble('Sim, quero ver! ✅');
+
+  const depoimento = tipo === 'curso'
+    ? { texto: '"Eu não acreditava que conseguia me comunicar em Libras. Depois do curso da Lorena, consigo ter conversas reais com surdos. Foi transformador."', nome: 'Carla M.', nivel: 'Era Básico → hoje Intermediário' }
+    : { texto: '"Eu achava que já sabia tudo de Libras. Mas com a Lorena descobri lacunas que nem sabia que tinha. Em 3 meses minha interpretação mudou completamente."', nome: 'Juliana R.', nivel: 'Intermediário → Fluência profissional' };
+
+  await sleep(3000);
+  await addBubble(`Olha o que ${tipo === 'curso' ? 'a <strong>Carla</strong>' : 'a <strong>Juliana</strong>'} me mandou... 🥹`, 1000);
+  await sleep(4000);
+  _mostrarDepoimento(depoimento);
+
+  await sleep(5000);
+
+  const prop = nomeSignificado
+    ? nomeSignificado.prop
+    : 'seu propósito vai além de você';
+  await addBubble(`Lembra, <strong>${lead.nome}</strong>: <em>${prop}</em>.\n\nCada passo que você der vai impactar quem está ao seu redor. 🌟`, 2200);
+  await sleep(4000);
+  await addBubble('Agora que você viu isso...', 800);
+  await sleep(3000);
+  await addBubble('Preparei uma condição especial para você começar agora 👇', 900);
+  await sleep(3000);
+
+  lead.statusCloser = `Viu a oferta — ${tipo}`;
+  Storage.upsert({ ...lead });
+
+  if (tipo === 'curso') {
+    _mostrarOfertaCurso(nivelCalculado || 'basico');
+  } else {
+    _mostrarCardMentoria();
+  }
+}
+
+async function recusarOferta() {
+  document.querySelectorAll('#choices-ver-oferta .choice-btn').forEach(b => b.disabled = true);
+  addUserBubble('Não, obrigado 👋');
+  lead.statusCloser = 'Não quis ver a oferta';
+  Storage.upsert({ ...lead });
+  await sleep(3000);
+  await addBubble(`Tudo bem, <strong>${lead.nome}</strong>! 😊\n\nQuando estiver pronto(a), pode voltar aqui a qualquer momento. Estarei te esperando. 🤟`);
+}
+
+// ── HELPERS DE OFERTA ──
 function _mostrarDepoimento({ texto, nome, nivel, foto }) {
   const el = document.createElement('div');
   el.className = 'testimonial-wrap show';
@@ -511,52 +710,6 @@ function _mostrarOfertaCurso(nivel) {
     </div>`;
   addElement(el);
   scrollDown();
-}
-
-// ── FUNIL MENTORIA ──
-async function mostrarFluxoMentoria() {
-  await addBubble('Você já tem base, mas precisa <strong>destravar fluência e interpretação</strong>. 💜', 1000);
-  await sleep(400);
-  await addBubble('Posso te mostrar como outras pessoas nesse nível avançaram de verdade? 👇', 900);
-  await sleep(300);
-
-  const wrap = document.createElement('div');
-  wrap.className = 'choices-wrap show';
-  wrap.id = 'choices-mentoria';
-  wrap.innerHTML = `
-    <button class="choice-btn" onclick="querMentoria()">
-      <div class="choice-icon">✅</div>
-      <div><div class="choice-label">Quero ver pessoas nesse nível</div></div>
-    </button>`;
-  addElement(wrap);
-}
-
-async function querMentoria() {
-  document.querySelectorAll('#choices-mentoria .choice-btn').forEach(b => b.disabled = true);
-  lead.quisAvancar = 'Sim';
-  addUserBubble('Quero ver pessoas nesse nível ✅');
-  await sleep(500);
-
-  await addBubble('Olha o que a <strong>Juliana</strong> me mandou depois de entrar na mentoria... 🥹', 1000);
-  await sleep(300);
-
-  _mostrarDepoimento({
-    texto: '"Eu achava que já sabia tudo de Libras. Mas com a Lorena descobri lacunas que nem sabia que tinha. Em 3 meses minha interpretação mudou completamente."',
-    nome: 'Juliana R.',
-    nivel: 'Intermediário → Fluência profissional',
-  });
-
-  await sleep(1000);
-  await addBubble('Ela estava exatamente no seu nível. 💜', 700);
-  await sleep(500);
-  await addBubble('Agora que você viu isso...', 800);
-  await sleep(400);
-  await addBubble(`Para quem já tem base e quer avançar de verdade, criei a <strong>${CONFIG.MENTORIA_NOME}</strong> — mentoria direta, personalizada, com vagas limitadas. 💜🚀`, 1400);
-  await sleep(400);
-
-  _mostrarCardMentoria();
-  lead.statusCloser = 'Viu o card da mentoria';
-  Storage.upsert({ ...lead });
 }
 
 function _mostrarCardMentoria() {
