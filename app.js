@@ -582,8 +582,11 @@ function _mostrarCardMentoria() {
           ${CONFIG.MENTORIA_BONUS.map(b => `<div class="offer-item"><span class="offer-item-icon">🎁</span> ${b}</div>`).join('')}
         </div>
         <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — vagas limitadas</span></div>
-        <a class="btn-kiwify btn-mentoria-grupo" href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">
-          💬 Entrar no grupo agora →
+        <a class="btn-kiwify btn-mentoria-grupo" href="${CONFIG.MENTORIA_EDUZZ_URL}" target="_blank" rel="noopener" onclick="registrarCompraMentoria()">
+          🔓 Comprar agora — ${CONFIG.MENTORIA_PRECO_OFERTA} →
+        </a>
+        <a class="btn-secundario" href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">
+          💬 Quero a oferta com desconto → Entrar no grupo
         </a>
       </div>
     </div>`;
@@ -603,6 +606,14 @@ function registrarCompra(plataforma) {
   lead.clicouCheckout = true;
   lead.status         = 'comprou';
   lead.statusCloser   = `Clicou comprar — ${lead.resultado}`;
+  Storage.upsert({ ...lead });
+}
+
+function registrarCompraMentoria() {
+  lead.comprouKiwify  = true;
+  lead.clicouCheckout = true;
+  lead.status         = 'comprou';
+  lead.statusCloser   = 'Clicou comprar — Mentoria Eduzz (preço cheio)';
   Storage.upsert({ ...lead });
 }
 
