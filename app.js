@@ -207,14 +207,14 @@ async function microCompromisso(sim) {
   if (sim) {
     addUserBubble('Sim, pode começar! ✅');
     await sleep(400);
-    await addBubble(`Ótimo, <strong>${lead.nome}</strong>! São 7 perguntas rápidas — responde com honestidade e identifico exatamente onde você está em Libras hoje 🎯`, 1500);
+    await addBubble(`Ótimo, <strong>${lead.nome}</strong>! São 12 perguntas rápidas — responde com honestidade e identifico exatamente onde você está em Libras hoje 🎯`, 1500);
     await sleep(400);
     iniciarQuiz();
   } else {
     addUserBubble('Quero entender melhor 🤔');
     await sleep(400);
     await addBubble('Claro! 😊', 600);
-    await addBubble('Vou te fazer <strong>7 perguntas rápidas</strong> sobre sua experiência com Libras.\n\nCom base nas suas respostas, identifico seu nível atual e te mostro o melhor caminho para evoluir de verdade.', 1800);
+    await addBubble('Vou te fazer <strong>12 perguntas rápidas</strong> sobre sua experiência com Libras.\n\nCom base nas suas respostas, identifico seu nível atual e te mostro o melhor caminho para evoluir de verdade.', 1800);
     await sleep(400);
     await addBubble('Não tem resposta certa ou errada — só responda o que é verdadeiro pra você. 🤟', 1200);
     await sleep(400);

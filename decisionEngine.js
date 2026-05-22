@@ -1,13 +1,13 @@
 const DecisionEngine = (() => {
   const OBJ_BONUS = [-4, 0, 3, 7, 9];
 
-  // 7 perguntas × 4 pts = 28 pts máx
+  // 12 perguntas × 4 pts = 48 pts máx
   function calcularNivel(quizScore, q1DifIdx, q2ObjIdx) {
     const bonus    = q2ObjIdx !== null ? OBJ_BONUS[q2ObjIdx] : 0;
     const adjusted = quizScore + bonus;
-    if (q1DifIdx === 0 && adjusted <= 13) return 'basico';
-    if (adjusted <= 8)   return 'basico';
-    if (adjusted <= 17)  return 'intermediario';
+    if (q1DifIdx === 0 && adjusted <= 22) return 'basico';
+    if (adjusted <= 14)  return 'basico';
+    if (adjusted <= 30)  return 'intermediario';
     return 'avancado';
   }
 
@@ -26,7 +26,7 @@ const DecisionEngine = (() => {
 
   function classificarLead(nivel, q2ObjIdx, score) {
     if (nivel === 'avancado') return 'QUENTE';
-    if (nivel === 'intermediario' && score >= 14) return 'QUENTE';
+    if (nivel === 'intermediario' && score >= 24) return 'QUENTE';
     if (nivel === 'intermediario') return 'MORNO';
     if (nivel === 'basico' && q2ObjIdx !== null && q2ObjIdx >= 2) return 'MORNO';
     return 'FRIO';
