@@ -734,12 +734,14 @@ function _mostrarCardMentoria() {
           <div class="offer-includes-title">Bônus exclusivo</div>
           ${CONFIG.MENTORIA_BONUS.map(b => `<div class="offer-item"><span class="offer-item-icon">🎁</span> ${b}</div>`).join('')}
         </div>
+        <div class="offer-price-row">
+          <div class="offer-price-from">Investimento a partir de</div>
+          <div class="offer-price-current">${CONFIG.MENTORIA_PRECO_OFERTA}</div>
+          <div class="offer-price-installment">Mas quem entrar no grupo recebe uma oferta que vai valer muito a pena 👇</div>
+        </div>
         <div class="vagas-row"><div class="vagas-dot"></div><span>Apenas <strong>15 vagas</strong> por turma — vagas limitadas</span></div>
-        <a class="btn-kiwify btn-mentoria-grupo" href="${CONFIG.MENTORIA_EDUZZ_URL}" target="_blank" rel="noopener" onclick="registrarCompraMentoria()">
-          🔓 Comprar agora — ${CONFIG.MENTORIA_PRECO_OFERTA} →
-        </a>
-        <a class="btn-secundario" href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">
-          💬 Quero a oferta com desconto → Entrar no grupo
+        <a class="btn-kiwify btn-mentoria-grupo" href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">
+          💬 Entrar no grupo agora →
         </a>
       </div>
     </div>`;
