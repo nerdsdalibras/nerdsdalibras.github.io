@@ -1,5 +1,5 @@
 const CONFIG = {
-  SHEETS_URL:   'https://script.google.com/macros/s/AKfycbxYvgSFg81GDju_92IGO-ho39klL6ZM34TmfOIO3q2AIQ3OQCm_TV82AAPqwEBx08Q/exec',
+  SHEETS_URL:   'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec',
   WA_CURSO:     'https://chat.whatsapp.com/GLQeFyVsR2kFvzcBgggDsV',
   WA_MENTORIA:  'https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe',
 
