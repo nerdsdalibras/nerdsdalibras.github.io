@@ -1,142 +1,204 @@
 // ═══════════════════════════════════════════════════
-//  NERDS DA LIBRAS — Google Apps Script
-//  Cole este código no seu Apps Script e publique
-//  como Web App (Executar como: Eu, Acesso: Qualquer)
+//  NERDS DA LIBRAS — Google Apps Script v3
+//  Cole este código e publique como nova versão
 // ═══════════════════════════════════════════════════
 
-const SHEET_NAME = 'Leads';
+// Nomes possíveis da aba de leads (tenta cada um)
+const SHEET_NAMES = ['LEADS', 'Leads', 'leads', 'Lead'];
 
-// ── ENTRADA POST (quiz + webhook Kiwify) ──────────
+// Mapeamento: nome da coluna na planilha → campo JS usado no dashboard
+const COL_TO_FIELD = {
+  'Data':             'createdAt',
+  'Nome':             'nome',
+  'WhatsApp':         'whatsapp',
+  'Instagram':        'instagram',
+  'Origem':           'origem',
+  'Conheceu Lorena':  'conheceuLorena',
+  'Iniciou Quiz':     'iniciouQuiz',
+  'Concluiu Quiz':    'concluiuQuiz',
+  'Dificuldade Q1':   'respostaDificuldade',
+  'Objetivo Q2':      'respostaObjetivo',
+  'Pontuação':        'pontuacao',
+  'Nível':            'nivelIdentificado',
+  'Resultado':        'resultado',
+  // Colunas novas (serão criadas automaticamente se não existirem)
+  'sessionId':        'sessionId',
+  'genero':           'genero',
+  'oferta':           'oferta',
+  'classificacaoLead':'classificacaoLead',
+  'status':           'status',
+  'statusCloser':     'statusCloser',
+  'comprouKiwify':    'comprouKiwify',
+  'clicouGrupo':      'clicouGrupo',
+  'clicouCheckout':   'clicouCheckout',
+  'tempoNoQuiz':      'tempoNoQuiz',
+  'updatedAt':        'updatedAt',
+};
+
+// Mapeamento inverso: campo JS → nome da coluna
+const FIELD_TO_COL = {};
+for (var k in COL_TO_FIELD) { FIELD_TO_COL[COL_TO_FIELD[k]] = k; }
+
+// Novas colunas que precisam existir para o sistema funcionar
+const NEW_COLS = ['sessionId','genero','oferta','classificacaoLead','status','statusCloser','comprouKiwify','clicouGrupo','clicouCheckout','tempoNoQuiz','updatedAt'];
+
+// ── ENTRADA POST ──────────────────────────────────
 function doPost(e) {
   try {
     const raw  = e.postData ? e.postData.contents : '{}';
     const data = JSON.parse(raw);
 
-    // Webhook da Kiwify: tem campo "event" e "data.customer"
+    // Webhook da Kiwify: tem campo "event"
     if (data.event && data.data && data.data.customer) {
       handleKiwifyWebhook(data);
       return respond({ ok: true, source: 'kiwify' });
     }
 
     // Dados do lead vindo do quiz
-    if (data.sessionId) {
+    if (data.sessionId || data.nome) {
       upsertLead(data);
       return respond({ ok: true, source: 'quiz' });
     }
 
-    return respond({ ok: true, msg: 'sem acao' });
+    return respond({ ok: true });
   } catch (err) {
     return respond({ error: err.message });
   }
 }
 
-// ── ENTRADA GET (dashboard lê os leads) ──────────
+// ── ENTRADA GET (dashboard busca leads) ──────────
 function doGet(e) {
   const action = (e.parameter && e.parameter.action) || '';
-
   if (action === 'getLeads') {
     return respond(getAllLeads());
   }
-
-  return respond({ ok: true, version: '2.0' });
+  return respond({ ok: true, version: '3.0' });
 }
 
-// ── HELPER: retorna JSON com CORS ─────────────────
 function respond(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ── SHEET ─────────────────────────────────────────
+// ── LOCALIZAR ABA ─────────────────────────────────
 function getSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  return ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
-}
-
-const HEADERS = [
-  'sessionId', 'nome', 'whatsapp', 'instagram', 'genero',
-  'nivelIdentificado', 'pontuacao', 'oferta', 'resultado',
-  'classificacaoLead', 'status', 'statusCloser',
-  'comprouKiwify', 'clicouGrupo', 'clicouCheckout',
-  'respostaDificuldade', 'respostaObjetivo',
-  'iniciouQuiz', 'concluiuQuiz', 'tempoNoQuiz',
-  'createdAt', 'updatedAt'
-];
-
-function ensureHeaders(sheet) {
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(HEADERS);
-    sheet.getRange(1, 1, 1, HEADERS.length)
-      .setFontWeight('bold')
-      .setBackground('#1a1a2e')
-      .setFontColor('#ffffff');
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  for (var i = 0; i < SHEET_NAMES.length; i++) {
+    var s = ss.getSheetByName(SHEET_NAMES[i]);
+    if (s) return s;
   }
-  return sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  // Cria nova aba se não encontrar nenhuma
+  return ss.insertSheet('Leads');
 }
 
-// ── UPSERT: cria ou atualiza lead por sessionId ───
-function upsertLead(data) {
-  const sheet   = getSheet();
-  const headers = ensureHeaders(sheet);
-  const sidCol  = headers.indexOf('sessionId');
-  const lastRow = sheet.getLastRow();
+// ── LER CABEÇALHOS ────────────────────────────────
+function getHeaders(sheet) {
+  var lastCol = sheet.getLastColumn();
+  if (lastCol === 0) return [];
+  return sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+}
 
-  let existingRow = -1;
-  if (lastRow > 1 && sidCol >= 0) {
-    const ids = sheet.getRange(2, sidCol + 1, lastRow - 1, 1).getValues();
-    for (let i = 0; i < ids.length; i++) {
+// ── GARANTIR NOVAS COLUNAS ───────────────────────
+function ensureNewColumns(sheet) {
+  var headers = getHeaders(sheet);
+  var added   = false;
+  for (var i = 0; i < NEW_COLS.length; i++) {
+    if (headers.indexOf(NEW_COLS[i]) === -1) {
+      headers.push(NEW_COLS[i]);
+      sheet.getRange(1, headers.length).setValue(NEW_COLS[i]);
+      added = true;
+    }
+  }
+  return getHeaders(sheet);
+}
+
+// ── UPSERT LEAD ───────────────────────────────────
+function upsertLead(data) {
+  var sheet   = getSheet();
+  var headers = ensureNewColumns(sheet);
+  var lastRow = sheet.getLastRow();
+
+  // Índices das colunas-chave
+  var sidCol = headers.indexOf('sessionId');
+  var wppCol = headers.indexOf('WhatsApp') >= 0 ? headers.indexOf('WhatsApp') : headers.indexOf('whatsapp');
+  var nomCol = headers.indexOf('Nome')     >= 0 ? headers.indexOf('Nome')     : headers.indexOf('nome');
+
+  var existingRow = -1;
+
+  // 1) Tenta encontrar pelo sessionId
+  if (sidCol >= 0 && data.sessionId && lastRow > 1) {
+    var ids = sheet.getRange(2, sidCol + 1, lastRow - 1, 1).getValues();
+    for (var i = 0; i < ids.length; i++) {
       if (ids[i][0] === data.sessionId) { existingRow = i + 2; break; }
     }
   }
 
-  const now = new Date().toISOString();
+  // 2) Fallback: encontra pelo WhatsApp
+  if (existingRow < 0 && wppCol >= 0 && data.whatsapp && lastRow > 1) {
+    var phones = sheet.getRange(2, wppCol + 1, lastRow - 1, 1).getValues();
+    var clean  = String(data.whatsapp).replace(/\D/g, '');
+    for (var j = 0; j < phones.length; j++) {
+      var rowPhone = String(phones[j][0] || '').replace(/\D/g, '');
+      if (rowPhone && rowPhone.slice(-9) === clean.slice(-9)) {
+        existingRow = j + 2; break;
+      }
+    }
+  }
+
+  var now = new Date().toISOString();
   if (!data.createdAt) data.createdAt = now;
   data.updatedAt = now;
 
-  const row = HEADERS.map(h => {
-    const v = data[h];
-    if (v === undefined || v === null) return '';
-    return v;
-  });
-
   if (existingRow > 0) {
-    sheet.getRange(existingRow, 1, 1, row.length).setValues([row]);
+    // Atualiza somente as células que têm valor no data recebido
+    for (var h = 0; h < headers.length; h++) {
+      var colName  = headers[h];
+      var field    = COL_TO_FIELD[colName] || colName;
+      var val      = data[field];
+      if (val !== undefined && val !== null && val !== '') {
+        sheet.getRange(existingRow, h + 1).setValue(val);
+      }
+    }
   } else {
+    // Nova linha
+    var row = headers.map(function(colName) {
+      var field = COL_TO_FIELD[colName] || colName;
+      var val   = data[field];
+      if (val === undefined || val === null) return '';
+      return val;
+    });
     sheet.appendRow(row);
   }
 }
 
-// ── WEBHOOK KIWIFY: marca compra confirmada ───────
+// ── WEBHOOK KIWIFY ────────────────────────────────
 function handleKiwifyWebhook(data) {
-  const sheet   = getSheet();
-  const lastRow = sheet.getLastRow();
+  var sheet   = getSheet();
+  var lastRow = sheet.getLastRow();
   if (lastRow < 2) return;
 
-  const headers  = ensureHeaders(sheet);
-  const customer = data.data.customer;
+  var headers  = getHeaders(sheet);
+  var customer = data.data.customer;
+  var phone    = String(customer.mobile || customer.phone || '').replace(/\D/g, '');
 
-  // Pega telefone limpo (só dígitos), compara pelos últimos 9
-  const phone = String(customer.mobile || customer.phone || '').replace(/\D/g, '');
+  var wppCol    = headers.indexOf('WhatsApp') >= 0 ? headers.indexOf('WhatsApp') : headers.indexOf('whatsapp');
+  var statusCol = headers.indexOf('status');
+  var comprouCol= headers.indexOf('comprouKiwify');
+  var closerCol = headers.indexOf('statusCloser');
+  var updCol    = headers.indexOf('updatedAt');
 
-  const wppCol    = headers.indexOf('whatsapp');
-  const statusCol = headers.indexOf('status');
-  const comprouCol= headers.indexOf('comprouKiwify');
-  const updatedCol= headers.indexOf('updatedAt');
-  const closerCol = headers.indexOf('statusCloser');
+  if (wppCol < 0 || !phone) return;
 
-  if (wppCol < 0) return;
-
-  const phones = sheet.getRange(2, wppCol + 1, lastRow - 1, 1).getValues();
-
-  for (let i = 0; i < phones.length; i++) {
-    const rowPhone = String(phones[i][0] || '').replace(/\D/g, '');
-    if (phone && rowPhone && rowPhone.slice(-9) === phone.slice(-9)) {
-      const r = i + 2;
-      if (statusCol   >= 0) sheet.getRange(r, statusCol    + 1).setValue('comprou');
-      if (comprouCol  >= 0) sheet.getRange(r, comprouCol   + 1).setValue(true);
-      if (closerCol   >= 0) sheet.getRange(r, closerCol    + 1).setValue('✅ Compra confirmada pela Kiwify');
-      if (updatedCol  >= 0) sheet.getRange(r, updatedCol   + 1).setValue(new Date().toISOString());
+  var phones = sheet.getRange(2, wppCol + 1, lastRow - 1, 1).getValues();
+  for (var i = 0; i < phones.length; i++) {
+    var rowPhone = String(phones[i][0] || '').replace(/\D/g, '');
+    if (rowPhone && rowPhone.slice(-9) === phone.slice(-9)) {
+      var r = i + 2;
+      if (statusCol  >= 0) sheet.getRange(r, statusCol   + 1).setValue('comprou');
+      if (comprouCol >= 0) sheet.getRange(r, comprouCol  + 1).setValue(true);
+      if (closerCol  >= 0) sheet.getRange(r, closerCol   + 1).setValue('✅ Compra confirmada pela Kiwify');
+      if (updCol     >= 0) sheet.getRange(r, updCol      + 1).setValue(new Date().toISOString());
       break;
     }
   }
@@ -144,27 +206,50 @@ function handleKiwifyWebhook(data) {
 
 // ── GET ALL LEADS para o dashboard ───────────────
 function getAllLeads() {
-  const sheet   = getSheet();
-  const lastRow = sheet.getLastRow();
+  var sheet   = getSheet();
+  var lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
 
-  const data    = sheet.getDataRange().getValues();
-  const headers = data[0];
-  const leads   = [];
+  var data    = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var leads   = [];
+  var seen    = {}; // para deduplicar por sessionId ou whatsapp
 
-  for (let i = 1; i < data.length; i++) {
-    if (!data[i][0]) continue;
-    const lead = {};
-    for (let j = 0; j < headers.length; j++) {
-      const v = data[i][j];
-      // Converte strings booleanas de volta para boolean
-      if      (v === 'true'  || v === true)  lead[headers[j]] = true;
-      else if (v === 'false' || v === false) lead[headers[j]] = false;
-      else lead[headers[j]] = v;
+  for (var i = data.length - 1; i >= 1; i--) {  // de baixo para cima (pega versão mais recente)
+    var row  = data[i];
+    var lead = {};
+
+    for (var j = 0; j < headers.length; j++) {
+      var colName = headers[j];
+      var field   = COL_TO_FIELD[colName] || colName;
+      var val     = row[j];
+
+      if      (val === 'true'  || val === true)  lead[field] = true;
+      else if (val === 'false' || val === false) lead[field] = false;
+      else if (val instanceof Date)              lead[field] = val.toISOString();
+      else                                       lead[field] = val;
     }
+
+    if (!lead.nome && !lead.whatsapp) continue;
+
+    // Deduplicação: usa sessionId como chave, ou whatsapp como fallback
+    var key = lead.sessionId || (String(lead.whatsapp || '').replace(/\D/g,'').slice(-9));
+    if (key && seen[key]) continue;
+    if (key) seen[key] = true;
+
+    // Garante createdAt a partir da coluna Data se não tiver
+    if (!lead.createdAt && lead['Data']) lead.createdAt = lead['Data'];
+
+    // Status padrão
+    if (!lead.status) lead.status = 'novo';
+
     leads.push(lead);
   }
 
-  leads.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  // Ordena por data, mais recentes primeiro
+  leads.sort(function(a, b) {
+    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+  });
+
   return leads;
 }
