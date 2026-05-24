@@ -3,6 +3,9 @@ let filtroAtivo  = 'todos';
 let currentLead  = null;
 let currentTab   = 'dados';
 let currentPage  = 'leads';
+let cachedLeads  = null;
+let lastFetch    = 0;
+let autoRefreshTimer = null;
 
 /* ── AUTH ── */
 function checkPassword() {
@@ -12,7 +15,8 @@ function checkPassword() {
     sessionStorage.setItem('ndl_auth', '1');
     document.getElementById('password-screen').style.display = 'none';
     document.getElementById('app').removeAttribute('hidden');
-    renderDashboard();
+    renderDashboard(true);
+    startAutoRefresh();
   } else {
     err.textContent = 'Senha incorreta.';
     input.value = '';
@@ -22,10 +26,40 @@ function checkPassword() {
 }
 
 function logout() {
+  clearInterval(autoRefreshTimer);
   sessionStorage.removeItem('ndl_auth');
   document.getElementById('app').setAttribute('hidden', '');
   document.getElementById('password-screen').style.display = 'flex';
   document.getElementById('pwd-input').value = '';
+}
+
+/* ── AUTO REFRESH ── */
+function startAutoRefresh() {
+  clearInterval(autoRefreshTimer);
+  autoRefreshTimer = setInterval(() => renderDashboard(false), 60000);
+}
+
+/* ── FETCH LEADS DO SHEETS ── */
+async function fetchLeads() {
+  try {
+    const url = CONFIG.SHEETS_URL + '?action=getLeads';
+    const res = await fetch(url, { redirect: 'follow' });
+    const data = await res.json();
+    if (Array.isArray(data)) return data;
+    console.warn('Sheets retornou formato inesperado:', data);
+    return Storage.getAll();
+  } catch (err) {
+    console.warn('Falha ao buscar do Sheets, usando localStorage:', err);
+    return Storage.getAll();
+  }
+}
+
+async function getLeads(force = false) {
+  const now = Date.now();
+  if (!force && cachedLeads && (now - lastFetch) < 30000) return cachedLeads;
+  cachedLeads = await fetchLeads();
+  lastFetch   = now;
+  return cachedLeads;
 }
 
 /* ── NAVIGATION ── */
@@ -35,7 +69,7 @@ function setPage(page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelector(`[data-page="${page}"]`).classList.add('active');
-  if (page === 'pipeline')  renderPipeline();
+  if (page === 'pipeline')   renderPipeline();
   else if (page === 'analytics') renderAnalytics();
   else renderLeads();
 }
@@ -44,13 +78,23 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
 
+/* ── LOADING STATE ── */
+function setLoading(on) {
+  const btn = document.querySelector('.icon-btn[title="Atualizar"]');
+  if (btn) btn.style.opacity = on ? '.4' : '1';
+}
+
 /* ── MAIN RENDER ── */
-function renderDashboard() {
-  const leads = Storage.getAll();
+async function renderDashboard(force = false) {
+  setLoading(true);
+  const leads = await getLeads(force);
+  setLoading(false);
   updateBadges(leads);
   renderStats(leads);
-  renderLeads();
   renderAISuggestions(leads);
+  if (currentPage === 'leads')     renderLeads();
+  else if (currentPage === 'pipeline')  renderPipeline();
+  else if (currentPage === 'analytics') renderAnalytics();
 }
 
 /* ── AI SUGGESTIONS ── */
@@ -71,11 +115,12 @@ function renderAISuggestions(leads) {
     });
   }
 
-  const checkoutNoBuy = leads.filter(l => l.comprouKiwify && l.status !== 'comprou');
+  // Leads que viram o checkout mas NÃO tiveram compra confirmada pela Kiwify
+  const checkoutNoBuy = leads.filter(l => l.clicouCheckout && l.status !== 'comprou');
   if (checkoutNoBuy.length) {
     suggestions.push({
       dot: 'orange',
-      text: `${checkoutNoBuy.length} lead${checkoutNoBuy.length > 1 ? 's' : ''} clicou no checkout mas não finalizou`,
+      text: `${checkoutNoBuy.length} lead${checkoutNoBuy.length > 1 ? 's' : ''} viu o checkout mas não comprou`,
       sub: 'Carrinho abandonado — recuperação tem alta conversão'
     });
   }
@@ -119,14 +164,12 @@ function renderAISuggestions(leads) {
             ${s.text}
             <em>${s.sub}</em>
           </div>
-        </div>
-      `).join('')}
+        </div>`).join('')}
     </div>`;
 }
 
 /* ── STATS ── */
 function renderStats(leads) {
-  if (!leads) leads = Storage.getAll();
   const now   = new Date();
   const total = leads.length;
 
@@ -138,12 +181,15 @@ function renderStats(leads) {
 
   const muitoQuente = leads.filter(l => l.status === 'muito_quente').length;
   const prioridade  = leads.filter(l => l.status === 'prioridade_maxima').length;
-  const comprou     = leads.filter(l => l.status === 'comprou' || l.comprouKiwify).length;
+  // "comprou" = confirmado pela Kiwify (status === 'comprou')
+  const comprou     = leads.filter(l => l.status === 'comprou').length;
+  // "viu checkout" = clicou mas pode não ter comprado
+  const viuCheckout = leads.filter(l => l.clicouCheckout && l.status !== 'comprou').length;
   const semContato  = leads.filter(l =>
     !l.status || l.status === 'novo' ||
     (l.statusCloser === 'Aguardando resposta sobre próximo nível' && l.status !== 'comprou' && l.status !== 'nao_quis')
   ).length;
-  const conversao   = total > 0 ? Math.round((comprou / total) * 100) : 0;
+  const conversao  = total > 0 ? Math.round((comprou / total) * 100) : 0;
   const faturamento = comprou * 397;
 
   document.getElementById('stats').innerHTML = `
@@ -173,16 +219,21 @@ function renderStats(leads) {
       <div class="stat-label">Compraram</div>
     </div>
     <div class="stat-card animate-up" style="animation-delay:.15s">
+      <div class="stat-icon">🛒</div>
+      <div class="stat-val sv-yellow">${viuCheckout}</div>
+      <div class="stat-label">Viu Checkout</div>
+    </div>
+    <div class="stat-card animate-up" style="animation-delay:.18s">
       <div class="stat-icon">📈</div>
       <div class="stat-val sv-yellow">${conversao}%</div>
       <div class="stat-label">Taxa de Conversão</div>
     </div>
-    <div class="stat-card animate-up" style="animation-delay:.18s">
+    <div class="stat-card animate-up" style="animation-delay:.21s">
       <div class="stat-icon">💰</div>
       <div class="stat-val sv-green" style="font-size:1.1rem">R$${faturamento.toLocaleString('pt-BR')}</div>
-      <div class="stat-label">Faturamento Est.</div>
+      <div class="stat-label">Faturamento Conf.</div>
     </div>
-    <div class="stat-card animate-up" style="animation-delay:.21s">
+    <div class="stat-card animate-up" style="animation-delay:.24s">
       <div class="stat-icon">⚡</div>
       <div class="stat-val sv-orange">${semContato}</div>
       <div class="stat-label">Aguardando Contato</div>
@@ -193,14 +244,15 @@ function renderStats(leads) {
 /* ── FILTERS ── */
 function renderFilters(leads) {
   const counts = {
-    todos:            leads.length,
+    todos:             leads.length,
     prioridade_maxima: leads.filter(l => l.status === 'prioridade_maxima').length,
-    muito_quente:     leads.filter(l => l.status === 'muito_quente').length,
-    quente:           leads.filter(l => l.status === 'quente').length,
-    morno:            leads.filter(l => l.status === 'morno').length,
-    comprou:          leads.filter(l => l.status === 'comprou' || l.comprouKiwify).length,
-    nao_quis:         leads.filter(l => l.status === 'nao_quis').length,
-    aguardando:       leads.filter(l => l.status === 'aguardando').length,
+    muito_quente:      leads.filter(l => l.status === 'muito_quente').length,
+    quente:            leads.filter(l => l.status === 'quente').length,
+    morno:             leads.filter(l => l.status === 'morno').length,
+    comprou:           leads.filter(l => l.status === 'comprou').length,
+    viu_checkout:      leads.filter(l => l.clicouCheckout && l.status !== 'comprou').length,
+    aguardando:        leads.filter(l => l.status === 'aguardando').length,
+    nao_quis:          leads.filter(l => l.status === 'nao_quis').length,
   };
   const defs = [
     { key: 'todos',             label: 'Todos' },
@@ -208,6 +260,7 @@ function renderFilters(leads) {
     { key: 'muito_quente',      label: '🔥🔥 Muito Quente' },
     { key: 'quente',            label: '🔥 Quente' },
     { key: 'morno',             label: '🌡 Morno' },
+    { key: 'viu_checkout',      label: '🛒 Viu Checkout' },
     { key: 'comprou',           label: '✅ Compraram' },
     { key: 'aguardando',        label: '⏳ Aguardando' },
     { key: 'nao_quis',          label: '❌ Não Quiseram' },
@@ -221,30 +274,30 @@ function renderFilters(leads) {
       </button>`).join('');
 }
 
-function filtrar(status, btn) {
+function filtrar(status) {
   filtroAtivo = status;
   renderLeads();
 }
 
-function onSearch() {
-  renderLeads();
-}
+function onSearch() { renderLeads(); }
 
 /* ── LEADS LIST ── */
-function renderLeads() {
+async function renderLeads() {
   const search = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
-  let leads = Storage.getAll().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const leads  = await getLeads();
 
   renderFilters(leads);
 
-  if (filtroAtivo !== 'todos') {
-    leads = leads.filter(l => {
-      if (filtroAtivo === 'comprou') return l.status === 'comprou' || l.comprouKiwify;
-      return l.status === filtroAtivo;
-    });
+  let filtered = [...leads];
+
+  if (filtroAtivo === 'viu_checkout') {
+    filtered = filtered.filter(l => l.clicouCheckout && l.status !== 'comprou');
+  } else if (filtroAtivo !== 'todos') {
+    filtered = filtered.filter(l => l.status === filtroAtivo);
   }
+
   if (search) {
-    leads = leads.filter(l =>
+    filtered = filtered.filter(l =>
       (l.nome || '').toLowerCase().includes(search) ||
       (l.whatsapp || '').includes(search) ||
       (l.instagram || '').toLowerCase().includes(search)
@@ -252,7 +305,7 @@ function renderLeads() {
   }
 
   const list = document.getElementById('leads-list');
-  if (!leads.length) {
+  if (!filtered.length) {
     list.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">📭</div>
@@ -261,21 +314,22 @@ function renderLeads() {
       </div>`;
     return;
   }
-  list.innerHTML = leads.map((l, i) => renderLeadCard(l, i)).join('');
+  list.innerHTML = filtered.map((l, i) => renderLeadCard(l, i)).join('');
 }
 
 function renderLeadCard(l, idx) {
-  const statusKey   = l.comprouKiwify ? 'comprou' : (l.status || 'novo');
+  const statusKey   = l.status || 'novo';
   const statusLabel = DecisionEngine.STATUS_LABELS[statusKey] || statusKey;
   const timeAgo     = l.createdAt ? timeElapsed(l.createdAt) : '';
-  const wppLink     = l.whatsapp ? `https://wa.me/55${l.whatsapp.replace(/\D/g,'')}` : null;
+  const wppLink     = l.whatsapp ? `https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}` : null;
   const pontuacao   = l.pontuacao || 0;
   const scorePct    = Math.min(100, Math.round((pontuacao / 48) * 100));
   const scoreColor  = scorePct >= 65 ? 'var(--g)' : scorePct >= 40 ? 'var(--yellow)' : 'var(--red)';
   const initials    = (l.nome || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-  const avatarColor = getAvatarColor(l.sessionId || l.nome || '');
+  const avatarColor = getAvatarColor(String(l.sessionId || l.nome || ''));
   const hasAlert    = (statusKey === 'muito_quente' || statusKey === 'prioridade_maxima') &&
                       (!l.statusCloser || l.statusCloser === 'Aguardando resposta sobre próximo nível');
+  const viuCheckout = l.clicouCheckout && statusKey !== 'comprou';
 
   return `
     <div class="lead-card lc-${statusKey} animate-up" style="animation-delay:${Math.min(idx * 0.025, 0.3)}s"
@@ -305,9 +359,10 @@ function renderLeadCard(l, idx) {
         </div>` : ''}
         ${l.nivelIdentificado ? `<div class="info-chip"><strong>${l.nivelIdentificado}</strong></div>` : ''}
         ${l.oferta ? `<div class="info-chip">${l.oferta === 'curso' ? '📚 Curso' : '🎯 Mentoria'}</div>` : ''}
-        ${l.comprouKiwify ? `<div class="info-chip green">✅ Checkout</div>` : ''}
-        ${l.clicouGrupo   ? `<div class="info-chip blue">💬 Grupo</div>` : ''}
-        ${hasAlert ? `<div class="ai-alert">⚡ Abordar agora</div>` : ''}
+        ${statusKey === 'comprou'  ? `<div class="info-chip green">✅ Compra confirmada</div>` : ''}
+        ${viuCheckout              ? `<div class="info-chip" style="color:var(--yellow)">🛒 Viu checkout</div>` : ''}
+        ${l.clicouGrupo            ? `<div class="info-chip blue">💬 Grupo</div>` : ''}
+        ${hasAlert                 ? `<div class="ai-alert">⚡ Abordar agora</div>` : ''}
       </div>
 
       <div class="lead-row3">
@@ -323,14 +378,14 @@ function renderLeadCard(l, idx) {
 
 /* ── LEAD DETAIL PANEL ── */
 function openLead(sessionId) {
-  const lead = Storage.getAll().find(l => l.sessionId === sessionId);
+  const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
   if (!lead) return;
   currentLead = lead;
   currentTab  = 'dados';
 
-  const statusKey   = lead.comprouKiwify ? 'comprou' : (lead.status || 'novo');
+  const statusKey   = lead.status || 'novo';
   const initials    = (lead.nome || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-  const avatarColor = getAvatarColor(lead.sessionId || lead.nome || '');
+  const avatarColor = getAvatarColor(String(lead.sessionId || lead.nome || ''));
 
   document.getElementById('panel-title-wrap').innerHTML = `
     <div style="display:flex;align-items:center;gap:8px">
@@ -342,7 +397,7 @@ function openLead(sessionId) {
     </div>`;
 
   document.getElementById('panel-hdr-actions').innerHTML = lead.whatsapp
-    ? `<a class="quick-btn qb-wpp" href="https://wa.me/55${lead.whatsapp.replace(/\D/g,'')}" target="_blank" rel="noopener">💬 WA</a>`
+    ? `<a class="quick-btn qb-wpp" href="https://wa.me/55${String(lead.whatsapp).replace(/\D/g,'')}" target="_blank" rel="noopener">💬 WA</a>`
     : '';
 
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -372,7 +427,8 @@ function renderTab(tab) {
   const l = currentLead;
 
   if (tab === 'dados') {
-    const statusKey = l.comprouKiwify ? 'comprou' : (l.status || 'novo');
+    const statusKey  = l.status || 'novo';
+    const viuCheck   = l.clicouCheckout && statusKey !== 'comprou';
     body.innerHTML = `
       <div class="panel-section">
         <div class="panel-section-title">Contato</div>
@@ -388,16 +444,21 @@ function renderTab(tab) {
         <div class="panel-field"><span class="pf-label">Pontuação</span><span class="pf-val">${l.pontuacao || 0} / 48 pts</span></div>
         <div class="panel-field"><span class="pf-label">Oferta</span><span class="pf-val">${l.oferta === 'curso' ? '📚 Curso' : l.oferta === 'mentoria' ? '🎯 Mentoria' : '—'}</span></div>
         <div class="panel-field"><span class="pf-label">Classificação</span><span class="pf-val">${l.classificacaoLead || '—'}</span></div>
-        ${l.respostaDificuldade ? `<div class="panel-field"><span class="pf-label">Dificuldade (Q1)</span><span class="pf-val">${l.respostaDificuldade}</span></div>` : ''}
-        ${l.respostaObjetivo    ? `<div class="panel-field"><span class="pf-label">Objetivo (Q2)</span><span class="pf-val">${l.respostaObjetivo}</span></div>` : ''}
+        ${l.respostaDificuldade ? `<div class="panel-field"><span class="pf-label">Dificuldade</span><span class="pf-val">${l.respostaDificuldade}</span></div>` : ''}
+        ${l.respostaObjetivo    ? `<div class="panel-field"><span class="pf-label">Objetivo</span><span class="pf-val">${l.respostaObjetivo}</span></div>` : ''}
       </div>
 
       <div class="panel-section">
         <div class="panel-section-title">Atividade</div>
         <div class="panel-field"><span class="pf-label">Entrou em</span><span class="pf-val">${l.createdAt ? new Date(l.createdAt).toLocaleString('pt-BR') : '—'}</span></div>
         <div class="panel-field"><span class="pf-label">Tempo no quiz</span><span class="pf-val">${l.tempoNoQuiz ? l.tempoNoQuiz + 's' : '—'}</span></div>
-        <div class="panel-field"><span class="pf-label">Clicou checkout</span><span class="pf-val">${l.comprouKiwify ? '✅ Sim' : '—'}</span></div>
-        <div class="panel-field"><span class="pf-label">Entrou no grupo</span><span class="pf-val">${l.clicouGrupo ? '✅ Sim' : '—'}</span></div>
+        <div class="panel-field">
+          <span class="pf-label">Checkout</span>
+          <span class="pf-val" style="color:${statusKey === 'comprou' ? 'var(--g)' : viuCheck ? 'var(--yellow)' : 'var(--td)'}">
+            ${statusKey === 'comprou' ? '✅ Compra confirmada (Kiwify)' : viuCheck ? '🛒 Viu, não comprou' : '—'}
+          </span>
+        </div>
+        <div class="panel-field"><span class="pf-label">Entrou no grupo</span><span class="pf-val">${l.clicouGrupo ? '💬 Sim' : '—'}</span></div>
         ${l.statusCloser ? `<div class="panel-field"><span class="pf-label">Nota closer</span><span class="pf-val">${l.statusCloser}</span></div>` : ''}
       </div>
 
@@ -412,7 +473,7 @@ function renderTab(tab) {
 
       <div class="panel-section">
         <div class="panel-section-title">Ações</div>
-        ${l.whatsapp ? `<a class="panel-big-btn pbb-wpp" href="https://wa.me/55${l.whatsapp.replace(/\D/g,'')}" target="_blank" rel="noopener">💬 Abrir WhatsApp</a>` : ''}
+        ${l.whatsapp ? `<a class="panel-big-btn pbb-wpp" href="https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}" target="_blank" rel="noopener">💬 Abrir WhatsApp</a>` : ''}
         <button class="panel-big-btn pbb-copy" onclick="copiarMensagemPanel()">📋 Copiar mensagem de abordagem</button>
       </div>`;
   }
@@ -471,56 +532,41 @@ function renderTab(tab) {
 
 function buildTimeline(l) {
   const events = [];
-  if (l.createdAt)    events.push({ time: formatTime(l.createdAt), text: 'Concluiu o diagnóstico com a Lorena' });
-  if (l.iniciouQuiz)  events.push({ time: '—', text: 'Iniciou o quiz' });
-  if (l.concluiuQuiz) events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0} / 48 pts` });
-  if (l.clicouGrupo)  events.push({ time: '—', text: '💬 Entrou no grupo de WhatsApp' });
-  if (l.comprouKiwify) events.push({ time: '—', text: '🛒 Clicou no checkout (Kiwify)' });
-  if (l.status === 'comprou') events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '✅ Registrado como comprado' });
+  if (l.createdAt)     events.push({ time: formatTime(l.createdAt), text: 'Concluiu o diagnóstico' });
+  if (l.concluiuQuiz)  events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0} / 48 pts` });
+  if (l.clicouGrupo)   events.push({ time: '—', text: '💬 Clicou para entrar no grupo de WhatsApp' });
+  if (l.clicouCheckout && l.status !== 'comprou') events.push({ time: '—', text: '🛒 Visitou a página de checkout (não confirmado)' });
+  if (l.status === 'comprou')  events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '✅ Compra confirmada pela Kiwify' });
   if (l.status === 'nao_quis') events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '❌ Registrado como não quis' });
   return events;
 }
 
 function getObjecoes(l) {
   const base = [
-    {
-      q: '"Não tenho tempo para estudar agora."',
-      a: 'O curso é 100% no seu ritmo, com acesso vitalício. Você estuda quando e como quiser — 15 minutos por dia já fazem enorme diferença.'
-    },
-    {
-      q: '"Está muito caro."',
-      a: 'Dividido em 12x de R$41,06, fica menos que um café por dia. Quanto vale se comunicar com uma pessoa surda pela primeira vez na vida?'
-    },
-    {
-      q: '"Já tentei aprender e desisti."',
-      a: 'A maioria que desiste é porque o método era errado — não a pessoa. Com a metodologia visual e progressiva certa, é completamente diferente.'
-    },
-    {
-      q: '"Preciso pensar mais."',
-      a: 'Entendo! Enquanto isso, posso tirar alguma dúvida específica? Às vezes um detalhe pequeno impede uma decisão que muda tudo.'
-    },
+    { q: '"Não tenho tempo para estudar agora."', a: 'O curso é 100% no seu ritmo, com acesso vitalício. 15 minutos por dia já fazem enorme diferença.' },
+    { q: '"Está muito caro."', a: 'Dividido em 12x de R$41,06, fica menos que um café por dia. Quanto vale se comunicar com uma pessoa surda pela primeira vez?' },
+    { q: '"Já tentei aprender e desisti."', a: 'A maioria que desiste é porque o método era errado — não a pessoa. Com a metodologia certa, é completamente diferente.' },
+    { q: '"Preciso pensar mais."', a: 'Entendo! Posso tirar alguma dúvida específica enquanto isso? Às vezes um detalhe resolve a decisão.' },
   ];
   if (l.oferta === 'mentoria' || l.nivelIdentificado === 'AVANÇADO') {
-    base.push({
-      q: '"Não preciso de mentoria, consigo estudar sozinha."',
-      a: 'Saber estudar é diferente de ter aceleração com acompanhamento. A mentoria encurta em meses um caminho que levaria anos no autoestudo.'
-    });
+    base.push({ q: '"Consigo estudar sozinha."', a: 'Saber estudar é diferente de ter aceleração com acompanhamento. A mentoria encurta meses de autoestudo.' });
   }
   return base;
 }
 
 function getIASuggestions(l) {
   const nome      = l.nome || 'o lead';
-  const statusKey = l.comprouKiwify ? 'comprou' : (l.status || 'novo');
+  const statusKey = l.status || 'novo';
   const nivel     = l.nivelIdentificado || '';
+  const viuCheck  = l.clicouCheckout && statusKey !== 'comprou';
 
   let msg = '';
   if (statusKey === 'prioridade_maxima') {
     msg = `Oi, ${nome}! 🤟 Aqui é a Lorena.\n\nVi seu diagnóstico e seu perfil chamou minha atenção — você está num ponto muito importante da sua jornada em Libras.\n\nQuero te fazer uma proposta personalizada. Posso te contar mais?`;
   } else if (statusKey === 'muito_quente') {
-    msg = `Oi, ${nome}! 🤟 Sou a Lorena da Nerds da Libras.\n\nVi que você fez o diagnóstico e seu nível é ${nivel}. Tenho algo especialmente preparado para o seu perfil — posso te explicar?`;
-  } else if (l.comprouKiwify && statusKey !== 'comprou') {
-    msg = `Oi, ${nome}! Percebi que você chegou a ver o checkout mas não finalizou. Posso te ajudar com alguma dúvida? Às vezes um detalhe pequeno impede uma decisão que muda tudo.`;
+    msg = `Oi, ${nome}! 🤟 Sou a Lorena da Nerds da Libras.\n\nVi que você fez o diagnóstico e seu nível é ${nivel}. Tenho algo preparado especialmente para o seu perfil — posso te explicar?`;
+  } else if (viuCheck) {
+    msg = `Oi, ${nome}! Vi que você chegou a ver o checkout mas não finalizou. Posso te ajudar com alguma dúvida? Às vezes um detalhe pequeno impede uma decisão que muda tudo.`;
   } else if (statusKey === 'quente') {
     msg = `Oi, ${nome}! 🤟 Vi que você fez o diagnóstico com a Lorena. Ainda tem interesse em evoluir em Libras? Posso te contar como funciona ${l.oferta === 'mentoria' ? 'a mentoria' : 'o curso'}?`;
   } else {
@@ -531,8 +577,8 @@ function getIASuggestions(l) {
   if (!l.statusCloser || l.statusCloser === 'Aguardando resposta sobre próximo nível') {
     alerts.push({ title: 'Primeiro Contato', text: `${nome} ainda não foi abordad${l.genero === 'feminino' ? 'a' : 'o'}. Sugestão: entrar em contato nas próximas ${statusKey === 'prioridade_maxima' ? '30 minutos' : '2 horas'}.` });
   }
-  if (l.comprouKiwify && statusKey !== 'comprou') {
-    alerts.push({ title: 'Recuperar Carrinho', text: 'Clicou no checkout mas não comprou. Alta probabilidade de conversão com uma mensagem de recuperação.' });
+  if (viuCheck) {
+    alerts.push({ title: 'Recuperar Carrinho', text: 'Visitou o checkout mas não comprou. Alta probabilidade de conversão com uma mensagem de recuperação.' });
   }
   if (nivel === 'AVANÇADO' && l.oferta !== 'mentoria') {
     alerts.push({ title: 'Upgrade para Mentoria', text: 'Perfil avançado. Considere oferecer a Mentoria Ciclo da Fluência como próximo passo.' });
@@ -568,12 +614,12 @@ const PIPELINE_STAGES = [
   { key: 'muito_quente',      label: 'Muito Quente',    color: '#f87171' },
   { key: 'prioridade_maxima', label: 'Prioridade Máx.', color: '#a78bfa' },
   { key: 'aguardando',        label: 'Follow-up',       color: '#f97316' },
-  { key: 'comprou',           label: 'Comprou',         color: '#60a5fa' },
+  { key: 'comprou',           label: '✅ Comprou',      color: '#60a5fa' },
   { key: 'nao_quis',          label: 'Perdido',         color: '#52525b' },
 ];
 
-function renderPipeline() {
-  const leads  = Storage.getAll();
+async function renderPipeline() {
+  const leads  = await getLeads();
   const kanban = document.getElementById('kanban');
   kanban.innerHTML = PIPELINE_STAGES.map(stage => {
     const sl = leads.filter(l => (l.status || 'novo') === stage.key);
@@ -601,11 +647,10 @@ function renderPipeline() {
 }
 
 /* ── ANALYTICS ── */
-function renderAnalytics() {
-  const leads = Storage.getAll();
+async function renderAnalytics() {
+  const leads = await getLeads();
   const total = leads.length || 1;
 
-  // Leads por dia — últimos 7 dias
   const days7 = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i);
@@ -619,19 +664,17 @@ function renderAnalytics() {
   }
   const maxDay = Math.max(...days7.map(d => d.count), 1);
 
-  // Status counts
   const sc = {};
   PIPELINE_STAGES.forEach(s => { sc[s.key] = leads.filter(l => (l.status || 'novo') === s.key).length; });
-  const comprou   = leads.filter(l => l.status === 'comprou' || l.comprouKiwify).length;
-  const checkout  = leads.filter(l => l.comprouKiwify).length;
-  const hot       = (sc.quente || 0) + (sc.muito_quente || 0) + (sc.prioridade_maxima || 0);
-  const conversao = Math.round((comprou / total) * 100);
+  const comprou    = sc.comprou || 0;
+  const checkout   = leads.filter(l => l.clicouCheckout).length;
+  const hot        = (sc.quente || 0) + (sc.muito_quente || 0) + (sc.prioridade_maxima || 0);
+  const conversao  = Math.round((comprou / total) * 100);
 
-  // Por nível
   const nc = {
-    'BÁSICO':         leads.filter(l => l.nivelIdentificado === 'BÁSICO').length,
-    'INTERMEDIÁRIO':  leads.filter(l => l.nivelIdentificado === 'INTERMEDIÁRIO').length,
-    'AVANÇADO':       leads.filter(l => l.nivelIdentificado === 'AVANÇADO').length,
+    'BÁSICO':        leads.filter(l => l.nivelIdentificado === 'BÁSICO').length,
+    'INTERMEDIÁRIO': leads.filter(l => l.nivelIdentificado === 'INTERMEDIÁRIO').length,
+    'AVANÇADO':      leads.filter(l => l.nivelIdentificado === 'AVANÇADO').length,
   };
   const totalNivel = Object.values(nc).reduce((a, b) => a + b, 0) || 1;
 
@@ -662,7 +705,7 @@ function renderAnalytics() {
           <div class="funnel-count">${hot}</div>
         </div>
         <div class="funnel-row">
-          <div class="funnel-label">Checkout</div>
+          <div class="funnel-label">Viu Checkout</div>
           <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${Math.round((checkout/total)*100)}%;background:var(--yellow)"></div></div>
           <div class="funnel-count">${checkout}</div>
         </div>
@@ -678,9 +721,9 @@ function renderAnalytics() {
       <div class="chart-title">Distribuição por Nível</div>
       <div class="distrib-list">
         ${[
-          { label: 'Básico',         key: 'BÁSICO',        color: '#4ade80' },
-          { label: 'Intermediário',  key: 'INTERMEDIÁRIO', color: '#fbbf24' },
-          { label: 'Avançado',       key: 'AVANÇADO',      color: '#a78bfa' },
+          { label: 'Básico',        key: 'BÁSICO',        color: '#4ade80' },
+          { label: 'Intermediário', key: 'INTERMEDIÁRIO', color: '#fbbf24' },
+          { label: 'Avançado',      key: 'AVANÇADO',      color: '#a78bfa' },
         ].map(n => `
           <div class="distrib-row">
             <div class="distrib-dot" style="background:${n.color}"></div>
@@ -695,9 +738,10 @@ function renderAnalytics() {
       <div class="chart-title">Resumo Geral</div>
       <div style="display:flex;flex-direction:column;gap:0">
         <div class="panel-field"><span class="pf-label">Total de leads</span><span class="pf-val sv-white">${leads.length}</span></div>
+        <div class="panel-field"><span class="pf-label">Viram o checkout</span><span class="pf-val sv-yellow">${checkout}</span></div>
+        <div class="panel-field"><span class="pf-label">Compraram (confirmado)</span><span class="pf-val sv-green">${comprou}</span></div>
         <div class="panel-field"><span class="pf-label">Taxa de conversão</span><span class="pf-val sv-green">${conversao}%</span></div>
-        <div class="panel-field"><span class="pf-label">Compraram</span><span class="pf-val sv-green">${comprou}</span></div>
-        <div class="panel-field"><span class="pf-label">Faturamento est.</span><span class="pf-val sv-green">R$${(comprou * 397).toLocaleString('pt-BR')}</span></div>
+        <div class="panel-field"><span class="pf-label">Faturamento conf.</span><span class="pf-val sv-green">R$${(comprou * 397).toLocaleString('pt-BR')}</span></div>
         <div class="panel-field"><span class="pf-label">Leads ativos</span><span class="pf-val sv-orange">${leads.filter(l => l.status !== 'comprou' && l.status !== 'nao_quis').length}</span></div>
       </div>
     </div>
@@ -730,7 +774,6 @@ function getAvatarColor(seed) {
 }
 
 function updateBadges(leads) {
-  if (!leads) leads = Storage.getAll();
   const hot = leads.filter(l => l.status === 'muito_quente' || l.status === 'prioridade_maxima').length;
   const b = document.getElementById('badge-leads');
   if (b) b.textContent = hot > 0 ? hot : '';
@@ -748,7 +791,7 @@ function gerarMensagem(l) {
 }
 
 function copiarMensagem(sessionId, btn) {
-  const lead = Storage.getAll().find(l => l.sessionId === sessionId);
+  const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
   if (!lead) return;
   navigator.clipboard.writeText(gerarMensagem(lead)).then(() => {
     if (btn) { const t = btn.textContent; btn.textContent = '✅'; setTimeout(() => { btn.textContent = t; }, 2000); }
@@ -767,14 +810,17 @@ function copiarTexto(text, btn) {
 }
 
 function atualizarStatus(sessionId, newStatus) {
-  Storage.updateStatus(sessionId, newStatus);
-  const leads = Storage.getAll();
-  if (currentLead && currentLead.sessionId === sessionId) {
-    currentLead = leads.find(l => l.sessionId === sessionId);
+  // Atualiza cache local imediatamente (UX responsiva)
+  if (cachedLeads) {
+    const idx = cachedLeads.findIndex(l => l.sessionId === sessionId);
+    if (idx >= 0) cachedLeads[idx].status = newStatus;
+    if (currentLead && currentLead.sessionId === sessionId) currentLead.status = newStatus;
   }
-  updateBadges(leads);
-  renderStats(leads);
-  renderFilters(leads);
+  // Sincroniza com Google Sheets via Storage
+  Storage.updateStatus(sessionId, newStatus);
+  updateBadges(cachedLeads || []);
+  renderStats(cachedLeads || []);
+  renderFilters(cachedLeads || []);
   if (currentPage === 'pipeline') renderPipeline();
 }
 
@@ -788,18 +834,24 @@ function salvarAgenda() {
   if (idx >= 0) {
     leads[idx].agenda = { dt, nota };
     localStorage.setItem('ndl_leads', JSON.stringify(leads));
-    currentLead = leads[idx];
+    currentLead.agenda = { dt, nota };
+    if (cachedLeads) {
+      const ci = cachedLeads.findIndex(l => l.sessionId === currentLead.sessionId);
+      if (ci >= 0) cachedLeads[ci].agenda = { dt, nota };
+    }
   }
   renderTab('agenda');
 }
 
 function exportCSV() {
-  const leads  = Storage.getAll();
-  const header = ['Nome','WhatsApp','Instagram','Gênero','Nível','Pontuação','Oferta','Classificação','Status','Checkout','Grupo','Data'];
+  const leads  = cachedLeads || Storage.getAll();
+  const header = ['Nome','WhatsApp','Instagram','Gênero','Nível','Pontuação','Oferta','Classificação','Status','Viu Checkout','Comprou (confirmado)','Grupo','Data'];
   const rows   = leads.map(l => [
     l.nome || '', l.whatsapp || '', l.instagram || '', l.genero || '',
     l.nivelIdentificado || '', l.pontuacao || '', l.oferta || '', l.classificacaoLead || '',
-    l.status || '', l.comprouKiwify ? 'Sim' : 'Não', l.clicouGrupo ? 'Sim' : 'Não',
+    l.status || '', l.clicouCheckout ? 'Sim' : 'Não',
+    l.status === 'comprou' ? 'Sim' : 'Não',
+    l.clicouGrupo ? 'Sim' : 'Não',
     l.createdAt ? new Date(l.createdAt).toLocaleString('pt-BR') : '',
   ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
 
@@ -816,6 +868,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('ndl_auth') === '1') {
     document.getElementById('password-screen').style.display = 'none';
     document.getElementById('app').removeAttribute('hidden');
-    renderDashboard();
+    renderDashboard(true);
+    startAutoRefresh();
   }
 });
