@@ -1,13 +1,384 @@
 /* ── STATE ── */
-let filtroAtivo  = 'todos';
-let currentLead  = null;
-let currentTab   = 'dados';
-let currentPage  = 'leads';
-let cachedLeads  = null;
-let lastFetch    = 0;
+let filtroAtivo   = 'todos';
+let currentLead   = null;
+let currentTab    = 'dados';
+let currentPage   = 'leads';
+let cachedLeads   = null;
+let lastFetch     = 0;
 let autoRefreshTimer = null;
+let selectedLeads = new Set();
+let sortOrder     = 'date_desc';
+let tagFilter     = null;
+let isDarkTheme   = true;
 
-/* ── AUTH ── */
+/* ═══════════════════════════════════════════
+   TEMPLATES
+═══════════════════════════════════════════ */
+const DEFAULT_TEMPLATES = [
+  { id: 't1', nome: 'Boas-vindas', stages: ['novo'],
+    texto: 'Oi, {{primeiro_nome}}! 🤟 Vi que você fez o diagnóstico com a Lorena. Seu nível é {{nivel}} — incrível! Posso te contar sobre o próximo passo para você?' },
+  { id: 't2', nome: 'Abordagem Quente', stages: ['quente'],
+    texto: 'Oi, {{primeiro_nome}}! 🤟 Sou a Lorena da Nerds da Libras. Seu nível {{nivel}} chamou minha atenção. Tenho algo especial preparado para o seu perfil. Posso te mostrar?' },
+  { id: 't3', nome: 'Muito Quente', stages: ['muito_quente'],
+    texto: 'Oi, {{primeiro_nome}}! 🤟 Vi seu resultado — nível {{nivel}}. Você está num ponto-chave da sua jornada. Posso te mostrar o que preparei especialmente para você?' },
+  { id: 't4', nome: 'Prioridade Máxima', stages: ['prioridade_maxima'],
+    texto: 'Oi, {{primeiro_nome}}! 🤟 Aqui é a Lorena. Seu perfil {{nivel}} me chamou muita atenção. Quero fazer uma proposta personalizada. Posso falar agora?' },
+  { id: 't5', nome: 'Recuperar Checkout', stages: ['quente','muito_quente','prioridade_maxima'],
+    texto: 'Oi, {{primeiro_nome}}! Vi que você chegou até o checkout mas não finalizou. Tem alguma dúvida que posso esclarecer? 😊' },
+  { id: 't6', nome: 'Follow-up 24h', stages: ['aguardando'],
+    texto: 'Oi, {{primeiro_nome}}! Passando para ver se você teve tempo de pensar. Ainda estou aqui para ajudar! 🤟' },
+  { id: 't7', nome: 'Reativação', stages: ['morno'],
+    texto: 'Oi, {{primeiro_nome}}! Faz um tempo que não nos falamos. Você ainda pensa em aprender Libras? Tenho uma novidade perfeita para você! 🤟' },
+];
+
+function getTemplates() {
+  return JSON.parse(localStorage.getItem('ndl_templates') || 'null') || DEFAULT_TEMPLATES;
+}
+function saveTemplates(tpls) {
+  localStorage.setItem('ndl_templates', JSON.stringify(tpls));
+}
+function applyTemplateVars(texto, lead) {
+  return texto
+    .replace(/\{\{nome\}\}/g, lead.nome || '')
+    .replace(/\{\{primeiro_nome\}\}/g, (lead.nome || '').split(' ')[0])
+    .replace(/\{\{nivel\}\}/g, lead.nivelIdentificado || '—')
+    .replace(/\{\{oferta\}\}/g, lead.oferta === 'mentoria' ? 'Mentoria' : 'Curso');
+}
+function getRelevantTemplates(lead) {
+  const status = lead.status || 'novo';
+  return getTemplates().filter(t => !t.stages || !t.stages.length || t.stages.includes(status));
+}
+
+/* Templates modal */
+function openTemplatesModal() {
+  renderTemplatesModal();
+  document.getElementById('templates-modal').style.display = 'flex';
+}
+function closeTemplatesModal() {
+  document.getElementById('templates-modal').style.display = 'none';
+}
+function renderTemplatesModal() {
+  const tpls = getTemplates();
+  const stageOpts = Object.entries(DecisionEngine.STATUS_LABELS)
+    .map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
+  document.getElementById('templates-body').innerHTML = `
+    <div class="tpl-list">
+      ${tpls.map((t, i) => `
+        <div class="tpl-card">
+          <div class="tpl-card-top">
+            <span class="tpl-card-name">${t.nome}</span>
+            <span class="tpl-card-stages">${(t.stages||[]).map(s => DecisionEngine.STATUS_LABELS[s]||s).join(', ')||'Todos'}</span>
+          </div>
+          <div class="tpl-card-text">${t.texto.substring(0,120)}${t.texto.length>120?'…':''}</div>
+          <div class="tpl-card-actions">
+            <button class="tpl-btn" onclick="editTemplate(${i})">✏️ Editar</button>
+            <button class="tpl-btn danger" onclick="deleteTemplate(${i})">🗑 Excluir</button>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="tpl-new-form" id="tpl-form">
+      <div class="tpl-form-title">+ Novo template</div>
+      <input class="tpl-input" id="tpl-nome" placeholder="Nome do template" />
+      <select class="tpl-input" id="tpl-stages" multiple style="height:80px">
+        ${stageOpts}
+      </select>
+      <div style="font-size:.71rem;color:var(--td);margin-bottom:6px">Segure Ctrl para selecionar múltiplos estágios. Deixe vazio para todos.</div>
+      <textarea class="tpl-input tpl-textarea" id="tpl-texto" placeholder="Texto da mensagem..."></textarea>
+      <div class="tpl-vars">Variáveis: <code>{{nome}}</code> <code>{{primeiro_nome}}</code> <code>{{nivel}}</code> <code>{{oferta}}</code></div>
+      <button class="panel-big-btn pbb-green" onclick="saveNewTemplate()" style="margin-top:0">✓ Salvar template</button>
+    </div>`;
+}
+function saveNewTemplate() {
+  const nome  = document.getElementById('tpl-nome')?.value.trim();
+  const texto = document.getElementById('tpl-texto')?.value.trim();
+  const sel   = document.getElementById('tpl-stages');
+  if (!nome || !texto) { showToast('Preencha nome e texto'); return; }
+  const stages = sel ? [...sel.selectedOptions].map(o => o.value) : [];
+  const tpls = getTemplates();
+  tpls.push({ id: 't' + Date.now(), nome, stages, texto });
+  saveTemplates(tpls);
+  showToast('Template salvo!');
+  renderTemplatesModal();
+}
+function deleteTemplate(i) {
+  if (!confirm('Excluir este template?')) return;
+  const tpls = getTemplates();
+  tpls.splice(i, 1);
+  saveTemplates(tpls);
+  renderTemplatesModal();
+}
+function editTemplate(i) {
+  const tpls = getTemplates();
+  const t = tpls[i];
+  document.getElementById('tpl-nome').value  = t.nome;
+  document.getElementById('tpl-texto').value = t.texto;
+  const sel = document.getElementById('tpl-stages');
+  if (sel) [...sel.options].forEach(o => { o.selected = (t.stages||[]).includes(o.value); });
+  document.getElementById('tpl-form').querySelector('button').onclick = () => {
+    const nome  = document.getElementById('tpl-nome')?.value.trim();
+    const texto = document.getElementById('tpl-texto')?.value.trim();
+    const stages = sel ? [...sel.selectedOptions].map(o => o.value) : [];
+    if (!nome || !texto) { showToast('Preencha nome e texto'); return; }
+    tpls[i] = { ...tpls[i], nome, stages, texto };
+    saveTemplates(tpls);
+    showToast('Template atualizado!');
+    renderTemplatesModal();
+  };
+  document.getElementById('tpl-form').querySelector('.tpl-form-title').textContent = '✏️ Editando template';
+  document.getElementById('tpl-nome').focus();
+}
+
+/* ═══════════════════════════════════════════
+   NORMALIZE
+═══════════════════════════════════════════ */
+function normalizePhone(raw) {
+  if (!raw) return null;
+  const d = String(raw).replace(/\D/g, '');
+  if (d.length < 8) return null;
+  if (d.startsWith('55') && (d.length === 12 || d.length === 13)) return '+' + d;
+  if (d.length === 10 || d.length === 11) return '+55' + d;
+  if (d.length === 12 || d.length === 13) return '+' + d;
+  return null;
+}
+function normalizeInstagram(raw) {
+  if (!raw) return null;
+  let h = String(raw).trim().replace(/^@+/, '');
+  h = h.replace(/https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/$/, '').trim();
+  if (h.includes('@') || /\.(com|br|net|org)/i.test(h)) return null;
+  return h || null;
+}
+
+function openNormalizeModal() {
+  document.getElementById('normalize-modal').style.display = 'flex';
+  document.getElementById('normalize-body').innerHTML = `
+    <p style="font-size:.82rem;color:var(--ts);margin-bottom:16px;line-height:1.6">
+      Corrige automaticamente telefones malformados e instagrams com @@ ou e-mails no campo errado.
+    </p>
+    <div style="font-size:.78rem;color:var(--td);margin-bottom:16px;line-height:1.7">
+      Exemplos corrigidos:<br>
+      <code style="color:var(--ts)">119731.49887</code> → <code style="color:var(--g)">+5511973149887</code><br>
+      <code style="color:var(--ts)">@@usuario</code> → <code style="color:var(--g)">usuario</code>
+    </div>
+    <button class="panel-big-btn pbb-green" onclick="runNormalize()">▶ Executar normalização</button>`;
+}
+function closeNormalizeModal() {
+  document.getElementById('normalize-modal').style.display = 'none';
+}
+function runNormalize() {
+  const leads = Storage.getAll();
+  let phoneFixed = 0, instaFixed = 0, phoneInvalid = 0, instaInvalid = 0;
+  leads.forEach(lead => {
+    let changed = false;
+    if (lead.whatsapp) {
+      const np = normalizePhone(lead.whatsapp);
+      if (np && np !== lead.whatsapp) { lead.whatsapp = np; phoneFixed++; changed = true; }
+      else if (!np) phoneInvalid++;
+    }
+    if (lead.instagram) {
+      const ni = normalizeInstagram(lead.instagram);
+      if (ni !== null && ni !== lead.instagram) { lead.instagram = ni; instaFixed++; changed = true; }
+      else if (ni === null) { lead.instagram = ''; instaInvalid++; changed = true; }
+    }
+    if (changed) Storage.upsert(lead);
+  });
+  document.getElementById('normalize-body').innerHTML = `
+    <div style="font-size:.85rem;line-height:2.2;color:var(--text)">
+      <div>✅ Telefones corrigidos: <strong style="color:var(--g)">${phoneFixed}</strong></div>
+      <div>⚠️ Telefones inválidos (marcados): <strong style="color:var(--yellow)">${phoneInvalid}</strong></div>
+      <div>✅ Instagrams corrigidos: <strong style="color:var(--g)">${instaFixed}</strong></div>
+      <div>⚠️ Instagrams inválidos (limpos): <strong style="color:var(--yellow)">${instaInvalid}</strong></div>
+    </div>
+    <button class="panel-big-btn pbb-green" style="margin-top:16px"
+      onclick="closeNormalizeModal();renderDashboard(true)">✓ Fechar e atualizar</button>`;
+}
+
+/* ═══════════════════════════════════════════
+   TAGS
+═══════════════════════════════════════════ */
+const TAG_COLORS = ['#4ade80','#60a5fa','#a78bfa','#fb923c','#f472b6','#34d399','#facc15','#f87171'];
+function tagColor(tag) {
+  let h = 0;
+  for (let i = 0; i < tag.length; i++) h = tag.charCodeAt(i) + ((h << 5) - h);
+  return TAG_COLORS[Math.abs(h) % TAG_COLORS.length];
+}
+function getLeadTags(lead) {
+  return Array.isArray(lead.tags) ? lead.tags : [];
+}
+function patchLead(sessionId, patch) {
+  if (!cachedLeads) return;
+  const ci = cachedLeads.findIndex(l => l.sessionId === sessionId);
+  if (ci < 0) return;
+  Object.assign(cachedLeads[ci], patch, { updatedAt: new Date().toISOString() });
+  Storage.upsert(cachedLeads[ci]);
+  if (currentLead && currentLead.sessionId === sessionId) Object.assign(currentLead, patch);
+}
+function addTagToLead(sessionId, tag) {
+  tag = tag.trim().toLowerCase().replace(/\s+/g, '-');
+  if (!tag) return;
+  const lead = cachedLeads && cachedLeads.find(l => l.sessionId === sessionId);
+  if (!lead) return;
+  const tags = getLeadTags(lead);
+  if (tags.includes(tag)) return;
+  patchLead(sessionId, { tags: [...tags, tag] });
+  if (currentLead && currentLead.sessionId === sessionId) renderTab(currentTab);
+  updateTagFilterButtons();
+}
+function removeTagFromLead(sessionId, tag) {
+  const lead = cachedLeads && cachedLeads.find(l => l.sessionId === sessionId);
+  if (!lead) return;
+  patchLead(sessionId, { tags: getLeadTags(lead).filter(t => t !== tag) });
+  if (currentLead && currentLead.sessionId === sessionId) renderTab(currentTab);
+}
+function getAllTags() {
+  if (!cachedLeads) return [];
+  const set = new Set();
+  cachedLeads.forEach(l => getLeadTags(l).forEach(t => set.add(t)));
+  return [...set].sort();
+}
+function updateTagFilterButtons() {
+  const bar = document.getElementById('filters');
+  if (!bar) return;
+  renderFilters(cachedLeads || []);
+}
+
+/* ═══════════════════════════════════════════
+   PIPELINE PROJECTION
+═══════════════════════════════════════════ */
+const STAGE_PROB = {
+  novo: 0.05, morno: 0.15, quente: 0.30, muito_quente: 0.50,
+  prioridade_maxima: 0.70, aguardando: 0.40, comprou: 1.0, nao_quis: 0
+};
+const TICKET_DEFAULT = { curso: 397, mentoria: 1997 };
+
+function calcProjectedValue(lead) {
+  const ticket = lead.oferta === 'mentoria' ? TICKET_DEFAULT.mentoria : TICKET_DEFAULT.curso;
+  return ticket * (STAGE_PROB[lead.status || 'novo'] || 0.05);
+}
+function calcTotalPipeline(leads) {
+  return leads.filter(l => l.status !== 'nao_quis').reduce((s, l) => s + calcProjectedValue(l), 0);
+}
+
+/* ═══════════════════════════════════════════
+   BULK ACTIONS
+═══════════════════════════════════════════ */
+function toggleLeadSelect(sessionId, e) {
+  e.stopPropagation();
+  if (selectedLeads.has(sessionId)) selectedLeads.delete(sessionId);
+  else selectedLeads.add(sessionId);
+  const card = document.querySelector(`.lead-card[data-session-id="${sessionId}"]`);
+  if (card) card.classList.toggle('selected', selectedLeads.has(sessionId));
+  renderBulkBar();
+  renderListHeader();
+}
+function toggleSelectAll() {
+  const cards = document.querySelectorAll('.lead-card[data-session-id]');
+  const allSel = cards.length > 0 && [...cards].every(c => selectedLeads.has(c.dataset.sessionId));
+  cards.forEach(c => {
+    if (allSel) { selectedLeads.delete(c.dataset.sessionId); c.classList.remove('selected'); }
+    else        { selectedLeads.add(c.dataset.sessionId);    c.classList.add('selected'); }
+    const cb = c.querySelector('.lead-checkbox');
+    if (cb) cb.checked = !allSel;
+  });
+  renderBulkBar();
+  renderListHeader();
+}
+function clearSelection() {
+  selectedLeads.clear();
+  document.querySelectorAll('.lead-card.selected').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.lead-checkbox').forEach(cb => cb.checked = false);
+  renderBulkBar();
+  renderListHeader();
+}
+function renderBulkBar() {
+  const bar = document.getElementById('bulk-bar');
+  if (!bar) return;
+  if (selectedLeads.size === 0) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  const statusOpts = Object.entries(DecisionEngine.STATUS_LABELS)
+    .map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
+  bar.innerHTML = `
+    <span class="bulk-count">${selectedLeads.size} selecionado${selectedLeads.size > 1 ? 's' : ''}</span>
+    <button class="bulk-btn" onclick="bulkCopyLinks()">💬 Copiar links WA</button>
+    <button class="bulk-btn" onclick="bulkCopyMsgs()">📋 Copiar mensagens</button>
+    <select class="sort-select" id="bulk-status-sel" style="font-size:.75rem">
+      <option value="">📊 Mudar status...</option>
+      ${statusOpts}
+    </select>
+    <button class="bulk-btn" onclick="applyBulkStatus()">Aplicar</button>
+    <button class="bulk-btn danger" onclick="clearSelection()" style="margin-left:auto">✕ Limpar</button>`;
+}
+function getSelectedLeads() {
+  return (cachedLeads || []).filter(l => selectedLeads.has(l.sessionId));
+}
+function bulkCopyLinks() {
+  const text = getSelectedLeads()
+    .filter(l => l.whatsapp)
+    .map(l => `${l.nome}: https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}`)
+    .join('\n');
+  navigator.clipboard.writeText(text).then(() => showToast(`${selectedLeads.size} links copiados!`));
+}
+function bulkCopyMsgs() {
+  const text = getSelectedLeads().map(l => {
+    const wpp = l.whatsapp ? `https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}` : '';
+    return `— ${l.nome}\n${wpp}\n${gerarMensagem(l)}`;
+  }).join('\n\n---\n\n');
+  navigator.clipboard.writeText(text).then(() => showToast(`${selectedLeads.size} mensagens copiadas!`));
+}
+function applyBulkStatus() {
+  const sel = document.getElementById('bulk-status-sel');
+  if (!sel || !sel.value) { showToast('Escolha um status primeiro'); return; }
+  const newStatus = sel.value;
+  [...selectedLeads].forEach(sid => atualizarStatus(sid, newStatus));
+  showToast(`${selectedLeads.size} leads → "${DecisionEngine.STATUS_LABELS[newStatus]}"`);
+  clearSelection();
+  renderLeads();
+}
+
+/* ═══════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════ */
+function toggleTheme() {
+  isDarkTheme = !isDarkTheme;
+  document.documentElement.classList.toggle('light-theme', !isDarkTheme);
+  localStorage.setItem('ndl_theme', isDarkTheme ? 'dark' : 'light');
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = isDarkTheme ? '☀' : '🌙';
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ═══════════════════════════════════════════
+   SORT
+═══════════════════════════════════════════ */
+function onSortChange() {
+  sortOrder = document.getElementById('sort-select')?.value || 'date_desc';
+  renderLeads();
+}
+function sortLeads(leads) {
+  const s = [...leads];
+  switch (sortOrder) {
+    case 'date_desc':  return s.sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
+    case 'date_asc':   return s.sort((a,b) => new Date(a.createdAt||0) - new Date(b.createdAt||0));
+    case 'score_desc': return s.sort((a,b) => (b.pontuacao||0) - (a.pontuacao||0));
+    case 'score_asc':  return s.sort((a,b) => (a.pontuacao||0) - (b.pontuacao||0));
+    case 'nome_asc':   return s.sort((a,b) => (a.nome||'').localeCompare(b.nome||'','pt-BR'));
+    default: return s;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════ */
 function checkPassword() {
   const input = document.getElementById('pwd-input');
   const err   = document.getElementById('pwd-err');
@@ -24,7 +395,6 @@ function checkPassword() {
     setTimeout(() => { err.textContent = ''; }, 2500);
   }
 }
-
 function logout() {
   clearInterval(autoRefreshTimer);
   sessionStorage.removeItem('ndl_auth');
@@ -33,27 +403,28 @@ function logout() {
   document.getElementById('pwd-input').value = '';
 }
 
-/* ── AUTO REFRESH ── */
+/* ═══════════════════════════════════════════
+   AUTO REFRESH
+═══════════════════════════════════════════ */
 function startAutoRefresh() {
   clearInterval(autoRefreshTimer);
   autoRefreshTimer = setInterval(() => renderDashboard(false), 60000);
 }
 
-/* ── FETCH LEADS DO SHEETS ── */
+/* ═══════════════════════════════════════════
+   FETCH LEADS
+═══════════════════════════════════════════ */
 async function fetchLeads() {
   try {
     const url = CONFIG.SHEETS_URL + '?action=getLeads';
     const res = await fetch(url, { redirect: 'follow' });
     const data = await res.json();
     if (Array.isArray(data)) return data;
-    console.warn('Sheets retornou formato inesperado:', data);
     return Storage.getAll();
-  } catch (err) {
-    console.warn('Falha ao buscar do Sheets, usando localStorage:', err);
+  } catch {
     return Storage.getAll();
   }
 }
-
 async function getLeads(force = false) {
   const now = Date.now();
   if (!force && cachedLeads && (now - lastFetch) < 30000) return cachedLeads;
@@ -62,29 +433,32 @@ async function getLeads(force = false) {
   return cachedLeads;
 }
 
-/* ── NAVIGATION ── */
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
 function setPage(page) {
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelector(`[data-page="${page}"]`).classList.add('active');
-  if (page === 'pipeline')   renderPipeline();
-  else if (page === 'analytics') renderAnalytics();
-  else renderLeads();
+  if (page === 'pipeline')        renderPipeline();
+  else if (page === 'analytics')  renderAnalytics();
+  else                            renderLeads();
 }
-
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
 
-/* ── LOADING STATE ── */
+/* ── LOADING ── */
 function setLoading(on) {
   const btn = document.querySelector('.icon-btn[title="Atualizar"]');
   if (btn) btn.style.opacity = on ? '.4' : '1';
 }
 
-/* ── MAIN RENDER ── */
+/* ═══════════════════════════════════════════
+   MAIN RENDER
+═══════════════════════════════════════════ */
 async function renderDashboard(force = false) {
   setLoading(true);
   const leads = await getLeads(force);
@@ -92,12 +466,14 @@ async function renderDashboard(force = false) {
   updateBadges(leads);
   renderStats(leads);
   renderAISuggestions(leads);
-  if (currentPage === 'leads')     renderLeads();
-  else if (currentPage === 'pipeline')  renderPipeline();
+  if (currentPage === 'leads')         renderLeads();
+  else if (currentPage === 'pipeline') renderPipeline();
   else if (currentPage === 'analytics') renderAnalytics();
 }
 
-/* ── AI SUGGESTIONS ── */
+/* ═══════════════════════════════════════════
+   AI SUGGESTIONS
+═══════════════════════════════════════════ */
 function renderAISuggestions(leads) {
   const box = document.getElementById('ai-box');
   const suggestions = [];
@@ -108,34 +484,26 @@ function renderAISuggestions(leads) {
     (!l.statusCloser || l.statusCloser === 'Aguardando resposta sobre próximo nível')
   );
   if (hotNoContact.length) {
-    suggestions.push({
-      dot: 'red',
-      text: `${hotNoContact.length} lead${hotNoContact.length > 1 ? 's muito quentes' : ' muito quente'} ainda sem abordagem`,
-      sub: 'Ação urgente — entre em contato agora'
-    });
+    suggestions.push({ dot: 'red',
+      text: `${hotNoContact.length} lead${hotNoContact.length > 1 ? 's muito quentes' : ' muito quente'} sem abordagem`,
+      sub: 'Ação urgente — entre em contato agora' });
   }
 
-  // Leads que viram o checkout mas NÃO tiveram compra confirmada pela Kiwify
   const checkoutNoBuy = leads.filter(l => l.clicouCheckout && l.status !== 'comprou');
   if (checkoutNoBuy.length) {
-    suggestions.push({
-      dot: 'orange',
+    suggestions.push({ dot: 'orange',
       text: `${checkoutNoBuy.length} lead${checkoutNoBuy.length > 1 ? 's' : ''} viu o checkout mas não comprou`,
-      sub: 'Carrinho abandonado — recuperação tem alta conversão'
-    });
+      sub: 'Carrinho abandonado — recuperação tem alta conversão' });
   }
 
   const newStale = leads.filter(l => {
     if (l.status !== 'novo' && l.status !== 'morno') return false;
-    const age = now - new Date(l.createdAt).getTime();
-    return age > 2 * 3600000;
+    return (now - new Date(l.createdAt).getTime()) > 2 * 3600000;
   });
   if (newStale.length) {
-    suggestions.push({
-      dot: 'orange',
+    suggestions.push({ dot: 'orange',
       text: `${newStale.length} lead${newStale.length > 1 ? 's' : ''} sem contato há mais de 2h`,
-      sub: 'Leads frescos convertem muito mais — agir rápido'
-    });
+      sub: 'Leads frescos convertem muito mais — agir rápido' });
   }
 
   const today = leads.filter(l => {
@@ -144,15 +512,12 @@ function renderAISuggestions(leads) {
     return d.getDate() === n.getDate() && d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear();
   });
   if (today.length && !suggestions.length) {
-    suggestions.push({
-      dot: 'green',
+    suggestions.push({ dot: 'green',
       text: `${today.length} novo${today.length > 1 ? 's leads chegaram' : ' lead chegou'} hoje`,
-      sub: 'Primeiro contato nas primeiras horas aumenta conversão em 400%'
-    });
+      sub: 'Primeiro contato nas primeiras horas aumenta conversão em 400%' });
   }
 
   if (!suggestions.length) { box.style.display = 'none'; return; }
-
   box.style.display = 'block';
   box.innerHTML = `
     <div class="ai-box-header">⚡ IA · Alertas</div>
@@ -160,36 +525,31 @@ function renderAISuggestions(leads) {
       ${suggestions.map(s => `
         <div class="ai-suggestion">
           <div class="ai-dot ${s.dot}"></div>
-          <div class="ai-suggestion-text">
-            ${s.text}
-            <em>${s.sub}</em>
-          </div>
+          <div class="ai-suggestion-text">${s.text}<em>${s.sub}</em></div>
         </div>`).join('')}
     </div>`;
 }
 
-/* ── STATS ── */
+/* ═══════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════ */
 function renderStats(leads) {
   const now   = new Date();
   const total = leads.length;
-
-  const hoje = leads.filter(l => {
+  const hoje  = leads.filter(l => {
     if (!l.createdAt) return false;
     const d = new Date(l.createdAt);
     return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   }).length;
-
   const muitoQuente = leads.filter(l => l.status === 'muito_quente').length;
   const prioridade  = leads.filter(l => l.status === 'prioridade_maxima').length;
-  // "comprou" = confirmado pela Kiwify (status === 'comprou')
   const comprou     = leads.filter(l => l.status === 'comprou').length;
-  // "viu checkout" = clicou mas pode não ter comprado
   const viuCheckout = leads.filter(l => l.clicouCheckout && l.status !== 'comprou').length;
   const semContato  = leads.filter(l =>
     !l.status || l.status === 'novo' ||
     (l.statusCloser === 'Aguardando resposta sobre próximo nível' && l.status !== 'comprou' && l.status !== 'nao_quis')
   ).length;
-  const conversao  = total > 0 ? Math.round((comprou / total) * 100) : 0;
+  const conversao   = total > 0 ? Math.round((comprou / total) * 100) : 0;
   const faturamento = comprou * 397;
 
   document.getElementById('stats').innerHTML = `
@@ -237,11 +597,12 @@ function renderStats(leads) {
       <div class="stat-icon">⚡</div>
       <div class="stat-val sv-orange">${semContato}</div>
       <div class="stat-label">Aguardando Contato</div>
-    </div>
-  `;
+    </div>`;
 }
 
-/* ── FILTERS ── */
+/* ═══════════════════════════════════════════
+   FILTERS
+═══════════════════════════════════════════ */
 function renderFilters(leads) {
   const counts = {
     todos:             leads.length,
@@ -265,23 +626,52 @@ function renderFilters(leads) {
     { key: 'aguardando',        label: '⏳ Aguardando' },
     { key: 'nao_quis',          label: '❌ Não Quiseram' },
   ];
-  document.getElementById('filters').innerHTML = defs
-    .filter(f => counts[f.key] > 0 || f.key === 'todos')
-    .map(f => `
-      <button class="filter-btn ${filtroAtivo === f.key ? 'active' : ''}"
-              onclick="filtrar('${f.key}', this)">
+
+  const tags = getAllTags();
+  const tagBtns = tags.map(t => `
+    <button class="filter-btn ${tagFilter === t ? 'tag-active' : ''}"
+            onclick="setTagFilter('${t}')" style="font-size:.71rem">
+      🏷 ${t}
+    </button>`).join('');
+
+  document.getElementById('filters').innerHTML =
+    defs.filter(f => counts[f.key] > 0 || f.key === 'todos').map(f => `
+      <button class="filter-btn ${filtroAtivo === f.key && !tagFilter ? 'active' : ''}"
+              onclick="filtrar('${f.key}')">
         ${f.label} <span class="filter-count">${counts[f.key]}</span>
-      </button>`).join('');
+      </button>`).join('') + tagBtns;
 }
 
 function filtrar(status) {
   filtroAtivo = status;
+  tagFilter   = null;
   renderLeads();
 }
-
+function setTagFilter(tag) {
+  tagFilter   = tagFilter === tag ? null : tag;
+  filtroAtivo = 'todos';
+  renderLeads();
+}
 function onSearch() { renderLeads(); }
 
-/* ── LEADS LIST ── */
+/* ═══════════════════════════════════════════
+   LIST HEADER
+═══════════════════════════════════════════ */
+function renderListHeader(total, filtered) {
+  const hdr = document.getElementById('list-header');
+  if (!hdr) return;
+  if (total === undefined) { hdr.innerHTML = ''; return; }
+  hdr.innerHTML = `
+    <button class="list-select-all" onclick="toggleSelectAll()">
+      <input type="checkbox" style="pointer-events:none;accent-color:var(--g)"
+             ${selectedLeads.size > 0 ? 'checked' : ''}> Selecionar todos
+    </button>
+    <span class="list-header-count">Exibindo <strong>${filtered}</strong> de <strong>${total}</strong> leads${tagFilter ? ` · tag: <strong>${tagFilter}</strong> <button onclick="setTagFilter(null)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:.8rem">✕</button>` : ''}</span>`;
+}
+
+/* ═══════════════════════════════════════════
+   LEADS LIST
+═══════════════════════════════════════════ */
 async function renderLeads() {
   const search = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
   const leads  = await getLeads();
@@ -290,7 +680,9 @@ async function renderLeads() {
 
   let filtered = [...leads];
 
-  if (filtroAtivo === 'viu_checkout') {
+  if (tagFilter) {
+    filtered = filtered.filter(l => getLeadTags(l).includes(tagFilter));
+  } else if (filtroAtivo === 'viu_checkout') {
     filtered = filtered.filter(l => l.clicouCheckout && l.status !== 'comprou');
   } else if (filtroAtivo !== 'todos') {
     filtered = filtered.filter(l => l.status === filtroAtivo);
@@ -300,9 +692,13 @@ async function renderLeads() {
     filtered = filtered.filter(l =>
       (l.nome || '').toLowerCase().includes(search) ||
       (l.whatsapp || '').includes(search) ||
-      (l.instagram || '').toLowerCase().includes(search)
+      (l.instagram || '').toLowerCase().includes(search) ||
+      getLeadTags(l).some(t => t.includes(search))
     );
   }
+
+  filtered = sortLeads(filtered);
+  renderListHeader(leads.length, filtered.length);
 
   const list = document.getElementById('leads-list');
   if (!filtered.length) {
@@ -310,7 +706,7 @@ async function renderLeads() {
       <div class="empty-state">
         <div class="empty-icon">📭</div>
         <div class="empty-text">Nenhum lead encontrado</div>
-        <div class="empty-sub">${filtroAtivo !== 'todos' ? 'Tente outro filtro' : 'Os leads aparecem aqui após o quiz'}</div>
+        <div class="empty-sub">${filtroAtivo !== 'todos' || tagFilter ? 'Tente outro filtro' : 'Os leads aparecem aqui após o quiz'}</div>
       </div>`;
     return;
   }
@@ -330,12 +726,19 @@ function renderLeadCard(l, idx) {
   const hasAlert    = (statusKey === 'muito_quente' || statusKey === 'prioridade_maxima') &&
                       (!l.statusCloser || l.statusCloser === 'Aguardando resposta sobre próximo nível');
   const viuCheckout = l.clicouCheckout && statusKey !== 'comprou';
+  const tags        = getLeadTags(l);
+  const isSel       = selectedLeads.has(l.sessionId);
 
   return `
-    <div class="lead-card lc-${statusKey} animate-up" style="animation-delay:${Math.min(idx * 0.025, 0.3)}s"
+    <div class="lead-card lc-${statusKey} ${isSel ? 'selected' : ''} animate-up"
+         style="animation-delay:${Math.min(idx * 0.025, 0.3)}s"
+         data-session-id="${l.sessionId}"
          onclick="openLead('${l.sessionId}')">
       <div class="lead-row1">
         <div class="lead-info-main">
+          <div class="lead-checkbox-wrap" onclick="toggleLeadSelect('${l.sessionId}', event)">
+            <input type="checkbox" class="lead-checkbox" ${isSel ? 'checked' : ''} onclick="event.stopPropagation()"/>
+          </div>
           <div class="lead-avatar" style="background:${avatarColor}">${initials}</div>
           <div class="lead-name-wrap">
             <div class="lead-name">${l.nome || 'Lead sem nome'}</div>
@@ -363,12 +766,26 @@ function renderLeadCard(l, idx) {
         ${viuCheckout              ? `<div class="info-chip" style="color:var(--yellow)">🛒 Viu checkout</div>` : ''}
         ${l.clicouGrupo            ? `<div class="info-chip blue">💬 Grupo</div>` : ''}
         ${hasAlert                 ? `<div class="ai-alert">⚡ Abordar agora</div>` : ''}
+        ${tags.map(t => `<span class="tag-chip" style="background:${tagColor(t)}">${t}</span>`).join('')}
       </div>
 
       <div class="lead-row3">
         <span style="font-size:.71rem;color:var(--td)">${l.createdAt ? formatDate(l.createdAt) : '—'}</span>
         <div class="lead-quick-actions" onclick="event.stopPropagation()">
-          <button class="quick-btn qb-copy" onclick="copiarMensagem('${l.sessionId}', this)">📋 Msg</button>
+          <div class="template-dropdown" id="tdd-${l.sessionId}">
+            <button class="quick-btn qb-copy"
+              onclick="toggleTemplateMenu('${l.sessionId}', event)">📋 Msg ▾</button>
+            <div class="template-menu" id="tmenu-${l.sessionId}">
+              ${getRelevantTemplates(l).map(t => `
+                <div class="tmpl-item" onclick="copyTemplate('${l.sessionId}','${t.id}',event)">
+                  <div class="tmpl-item-name">${t.nome}</div>
+                  <div class="tmpl-item-preview">${t.texto.substring(0,60)}…</div>
+                </div>`).join('')}
+              <div class="tmpl-item" onclick="copyDefaultMsg('${l.sessionId}',event)" style="border-top:1px solid var(--bdr);margin-top:4px;padding-top:8px">
+                <div class="tmpl-item-name">Mensagem padrão</div>
+              </div>
+            </div>
+          </div>
           ${wppLink ? `<a class="quick-btn qb-wpp" href="${wppLink}" target="_blank" rel="noopener">💬 WA</a>` : ''}
           <button class="quick-btn qb-open" onclick="openLead('${l.sessionId}')">Ver →</button>
         </div>
@@ -376,7 +793,38 @@ function renderLeadCard(l, idx) {
     </div>`;
 }
 
-/* ── LEAD DETAIL PANEL ── */
+function toggleTemplateMenu(sessionId, e) {
+  e.stopPropagation();
+  const menu = document.getElementById(`tmenu-${sessionId}`);
+  if (!menu) return;
+  const wasOpen = menu.classList.contains('open');
+  document.querySelectorAll('.template-menu.open').forEach(m => m.classList.remove('open'));
+  if (!wasOpen) menu.classList.add('open');
+}
+function copyTemplate(sessionId, templateId, e) {
+  e && e.stopPropagation();
+  const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
+  const tpl  = getTemplates().find(t => t.id === templateId);
+  if (!lead || !tpl) return;
+  navigator.clipboard.writeText(applyTemplateVars(tpl.texto, lead)).then(() => showToast('Mensagem copiada!'));
+  document.querySelectorAll('.template-menu.open').forEach(m => m.classList.remove('open'));
+}
+function copyDefaultMsg(sessionId, e) {
+  e && e.stopPropagation();
+  const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
+  if (!lead) return;
+  navigator.clipboard.writeText(gerarMensagem(lead)).then(() => showToast('Mensagem copiada!'));
+  document.querySelectorAll('.template-menu.open').forEach(m => m.classList.remove('open'));
+}
+
+/* Close template menus on outside click */
+document.addEventListener('click', () => {
+  document.querySelectorAll('.template-menu.open').forEach(m => m.classList.remove('open'));
+});
+
+/* ═══════════════════════════════════════════
+   LEAD DETAIL PANEL
+═══════════════════════════════════════════ */
 function openLead(sessionId) {
   const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
   if (!lead) return;
@@ -402,33 +850,31 @@ function openLead(sessionId) {
 
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelector('[data-tab="dados"]').classList.add('active');
-
   renderTab('dados');
   document.getElementById('lead-panel').classList.add('open');
   document.getElementById('panel-overlay').classList.add('active');
 }
-
 function closePainel() {
   document.getElementById('lead-panel').classList.remove('open');
   document.getElementById('panel-overlay').classList.remove('active');
   currentLead = null;
 }
-
 function setTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
   renderTab(tab);
 }
-
 function renderTab(tab) {
   const body = document.getElementById('panel-body');
   if (!currentLead) return;
   const l = currentLead;
 
   if (tab === 'dados') {
-    const statusKey  = l.status || 'novo';
-    const viuCheck   = l.clicouCheckout && statusKey !== 'comprou';
+    const statusKey = l.status || 'novo';
+    const viuCheck  = l.clicouCheckout && statusKey !== 'comprou';
+    const tags      = getLeadTags(l);
+    const tpls      = getRelevantTemplates(l);
     body.innerHTML = `
       <div class="panel-section">
         <div class="panel-section-title">Contato</div>
@@ -436,6 +882,22 @@ function renderTab(tab) {
         <div class="panel-field"><span class="pf-label">WhatsApp</span><span class="pf-val">${l.whatsapp || '—'}</span></div>
         <div class="panel-field"><span class="pf-label">Instagram</span><span class="pf-val">${l.instagram ? '@' + l.instagram : '—'}</span></div>
         <div class="panel-field"><span class="pf-label">Gênero</span><span class="pf-val">${l.genero === 'masculino' ? 'Masculino' : l.genero === 'feminino' ? 'Feminino' : '—'}</span></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title">Tags</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+          ${tags.length ? tags.map(t => `
+            <span class="tag-chip" style="background:${tagColor(t)}">
+              ${t}
+              <button class="tag-remove" onclick="removeTagFromLead('${l.sessionId}','${t}')">✕</button>
+            </span>`).join('') : '<span style="font-size:.75rem;color:var(--td)">Nenhuma tag</span>'}
+        </div>
+        <div class="tag-input-wrap">
+          <input class="tag-input" id="tag-input-panel" placeholder="Nova tag..."
+                 onkeydown="if(event.key==='Enter'){addTagFromPanel();event.preventDefault()}"/>
+          <button class="tag-add-btn" onclick="addTagFromPanel()">+ Adicionar</button>
+        </div>
       </div>
 
       <div class="panel-section">
@@ -465,7 +927,7 @@ function renderTab(tab) {
       <div class="panel-section">
         <div class="panel-section-title">Status do Pipeline</div>
         <select class="panel-status-select" onchange="atualizarStatus('${l.sessionId}', this.value)">
-          ${Object.entries(DecisionEngine.STATUS_LABELS).map(([k, v]) =>
+          ${Object.entries(DecisionEngine.STATUS_LABELS).map(([k,v]) =>
             `<option value="${k}" ${(l.status || 'novo') === k ? 'selected' : ''}>${v}</option>`
           ).join('')}
         </select>
@@ -474,7 +936,10 @@ function renderTab(tab) {
       <div class="panel-section">
         <div class="panel-section-title">Ações</div>
         ${l.whatsapp ? `<a class="panel-big-btn pbb-wpp" href="https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}" target="_blank" rel="noopener">💬 Abrir WhatsApp</a>` : ''}
-        <button class="panel-big-btn pbb-copy" onclick="copiarMensagemPanel()">📋 Copiar mensagem de abordagem</button>
+        ${tpls.map(t => `
+          <button class="panel-big-btn pbb-copy" onclick="copyTemplatePanel('${t.id}')">📋 ${t.nome}</button>
+        `).join('')}
+        <button class="panel-big-btn pbb-copy" onclick="copiarMensagemPanel()">📋 Mensagem padrão</button>
       </div>`;
   }
 
@@ -510,11 +975,9 @@ function renderTab(tab) {
     body.innerHTML = `
       <div class="panel-section">
         <div class="panel-section-title">Agendar Follow-up</div>
-        <input class="agenda-input" type="datetime-local" id="agenda-dt"
-               value="${ag ? ag.dt : ''}"/>
+        <input class="agenda-input" type="datetime-local" id="agenda-dt" value="${ag ? ag.dt : ''}"/>
         <input class="agenda-input" type="text" id="agenda-nota"
-               placeholder="Nota sobre o follow-up..."
-               value="${ag ? (ag.nota || '') : ''}"/>
+               placeholder="Nota sobre o follow-up..." value="${ag ? (ag.nota || '') : ''}"/>
         <button class="panel-big-btn pbb-green" onclick="salvarAgenda()">✓ Salvar</button>
       </div>
       ${ag ? `
@@ -530,14 +993,35 @@ function renderTab(tab) {
   }
 }
 
+function addTagFromPanel() {
+  if (!currentLead) return;
+  const input = document.getElementById('tag-input-panel');
+  if (!input) return;
+  addTagToLead(currentLead.sessionId, input.value);
+  input.value = '';
+}
+
+function copyTemplatePanel(templateId) {
+  if (!currentLead) return;
+  const tpl = getTemplates().find(t => t.id === templateId);
+  if (!tpl) return;
+  copiarTexto(applyTemplateVars(tpl.texto, currentLead));
+}
+
 function buildTimeline(l) {
   const events = [];
-  if (l.createdAt)     events.push({ time: formatTime(l.createdAt), text: 'Concluiu o diagnóstico' });
-  if (l.concluiuQuiz)  events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0} / 48 pts` });
-  if (l.clicouGrupo)   events.push({ time: '—', text: '💬 Clicou para entrar no grupo de WhatsApp' });
-  if (l.clicouCheckout && l.status !== 'comprou') events.push({ time: '—', text: '🛒 Visitou a página de checkout (não confirmado)' });
-  if (l.status === 'comprou')  events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '✅ Compra confirmada pela Kiwify' });
-  if (l.status === 'nao_quis') events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '❌ Registrado como não quis' });
+  if (l.createdAt)    events.push({ time: formatTime(l.createdAt), text: 'Concluiu o diagnóstico' });
+  if (l.concluiuQuiz) events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0} / 48 pts` });
+  if (l.clicouGrupo)  events.push({ time: '—', text: '💬 Clicou para entrar no grupo de WhatsApp' });
+  if (l.clicouCheckout && l.status !== 'comprou')
+    events.push({ time: '—', text: '🛒 Visitou a página de checkout (não confirmado)' });
+  if (l.status === 'comprou')
+    events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '✅ Compra confirmada pela Kiwify' });
+  if (l.status === 'nao_quis')
+    events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '❌ Registrado como não quis' });
+  const tags = getLeadTags(l);
+  if (tags.length)
+    events.push({ time: '—', text: `🏷 Tags: ${tags.join(', ')}` });
   return events;
 }
 
@@ -606,7 +1090,9 @@ function getIASuggestions(l) {
     </div>`;
 }
 
-/* ── PIPELINE ── */
+/* ═══════════════════════════════════════════
+   PIPELINE — DRAG & DROP + R$ PROJETADO
+═══════════════════════════════════════════ */
 const PIPELINE_STAGES = [
   { key: 'novo',              label: 'Novo Lead',       color: '#a1a1aa' },
   { key: 'morno',             label: 'Morno',           color: '#fbbf24' },
@@ -621,32 +1107,78 @@ const PIPELINE_STAGES = [
 async function renderPipeline() {
   const leads  = await getLeads();
   const kanban = document.getElementById('kanban');
+  const total  = calcTotalPipeline(leads);
+
+  const proj = document.getElementById('pipeline-projection');
+  if (proj) {
+    proj.textContent = `💰 Pipeline projetado: R$ ${Math.round(total).toLocaleString('pt-BR')}`;
+  }
+
   kanban.innerHTML = PIPELINE_STAGES.map(stage => {
-    const sl = leads.filter(l => (l.status || 'novo') === stage.key);
+    const sl  = leads.filter(l => (l.status || 'novo') === stage.key);
+    const val = sl.filter(l => stage.key !== 'nao_quis')
+      .reduce((s, l) => s + calcProjectedValue(l), 0);
     return `
       <div class="kanban-col">
         <div class="col-header">
-          <div class="col-title-wrap">
-            <div class="col-dot" style="background:${stage.color}"></div>
-            <span class="col-title">${stage.label}</span>
+          <div class="col-header-top">
+            <div class="col-title-wrap">
+              <div class="col-dot" style="background:${stage.color}"></div>
+              <span class="col-title">${stage.label}</span>
+            </div>
+            <span class="col-count">${sl.length}</span>
           </div>
-          <span class="col-count">${sl.length}</span>
+          ${stage.key !== 'nao_quis' && val > 0
+            ? `<div class="col-value">R$ ${Math.round(val).toLocaleString('pt-BR')}</div>` : ''}
         </div>
-        <div class="col-cards">
+        <div class="col-cards" data-stage="${stage.key}">
           ${sl.length
             ? sl.map(l => `
-              <div class="mini-card" onclick="openLead('${l.sessionId}')">
+              <div class="mini-card" data-session-id="${l.sessionId}" onclick="openLead('${l.sessionId}')">
                 <div class="mini-name">${l.nome || 'Lead'}</div>
                 <div class="mini-sub">${l.whatsapp || '—'}</div>
                 ${l.pontuacao ? `<div class="mini-score">Score: ${l.pontuacao}</div>` : ''}
+                ${getLeadTags(l).slice(0,2).map(t => `<span class="tag-chip" style="background:${tagColor(t)};font-size:.6rem;padding:1px 5px;margin-top:3px">${t}</span>`).join('')}
               </div>`).join('')
             : '<div class="mini-empty">Vazio</div>'}
         </div>
       </div>`;
   }).join('');
+
+  initSortable();
 }
 
-/* ── ANALYTICS ── */
+function initSortable() {
+  if (typeof Sortable === 'undefined') return;
+  document.querySelectorAll('.col-cards').forEach(col => {
+    if (col._sortable) col._sortable.destroy();
+    col._sortable = new Sortable(col, {
+      group: 'pipeline',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      onEnd(evt) {
+        const sessionId = evt.item.dataset.sessionId;
+        const newStage  = evt.to.dataset.stage;
+        if (sessionId && newStage) {
+          atualizarStatus(sessionId, newStage);
+          const proj = document.getElementById('pipeline-projection');
+          if (proj && cachedLeads) {
+            const total = calcTotalPipeline(cachedLeads);
+            proj.textContent = `💰 Pipeline projetado: R$ ${Math.round(total).toLocaleString('pt-BR')}`;
+          }
+          const colHeader = evt.to.closest('.kanban-col')?.querySelector('.col-value');
+          // Recalculate column value
+          setTimeout(() => renderPipeline(), 300);
+        }
+      }
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════
+   ANALYTICS
+═══════════════════════════════════════════ */
 async function renderAnalytics() {
   const leads = await getLeads();
   const total = leads.length || 1;
@@ -666,10 +1198,10 @@ async function renderAnalytics() {
 
   const sc = {};
   PIPELINE_STAGES.forEach(s => { sc[s.key] = leads.filter(l => (l.status || 'novo') === s.key).length; });
-  const comprou    = sc.comprou || 0;
-  const checkout   = leads.filter(l => l.clicouCheckout).length;
-  const hot        = (sc.quente || 0) + (sc.muito_quente || 0) + (sc.prioridade_maxima || 0);
-  const conversao  = Math.round((comprou / total) * 100);
+  const comprou   = sc.comprou || 0;
+  const checkout  = leads.filter(l => l.clicouCheckout).length;
+  const hot       = (sc.quente || 0) + (sc.muito_quente || 0) + (sc.prioridade_maxima || 0);
+  const conversao = Math.round((comprou / total) * 100);
 
   const nc = {
     'BÁSICO':        leads.filter(l => l.nivelIdentificado === 'BÁSICO').length,
@@ -677,6 +1209,11 @@ async function renderAnalytics() {
     'AVANÇADO':      leads.filter(l => l.nivelIdentificado === 'AVANÇADO').length,
   };
   const totalNivel = Object.values(nc).reduce((a, b) => a + b, 0) || 1;
+
+  const curso    = leads.filter(l => l.oferta === 'curso').length;
+  const mentoria = leads.filter(l => l.oferta === 'mentoria').length;
+
+  const pipeline = calcTotalPipeline(leads);
 
   document.getElementById('analytics-grid').innerHTML = `
     <div class="chart-card animate-up">
@@ -735,20 +1272,40 @@ async function renderAnalytics() {
     </div>
 
     <div class="chart-card animate-up" style="animation-delay:.18s">
+      <div class="chart-title">Oferta</div>
+      <div class="distrib-list">
+        <div class="distrib-row">
+          <div class="distrib-dot" style="background:var(--g)"></div>
+          <div class="distrib-name">📚 Curso</div>
+          <div class="distrib-val">${curso}</div>
+          <span class="distrib-pct">(${Math.round((curso/total)*100)}%)</span>
+        </div>
+        <div class="distrib-row">
+          <div class="distrib-dot" style="background:var(--purple)"></div>
+          <div class="distrib-name">🎯 Mentoria</div>
+          <div class="distrib-val">${mentoria}</div>
+          <span class="distrib-pct">(${Math.round((mentoria/total)*100)}%)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card animate-up" style="animation-delay:.21s">
       <div class="chart-title">Resumo Geral</div>
       <div style="display:flex;flex-direction:column;gap:0">
         <div class="panel-field"><span class="pf-label">Total de leads</span><span class="pf-val sv-white">${leads.length}</span></div>
         <div class="panel-field"><span class="pf-label">Viram o checkout</span><span class="pf-val sv-yellow">${checkout}</span></div>
-        <div class="panel-field"><span class="pf-label">Compraram (confirmado)</span><span class="pf-val sv-green">${comprou}</span></div>
+        <div class="panel-field"><span class="pf-label">Compraram (conf.)</span><span class="pf-val sv-green">${comprou}</span></div>
         <div class="panel-field"><span class="pf-label">Taxa de conversão</span><span class="pf-val sv-green">${conversao}%</span></div>
         <div class="panel-field"><span class="pf-label">Faturamento conf.</span><span class="pf-val sv-green">R$${(comprou * 397).toLocaleString('pt-BR')}</span></div>
+        <div class="panel-field"><span class="pf-label">Pipeline projetado</span><span class="pf-val sv-purple">R$${Math.round(pipeline).toLocaleString('pt-BR')}</span></div>
         <div class="panel-field"><span class="pf-label">Leads ativos</span><span class="pf-val sv-orange">${leads.filter(l => l.status !== 'comprou' && l.status !== 'nao_quis').length}</span></div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-/* ── HELPERS ── */
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
 function formatDate(iso) {
   return new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
@@ -779,7 +1336,9 @@ function updateBadges(leads) {
   if (b) b.textContent = hot > 0 ? hot : '';
 }
 
-/* ── ACTIONS ── */
+/* ═══════════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════════ */
 function gerarMensagem(l) {
   const nome  = l.nome || 'você';
   const nivel = l.nivelIdentificado || '—';
@@ -795,6 +1354,7 @@ function copiarMensagem(sessionId, btn) {
   if (!lead) return;
   navigator.clipboard.writeText(gerarMensagem(lead)).then(() => {
     if (btn) { const t = btn.textContent; btn.textContent = '✅'; setTimeout(() => { btn.textContent = t; }, 2000); }
+    showToast('Mensagem copiada!');
   });
 }
 
@@ -806,17 +1366,19 @@ function copiarMensagemPanel() {
 function copiarTexto(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
     if (btn) { const t = btn.textContent; btn.textContent = '✅ Copiado!'; setTimeout(() => { btn.textContent = t; }, 2000); }
+    showToast('Copiado!');
   });
 }
 
 function atualizarStatus(sessionId, newStatus) {
-  // Atualiza cache local imediatamente (UX responsiva)
   if (cachedLeads) {
     const idx = cachedLeads.findIndex(l => l.sessionId === sessionId);
-    if (idx >= 0) cachedLeads[idx].status = newStatus;
+    if (idx >= 0) {
+      cachedLeads[idx].status = newStatus;
+      cachedLeads[idx].updatedAt = new Date().toISOString();
+    }
     if (currentLead && currentLead.sessionId === sessionId) currentLead.status = newStatus;
   }
-  // Sincroniza com Google Sheets via Storage
   Storage.updateStatus(sessionId, newStatus);
   updateBadges(cachedLeads || []);
   renderStats(cachedLeads || []);
@@ -828,30 +1390,23 @@ function salvarAgenda() {
   if (!currentLead) return;
   const dt   = document.getElementById('agenda-dt')?.value;
   const nota = document.getElementById('agenda-nota')?.value;
-  if (!dt) { alert('Selecione uma data'); return; }
-  const leads = Storage.getAll();
-  const idx   = leads.findIndex(l => l.sessionId === currentLead.sessionId);
-  if (idx >= 0) {
-    leads[idx].agenda = { dt, nota };
-    localStorage.setItem('ndl_leads', JSON.stringify(leads));
-    currentLead.agenda = { dt, nota };
-    if (cachedLeads) {
-      const ci = cachedLeads.findIndex(l => l.sessionId === currentLead.sessionId);
-      if (ci >= 0) cachedLeads[ci].agenda = { dt, nota };
-    }
-  }
+  if (!dt) { showToast('Selecione uma data'); return; }
+  patchLead(currentLead.sessionId, { agenda: { dt, nota } });
+  currentLead.agenda = { dt, nota };
   renderTab('agenda');
+  showToast('Follow-up salvo!');
 }
 
 function exportCSV() {
   const leads  = cachedLeads || Storage.getAll();
-  const header = ['Nome','WhatsApp','Instagram','Gênero','Nível','Pontuação','Oferta','Classificação','Status','Viu Checkout','Comprou (confirmado)','Grupo','Data'];
+  const header = ['Nome','WhatsApp','Instagram','Gênero','Nível','Pontuação','Oferta','Classificação','Status','Viu Checkout','Comprou','Grupo','Tags','Data'];
   const rows   = leads.map(l => [
     l.nome || '', l.whatsapp || '', l.instagram || '', l.genero || '',
     l.nivelIdentificado || '', l.pontuacao || '', l.oferta || '', l.classificacaoLead || '',
     l.status || '', l.clicouCheckout ? 'Sim' : 'Não',
     l.status === 'comprou' ? 'Sim' : 'Não',
     l.clicouGrupo ? 'Sim' : 'Não',
+    getLeadTags(l).join(';'),
     l.createdAt ? new Date(l.createdAt).toLocaleString('pt-BR') : '',
   ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
 
@@ -863,8 +1418,30 @@ function exportCSV() {
   a.click(); URL.revokeObjectURL(url);
 }
 
-/* ── INIT ── */
+/* ═══════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+  if (e.key === 'Escape') closePainel();
+  if (e.key === '/') {
+    e.preventDefault();
+    document.getElementById('search-input')?.focus();
+  }
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('ndl_theme');
+  if (savedTheme === 'light') {
+    isDarkTheme = false;
+    document.documentElement.classList.add('light-theme');
+    const btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = '🌙';
+  }
+
   if (sessionStorage.getItem('ndl_auth') === '1') {
     document.getElementById('password-screen').style.display = 'none';
     document.getElementById('app').removeAttribute('hidden');

@@ -66,14 +66,20 @@
       <div class="search-wrap">
         <span class="search-icon">⌕</span>
         <input class="search-input" id="search-input" type="text"
-          placeholder="Buscar por nome, WhatsApp..."
+          placeholder="Buscar por nome, WhatsApp, tag..."
           oninput="onSearch()"/>
       </div>
       <div class="topbar-right">
-        <button class="icon-btn" onclick="renderDashboard()" title="Atualizar">↺</button>
+        <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Alternar tema">☀</button>
+        <button class="icon-btn" onclick="renderDashboard(true)" title="Atualizar">↺</button>
         <button class="icon-btn" onclick="exportCSV()" title="Exportar CSV">↓</button>
+        <button class="icon-btn" onclick="openNormalizeModal()" title="Normalizar dados da base">🔧</button>
+        <button class="icon-btn" onclick="openTemplatesModal()" title="Templates de mensagem">📝</button>
       </div>
     </header>
+
+    <!-- BULK BAR -->
+    <div class="bulk-bar" id="bulk-bar" style="display:none"></div>
 
     <!-- PAGES -->
     <div class="content">
@@ -82,7 +88,17 @@
       <div id="page-leads" class="page active">
         <div class="ai-box" id="ai-box" style="display:none"></div>
         <div class="stats-grid" id="stats"></div>
-        <div class="filters-bar" id="filters"></div>
+        <div class="filters-wrap">
+          <div class="filters-bar" id="filters"></div>
+          <select class="sort-select" id="sort-select" onchange="onSortChange()">
+            <option value="date_desc">↓ Mais recentes</option>
+            <option value="date_asc">↑ Mais antigos</option>
+            <option value="score_desc">↓ Maior score</option>
+            <option value="score_asc">↑ Menor score</option>
+            <option value="nome_asc">A→Z Nome</option>
+          </select>
+        </div>
+        <div class="list-header" id="list-header"></div>
         <div id="leads-list"></div>
       </div>
 
@@ -90,6 +106,7 @@
       <div id="page-pipeline" class="page">
         <div class="page-header">
           <h2 class="page-title">Pipeline de Vendas</h2>
+          <div class="pipeline-projection" id="pipeline-projection"></div>
         </div>
         <div class="kanban" id="kanban"></div>
       </div>
@@ -116,20 +133,56 @@
       <div class="panel-hdr-actions" id="panel-hdr-actions"></div>
     </div>
     <div class="panel-tabs" id="panel-tabs">
-      <button class="tab active" onclick="setTab('dados')"     data-tab="dados">Dados</button>
-      <button class="tab"        onclick="setTab('timeline')"  data-tab="timeline">Timeline</button>
-      <button class="tab"        onclick="setTab('objections')"data-tab="objections">Objeções</button>
-      <button class="tab"        onclick="setTab('agenda')"    data-tab="agenda">Agenda</button>
-      <button class="tab"        onclick="setTab('ia')"        data-tab="ia">IA</button>
+      <button class="tab active" onclick="setTab('dados')"      data-tab="dados">Dados</button>
+      <button class="tab"        onclick="setTab('timeline')"   data-tab="timeline">Timeline</button>
+      <button class="tab"        onclick="setTab('objections')" data-tab="objections">Objeções</button>
+      <button class="tab"        onclick="setTab('agenda')"     data-tab="agenda">Agenda</button>
+      <button class="tab"        onclick="setTab('ia')"         data-tab="ia">IA</button>
     </div>
     <div class="panel-body" id="panel-body"></div>
   </aside>
+
+  <!-- MODAL: NORMALIZAR -->
+  <div class="modal-overlay" id="normalize-modal" onclick="if(event.target===this)closeNormalizeModal()" style="display:none">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">🔧 Normalizar Base de Dados</span>
+        <button class="modal-close" onclick="closeNormalizeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="normalize-body">
+        <p style="font-size:.82rem;color:var(--ts);margin-bottom:16px;line-height:1.6">
+          Corrige automaticamente telefones malformados e instagrams com @@ ou e-mails no campo errado.
+        </p>
+        <div style="font-size:.78rem;color:var(--td);margin-bottom:16px;line-height:1.7">
+          Exemplos corrigidos:<br>
+          <code style="color:var(--ts)">119731.49887</code> → <code style="color:var(--g)">+5511973149887</code><br>
+          <code style="color:var(--ts)">@@usuario</code> → <code style="color:var(--g)">usuario</code>
+        </div>
+        <button class="panel-big-btn pbb-green" onclick="runNormalize()">▶ Executar normalização</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TEMPLATES -->
+  <div class="modal-overlay" id="templates-modal" onclick="if(event.target===this)closeTemplatesModal()" style="display:none">
+    <div class="modal-box modal-wide">
+      <div class="modal-header">
+        <span class="modal-title">📝 Templates de Mensagem</span>
+        <button class="modal-close" onclick="closeTemplatesModal()">✕</button>
+      </div>
+      <div class="modal-body" id="templates-body"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
 </div>
 
 <script src="config.js"></script>
 <script src="storage.js"></script>
 <script src="decisionEngine.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script src="dashboard.js"></script>
 </body>
 </html>
