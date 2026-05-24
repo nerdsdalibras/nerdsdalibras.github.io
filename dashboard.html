@@ -3,172 +3,128 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel de Leads — Lorena | Nerds da Libras</title>
+  <title>CRM · Nerds da Libras</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --verde: #25D366; --verde-esc: #075E54;
-      --bg: #0D1117; --bg2: #161B22; --bg3: #21262D;
-      --text: #E9EDEF; --text-sub: rgba(233,237,239,.55);
-      --borda: rgba(255,255,255,.1);
-    }
-    body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
-
-    /* ── TELA DE SENHA ── */
-    #password-screen {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 100vh; gap: 16px; padding: 24px;
-    }
-    .pwd-logo { font-size: 2.5rem; margin-bottom: 8px; }
-    .pwd-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
-    .pwd-sub { font-size: .82rem; color: var(--text-sub); }
-    .pwd-input {
-      width: 100%; max-width: 320px; padding: 13px 16px;
-      background: var(--bg3); border: 1.5px solid var(--borda);
-      border-radius: 12px; color: var(--text);
-      font-family: 'Inter', sans-serif; font-size: .95rem; outline: none;
-      transition: border-color .2s; text-align: center; letter-spacing: .08em;
-    }
-    .pwd-input:focus { border-color: rgba(37,211,102,.5); }
-    .pwd-btn {
-      width: 100%; max-width: 320px; padding: 13px;
-      background: var(--verde); color: #fff; border: none; border-radius: 12px;
-      font-family: 'Inter', sans-serif; font-size: .95rem; font-weight: 700;
-      cursor: pointer; transition: opacity .2s;
-    }
-    .pwd-btn:hover { opacity: .85; }
-
-    /* ── DASHBOARD ── */
-    #dashboard { display: none; }
-    .dash-header {
-      background: var(--verde-esc); padding: 14px 24px;
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 10;
-    }
-    .dash-header-title { font-weight: 800; font-size: 1rem; }
-    .dash-header-sub { font-size: .74rem; color: rgba(255,255,255,.65); margin-top: 2px; }
-    .dash-logout { font-size: .78rem; color: rgba(255,255,255,.6); cursor: pointer; background: none; border: none; font-family: 'Inter', sans-serif; }
-    .dash-logout:hover { color: #fff; }
-
-    .dash-body { padding: 20px 16px; max-width: 860px; margin: 0 auto; }
-
-    /* ── STATS ── */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px; }
-    .stat-card {
-      background: var(--bg2); border: 1px solid var(--borda);
-      border-radius: 12px; padding: 14px 12px; text-align: center;
-    }
-    .stat-val { font-size: 1.6rem; font-weight: 900; }
-    .stat-label { font-size: .72rem; color: var(--text-sub); margin-top: 3px; }
-    .stat-verde { color: var(--verde); }
-    .stat-red { color: #EF4444; }
-    .stat-roxo { color: #C4B5FD; }
-    .stat-ouro { color: #FCD34D; }
-
-    /* ── FILTROS ── */
-    .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-    .filter-btn {
-      padding: 6px 14px; border-radius: 999px;
-      background: var(--bg3); border: 1px solid var(--borda);
-      color: var(--text-sub); font-family: 'Inter', sans-serif;
-      font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .15s;
-    }
-    .filter-btn:hover, .filter-btn.active { background: rgba(37,211,102,.15); border-color: rgba(37,211,102,.4); color: var(--verde); }
-
-    /* ── CARDS DE LEAD ── */
-    #leads-list { display: flex; flex-direction: column; gap: 10px; }
-    .lead-card {
-      background: var(--bg2); border: 1px solid var(--borda);
-      border-radius: 14px; padding: 16px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .lead-card.status-prioridade_maxima { border-color: rgba(196,181,253,.3); }
-    .lead-card.status-muito_quente { border-color: rgba(239,68,68,.3); }
-    .lead-card.status-quente { border-color: rgba(37,211,102,.25); }
-    .lead-card.status-comprou { border-color: rgba(34,197,94,.5); background: rgba(34,197,94,.05); }
-
-    .lead-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-    .lead-nome { font-weight: 800; font-size: 1rem; }
-    .lead-meta { font-size: .78rem; color: var(--text-sub); margin-top: 3px; }
-    .lead-badge {
-      white-space: nowrap; border-radius: 999px; padding: 4px 10px;
-      font-size: .7rem; font-weight: 700; flex-shrink: 0;
-    }
-    .badge-prioridade_maxima { background: rgba(196,181,253,.15); color: #C4B5FD; border: 1px solid rgba(196,181,253,.3); }
-    .badge-muito_quente { background: rgba(239,68,68,.12); color: #FCA5A5; border: 1px solid rgba(239,68,68,.25); }
-    .badge-quente { background: rgba(37,211,102,.1); color: var(--verde); border: 1px solid rgba(37,211,102,.25); }
-    .badge-morno { background: rgba(255,255,255,.07); color: var(--text-sub); border: 1px solid var(--borda); }
-    .badge-comprou { background: rgba(34,197,94,.15); color: #4ADE80; border: 1px solid rgba(34,197,94,.35); }
-    .badge-nao_quis { background: rgba(239,68,68,.08); color: rgba(255,130,130,.7); border: 1px solid rgba(239,68,68,.15); }
-    .badge-novo { background: rgba(255,255,255,.05); color: var(--text-sub); border: 1px solid var(--borda); }
-
-    .lead-info { display: flex; flex-wrap: wrap; gap: 6px; }
-    .info-chip {
-      background: var(--bg3); border-radius: 8px; padding: 4px 10px;
-      font-size: .75rem; color: var(--text-sub);
-    }
-    .info-chip strong { color: var(--text); }
-
-    .lead-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .action-btn {
-      padding: 8px 14px; border-radius: 10px; font-size: .8rem; font-weight: 700;
-      cursor: pointer; border: none; font-family: 'Inter', sans-serif; transition: opacity .2s;
-    }
-    .action-btn:hover { opacity: .8; }
-    .btn-copy { background: var(--verde); color: #fff; }
-    .btn-wpp { background: #005C4B; color: #fff; }
-    .btn-status { background: var(--bg3); color: var(--text-sub); border: 1px solid var(--borda); }
-
-    .lead-closer { font-size: .75rem; color: var(--text-sub); font-style: italic; }
-
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-sub); font-size: .88rem; }
-    .empty-state .e-icon { font-size: 3rem; margin-bottom: 12px; }
-
-    @media (min-width: 600px) {
-      .lead-card { flex-direction: row; align-items: flex-start; }
-      .lead-main { flex: 1; }
-      .lead-actions { flex-direction: column; align-items: flex-end; flex-shrink: 0; }
-    }
-  </style>
+  <link rel="stylesheet" href="dashboard.css"/>
 </head>
 <body>
 
-<!-- TELA DE SENHA -->
+<!-- ── SENHA ── -->
 <div id="password-screen">
-  <div class="pwd-logo">🤟</div>
-  <div class="pwd-title">Painel de Leads — Lorena</div>
-  <div class="pwd-sub">Nerds da Libras · Acesso restrito</div>
-  <input class="pwd-input" id="pwd-input" type="password" placeholder="••••••••"
-    onkeydown="if(event.key==='Enter')checkPassword()"/>
-  <button class="pwd-btn" onclick="checkPassword()">Entrar</button>
+  <div class="pwd-card">
+    <div class="pwd-icon">🤟</div>
+    <h1 class="pwd-title">Nerds da Libras</h1>
+    <p class="pwd-sub">Painel de Leads · Acesso restrito</p>
+    <input id="pwd-input" class="pwd-input" type="password" placeholder="Senha"
+      onkeydown="if(event.key==='Enter')checkPassword()"/>
+    <button class="pwd-btn" onclick="checkPassword()">Entrar</button>
+    <p class="pwd-err" id="pwd-err"></p>
+  </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <div class="dash-header">
-    <div>
-      <div class="dash-header-title">🤟 Painel de Leads</div>
-      <div class="dash-header-sub">Nerds da Libras · Prof. Lorena</div>
-    </div>
-    <button class="dash-logout" onclick="logout()">Sair</button>
-  </div>
+<!-- ── APP ── -->
+<div id="app" hidden>
 
-  <div class="dash-body">
-    <div class="stats-grid" id="stats"></div>
-
-    <div class="filters" id="filters">
-      <button class="filter-btn active" onclick="filtrar('todos', this)">Todos</button>
-      <button class="filter-btn" onclick="filtrar('prioridade_maxima', this)">⭐ Prioridade</button>
-      <button class="filter-btn" onclick="filtrar('muito_quente', this)">🔥🔥 Muito Quente</button>
-      <button class="filter-btn" onclick="filtrar('quente', this)">🔥 Quente</button>
-      <button class="filter-btn" onclick="filtrar('comprou', this)">✅ Compraram</button>
-      <button class="filter-btn" onclick="filtrar('nao_quis', this)">❌ Não Quiseram</button>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">🤟</span>
+      <div>
+        <div class="logo-name">Nerds da Libras</div>
+        <div class="logo-sub">CRM · Lorena</div>
+      </div>
     </div>
 
-    <div id="leads-list"></div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="setPage('leads')" data-page="leads">
+        <span class="nav-icon">◈</span>
+        <span class="nav-label">Leads</span>
+        <span class="nav-badge" id="badge-leads"></span>
+      </button>
+      <button class="nav-item" onclick="setPage('pipeline')" data-page="pipeline">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">Pipeline</span>
+      </button>
+      <button class="nav-item" onclick="setPage('analytics')" data-page="analytics">
+        <span class="nav-icon">◎</span>
+        <span class="nav-label">Analytics</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">→ Sair</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input class="search-input" id="search-input" type="text"
+          placeholder="Buscar por nome, WhatsApp..."
+          oninput="onSearch()"/>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" onclick="renderDashboard()" title="Atualizar">↺</button>
+        <button class="icon-btn" onclick="exportCSV()" title="Exportar CSV">↓</button>
+      </div>
+    </header>
+
+    <!-- PAGES -->
+    <div class="content">
+
+      <!-- LEADS -->
+      <div id="page-leads" class="page active">
+        <div class="ai-box" id="ai-box" style="display:none"></div>
+        <div class="stats-grid" id="stats"></div>
+        <div class="filters-bar" id="filters"></div>
+        <div id="leads-list"></div>
+      </div>
+
+      <!-- PIPELINE -->
+      <div id="page-pipeline" class="page">
+        <div class="page-header">
+          <h2 class="page-title">Pipeline de Vendas</h2>
+        </div>
+        <div class="kanban" id="kanban"></div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div id="page-analytics" class="page">
+        <div class="page-header">
+          <h2 class="page-title">Analytics</h2>
+        </div>
+        <div class="analytics-grid" id="analytics-grid"></div>
+      </div>
+
+    </div>
   </div>
+
+  <!-- OVERLAY -->
+  <div class="panel-overlay" id="panel-overlay" onclick="closePainel()"></div>
+
+  <!-- LEAD PANEL -->
+  <aside class="lead-panel" id="lead-panel">
+    <div class="panel-topbar">
+      <button class="panel-close" onclick="closePainel()">✕</button>
+      <div class="panel-title-wrap" id="panel-title-wrap"></div>
+      <div class="panel-hdr-actions" id="panel-hdr-actions"></div>
+    </div>
+    <div class="panel-tabs" id="panel-tabs">
+      <button class="tab active" onclick="setTab('dados')"     data-tab="dados">Dados</button>
+      <button class="tab"        onclick="setTab('timeline')"  data-tab="timeline">Timeline</button>
+      <button class="tab"        onclick="setTab('objections')"data-tab="objections">Objeções</button>
+      <button class="tab"        onclick="setTab('agenda')"    data-tab="agenda">Agenda</button>
+      <button class="tab"        onclick="setTab('ia')"        data-tab="ia">IA</button>
+    </div>
+    <div class="panel-body" id="panel-body"></div>
+  </aside>
+
 </div>
 
 <script src="config.js"></script>
