@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Do ZERO a LIBRAS — Assista ao vídeo completo</title>
+
+  <meta name="description" content="Aprenda Libras do zero em 30 dias com o método exclusivo i+1 da Profa. Lorena. Assista ao vídeo e garanta sua vaga." />
+  <meta name="robots" content="noindex" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ouro:    #C9963A;
+      --ouro-lt: #E8B96A;
+      --escuro:  #0D0D0D;
+      --cinza:   #1A1A1A;
+      --borda:   rgba(255,255,255,0.07);
+      --texto:   rgba(255,255,255,0.55);
+      --verde:   #22C55E;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--escuro);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-noise {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(201,150,58,.15) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 80% 100%, rgba(34,197,94,.08) 0%, transparent 60%);
+    }
+
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--ouro), var(--ouro-lt), var(--ouro), transparent);
+      z-index: 100;
+    }
+
+    .wrapper {
+      position: relative; z-index: 1;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 52px 20px 80px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      width: 100%; text-align: center; margin-bottom: 28px;
+    }
+
+    .logo-wrap {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; margin-bottom: 20px;
+    }
+    .logo-ring {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(135deg, var(--ouro) 0%, var(--ouro-lt) 50%, var(--ouro) 100%);
+      flex-shrink: 0;
+    }
+    .logo-ring img {
+      width: 100%; height: 100%;
+      border-radius: 50%; object-fit: cover; object-position: top center;
+      display: block; background: var(--cinza);
+    }
+    .logo-text { text-align: left; }
+    .logo-name { font-size: .92rem; font-weight: 800; color: #fff; line-height: 1.2; }
+    .logo-sub  { font-size: .68rem; color: var(--ouro); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+
+    /* urgência */
+    .urgency-bar {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3);
+      border-radius: 999px; padding: 6px 16px;
+      font-size: .72rem; font-weight: 700; color: #4ADE80;
+      letter-spacing: .04em; margin-bottom: 20px;
+      animation: pulseGreen 2s ease-in-out infinite;
+    }
+    @keyframes pulseGreen { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)} 50%{box-shadow:0 0 0 6px rgba(34,197,94,0)} }
+    .urgency-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #4ADE80; flex-shrink: 0;
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 800; line-height: 1.15;
+      background: linear-gradient(135deg, #fff 40%, var(--ouro-lt));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .headline em { font-style: normal; color: var(--ouro-lt); -webkit-text-fill-color: var(--ouro-lt); }
+
+    .subheadline {
+      font-size: .92rem; color: var(--texto); line-height: 1.6;
+      max-width: 520px; margin: 0 auto;
+    }
+    .subheadline strong { color: rgba(255,255,255,.85); }
+
+    /* ── PLAYER ── */
+    .player-section { width: 100%; margin: 28px 0 0; }
+
+    .player-wrap {
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(201,150,58,.3);
+      box-shadow: 0 0 60px rgba(201,150,58,.15), 0 20px 60px rgba(0,0,0,.6);
+      position: relative;
+      background: #000;
+    }
+
+    /* aspect-ratio 16:9 */
+    .player-ratio {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+    }
+
+    .player-ratio iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    /* placeholder enquanto não tem vídeo */
+    .player-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px;
+      background: radial-gradient(ellipse 80% 70% at 50% 50%, #1a1000, #000);
+    }
+    .play-btn {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ouro), var(--ouro-lt));
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 40px rgba(201,150,58,.5);
+      animation: pulsePlay 2s ease-in-out infinite;
+      cursor: pointer;
+    }
+    @keyframes pulsePlay { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+    .play-btn svg { width: 28px; height: 28px; fill: #000; margin-left: 4px; }
+    .placeholder-text { font-size: .82rem; color: var(--ouro-lt); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+
+    /* instrução abaixo do player */
+    .watch-hint {
+      text-align: center; margin-top: 12px;
+      font-size: .75rem; color: rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
+    /* ── PROVA SOCIAL mini ── */
+    .social-proof {
+      width: 100%; margin-top: 24px;
+      display: flex; justify-content: center; align-items: center; gap: 0;
+      border: 1px solid var(--borda); border-radius: 16px;
+      background: rgba(255,255,255,.02); overflow: hidden;
+    }
+    .sp-item {
+      flex: 1; padding: 14px 8px; text-align: center;
+      border-right: 1px solid var(--borda);
+    }
+    .sp-item:last-child { border-right: none; }
+    .sp-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; font-weight: 800; color: var(--ouro-lt); line-height: 1;
+    }
+    .sp-label { font-size: .62rem; color: var(--texto); margin-top: 3px; line-height: 1.3; }
+
+    /* ── BENEFÍCIOS ── */
+    .section-label {
+      width: 100%; display: flex; align-items: center; gap: 10px;
+      margin: 32px 0 16px;
+      font-size: .72rem; letter-spacing: .14em;
+      text-transform: uppercase; font-weight: 800; color: var(--ouro-lt);
+    }
+    .section-label::before, .section-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,150,58,.3), transparent);
+    }
+
+    .benefits {
+      width: 100%; display: flex; flex-direction: column; gap: 10px;
+    }
+    .benefit-row {
+      display: flex; align-items: flex-start; gap: 13px;
+      padding: 16px 18px; border-radius: 14px;
+      border: 1px solid rgba(34,197,94,.18);
+      background: rgba(34,197,94,.05);
+    }
+    .benefit-icon {
+      width: 38px; height: 38px; flex-shrink: 0;
+      background: rgba(34,197,94,.12); border-radius: 10px;
+      border: 1px solid rgba(34,197,94,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .benefit-text { flex: 1; }
+    .benefit-title { font-size: .88rem; font-weight: 700; color: #fff; line-height: 1.3; }
+    .benefit-desc  { font-size: .75rem; color: var(--texto); margin-top: 3px; line-height: 1.45; }
+
+    /* ── CTA PRINCIPAL ── */
+    .cta-section { width: 100%; margin-top: 36px; text-align: center; }
+
+    .cta-label {
+      font-size: .72rem; color: var(--texto); margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .cta-label::before, .cta-label::after {
+      content: ''; flex: 1; max-width: 60px; height: 1px;
+      background: rgba(255,255,255,.1);
+    }
+
+    .cta-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 20px 24px; border-radius: 16px;
+      background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+      color: #fff; font-weight: 900; font-size: 1.05rem;
+      text-align: center; text-decoration: none; border: none; cursor: pointer;
+      letter-spacing: .03em;
+      box-shadow: 0 0 40px rgba(34,197,94,.55), 0 6px 24px rgba(34,197,94,.35);
+      transition: box-shadow .3s, transform .2s;
+      position: relative; overflow: hidden;
+    }
+    .cta-btn:hover {
+      box-shadow: 0 0 60px rgba(34,197,94,.75), 0 8px 30px rgba(34,197,94,.45);
+      transform: translateY(-2px) scale(1.01);
+    }
+    .cta-btn:active { transform: scale(.98); }
+    .cta-btn::after {
+      content: '';
+      position: absolute; top: -20%; left: -80%;
+      width: 50%; height: 140%;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%);
+      transform: skewX(-15deg);
+      animation: shimmer 2.8s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%   { left: -80%; opacity: 1; }
+      55%  { left: 130%; opacity: 1; }
+      56%  { opacity: 0; }
+      100% { left: 130%; opacity: 0; }
+    }
+
+    .cta-sub {
+      margin-top: 12px;
+      font-size: .72rem; color: rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      flex-wrap: wrap;
+    }
+    .cta-sub span { display: flex; align-items: center; gap: 4px; }
+
+    /* ── GARANTIA ── */
+    .garantia {
+      width: 100%; margin-top: 28px;
+      padding: 20px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(201,150,58,.25);
+      background: rgba(201,150,58,.06);
+      display: flex; align-items: flex-start; gap: 14px;
+      text-align: left;
+    }
+    .garantia-icon {
+      font-size: 2rem; flex-shrink: 0; line-height: 1;
+    }
+    .garantia-title {
+      font-size: .9rem; font-weight: 800; color: var(--ouro-lt);
+      margin-bottom: 5px;
+    }
+    .garantia-desc {
+      font-size: .78rem; color: var(--texto); line-height: 1.55;
+    }
+    .garantia-desc strong { color: rgba(255,255,255,.8); }
+
+    /* ── PROF. LORENA mini-bio ── */
+    .bio-card {
+      width: 100%; margin-top: 28px;
+      padding: 20px 20px;
+      border-radius: 20px;
+      border: 1px solid var(--borda);
+      background: rgba(255,255,255,.03);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .bio-photo {
+      width: 70px; height: 70px; flex-shrink: 0;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(135deg, var(--ouro), var(--ouro-lt));
+    }
+    .bio-photo img {
+      width: 100%; height: 100%;
+      border-radius: 50%; object-fit: cover; object-position: top center;
+      display: block; background: var(--cinza);
+    }
+    .bio-text { flex: 1; }
+    .bio-name  { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 800; color: #fff; }
+    .bio-role  { font-size: .68rem; color: var(--ouro); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+    .bio-desc  { font-size: .76rem; color: var(--texto); line-height: 1.5; margin-top: 6px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 48px; text-align: center;
+      font-size: .7rem; color: rgba(255,255,255,.15); line-height: 1.9;
+    }
+    .footer a { color: rgba(255,255,255,.2); text-decoration: none; }
+    .footer span { color: var(--ouro); opacity: .6; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .wrapper { padding: 44px 16px 60px; }
+      .headline { font-size: 1.55rem; }
+      .subheadline { font-size: .86rem; }
+      .cta-btn { font-size: .95rem; padding: 18px 20px; }
+      .bio-card { flex-direction: column; text-align: center; }
+      .bio-photo { margin: 0 auto; }
+      .bio-desc { text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cta-btn::after,
+      .urgency-bar,
+      .play-btn { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+<div class="bg-noise"></div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <div class="logo-wrap">
+      <div class="logo-ring">
+        <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena" />
+      </div>
+      <div class="logo-text">
+        <div class="logo-name">Prof. Lorena</div>
+        <div class="logo-sub">Nerds da Libras</div>
+      </div>
+    </div>
+
+    <div class="urgency-bar">
+      <span class="urgency-dot"></span>
+      Vagas abertas — turma com limite de alunos
+    </div>
+
+    <h1 class="headline">
+      Do <em>ZERO</em> a LIBRAS<br/>em 30 dias
+    </h1>
+
+    <p class="subheadline">
+      Assista ao vídeo abaixo e descubra como <strong>comunicar com surdos de verdade</strong> — sem decorar listas de sinais, sem enrolação.
+    </p>
+
+  </div>
+
+  <!-- PLAYER -->
+  <div class="player-section">
+    <div class="player-wrap">
+      <div class="player-ratio">
+
+        <!--
+          ════════════════════════════════════════════════════
+          COMO ADICIONAR SEU VÍDEO:
+
+          • YouTube:
+            Substitua o bloco .player-placeholder abaixo por:
+            <iframe src="https://www.youtube.com/embed/SEU_VIDEO_ID?autoplay=1&rel=0"
+                    allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+          • Vimeo:
+            <iframe src="https://player.vimeo.com/video/SEU_VIDEO_ID?autoplay=1"
+                    allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+          • Panda Video / VTurb / outro embed:
+            Cole o iframe fornecido pela plataforma dentro de .player-ratio
+          ════════════════════════════════════════════════════
+        -->
+
+        <div class="player-placeholder">
+          <div class="play-btn">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="placeholder-text">🎬 Seu vídeo de vendas aqui</span>
+        </div>
+
+      </div>
+    </div>
+    <p class="watch-hint">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Assista ao vídeo completo antes de garantir sua vaga
+    </p>
+  </div>
+
+  <!-- PROVA SOCIAL -->
+  <div class="social-proof">
+    <div class="sp-item">
+      <div class="sp-num">+500</div>
+      <div class="sp-label">Alunos<br/>formados</div>
+    </div>
+    <div class="sp-item">
+      <div class="sp-num">15+</div>
+      <div class="sp-label">Anos de<br/>experiência</div>
+    </div>
+    <div class="sp-item">
+      <div class="sp-num">🇧🇷</div>
+      <div class="sp-label">Todo o<br/>Brasil</div>
+    </div>
+    <div class="sp-item">
+      <div class="sp-num">⭐ 5.0</div>
+      <div class="sp-label">Avaliação<br/>dos alunos</div>
+    </div>
+  </div>
+
+  <!-- BENEFÍCIOS -->
+  <div class="section-label">✦ O que você vai aprender ✦</div>
+
+  <div class="benefits">
+    <div class="benefit-row">
+      <div class="benefit-icon">🤟</div>
+      <div class="benefit-text">
+        <div class="benefit-title">Comunique-se com surdos do zero</div>
+        <div class="benefit-desc">Método i+1 exclusivo da Profa. Lorena — você evolui no ritmo certo, sem decoreba.</div>
+      </div>
+    </div>
+    <div class="benefit-row">
+      <div class="benefit-icon">📲</div>
+      <div class="benefit-text">
+        <div class="benefit-title">Aulas 100% online e no seu tempo</div>
+        <div class="benefit-desc">Acesse do celular, tablet ou computador — onde e quando quiser.</div>
+      </div>
+    </div>
+    <div class="benefit-row">
+      <div class="benefit-icon">🎯</div>
+      <div class="benefit-text">
+        <div class="benefit-title">Do absoluto zero à comunicação real</div>
+        <div class="benefit-desc">Em <strong style="color:#fff">30 dias</strong> você já consegue se comunicar em situações do cotidiano.</div>
+      </div>
+    </div>
+    <div class="benefit-row">
+      <div class="benefit-icon">🏆</div>
+      <div class="benefit-text">
+        <div class="benefit-title">Certificado reconhecido</div>
+        <div class="benefit-desc">Receba seu certificado de conclusão ao terminar o curso.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-label">Pronto para começar?</div>
+
+    <!--
+      Substitua o href="#checkout" pelo link real do seu checkout
+      (Hotmart, Kiwify, Eduzz, etc.)
+    -->
+    <a href="#checkout" class="cta-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" style="flex-shrink:0"><path d="M5 12l5 5L20 7"/></svg>
+      Quero garantir minha vaga agora →
+    </a>
+
+    <div class="cta-sub">
+      <span>🔒 Pagamento seguro</span>
+      <span>·</span>
+      <span>💳 Cartão, boleto ou Pix</span>
+      <span>·</span>
+      <span>📦 Acesso imediato</span>
+    </div>
+  </div>
+
+  <!-- GARANTIA -->
+  <div class="garantia">
+    <div class="garantia-icon">🛡️</div>
+    <div>
+      <div class="garantia-title">Garantia incondicional de 7 dias</div>
+      <div class="garantia-desc">Se por qualquer motivo você não gostar do curso, devolvemos <strong>100% do seu dinheiro</strong> — sem perguntas, sem burocracia.</div>
+    </div>
+  </div>
+
+  <!-- BIO -->
+  <div class="bio-card">
+    <div class="bio-photo">
+      <img src="fotos/IMG_4966.jpg" alt="Prof. Lorena" />
+    </div>
+    <div class="bio-text">
+      <div class="bio-name">Prof. Lorena</div>
+      <div class="bio-role">Intérprete &amp; Professora de Libras</div>
+      <div class="bio-desc">Fundadora da <strong style="color:rgba(255,255,255,.75)">Nerds da Libras LTDA</strong>. 15 anos transformando vidas através da comunicação inclusiva. Criadora do método i+1 aplicado à Libras — exclusivo no Brasil.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>© 2026 <span>Nerds da Libras LTDA</span> · Prof. Lorena</p>
+    <p>Presente em todo o Brasil 🇧🇷</p>
+    <p style="margin-top:4px"><a href="index.html">← Voltar ao início</a></p>
+  </div>
+
+</div>
+
+</body>
+</html>
