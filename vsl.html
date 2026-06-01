@@ -77,7 +77,7 @@
     .hero-photo-right::after { background: linear-gradient(to left, #fafafa 0%, transparent 100%); }
 
     .wrapper {
-      max-width: 780px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 36px 20px 80px;
       display: flex; flex-direction: column; align-items: center;
@@ -100,15 +100,16 @@
     .logo-sub  { font-size: .65rem; color: var(--teal); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 
     /* ── HEADLINE ── */
-    .headline-wrap { width: 100%; text-align: center; margin-bottom: 24px; }
+    .headline-wrap { width: 100%; text-align: center; margin-bottom: 28px; }
     .headline {
-      font-size: 2.4rem; font-weight: 900; line-height: 1.15;
-      color: var(--escuro); margin-bottom: 8px;
+      font-size: 3rem; font-weight: 900; line-height: 1.12;
+      color: var(--escuro); margin-bottom: 12px;
+      letter-spacing: -.01em;
     }
-    .headline .teal { color: var(--teal); }
+    .headline .teal { color: var(--teal); display: block; font-size: 2.4rem; }
     .subheadline {
-      font-size: 1rem; color: var(--cinza); line-height: 1.6;
-      max-width: 560px; margin: 0 auto;
+      font-size: 1.15rem; color: var(--cinza); line-height: 1.65;
+      max-width: 640px; margin: 10px auto 0;
     }
 
     /* ── VÍDEO ── */
@@ -119,6 +120,24 @@
     }
     .player-ratio { position: relative; padding-bottom: 56.25%; height: 0; }
     .player-ratio iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+    /* ── FULLSCREEN OVERLAY ── */
+    #fsOverlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: #000;
+      flex-direction: column; align-items: center; justify-content: center;
+    }
+    #fsOverlay.open { display: flex; }
+    #fsOverlay .fs-inner { width: 100%; height: 100%; position: relative; }
+    #fsOverlay .fs-inner iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+    #fsClose {
+      position: fixed; top: 16px; right: 20px; z-index: 10000;
+      background: rgba(255,255,255,.15); border: none; cursor: pointer;
+      color: #fff; font-size: 1.4rem; line-height: 1;
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #fsClose:hover { background: rgba(255,255,255,.3); }
 
     .player-placeholder {
       position: absolute; inset: 0;
@@ -307,7 +326,8 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
-      .headline { font-size: 1.65rem; }
+      .headline { font-size: 2rem; }
+      .headline .teal { font-size: 1.7rem; }
       .section-title { font-size: 1.5rem; }
       .benefits-card { grid-template-columns: 1fr; padding: 24px 20px; gap: 22px; }
       .cta-btn { font-size: .95rem; padding: 16px 16px 16px 22px; }
@@ -356,11 +376,11 @@
   <!-- HEADLINE -->
   <div class="headline-wrap">
     <h1 class="headline">
-      Esse foi o curso de Libras<br/>
-      <span class="teal">mais vendido do último ano</span>
+      Esse Foi o Método que mais Gerou<br/>Resultado nos Últimos Anos
+      <span class="teal">Input Compreensível aplicado pela<br/>Primeira vez a Libras</span>
     </h1>
     <p class="subheadline">
-      Muita gente passou a se comunicar com surdos de verdade<br/>depois que descobriu esse método
+      Prof. Lorena trouxe para o Brasil o Maior Método de Aprendizado de idiomas,<br/>aplicado pela primeira vez à Libras
     </p>
   </div>
 
@@ -573,6 +593,12 @@
 
 </div>
 
+<!-- FULLSCREEN OVERLAY -->
+<div id="fsOverlay">
+  <button id="fsClose" title="Fechar">✕</button>
+  <div class="fs-inner" id="fsInner"></div>
+</div>
+
 <script>
   // ════════════════════════════════════════════
   // TIMER DO BOTÃO DE COMPRA
@@ -603,6 +629,44 @@
     }
 
     tick();
+  })();
+
+  // ════════════════════════════════════════════
+  // FULLSCREEN VIDEO ON CLICK
+  // ════════════════════════════════════════════
+  (function () {
+    const placeholder = document.getElementById('videoPlaceholder');
+    const overlay     = document.getElementById('fsOverlay');
+    const fsInner     = document.getElementById('fsInner');
+    const fsClose     = document.getElementById('fsClose');
+
+    function openFullscreen() {
+      // If there's already an iframe in the main player, clone it into overlay
+      const existingIframe = document.querySelector('.player-ratio iframe');
+      let iframeSrc = '';
+      if (existingIframe) {
+        iframeSrc = existingIframe.src;
+      }
+      // Build a fullscreen iframe — if no src, show placeholder message
+      if (iframeSrc) {
+        fsInner.innerHTML = '<iframe src="' + iframeSrc + '?autoplay=1" allow="autoplay; fullscreen" allowfullscreen></iframe>';
+      } else {
+        fsInner.innerHTML = '<div style="color:#fff;text-align:center;padding:40px;font-size:1.2rem;">Cole o link do vídeo no iframe do player para ativar o fullscreen.</div>';
+      }
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFullscreen() {
+      overlay.classList.remove('open');
+      fsInner.innerHTML = '';
+      document.body.style.overflow = '';
+    }
+
+    if (placeholder) placeholder.addEventListener('click', openFullscreen);
+    fsClose.addEventListener('click', closeFullscreen);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) closeFullscreen(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeFullscreen(); });
   })();
 </script>
 
