@@ -738,6 +738,10 @@
     });
   }
 
+  var lastKnownTime = 0;      // última posição confirmada
+  var maxReached    = 0;      // máximo que a pessoa chegou (sem pular)
+  var seekGuard     = false;  // evita loop ao corrigir posição
+
   function onPlayerReady(event) {
     var duration = event.target.getDuration();
     updateCountdown(duration);
@@ -751,21 +755,36 @@
     var librasSign= document.getElementById('librasSign');
     var librasMsg = document.getElementById('librasMsg');
 
-    // Vídeo tocando → atualiza contador em tempo real
+    // Vídeo tocando → monitora posição + atualiza contador
     if (event.data === YT.PlayerState.PLAYING) {
+      seekGuard = false;
       clearInterval(timerInterval);
       timerInterval = setInterval(function () {
-        var duration  = ytPlayer.getDuration();
-        var current   = ytPlayer.getCurrentTime();
+        var current  = ytPlayer.getCurrentTime();
+        var duration = ytPlayer.getDuration();
+
+        // Anti-skip: se pulou mais de 2s à frente do máximo permitido, volta
+        if (!seekGuard && current > maxReached + 2) {
+          seekGuard = true;
+          ytPlayer.seekTo(maxReached, true);
+          setTimeout(function () { seekGuard = false; }, 800);
+          return;
+        }
+
+        // Atualiza o máximo alcançado organicamente
+        if (current > maxReached) maxReached = current;
+        lastKnownTime = current;
+
+        // Atualiza contador (tempo restante)
         var remaining = Math.max(0, duration - current);
         updateCountdown(remaining);
       }, 500);
     }
 
-    // Pausado / parado → para o intervalo
-    if (event.data === YT.PlayerState.PAUSED ||
-        event.data === YT.PlayerState.BUFFERING) {
+    // Pausado → para intervalo, guarda posição
+    if (event.data === YT.PlayerState.PAUSED) {
       clearInterval(timerInterval);
+      if (!seekGuard) lastKnownTime = ytPlayer.getCurrentTime();
     }
 
     // Vídeo terminou → abre o cadeado
