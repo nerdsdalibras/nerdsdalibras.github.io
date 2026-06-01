@@ -29,6 +29,7 @@ const COL_TO_FIELD = {
   'status':           'status',
   'statusCloser':     'statusCloser',
   'comprouKiwify':    'comprouKiwify',
+  'clicouVSL':        'clicouVSL',
   'clicouGrupo':      'clicouGrupo',
   'clicouCheckout':   'clicouCheckout',
   'tempoNoQuiz':      'tempoNoQuiz',
@@ -40,7 +41,7 @@ const FIELD_TO_COL = {};
 for (var k in COL_TO_FIELD) { FIELD_TO_COL[COL_TO_FIELD[k]] = k; }
 
 // Novas colunas que precisam existir para o sistema funcionar
-const NEW_COLS = ['sessionId','genero','oferta','classificacaoLead','status','statusCloser','comprouKiwify','clicouGrupo','clicouCheckout','tempoNoQuiz','updatedAt'];
+const NEW_COLS = ['sessionId','genero','oferta','classificacaoLead','status','statusCloser','comprouKiwify','clicouVSL','clicouGrupo','clicouCheckout','tempoNoQuiz','updatedAt'];
 
 // ── ENTRADA POST ──────────────────────────────────
 function doPost(e) {

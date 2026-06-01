@@ -764,6 +764,7 @@ function renderLeadCard(l, idx) {
         ${l.oferta ? `<div class="info-chip">${l.oferta === 'curso' ? '📚 Curso' : '🎯 Mentoria'}</div>` : ''}
         ${statusKey === 'comprou'  ? `<div class="info-chip green">✅ Compra confirmada</div>` : ''}
         ${viuCheckout              ? `<div class="info-chip" style="color:var(--yellow)">🛒 Viu checkout</div>` : ''}
+        ${l.clicouVSL              ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">▶ Viu VSL</div>` : ''}
         ${l.clicouGrupo            ? `<div class="info-chip blue">💬 Grupo</div>` : ''}
         ${hasAlert                 ? `<div class="ai-alert">⚡ Abordar agora</div>` : ''}
         ${tags.map(t => `<span class="tag-chip" style="background:${tagColor(t)}">${t}</span>`).join('')}
@@ -920,6 +921,7 @@ function renderTab(tab) {
             ${statusKey === 'comprou' ? '✅ Compra confirmada (Kiwify)' : viuCheck ? '🛒 Viu, não comprou' : '—'}
           </span>
         </div>
+        <div class="panel-field"><span class="pf-label">Clicou no VSL</span><span class="pf-val" style="color:${l.clicouVSL ? '#FB923C' : 'inherit'}">${l.clicouVSL ? '▶ Sim — assistiu o vídeo' : '—'}</span></div>
         <div class="panel-field"><span class="pf-label">Entrou no grupo</span><span class="pf-val">${l.clicouGrupo ? '💬 Sim' : '—'}</span></div>
         ${l.statusCloser ? `<div class="panel-field"><span class="pf-label">Nota closer</span><span class="pf-val">${l.statusCloser}</span></div>` : ''}
       </div>
@@ -1012,6 +1014,7 @@ function buildTimeline(l) {
   const events = [];
   if (l.createdAt)    events.push({ time: formatTime(l.createdAt), text: 'Concluiu o diagnóstico' });
   if (l.concluiuQuiz) events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0} / 48 pts` });
+  if (l.clicouVSL)    events.push({ time: '—', text: '▶ Clicou no vídeo VSL — foi para a página de compra' });
   if (l.clicouGrupo)  events.push({ time: '—', text: '💬 Clicou para entrar no grupo de WhatsApp' });
   if (l.clicouCheckout && l.status !== 'comprou')
     events.push({ time: '—', text: '🛒 Visitou a página de checkout (não confirmado)' });

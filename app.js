@@ -20,6 +20,7 @@ const lead = {
   quisAvancar:       '',
   comprouKiwify:     false,
   clicouCheckout:    false,
+  clicouVSL:         false,
   clicouGrupo:       false,
   statusCloser:      '',
   observacoes:       '',
@@ -497,6 +498,67 @@ function mostrarCertificado(nivel) {
 
 // ── FLUXO DE OFERTA UNIFICADO ──
 async function iniciarFluxoOferta() {
+  if (nivelCalculado !== 'avancado') {
+    await fluxoCursoVSL();
+  } else {
+    await fluxoMentoriaDireto();
+  }
+}
+
+// ── FLUXO BÁSICO / INTERMEDIÁRIO → VSL DIRETO ──
+async function fluxoCursoVSL() {
+  await sleep(4000);
+
+  // Explicação detalhada do porquê do diagnóstico
+  if (nivelCalculado === 'basico') {
+    await addBubble(`Vou te explicar <strong>por que</strong> seu diagnóstico apontou para o nível Básico, <strong>${lead.nome}</strong>...`, 1800);
+    await sleep(4000);
+    await addBubble('Suas respostas mostram que você ainda está na fase de <strong>reconhecimento de sinais isolados</strong> — sem conseguir formar frases, sem estrutura visual e sem segurança para se comunicar.', 2400);
+    await sleep(4000);
+    await addBubble('Isso não é falta de esforço. É falta de <strong>caminho certo</strong>.\n\nQuem aprende sinais sem estrutura sempre trava — porque Libras não é uma lista de palavras. É uma língua visual com gramática própria.', 2600);
+    await sleep(4000);
+    await addBubble('A boa notícia? Quem está no nível Básico e começa pelo caminho certo <strong>avança muito mais rápido</strong> do que imagina. 🌱', 1800);
+  } else {
+    await addBubble(`Vou te explicar <strong>por que</strong> seu diagnóstico apontou para o nível Intermediário, <strong>${lead.nome}</strong>...`, 1800);
+    await sleep(4000);
+    await addBubble('Você já tem contato com a Libras — mas suas respostas mostram que você ainda <strong>traduz do português em vez de pensar visualmente.</strong>', 2200);
+    await sleep(4000);
+    await addBubble('Esse é o bloqueio mais comum nesse nível. Você até sabe alguns sinais, mas na hora de se comunicar de verdade... <strong>troca, gagueja, fica insegura.</strong>\n\nE isso tem causa: a estrutura nunca foi trabalhada do jeito certo.', 2600);
+    await sleep(4000);
+    await addBubble('A boa notícia? Esse nó tem solução — e quando você desamarra, a fluência vem rápido. ✨', 1600);
+  }
+
+  await sleep(4000);
+  await addBubble('Agora olha o que a <strong>Carla</strong> me mandou depois de passar por isso... 🥹', 1200);
+  await sleep(4000);
+  _mostrarDepoimento({
+    texto: '"Eu não acreditava que conseguia me comunicar em Libras. Depois do curso da Lorena, consigo ter conversas reais com surdos. Foi transformador."',
+    nome: 'Carla M.',
+    nivel: 'Era Básico → hoje Intermediário',
+  });
+
+  await sleep(5000);
+  await addBubble(`E sabe o que mais me emocionou na história da Carla?\n\nEla chegou aqui exatamente como você chegou hoje. Com dúvida. Com insegurança. Sem saber por onde começar. 🙏`, 2400);
+  await sleep(4000);
+
+  lead.statusCloser = 'Viu diagnóstico detalhado e depoimento';
+  Storage.upsert({ ...lead });
+
+  await addBubble(`<strong>${lead.nome}</strong>, tenho uma oferta especial para você. 🎁`, 1000);
+  await sleep(3000);
+  await addBubble('Essa oferta <strong>só aparece para quem faz essa avaliação</strong> — é um acesso que não está disponível em nenhum outro lugar.', 1800);
+  await sleep(3000);
+  await addBubble('Preparei um vídeo curto explicando tudo. Assiste agora 👇', 900);
+  await sleep(2000);
+
+  lead.statusCloser = 'Viu card VSL';
+  Storage.upsert({ ...lead });
+
+  _mostrarCardVSL();
+}
+
+// ── FLUXO AVANÇADO → MENTORIA ──
+async function fluxoMentoriaDireto() {
   const prop = nomeSignificado
     ? nomeSignificado.prop
     : 'seu propósito aqui vai além de você';
@@ -758,9 +820,9 @@ function _mostrarCardVSL() {
     <div class="vsl-card">
       <div class="vsl-header">
         <div class="vsl-badge">🔥 Exclusivo</div>
-        <div class="vsl-tag">Só para você</div>
+        <div class="vsl-tag">Só para quem fez a avaliação</div>
       </div>
-      <div class="vsl-thumb" onclick="window.location.href='https://www.clubedalibras.com/vsl'">
+      <div class="vsl-thumb" onclick="registrarCliqueVSL();window.location.href='https://www.clubedalibras.com/vsl'" style="cursor:pointer">
         <div class="vsl-thumb-bg"></div>
         <div class="vsl-play">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -770,7 +832,7 @@ function _mostrarCardVSL() {
       <div class="vsl-body">
         <div class="vsl-title">Você vai se arrepender se não ver <span class="orange">esse vídeo</span> — confia em mim</div>
         <div class="vsl-sub">A Lorena gravou um vídeo especial para quem está <strong>exatamente no seu nível</strong>. É curto, direto e pode mudar completamente o seu caminho em Libras.</div>
-        <a class="btn-vsl" href="https://www.clubedalibras.com/vsl">
+        <a class="btn-vsl" href="https://www.clubedalibras.com/vsl" onclick="registrarCliqueVSL()">
           ▶ Quero ver o vídeo agora
         </a>
         <div class="vsl-disclaimer">Gratuito · Sem cadastro · Menos de 10 minutos</div>
@@ -781,6 +843,13 @@ function _mostrarCardVSL() {
 }
 
 // ── TRACKING ──
+function registrarCliqueVSL() {
+  lead.clicouVSL    = true;
+  lead.clicouGrupo  = true;
+  lead.statusCloser = 'Clicou no vídeo VSL';
+  Storage.upsert({ ...lead });
+}
+
 function registrarClique() {
   lead.clicouGrupo  = true;
   lead.statusCloser = 'Entrou no grupo';
