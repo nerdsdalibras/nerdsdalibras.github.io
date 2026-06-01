@@ -486,6 +486,104 @@ body {
 .vagas-dot { width: 8px; height: 8px; border-radius: 50%; background: #EF4444; flex-shrink: 0; box-shadow: 0 0 6px rgba(239,68,68,.7); animation: pulseDot 1.4s ease-in-out infinite; }
 .vagas-row strong { color: #FCA5A5; }
 
+/* ── CARD VSL ── */
+.vsl-wrap { display: none; margin: 16px 0 8px 0; animation: fadeUp .5s ease; }
+.vsl-wrap.show { display: block; }
+.vsl-card {
+  border-radius: 18px; overflow: hidden;
+  border: 1.5px solid rgba(251,146,60,.45);
+  background: linear-gradient(145deg, #1a0e05 0%, #0f1117 60%);
+  box-shadow: 0 0 40px rgba(251,146,60,.12), 0 8px 32px rgba(0,0,0,.6);
+  position: relative;
+}
+.vsl-card::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: 18px;
+  background: linear-gradient(135deg, rgba(251,146,60,.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+.vsl-header {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid rgba(251,146,60,.15);
+  display: flex; align-items: center; gap: 10px;
+}
+.vsl-badge {
+  background: linear-gradient(135deg, #EA580C, #F97316);
+  border-radius: 999px; padding: 4px 12px;
+  font-size: .68rem; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; color: #fff;
+  box-shadow: 0 2px 12px rgba(249,115,22,.4);
+  white-space: nowrap;
+}
+.vsl-tag {
+  font-size: .72rem; font-weight: 600; color: rgba(251,146,60,.7);
+  letter-spacing: .04em; text-transform: uppercase;
+}
+.vsl-thumb {
+  position: relative; margin: 16px 18px 14px;
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(251,146,60,.2);
+  background: #0a0a0a;
+  aspect-ratio: 16/9;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.vsl-thumb-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #1a0800 0%, #0d0d0d 100%);
+}
+.vsl-play {
+  position: relative; z-index: 2;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(135deg, #EA580C, #F97316);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 12px rgba(249,115,22,.15), 0 8px 32px rgba(249,115,22,.4);
+  animation: playPulse 2s ease-in-out infinite;
+}
+@keyframes playPulse {
+  0%,100% { box-shadow: 0 0 0 12px rgba(249,115,22,.15), 0 8px 32px rgba(249,115,22,.4); }
+  50%      { box-shadow: 0 0 0 22px rgba(249,115,22,.05), 0 8px 32px rgba(249,115,22,.3); }
+}
+.vsl-play svg { width: 24px; height: 24px; fill: #fff; margin-left: 4px; }
+.vsl-thumb-label {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.75); border-radius: 6px; padding: 4px 10px;
+  font-size: .7rem; color: rgba(255,255,255,.7); white-space: nowrap; z-index: 2;
+}
+.vsl-body { padding: 0 18px 18px; }
+.vsl-title {
+  font-size: 1.05rem; font-weight: 900; line-height: 1.25;
+  color: #fff; margin-bottom: 8px; letter-spacing: -.02em;
+}
+.vsl-title .orange { color: #FB923C; }
+.vsl-sub {
+  font-size: .82rem; color: rgba(255,255,255,.55);
+  line-height: 1.6; margin-bottom: 16px;
+}
+.vsl-sub strong { color: rgba(255,255,255,.85); }
+.btn-vsl {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 15px 20px; border-radius: 12px;
+  background: linear-gradient(135deg, #EA580C 0%, #F97316 100%);
+  color: #fff; font-weight: 800; font-size: .92rem;
+  text-decoration: none; border: none;
+  box-shadow: 0 4px 24px rgba(249,115,22,.45);
+  transition: transform .2s, box-shadow .2s;
+  position: relative; overflow: hidden; letter-spacing: -.01em;
+  cursor: pointer;
+}
+.btn-vsl::after {
+  content: ''; position: absolute; top: -20%; left: -80%;
+  width: 50%; height: 140%;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.2) 50%, transparent 70%);
+  transform: skewX(-15deg); animation: shimmer 2.4s ease-in-out infinite;
+}
+.btn-vsl:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(249,115,22,.55); }
+.vsl-disclaimer {
+  text-align: center; font-size: .68rem;
+  color: rgba(255,255,255,.25); margin-top: 10px;
+}
+
 /* ── RODAPÉ ── */
 .chat-footer { padding: 10px 16px 18px; text-align: center; border-top: 1px solid var(--borda); }
 .chat-footer-text { font-size: .7rem; color: var(--text-time); }

@@ -635,6 +635,8 @@ async function verOferta(tipo) {
 
   if (tipo === 'curso') {
     _mostrarOfertaCurso(nivelCalculado || 'basico');
+    await sleep(2500);
+    _mostrarCardVSL();
   } else {
     _mostrarCardMentoria();
   }
@@ -743,6 +745,35 @@ function _mostrarCardMentoria() {
         <a class="btn-kiwify btn-mentoria-grupo" href="${CONFIG.WA_MENTORIA}" target="_blank" rel="noopener" onclick="registrarClique()">
           💬 Entrar no grupo agora →
         </a>
+      </div>
+    </div>`;
+  addElement(el);
+  scrollDown();
+}
+
+function _mostrarCardVSL() {
+  const el = document.createElement('div');
+  el.className = 'vsl-wrap show';
+  el.innerHTML = `
+    <div class="vsl-card">
+      <div class="vsl-header">
+        <div class="vsl-badge">🔥 Exclusivo</div>
+        <div class="vsl-tag">Só para você</div>
+      </div>
+      <div class="vsl-thumb" onclick="window.location.href='https://www.clubedalibras.com/vsl'">
+        <div class="vsl-thumb-bg"></div>
+        <div class="vsl-play">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="vsl-thumb-label">▶ Assistir agora</div>
+      </div>
+      <div class="vsl-body">
+        <div class="vsl-title">Você vai se arrepender se não ver <span class="orange">esse vídeo</span> — confia em mim</div>
+        <div class="vsl-sub">A Lorena gravou um vídeo especial para quem está <strong>exatamente no seu nível</strong>. É curto, direto e pode mudar completamente o seu caminho em Libras.</div>
+        <a class="btn-vsl" href="https://www.clubedalibras.com/vsl">
+          ▶ Quero ver o vídeo agora
+        </a>
+        <div class="vsl-disclaimer">Gratuito · Sem cadastro · Menos de 10 minutos</div>
       </div>
     </div>`;
   addElement(el);
