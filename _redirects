@@ -1,6 +1,9 @@
 # Netlify Redirects — Nerds da Libras
 # Formato: /link-curto   destino   302
 
+# ── VSL ──
+/vsl                  /vsl.html                                                  200
+
 # ── FUNIL DE VENDAS ──
 /quiz                 /quiz-libras.html                                          302
 /avaliacao            /avaliacao.html                                            302
