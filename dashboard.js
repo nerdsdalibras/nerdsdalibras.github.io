@@ -268,7 +268,7 @@ function renderLeadCard(l, idx) {
   const statusKey   = l.comprouKiwify ? 'comprou' : (l.status || 'novo');
   const statusLabel = DecisionEngine.STATUS_LABELS[statusKey] || statusKey;
   const timeAgo     = l.createdAt ? timeElapsed(l.createdAt) : '';
-  const wppLink     = l.whatsapp ? `https://wa.me/55${l.whatsapp.replace(/\D/g,'')}` : null;
+  const wppLink     = l.whatsapp ? `https://wa.me/55${l.whatsapp.replace(/\D/g,'')}?text=${encodeURIComponent(gerarMensagem(l))}` : null;
   const pontuacao   = l.pontuacao || 0;
   const scorePct    = Math.min(100, Math.round((pontuacao / 48) * 100));
   const scoreColor  = scorePct >= 65 ? 'var(--g)' : scorePct >= 40 ? 'var(--yellow)' : 'var(--red)';
@@ -342,7 +342,7 @@ function openLead(sessionId) {
     </div>`;
 
   document.getElementById('panel-hdr-actions').innerHTML = lead.whatsapp
-    ? `<a class="quick-btn qb-wpp" href="https://wa.me/55${lead.whatsapp.replace(/\D/g,'')}" target="_blank" rel="noopener">💬 WA</a>`
+    ? `<a class="quick-btn qb-wpp" href="https://wa.me/55${lead.whatsapp.replace(/\D/g,'')}?text=${encodeURIComponent(gerarMensagem(lead))}" target="_blank" rel="noopener">💬 WA</a>`
     : '';
 
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -411,8 +411,29 @@ function renderTab(tab) {
       </div>
 
       <div class="panel-section">
+        <div class="panel-section-title">Jornada no Funil</div>
+        <div class="funil-steps">
+          ${[
+            { icon: '📋', label: 'Fez a avaliação', note: l.createdAt ? formatDate(l.createdAt) : '—', done: true },
+            { icon: l.oferta === 'mentoria' ? '🎯' : '📚', label: 'Oferta definida', note: l.oferta === 'mentoria' ? 'Mentoria' : l.oferta === 'curso' ? 'Curso' : '—', done: !!l.oferta },
+            { icon: '🛒', label: 'Clicou no checkout', note: l.comprouKiwify ? 'Sim' : '—', done: !!l.comprouKiwify },
+            { icon: '💬', label: 'Entrou no grupo', note: l.clicouGrupo ? 'Sim' : '—', done: !!l.clicouGrupo },
+            { icon: '✅', label: 'Comprou', note: l.status === 'comprou' ? (l.updatedAt ? formatDate(l.updatedAt) : 'Sim') : '—', done: l.status === 'comprou' },
+          ].map(s => `
+            <div class="funil-step ${s.done ? 'done' : ''}">
+              <div class="funil-icon">${s.icon}</div>
+              <div class="funil-step-info">
+                <div class="funil-step-label">${s.label}</div>
+                <div class="funil-step-note">${s.note}</div>
+              </div>
+              <div class="funil-check">${s.done ? '✓' : '—'}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="panel-section">
         <div class="panel-section-title">Ações</div>
-        ${l.whatsapp ? `<a class="panel-big-btn pbb-wpp" href="https://wa.me/55${l.whatsapp.replace(/\D/g,'')}" target="_blank" rel="noopener">💬 Abrir WhatsApp</a>` : ''}
+        ${l.whatsapp ? `<a class="panel-big-btn pbb-wpp" href="https://wa.me/55${l.whatsapp.replace(/\D/g,'')}?text=${encodeURIComponent(gerarMensagem(l))}" target="_blank" rel="noopener">💬 Abrir WhatsApp com mensagem pronta</a>` : ''}
         <button class="panel-big-btn pbb-copy" onclick="copiarMensagemPanel()">📋 Copiar mensagem de abordagem</button>
       </div>`;
   }
@@ -466,6 +487,10 @@ function renderTab(tab) {
 
   else if (tab === 'ia') {
     body.innerHTML = getIASuggestions(l);
+  }
+
+  else if (tab === 'email') {
+    body.innerHTML = renderEmailTab(l);
   }
 }
 
@@ -588,12 +613,34 @@ function renderPipeline() {
         </div>
         <div class="col-cards">
           ${sl.length
-            ? sl.map(l => `
-              <div class="mini-card" onclick="openLead('${l.sessionId}')">
-                <div class="mini-name">${l.nome || 'Lead'}</div>
-                <div class="mini-sub">${l.whatsapp || '—'}</div>
-                ${l.pontuacao ? `<div class="mini-score">Score: ${l.pontuacao}</div>` : ''}
-              </div>`).join('')
+            ? sl.map(l => {
+                const wpp     = l.whatsapp ? l.whatsapp.replace(/\D/g,'') : null;
+                const wppHref = wpp ? `https://wa.me/55${wpp}?text=${encodeURIComponent(gerarMensagem(l))}` : null;
+                const date    = l.createdAt ? new Date(l.createdAt).toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' }) : '';
+                const hora    = l.createdAt ? new Date(l.createdAt).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : '';
+                const ofIcon  = l.oferta === 'mentoria' ? '🎯' : l.oferta === 'curso' ? '📚' : '';
+                return `
+                  <div class="mini-card" onclick="openLead('${l.sessionId}')">
+                    <div class="mini-card-top">
+                      <div class="mini-name">${l.nome || 'Lead'}</div>
+                      ${date ? `<div class="mini-date">${date} ${hora}</div>` : ''}
+                    </div>
+                    <div class="mini-sub">${l.whatsapp || '—'}${ofIcon ? ' · ' + ofIcon : ''}</div>
+                    <div class="mini-funnel">
+                      <span class="mf done" title="Avaliação">📋</span>
+                      <span class="mf-arr">›</span>
+                      <span class="mf ${l.oferta ? 'done' : ''}" title="Oferta">${ofIcon || '·'}</span>
+                      <span class="mf-arr">›</span>
+                      <span class="mf ${l.comprouKiwify ? 'done' : ''}" title="Checkout">🛒</span>
+                      <span class="mf-arr">›</span>
+                      <span class="mf ${l.clicouGrupo ? 'done' : ''}" title="Grupo">💬</span>
+                      <span class="mf-arr">›</span>
+                      <span class="mf ${l.status === 'comprou' ? 'done' : ''}" title="Comprou">✅</span>
+                    </div>
+                    ${l.pontuacao ? `<div class="mini-score">Score: ${l.pontuacao}</div>` : ''}
+                    ${wppHref ? `<a class="mini-wpp-btn" href="${wppHref}" target="_blank" rel="noopener" onclick="event.stopPropagation()">💬 Abrir WhatsApp</a>` : ''}
+                  </div>`;
+              }).join('')
             : '<div class="mini-empty">Vazio</div>'}
         </div>
       </div>`;
@@ -706,7 +753,7 @@ function renderAnalytics() {
 
 /* ── HELPERS ── */
 function formatDate(iso) {
-  return new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 function formatTime(iso) {
   return new Date(iso).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
@@ -810,6 +857,138 @@ function exportCSV() {
   const a    = document.createElement('a');
   a.href = url; a.download = `leads_${new Date().toISOString().slice(0, 10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
+}
+
+/* ── EMAIL REMARKETING ── */
+const EMAIL_DELAYS = [2, 24, 48];
+
+function _emailTemplate(l, num) {
+  const nome  = l.nome  || 'você';
+  const nivel = l.nivelIdentificado || '—';
+  const sfx   = l.genero === 'feminino' ? 'a' : 'o';
+  const link  = l.oferta === 'mentoria' ? CONFIG.MENTORIA_EDUZZ_URL : CONFIG.KIWIFY_URL;
+  const prod  = l.oferta === 'mentoria' ? CONFIG.MENTORIA_NOME       : CONFIG.CURSO_NOME;
+
+  const subjects = [
+    `${nome}, seu diagnóstico em Libras está aqui 🤟`,
+    `${nome}, o erro que trava 97% dos que aprendem Libras`,
+    `Última mensagem da Lorena pra você, ${nome} 🙏`,
+  ];
+
+  const bodies = [
+    `Oi ${nome}!\n\nAqui é a Lorena, da Nerds da Libras.\n\nVocê acabou de fazer o diagnóstico comigo e descobriu que está no nível ${nivel} em Libras.\n\n${l.oferta === 'mentoria'
+      ? `A ${CONFIG.MENTORIA_NOME} é para quem já tem base como você — e precisa destravar a fluência, a interpretação profissional e a confiança para ir mais longe.`
+      : `O ${CONFIG.CURSO_NOME} foi desenvolvido para pessoas exatamente no seu perfil. Com certificação de 300 horas e metodologia visual exclusiva — você aprende como a mente surda processa, não como tradução.`
+    }\n\nReservei uma condição especial para você por tempo limitado.\n\nResponde esse e-mail ou me chama no WhatsApp para saber mais. 🙏\n\nCom carinho,\nLorena\nNerds da Libras`,
+
+    `Oi ${nome}!\n\nOntem você fez o diagnóstico e ficou no nível ${nivel}.\n\nPreciso te contar algo que a maioria dos cursos nunca explica:\n\nA Libras não é português sinalizado. É uma língua completa, com gramática visual própria.\n\nEnquanto você tenta traduzir o português para sinais, seu cérebro fica em conflito. É por isso que pessoas que estudam por anos travam na hora de usar.\n\nO método certo inverte isso: você aprende a pensar visualmente. E aí as coisas fluem.\n\nA ${prod} vai te dar exatamente isso — com acompanhamento, estrutura e o caminho mais curto.\n\nA condição especial que reservei para você ainda está disponível.\n\nPosso te mostrar os detalhes?\n\nLorena 🤟\nNerds da Libras`,
+
+    `Oi ${nome}.\n\nEssa é minha última mensagem.\n\nFizemos o diagnóstico juntos há 2 dias. Você está no nível ${nivel} — e eu sei exatamente o que você precisa para evoluir.\n\nNão vou insistir. Sei que a vida é corrida e as decisões têm tempo.\n\nMas quero deixar uma coisa registrada:\n\nA barreira que existe hoje entre você e uma pessoa surda é real. E ela não vai desaparecer sozinha.\n\nQuando você estiver pronto${sfx}, o link está aqui:\n${link}\n\nVai ser um prazer te ver do outro lado.\n\nCom carinho,\nLorena 🤟\nNerds da Libras`,
+  ];
+
+  return { subject: subjects[num - 1], body: bodies[num - 1] };
+}
+
+function renderEmailTab(l) {
+  const now       = Date.now();
+  const createdMs = l.createdAt ? new Date(l.createdAt).getTime() : null;
+
+  const emailRow = `
+    <div class="panel-section">
+      <div class="panel-section-title">E-mail do Lead</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input class="agenda-input" type="email" id="lead-email-input"
+               placeholder="email@exemplo.com" value="${l.email || ''}"
+               style="margin:0;flex:1"
+               onkeydown="if(event.key==='Enter')salvarEmailLead('${l.sessionId}')"/>
+        <button class="panel-big-btn pbb-green" id="btn-salvar-email"
+                onclick="salvarEmailLead('${l.sessionId}')"
+                style="margin:0;width:auto;padding:10px 18px;font-size:.78rem;flex-shrink:0">
+          Salvar
+        </button>
+      </div>
+    </div>`;
+
+  const cards = EMAIL_DELAYS.map((delay, i) => {
+    const num      = i + 1;
+    const tpl      = _emailTemplate(l, num);
+    const sentKey  = `email${num}SentAt`;
+    const schedMs  = createdMs ? createdMs + delay * 3600000 : null;
+    const isSent   = !!l[sentKey];
+    const isOverdue= !isSent && !!schedMs && now > schedMs;
+    const isPending= !isSent && !isOverdue;
+
+    const statusCls = isSent ? 'sent' : isOverdue ? 'overdue' : 'pending';
+    const schedDate = schedMs ? new Date(schedMs) : null;
+    const statusTxt = isSent
+      ? `✅ Enviado em ${formatTime(l[sentKey])}`
+      : isOverdue
+        ? `⚠️ Atrasado — devia ser enviado em ${schedDate ? formatTime(schedDate.toISOString()) : '—'}`
+        : schedDate
+          ? `⏳ Enviar em ${formatTime(schedDate.toISOString())}`
+          : '—';
+
+    const mailto = l.email
+      ? `mailto:${l.email}?subject=${encodeURIComponent(tpl.subject)}&body=${encodeURIComponent(tpl.body)}`
+      : null;
+
+    const preview = tpl.body.replace(/\n/g,' ').substring(0, 115) + '…';
+
+    return `
+      <div class="email-card ec-${statusCls}">
+        <div class="email-card-hdr">
+          <span class="email-num-badge">Email ${num}</span>
+          <span class="email-delay-chip">${delay}h após avaliação</span>
+        </div>
+        <div class="email-status-row ${statusCls}">${statusTxt}</div>
+        <div class="email-subject">📧 ${tpl.subject}</div>
+        <div class="email-body-preview">${preview}</div>
+        <div class="email-actions">
+          <button class="quick-btn qb-copy"
+                  onclick="copiarTexto(${JSON.stringify(tpl.subject + '\n\n' + tpl.body)}, this)">
+            📋 Copiar
+          </button>
+          ${mailto
+            ? `<a class="quick-btn qb-open" href="${mailto}" target="_blank" rel="noopener">📬 Gmail</a>`
+            : `<span class="quick-btn" style="opacity:.35;cursor:default" title="Adicione o e-mail do lead acima">📬 Gmail</span>`}
+          ${!isSent
+            ? `<button class="quick-btn qb-sent" onclick="markEmailSent('${l.sessionId}', ${num})">✓ Enviado</button>`
+            : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    ${emailRow}
+    <div class="panel-section">
+      <div class="panel-section-title">Sequência de Remarketing — 3 emails</div>
+      <div style="display:flex;flex-direction:column;gap:10px">${cards}</div>
+    </div>`;
+}
+
+function markEmailSent(sessionId, num) {
+  const leads = Storage.getAll();
+  const idx   = leads.findIndex(l => l.sessionId === sessionId);
+  if (idx < 0) return;
+  leads[idx][`email${num}SentAt`] = new Date().toISOString();
+  leads[idx].updatedAt = new Date().toISOString();
+  Storage.save(leads, leads[idx]);
+  if (currentLead?.sessionId === sessionId) currentLead = leads[idx];
+  renderTab('email');
+}
+
+function salvarEmailLead(sessionId) {
+  const val = document.getElementById('lead-email-input')?.value?.trim();
+  const btn = document.getElementById('btn-salvar-email');
+  if (!val) return;
+  const leads = Storage.getAll();
+  const idx   = leads.findIndex(l => l.sessionId === sessionId);
+  if (idx < 0) return;
+  leads[idx].email     = val;
+  leads[idx].updatedAt = new Date().toISOString();
+  Storage.save(leads, leads[idx]);
+  if (currentLead?.sessionId === sessionId) currentLead = leads[idx];
+  if (btn) { btn.textContent = '✅ Salvo'; setTimeout(() => { btn.textContent = 'Salvar'; }, 2000); }
 }
 
 /* ── INIT ── */

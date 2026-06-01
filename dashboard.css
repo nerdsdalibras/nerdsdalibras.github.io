@@ -551,6 +551,65 @@ body {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* ── FUNNEL JOURNEY (panel) ── */
+.funil-steps { display:flex; flex-direction:column; gap:4px; }
+.funil-step {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:9px;
+  font-size:.79rem; opacity:.35; transition:opacity .15s;
+  border:1px solid transparent;
+}
+.funil-step.done {
+  opacity:1;
+  background:var(--gd); border-color:rgba(74,222,128,.14);
+}
+.funil-icon { font-size:1.05rem; width:24px; text-align:center; flex-shrink:0; }
+.funil-step-info { flex:1; }
+.funil-step-label { font-weight:700; color:var(--text); font-size:.76rem; }
+.funil-step-note  { font-size:.67rem; color:var(--ts); margin-top:1px; }
+.funil-check { font-size:.78rem; font-weight:800; color:var(--g); flex-shrink:0; }
+.funil-step:not(.done) .funil-check { color:var(--td); }
+
+/* ── MINI-CARD PIPELINE IMPROVEMENTS ── */
+.mini-card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:4px; margin-bottom:2px; }
+.mini-date { font-size:.58rem; color:var(--td); flex-shrink:0; text-align:right; line-height:1.3; }
+.mini-funnel { display:flex; align-items:center; gap:3px; margin:6px 0 4px; font-size:.72rem; }
+.mf { opacity:.18; transition:opacity .15s; line-height:1; }
+.mf.done { opacity:1; }
+.mf-arr { color:var(--td); font-size:.6rem; line-height:1; }
+.mini-wpp-btn {
+  display:block; margin-top:8px; padding:6px 10px; border-radius:8px;
+  background:#005C4B; color:#fff; font-size:.71rem; font-weight:700;
+  text-decoration:none; text-align:center; transition:opacity .2s;
+}
+.mini-wpp-btn:hover { opacity:.82; }
+
+/* ── EMAIL REMARKETING ── */
+.email-card {
+  background:var(--s2); border:1px solid var(--bdr);
+  border-radius:12px; padding:12px 14px;
+}
+.ec-overdue { border-color:rgba(239,68,68,.22); }
+.ec-sent    { border-color:rgba(74,222,128,.16); opacity:.7; }
+.email-card-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
+.email-num-badge {
+  font-size:.65rem; font-weight:800; color:var(--blue);
+  background:rgba(96,165,250,.1); border:1px solid rgba(96,165,250,.18);
+  border-radius:6px; padding:2px 8px;
+}
+.email-delay-chip { font-size:.63rem; color:var(--td); }
+.email-status-row {
+  font-size:.72rem; border-radius:6px; padding:5px 9px;
+  margin-bottom:9px; font-weight:600; line-height:1.35;
+}
+.email-status-row.pending  { color:var(--yellow); background:rgba(251,191,36,.07); border:1px solid rgba(251,191,36,.14); }
+.email-status-row.overdue  { color:var(--red);    background:rgba(239,68,68,.07);  border:1px solid rgba(239,68,68,.13); }
+.email-status-row.sent     { color:var(--g);      background:rgba(74,222,128,.07); border:1px solid rgba(74,222,128,.13); }
+.email-subject { font-size:.79rem; font-weight:700; color:var(--text); margin-bottom:5px; }
+.email-body-preview { font-size:.71rem; color:var(--ts); line-height:1.45; margin-bottom:10px; }
+.email-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.qb-sent { background:var(--gd); color:var(--g); border:1px solid rgba(74,222,128,.22); }
+
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
