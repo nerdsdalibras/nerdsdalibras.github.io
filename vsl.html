@@ -247,20 +247,133 @@
       color: var(--verde); font-size: 1.4rem;
     }
 
+    /* ── LOCK ANIMADO ── */
+    .lock-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 24px;
+      padding: 40px 20px;
+    }
+
+    .lock-scene { position: relative; width: 120px; height: 140px; }
+
+    /* corpo do cadeado */
+    .lock-body {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 80px; border-radius: 16px;
+      background: linear-gradient(145deg, #1a3a1a, #0f2a0f);
+      border: 2px solid var(--verde);
+      box-shadow: 0 0 30px rgba(34,197,94,.25), inset 0 1px 0 rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lock-keyhole {
+      width: 22px; height: 32px;
+      background: rgba(0,0,0,.7);
+      border-radius: 50% 50% 4px 4px / 40% 40% 4px 4px;
+      position: relative;
+    }
+    .lock-keyhole::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 8px; height: 14px;
+      background: rgba(0,0,0,.7);
+      border-radius: 0 0 4px 4px;
+    }
+
+    /* arco do cadeado */
+    .lock-shackle {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 54px; height: 58px;
+      border: 8px solid var(--verde);
+      border-bottom: none;
+      border-radius: 27px 27px 0 0;
+      box-shadow: 0 0 16px rgba(34,197,94,.4);
+      transform-origin: bottom right;
+      transition: transform .6s cubic-bezier(.34,1.56,.64,1), opacity .4s ease;
+    }
+
+    /* estado aberto */
+    .lock-scene.open .lock-shackle {
+      transform: translateX(-50%) rotate(-55deg) translateY(-18px);
+    }
+    .lock-scene.open .lock-body {
+      border-color: var(--verde-lt);
+      box-shadow: 0 0 60px rgba(34,197,94,.5), inset 0 1px 0 rgba(255,255,255,.1);
+    }
+
+    /* brilho de abertura */
+    .lock-burst {
+      position: absolute; inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34,197,94,.35) 0%, transparent 70%);
+      opacity: 0; pointer-events: none;
+      transform: scale(.4);
+      transition: opacity .4s ease, transform .5s ease;
+    }
+    .lock-scene.open .lock-burst {
+      opacity: 1; transform: scale(1);
+    }
+
+    /* partículas */
+    .lock-particles { position: absolute; inset: 0; pointer-events: none; }
+    .lock-particles span {
+      position: absolute; top: 50%; left: 50%;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--verde);
+      opacity: 0;
+      transition: none;
+    }
+    .lock-scene.open .lock-particles span {
+      animation: particle .7s ease-out forwards;
+    }
+    .lock-scene.open .lock-particles span:nth-child(1)  { animation-delay: .05s; --dx:-60px; --dy:-50px; }
+    .lock-scene.open .lock-particles span:nth-child(2)  { animation-delay: .10s; --dx: 60px; --dy:-55px; }
+    .lock-scene.open .lock-particles span:nth-child(3)  { animation-delay: .07s; --dx:-80px; --dy:  0px; }
+    .lock-scene.open .lock-particles span:nth-child(4)  { animation-delay: .12s; --dx: 80px; --dy:  5px; }
+    .lock-scene.open .lock-particles span:nth-child(5)  { animation-delay: .09s; --dx:-45px; --dy: 55px; }
+    .lock-scene.open .lock-particles span:nth-child(6)  { animation-delay: .15s; --dx: 45px; --dy: 60px; }
+    .lock-scene.open .lock-particles span:nth-child(7)  { animation-delay: .06s; --dx:  0px; --dy:-70px; }
+    .lock-scene.open .lock-particles span:nth-child(8)  { animation-delay: .13s; --dx: 20px; --dy: 70px; }
+    @keyframes particle {
+      0%   { opacity: 1; transform: translate(-50%,-50%) translate(0,0) scale(1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(0); }
+    }
+
+    /* contador */
+    .lock-countdown {
+      font-size: 3.5rem; font-weight: 900; color: var(--verde);
+      letter-spacing: .04em; font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 30px rgba(34,197,94,.4);
+      transition: color .4s;
+    }
+    .lock-countdown.unlocked { color: var(--verde-lt); text-shadow: 0 0 40px rgba(74,222,128,.6); }
+
+    .lock-hint {
+      font-size: .78rem; color: var(--texto-dim); letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* mão de libras pós-abertura */
+    .libras-sign {
+      font-size: 5rem; line-height: 1;
+      opacity: 0; transform: scale(.4) rotate(-15deg);
+      transition: opacity .6s ease .3s, transform .7s cubic-bezier(.34,1.56,.64,1) .3s;
+      filter: drop-shadow(0 0 20px rgba(34,197,94,.6));
+      display: none;
+    }
+    .libras-sign.show {
+      display: block; opacity: 1; transform: scale(1) rotate(0deg);
+    }
+    .libras-msg {
+      font-size: 1.1rem; font-weight: 800; color: var(--verde-lt);
+      text-align: center; line-height: 1.4;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .5s ease .7s, transform .5s ease .7s;
+    }
+    .libras-msg.show { opacity: 1; transform: translateY(0); }
+
     .cta-locked {
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      padding: 20px 32px; border-radius: 18px;
-      border: 1px solid var(--borda);
-      background: var(--card);
+      display: flex; flex-direction: column; align-items: center;
       width: 100%; max-width: 540px; text-align: center;
     }
-    .cta-locked-icon { font-size: 1.5rem; }
-    .cta-locked-text { font-size: .82rem; color: var(--texto-sec); }
-    .cta-countdown {
-      font-size: 2rem; font-weight: 900; color: var(--verde);
-      letter-spacing: .06em; font-variant-numeric: tabular-nums;
-    }
-    .cta-locked-hint { font-size: .68rem; color: var(--texto-dim); }
 
     .cta-unlocked { display: none; width: 100%; max-width: 540px; }
     .cta-unlocked.visible {
@@ -541,10 +654,25 @@
 
         <!-- bloqueado -->
         <div class="cta-locked" id="ctaLocked">
-          <div class="cta-locked-icon">🔒</div>
-          <div class="cta-locked-text">Oferta liberada após o vídeo</div>
-          <div class="cta-countdown" id="ctaCountdown">--:--</div>
-          <div class="cta-locked-hint">Continue assistindo ao vídeo</div>
+          <div class="lock-wrap">
+            <div class="lock-scene" id="lockScene">
+              <div class="lock-burst"></div>
+              <div class="lock-particles">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="lock-shackle"></div>
+              <div class="lock-body">
+                <div class="lock-keyhole"></div>
+              </div>
+            </div>
+
+            <div class="libras-sign" id="librasSign">🤟</div>
+            <div class="libras-msg" id="librasMsg">Você desbloqueou o acesso!<br/>A oferta está disponível abaixo.</div>
+
+            <div class="lock-countdown" id="ctaCountdown">08:00</div>
+            <div class="lock-hint">Oferta liberada após o vídeo</div>
+          </div>
         </div>
 
         <!-- desbloqueado -->
@@ -585,23 +713,42 @@
   // TIMER DO BOTÃO DE COMPRA
   // 180 = 3 min | 300 = 5 min | 600 = 10 min
   // ════════════════════════════════════════════
-  const CTA_DELAY_SECONDS = 420; // 7 minutos
+  const CTA_DELAY_SECONDS = 480; // 8 minutos
 
   (function () {
-    const locked    = document.getElementById('ctaLocked');
-    const unlocked  = document.getElementById('ctaUnlocked');
-    const ctaFinal  = document.getElementById('ctaFinal');
-    const countdown = document.getElementById('ctaCountdown');
+    const locked     = document.getElementById('ctaLocked');
+    const unlocked   = document.getElementById('ctaUnlocked');
+    const countdown  = document.getElementById('ctaCountdown');
+    const lockScene  = document.getElementById('lockScene');
+    const librasSign = document.getElementById('librasSign');
+    const librasMsg  = document.getElementById('librasMsg');
 
     let remaining = CTA_DELAY_SECONDS;
     function pad(n) { return String(n).padStart(2, '0'); }
 
-    function tick() {
-      if (remaining <= 0) {
+    function unlock() {
+      // 1. Abre o cadeado
+      lockScene.classList.add('open');
+      countdown.classList.add('unlocked');
+      countdown.textContent = '🔓';
+
+      // 2. Após animação do cadeado, mostra o sinal de Libras
+      setTimeout(function () {
+        librasSign.classList.add('show');
+        librasMsg.classList.add('show');
+      }, 600);
+
+      // 3. Desliza o botão de compra
+      setTimeout(function () {
         locked.style.display = 'none';
         unlocked.classList.add('visible');
-        ctaFinal.classList.add('visible');
         unlocked.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 2200);
+    }
+
+    function tick() {
+      if (remaining <= 0) {
+        unlock();
         return;
       }
       countdown.textContent = pad(Math.floor(remaining / 60)) + ':' + pad(remaining % 60);
