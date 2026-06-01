@@ -130,19 +130,18 @@ function renderStats(leads) {
   const now   = new Date();
   const total = leads.length;
 
-  const hoje = leads.filter(l => {
-    if (!l.createdAt) return false;
-    const d = new Date(l.createdAt);
-    return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  }).length;
-
-  const muitoQuente = leads.filter(l => l.status === 'muito_quente').length;
-  const prioridade  = leads.filter(l => l.status === 'prioridade_maxima').length;
-  const comprou     = leads.filter(l => l.status === 'comprou' || l.comprouKiwify).length;
-  const semContato  = leads.filter(l =>
-    !l.status || l.status === 'novo' ||
-    (l.statusCloser === 'Aguardando resposta sobre próximo nível' && l.status !== 'comprou' && l.status !== 'nao_quis')
-  ).length;
+  let hoje = 0, muitoQuente = 0, prioridade = 0, comprou = 0, semContato = 0;
+  for (const l of leads) {
+    if (l.createdAt) {
+      const d = new Date(l.createdAt);
+      if (d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) hoje++;
+    }
+    if (l.status === 'muito_quente') muitoQuente++;
+    else if (l.status === 'prioridade_maxima') prioridade++;
+    if (l.status === 'comprou' || l.comprouKiwify) comprou++;
+    if (!l.status || l.status === 'novo' ||
+        (l.statusCloser === 'Aguardando resposta sobre próximo nível' && l.status !== 'comprou' && l.status !== 'nao_quis')) semContato++;
+  }
   const conversao   = total > 0 ? Math.round((comprou / total) * 100) : 0;
   const faturamento = comprou * 397;
 
@@ -193,15 +192,14 @@ function renderStats(leads) {
 /* ── FILTERS ── */
 function renderFilters(leads) {
   const counts = {
-    todos:            leads.length,
-    prioridade_maxima: leads.filter(l => l.status === 'prioridade_maxima').length,
-    muito_quente:     leads.filter(l => l.status === 'muito_quente').length,
-    quente:           leads.filter(l => l.status === 'quente').length,
-    morno:            leads.filter(l => l.status === 'morno').length,
-    comprou:          leads.filter(l => l.status === 'comprou' || l.comprouKiwify).length,
-    nao_quis:         leads.filter(l => l.status === 'nao_quis').length,
-    aguardando:       leads.filter(l => l.status === 'aguardando').length,
+    todos: leads.length,
+    prioridade_maxima: 0, muito_quente: 0, quente: 0,
+    morno: 0, comprou: 0, nao_quis: 0, aguardando: 0,
   };
+  for (const l of leads) {
+    if (l.status === 'comprou' || l.comprouKiwify) counts.comprou++;
+    if (l.status && l.status !== 'comprou' && counts[l.status] !== undefined) counts[l.status]++;
+  }
   const defs = [
     { key: 'todos',             label: 'Todos' },
     { key: 'prioridade_maxima', label: '⭐ Prioridade' },
@@ -226,8 +224,10 @@ function filtrar(status, btn) {
   renderLeads();
 }
 
+let _searchTimer = null;
 function onSearch() {
-  renderLeads();
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(renderLeads, 180);
 }
 
 /* ── LEADS LIST ── */
@@ -787,7 +787,8 @@ function salvarAgenda() {
   const idx   = leads.findIndex(l => l.sessionId === currentLead.sessionId);
   if (idx >= 0) {
     leads[idx].agenda = { dt, nota };
-    localStorage.setItem('ndl_leads', JSON.stringify(leads));
+    leads[idx].updatedAt = new Date().toISOString();
+    Storage.save(leads, leads[idx]);
     currentLead = leads[idx];
   }
   renderTab('agenda');
