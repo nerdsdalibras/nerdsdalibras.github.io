@@ -4,345 +4,284 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Do ZERO a LIBRAS — Assista ao vídeo completo</title>
-
-  <meta name="description" content="Aprenda Libras do zero em 30 dias com o método exclusivo i+1 da Profa. Lorena. Assista ao vídeo e garanta sua vaga." />
+  <meta name="description" content="Aprenda Libras do zero em 30 dias com o método exclusivo i+1 da Profa. Lorena." />
   <meta name="robots" content="noindex, nofollow" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ouro:    #C9963A;
-      --ouro-lt: #E8B96A;
-      --escuro:  #0D0D0D;
-      --cinza:   #1A1A1A;
-      --borda:   rgba(255,255,255,0.07);
-      --texto:   rgba(255,255,255,0.55);
-      --verde:   #22C55E;
+      --teal:     #0BBFAD;
+      --teal-dk:  #089E8E;
+      --verde:    #22C55E;
+      --verde-dk: #16A34A;
+      --escuro:   #111111;
+      --cinza:    #444444;
+      --cinza-lt: #888888;
+      --bg:       #F2F2F2;
+      --bg-card:  #FFFFFF;
+      --borda:    #E0E0E0;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--escuro);
-      color: #fff;
+      background: var(--bg);
+      color: var(--escuro);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    .bg-noise {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background:
-        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(201,150,58,.12) 0%, transparent 55%),
-        radial-gradient(ellipse 40% 30% at 80% 100%, rgba(34,197,94,.06) 0%, transparent 60%);
-    }
-
     .top-bar {
-      position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 100;
-      background: linear-gradient(90deg, transparent, var(--ouro), var(--ouro-lt), var(--ouro), transparent);
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--verde), var(--teal));
     }
 
     .wrapper {
-      position: relative; z-index: 1;
-      max-width: 640px;
+      max-width: 780px;
       margin: 0 auto;
-      padding: 44px 20px 80px;
+      padding: 36px 20px 80px;
       display: flex; flex-direction: column; align-items: center;
     }
 
-    /* ══ 1. HEADER MÍNIMO ══ */
-    .header {
-      width: 100%; text-align: center; margin-bottom: 18px;
-    }
-
+    /* ── LOGO ── */
     .logo-wrap {
-      display: flex; align-items: center; justify-content: center;
-      gap: 10px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
     }
     .logo-ring {
-      width: 46px; height: 46px; border-radius: 50%; padding: 2px; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--ouro) 0%, var(--ouro-lt) 50%, var(--ouro) 100%);
+      width: 44px; height: 44px; border-radius: 50%; padding: 2px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--teal), var(--teal-dk));
     }
     .logo-ring img {
       width: 100%; height: 100%; border-radius: 50%;
-      object-fit: cover; object-position: top center;
-      display: block; background: var(--cinza);
+      object-fit: cover; object-position: top center; display: block; background: #ddd;
     }
-    .logo-name { font-size: .88rem; font-weight: 800; color: #fff; line-height: 1.2; }
-    .logo-sub  { font-size: .64rem; color: var(--ouro); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+    .logo-name { font-size: .9rem; font-weight: 800; color: var(--escuro); line-height: 1.2; }
+    .logo-sub  { font-size: .65rem; color: var(--teal); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 
-    .urgency-bar {
-      display: inline-flex; align-items: center; gap: 7px;
-      background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.28);
-      border-radius: 999px; padding: 5px 14px;
-      font-size: .7rem; font-weight: 700; color: #4ADE80;
-      letter-spacing: .04em; margin-bottom: 14px;
-      animation: pulseGreen 2s ease-in-out infinite;
-    }
-    @keyframes pulseGreen { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.35)} 50%{box-shadow:0 0 0 5px rgba(34,197,94,0)} }
-    .urgency-dot {
-      width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; flex-shrink: 0;
-      animation: blink 1.2s ease-in-out infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
-
+    /* ── HEADLINE ── */
+    .headline-wrap { width: 100%; text-align: center; margin-bottom: 24px; }
     .headline {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.75rem; font-weight: 800; line-height: 1.2;
-      background: linear-gradient(135deg, #fff 40%, var(--ouro-lt));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; margin-bottom: 8px;
+      font-size: 2.4rem; font-weight: 900; line-height: 1.15;
+      color: var(--escuro); margin-bottom: 8px;
     }
-    .headline em { font-style: normal; -webkit-text-fill-color: var(--ouro-lt); }
-
+    .headline .teal { color: var(--teal); }
     .subheadline {
-      font-size: .86rem; color: var(--texto); line-height: 1.55;
-      max-width: 500px; margin: 0 auto;
+      font-size: 1rem; color: var(--cinza); line-height: 1.6;
+      max-width: 560px; margin: 0 auto;
     }
-    .subheadline strong { color: rgba(255,255,255,.82); }
 
-    /* ══ 2. PLAYER — acima da dobra ══ */
-    .player-section { width: 100%; margin-top: 20px; }
-
+    /* ── VÍDEO ── */
     .player-wrap {
-      width: 100%; border-radius: 18px; overflow: hidden;
-      border: 1px solid rgba(201,150,58,.3);
-      box-shadow: 0 0 60px rgba(201,150,58,.14), 0 20px 60px rgba(0,0,0,.6);
-      background: #000;
+      width: 100%; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 4px 40px rgba(0,0,0,.13);
+      background: #000; border: 1px solid var(--borda);
     }
     .player-ratio { position: relative; padding-bottom: 56.25%; height: 0; }
-    .player-ratio iframe {
-      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
-    }
+    .player-ratio iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
 
     .player-placeholder {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 14px;
-      background: radial-gradient(ellipse 80% 70% at 50% 50%, #1a1000, #000);
+      align-items: center; justify-content: center; gap: 16px;
+      background: #1a1a1a; cursor: pointer;
     }
-    .play-btn {
+    .play-circle {
       width: 72px; height: 72px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--ouro), var(--ouro-lt));
+      background: var(--teal);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 40px rgba(201,150,58,.5);
-      animation: pulsePlay 2s ease-in-out infinite; cursor: pointer;
+      box-shadow: 0 0 0 14px rgba(11,191,173,.15);
+      animation: pulsePlay 2s ease-in-out infinite;
     }
-    @keyframes pulsePlay { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
-    .play-btn svg { width: 28px; height: 28px; fill: #000; margin-left: 4px; }
-    .placeholder-text { font-size: .78rem; color: var(--ouro-lt); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+    @keyframes pulsePlay { 0%,100%{box-shadow:0 0 0 14px rgba(11,191,173,.15)} 50%{box-shadow:0 0 0 22px rgba(11,191,173,.05)} }
+    .play-circle svg { width: 28px; height: 28px; fill: #fff; margin-left: 4px; }
+    .placeholder-text { font-size: .78rem; color: rgba(255,255,255,.5); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 
-    .watch-hint {
-      text-align: center; margin-top: 10px;
-      font-size: .72rem; color: rgba(255,255,255,.28);
-      display: flex; align-items: center; justify-content: center; gap: 5px;
-    }
-
-    /* ══ 3. DEPOIMENTOS — logo abaixo do vídeo ══ */
-    .section-label {
-      width: 100%; display: flex; align-items: center; gap: 10px;
-      margin: 30px 0 14px;
-      font-size: .68rem; letter-spacing: .14em;
-      text-transform: uppercase; font-weight: 800; color: var(--ouro-lt);
-    }
-    .section-label::before, .section-label::after {
-      content: ''; flex: 1; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(201,150,58,.3), transparent);
+    /* ── APÓS VÍDEO ── */
+    .after-video {
+      width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;
+      padding: 24px 0 0;
     }
 
-    .depoimentos { width: 100%; display: flex; flex-direction: column; gap: 12px; }
-
-    .dep-card {
-      padding: 18px 18px;
-      border-radius: 16px;
-      border: 1px solid var(--borda);
-      background: rgba(255,255,255,.03);
-      position: relative;
-    }
-    .dep-stars { color: #F59E0B; font-size: .78rem; margin-bottom: 8px; letter-spacing: 2px; }
-    .dep-text {
-      font-size: .82rem; color: rgba(255,255,255,.75); line-height: 1.6;
-      font-style: italic;
-    }
-    .dep-text strong { color: #fff; font-style: normal; }
-    .dep-author {
-      display: flex; align-items: center; gap: 10px; margin-top: 12px;
-    }
-    .dep-avatar {
-      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--ouro), var(--ouro-lt));
+    .avatars-row { display: flex; align-items: center; gap: 10px; }
+    .avatar-stack { display: flex; }
+    .av {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--bg);
+      margin-left: -10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: .85rem; font-weight: 800; color: #000;
+      font-size: .7rem; font-weight: 800; color: #fff;
+      flex-shrink: 0;
     }
-    .dep-name  { font-size: .8rem; font-weight: 700; color: #fff; line-height: 1.2; }
-    .dep-label { font-size: .65rem; color: var(--texto); }
+    .av:first-child { margin-left: 0; }
+    .avatars-text { font-size: .95rem; font-weight: 700; color: var(--escuro); }
 
-    /* ══ PROVA SOCIAL ══ */
-    .social-proof {
-      width: 100%; margin-top: 24px;
-      display: flex; align-items: center;
-      border: 1px solid var(--borda); border-radius: 14px;
-      background: rgba(255,255,255,.02); overflow: hidden;
-    }
-    .sp-item {
-      flex: 1; padding: 13px 6px; text-align: center;
-      border-right: 1px solid var(--borda);
-    }
-    .sp-item:last-child { border-right: none; }
-    .sp-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem; font-weight: 800; color: var(--ouro-lt); line-height: 1;
-    }
-    .sp-label { font-size: .6rem; color: var(--texto); margin-top: 3px; line-height: 1.3; }
+    /* ── CTA ── */
+    .cta-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
-    /* ══ BENEFÍCIOS ══ */
-    .benefits { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-
-    .benefit-row {
-      display: flex; align-items: flex-start; gap: 13px;
-      padding: 15px 16px; border-radius: 13px;
-      border: 1px solid rgba(34,197,94,.16); background: rgba(34,197,94,.04);
-    }
-    .benefit-icon {
-      width: 36px; height: 36px; flex-shrink: 0;
-      background: rgba(34,197,94,.1); border-radius: 9px;
-      border: 1px solid rgba(34,197,94,.18);
-      display: flex; align-items: center; justify-content: center; font-size: 1rem;
-    }
-    .benefit-text { flex: 1; }
-    .benefit-title { font-size: .86rem; font-weight: 700; color: #fff; line-height: 1.3; }
-    .benefit-desc  { font-size: .73rem; color: var(--texto); margin-top: 3px; line-height: 1.45; }
-
-    /* ══ 4. CTA — oculto até o timer ══ */
-    .cta-section {
-      width: 100%; margin-top: 36px; text-align: center;
-    }
-
-    /* estado bloqueado */
     .cta-locked {
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      padding: 22px 20px; border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      padding: 18px 28px; border-radius: 16px;
+      border: 1px solid var(--borda); background: #fff;
+      width: 100%; max-width: 520px; text-align: center;
     }
-    .cta-locked-icon { font-size: 1.6rem; opacity: .5; }
-    .cta-locked-text { font-size: .8rem; color: var(--texto); line-height: 1.5; }
+    .cta-locked-icon { font-size: 1.4rem; }
+    .cta-locked-text { font-size: .82rem; color: var(--cinza); }
     .cta-countdown {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; font-weight: 800; color: var(--ouro-lt);
-      letter-spacing: .06em;
+      font-size: 1.8rem; font-weight: 900; color: var(--escuro);
+      letter-spacing: .05em; font-variant-numeric: tabular-nums;
     }
-    .cta-locked-hint {
-      font-size: .68rem; color: rgba(255,255,255,.2); letter-spacing: .04em;
-    }
+    .cta-locked-hint { font-size: .68rem; color: var(--cinza-lt); }
 
-    /* estado desbloqueado */
-    .cta-unlocked { display: none; }
+    .cta-unlocked { display: none; width: 100%; max-width: 520px; }
     .cta-unlocked.visible {
-      display: block;
-      animation: fadeSlideUp .6s ease-out forwards;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      animation: fadeUp .5s ease-out forwards;
     }
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .cta-label {
-      font-size: .7rem; color: var(--texto); margin-bottom: 12px;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .cta-label::before, .cta-label::after {
-      content: ''; flex: 1; max-width: 60px; height: 1px; background: rgba(255,255,255,.1);
-    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 
     .cta-btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 20px 24px; border-radius: 16px;
-      background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
-      color: #fff; font-weight: 900; font-size: 1.05rem;
-      text-align: center; text-decoration: none; border: none; cursor: pointer;
-      letter-spacing: .03em;
-      box-shadow: 0 0 40px rgba(34,197,94,.55), 0 6px 24px rgba(34,197,94,.35);
-      transition: box-shadow .3s, transform .2s;
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 18px 18px 28px; border-radius: 999px;
+      background: var(--verde); color: #fff;
+      font-weight: 800; font-size: 1.05rem;
+      text-decoration: none; border: none; cursor: pointer;
+      box-shadow: 0 4px 24px rgba(34,197,94,.4);
+      transition: background .2s, transform .15s, box-shadow .2s;
       position: relative; overflow: hidden;
     }
-    .cta-btn:hover {
-      box-shadow: 0 0 60px rgba(34,197,94,.75), 0 8px 30px rgba(34,197,94,.45);
-      transform: translateY(-2px) scale(1.01);
-    }
+    .cta-btn:hover { background: var(--verde-dk); box-shadow: 0 6px 32px rgba(34,197,94,.55); transform: translateY(-1px); }
     .cta-btn:active { transform: scale(.98); }
+    .cta-btn-arrow {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(0,0,0,.18);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .cta-btn-arrow svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2.5; }
     .cta-btn::after {
       content: ''; position: absolute; top: -20%; left: -80%;
-      width: 50%; height: 140%;
-      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%);
+      width: 45%; height: 140%;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
       transform: skewX(-15deg);
-      animation: shimmer 2.8s ease-in-out infinite;
+      animation: shimmer 2.6s ease-in-out infinite;
     }
-    @keyframes shimmer {
-      0%   { left: -80%; opacity: 1; }
-      55%  { left: 130%; opacity: 1; }
-      56%  { opacity: 0; }
-      100% { left: 130%; opacity: 0; }
+    @keyframes shimmer { 0%{left:-80%;opacity:1} 55%{left:130%;opacity:1} 56%{opacity:0} 100%{left:130%;opacity:0} }
+
+    .trust-badges {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; flex-wrap: wrap; font-size: .78rem; color: var(--cinza);
+    }
+    .trust-badges span { display: flex; align-items: center; gap: 5px; }
+    .stars { color: #F59E0B; }
+
+    /* ── BENEFITS ── */
+    .benefits-card {
+      width: 100%; margin-top: 36px;
+      background: var(--bg-card); border-radius: 20px;
+      border: 1px solid var(--borda); padding: 32px 28px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+    }
+    .benefit-col { display: flex; flex-direction: column; gap: 10px; }
+    .benefit-icon-wrap {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--teal);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .benefit-icon-wrap svg { width: 24px; height: 24px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .benefit-title { font-size: .95rem; font-weight: 800; color: var(--escuro); line-height: 1.3; }
+    .benefit-desc  { font-size: .8rem; color: var(--cinza); line-height: 1.55; }
+
+    /* ── SEÇÃO ── */
+    .section-title {
+      width: 100%; text-align: center; margin: 44px 0 16px;
+      font-size: 2rem; font-weight: 900; color: var(--escuro); line-height: 1.2;
     }
 
-    .cta-sub {
-      margin-top: 11px; font-size: .7rem; color: rgba(255,255,255,.28);
-      display: flex; align-items: center; justify-content: center; gap: 7px; flex-wrap: wrap;
+    /* ── DEPOIMENTOS ── */
+    .depoimentos { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+    .dep-card {
+      background: var(--bg-card); border-radius: 16px;
+      border: 1px solid var(--borda); padding: 20px 20px;
     }
+    .dep-stars { color: #F59E0B; font-size: .82rem; margin-bottom: 10px; letter-spacing: 1px; }
+    .dep-text  { font-size: .88rem; color: var(--cinza); line-height: 1.65; font-style: italic; }
+    .dep-text strong { color: var(--escuro); font-style: normal; }
+    .dep-author { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+    .dep-avatar {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      background: var(--teal);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; font-weight: 800; color: #fff;
+    }
+    .dep-name  { font-size: .84rem; font-weight: 700; color: var(--escuro); }
+    .dep-label { font-size: .68rem; color: var(--cinza-lt); }
 
-    /* ══ GARANTIA ══ */
+    /* ── GARANTIA ── */
     .garantia {
-      width: 100%; margin-top: 24px; padding: 18px 18px;
-      border-radius: 14px;
-      border: 1px solid rgba(201,150,58,.22); background: rgba(201,150,58,.05);
-      display: flex; align-items: flex-start; gap: 14px;
+      width: 100%; margin-top: 36px; padding: 24px;
+      border-radius: 16px; border: 2px solid var(--teal);
+      background: rgba(11,191,173,.05);
+      display: flex; align-items: flex-start; gap: 16px;
     }
-    .garantia-icon { font-size: 1.8rem; flex-shrink: 0; line-height: 1; }
-    .garantia-title { font-size: .88rem; font-weight: 800; color: var(--ouro-lt); margin-bottom: 4px; }
-    .garantia-desc  { font-size: .76rem; color: var(--texto); line-height: 1.5; }
-    .garantia-desc strong { color: rgba(255,255,255,.8); }
+    .garantia-icon { font-size: 2.2rem; flex-shrink: 0; line-height: 1; }
+    .garantia-title { font-size: 1rem; font-weight: 800; color: var(--escuro); margin-bottom: 5px; }
+    .garantia-desc  { font-size: .83rem; color: var(--cinza); line-height: 1.6; }
+    .garantia-desc strong { color: var(--escuro); }
 
-    /* ══ BIO ══ */
+    /* ── BIO ── */
     .bio-card {
-      width: 100%; margin-top: 24px; padding: 18px 18px;
-      border-radius: 18px; border: 1px solid var(--borda); background: rgba(255,255,255,.03);
-      display: flex; align-items: center; gap: 16px;
+      width: 100%; margin-top: 32px; padding: 24px;
+      background: var(--bg-card); border-radius: 16px;
+      border: 1px solid var(--borda);
+      display: flex; align-items: center; gap: 18px;
     }
     .bio-photo {
-      width: 66px; height: 66px; flex-shrink: 0; border-radius: 50%; padding: 2px;
-      background: linear-gradient(135deg, var(--ouro), var(--ouro-lt));
+      width: 72px; height: 72px; flex-shrink: 0; border-radius: 50%; padding: 2px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-dk));
     }
     .bio-photo img {
       width: 100%; height: 100%; border-radius: 50%;
-      object-fit: cover; object-position: top center; display: block; background: var(--cinza);
+      object-fit: cover; object-position: top center; display: block; background: #ddd;
     }
-    .bio-name  { font-family: 'Playfair Display', serif; font-size: .96rem; font-weight: 800; color: #fff; }
-    .bio-role  { font-size: .65rem; color: var(--ouro); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
-    .bio-desc  { font-size: .74rem; color: var(--texto); line-height: 1.5; margin-top: 6px; }
+    .bio-name  { font-size: 1rem; font-weight: 800; color: var(--escuro); }
+    .bio-role  { font-size: .68rem; color: var(--teal); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+    .bio-desc  { font-size: .78rem; color: var(--cinza); line-height: 1.55; margin-top: 6px; }
 
-    /* ══ FOOTER — sem links ══ */
+    /* ── CTA FINAL ── */
+    .cta-final {
+      width: 100%; margin-top: 40px;
+      flex-direction: column; align-items: center; gap: 12px;
+      display: none;
+    }
+    .cta-final.visible { display: flex; }
+    .cta-final-label { font-size: .8rem; color: var(--cinza-lt); }
+    .cta-final-inner { width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+    /* ── FOOTER ── */
+    .divider { width: 100%; height: 1px; background: var(--borda); margin: 40px 0 0; }
     .footer {
-      margin-top: 44px; text-align: center;
-      font-size: .68rem; color: rgba(255,255,255,.14); line-height: 1.9;
+      margin-top: 28px; text-align: center;
+      font-size: .7rem; color: var(--cinza-lt); line-height: 1.9;
     }
-    .footer span { color: var(--ouro); opacity: .55; }
 
-    /* ══ RESPONSIVE ══ */
-    @media (max-width: 480px) {
-      .wrapper    { padding: 38px 16px 60px; }
-      .headline   { font-size: 1.4rem; }
-      .cta-btn    { font-size: .95rem; padding: 18px 18px; }
-      .bio-card   { flex-direction: column; text-align: center; }
-      .bio-photo  { margin: 0 auto; }
-      .bio-desc   { text-align: center; }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .headline { font-size: 1.65rem; }
+      .section-title { font-size: 1.5rem; }
+      .benefits-card { grid-template-columns: 1fr; padding: 24px 20px; gap: 22px; }
+      .cta-btn { font-size: .95rem; padding: 16px 16px 16px 22px; }
+      .bio-card { flex-direction: column; text-align: center; }
+      .bio-photo { margin: 0 auto; }
+      .garantia { flex-direction: column; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .cta-btn::after, .urgency-bar, .play-btn { animation: none; }
+      .cta-btn::after, .play-circle { animation: none; }
       .cta-unlocked.visible { animation: none; }
     }
   </style>
@@ -350,88 +289,155 @@
 <body>
 
 <div class="top-bar"></div>
-<div class="bg-noise"></div>
 
 <div class="wrapper">
 
-  <!-- ══ HEADER MÍNIMO ══ -->
-  <div class="header">
-
-    <div class="logo-wrap">
-      <div class="logo-ring">
-        <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena" />
-      </div>
-      <div>
-        <div class="logo-name">Prof. Lorena</div>
-        <div class="logo-sub">Nerds da Libras</div>
-      </div>
+  <!-- LOGO -->
+  <div class="logo-wrap">
+    <div class="logo-ring">
+      <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena" />
     </div>
-
-    <div class="urgency-bar">
-      <span class="urgency-dot"></span>
-      Vagas abertas — turma com limite de alunos
+    <div>
+      <div class="logo-name">Prof. Lorena</div>
+      <div class="logo-sub">Nerds da Libras</div>
     </div>
+  </div>
 
-    <h1 class="headline">Do <em>ZERO</em> a LIBRAS<br/>em 30 dias</h1>
-
+  <!-- HEADLINE -->
+  <div class="headline-wrap">
+    <h1 class="headline">
+      Esse foi o curso de Libras<br/>
+      <span class="teal">mais vendido do último ano</span>
+    </h1>
     <p class="subheadline">
-      Assista ao vídeo abaixo e descubra como <strong>comunicar com surdos de verdade</strong> — sem decorar listas de sinais, sem enrolação.
+      Muita gente passou a se comunicar com surdos de verdade<br/>depois que descobriu esse método
     </p>
-
   </div>
 
-  <!-- ══ VÍDEO — acima da dobra ══ -->
-  <div class="player-section">
-    <div class="player-wrap">
-      <div class="player-ratio">
+  <!-- VÍDEO -->
+  <div class="player-wrap">
+    <div class="player-ratio">
 
-        <!--
-          ════════════════════════════════════════════════════
-          COMO ADICIONAR SEU VÍDEO:
+      <!--
+        ════════════════════════════════════════════════
+        COMO ADICIONAR SEU VÍDEO:
 
-          • YouTube:
-            Substitua .player-placeholder por:
-            <iframe src="https://www.youtube.com/embed/SEU_ID?autoplay=1&rel=0"
-                    allow="autoplay; fullscreen" allowfullscreen></iframe>
+        • YouTube:
+          Substitua .player-placeholder por:
+          <iframe src="https://www.youtube.com/embed/SEU_ID?autoplay=1&rel=0"
+                  allow="autoplay; fullscreen" allowfullscreen></iframe>
 
-          • Vimeo:
-            <iframe src="https://player.vimeo.com/video/SEU_ID?autoplay=1"
-                    allow="autoplay; fullscreen" allowfullscreen></iframe>
+        • Vimeo:
+          <iframe src="https://player.vimeo.com/video/SEU_ID?autoplay=1"
+                  allow="autoplay; fullscreen" allowfullscreen></iframe>
 
-          • Panda Video / VTurb:
-            Cole o iframe da plataforma aqui dentro.
+        • Panda Video / VTurb:
+          Cole o iframe da plataforma aqui dentro.
 
-          Após adicionar o vídeo, ajuste CTA_DELAY_SECONDS abaixo
-          para o minuto exato em que quer liberar o botão de compra.
-          ════════════════════════════════════════════════════
-        -->
+        Depois ajuste CTA_DELAY_SECONDS no script abaixo.
+        ════════════════════════════════════════════════
+      -->
 
-        <div class="player-placeholder" id="videoPlaceholder">
-          <div class="play-btn">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-          <span class="placeholder-text">🎬 Seu vídeo de vendas aqui</span>
+      <div class="player-placeholder" id="videoPlaceholder">
+        <div class="play-circle">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </div>
-
+        <span class="placeholder-text">🎬 Seu vídeo de vendas aqui</span>
       </div>
+
     </div>
-    <p class="watch-hint">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Assista ao vídeo completo antes de garantir sua vaga
-    </p>
   </div>
 
-  <!-- ══ DEPOIMENTOS — logo abaixo do vídeo ══ -->
-  <div class="section-label">✦ O que dizem os alunos ✦</div>
+  <!-- APÓS VÍDEO -->
+  <div class="after-video">
+
+    <div class="avatars-row">
+      <div class="avatar-stack">
+        <div class="av" style="background:#0BBFAD;margin-left:0">A</div>
+        <div class="av" style="background:#089E8E">C</div>
+        <div class="av" style="background:#06857A">J</div>
+        <div class="av" style="background:#0BBFAD">M</div>
+        <div class="av" style="background:#089E8E">R</div>
+      </div>
+      <span class="avatars-text">+500 alunos formados</span>
+    </div>
+
+    <div class="cta-wrap">
+
+      <!-- bloqueado -->
+      <div class="cta-locked" id="ctaLocked">
+        <div class="cta-locked-icon">🔒</div>
+        <div class="cta-locked-text">O botão de compra será liberado em</div>
+        <div class="cta-countdown" id="ctaCountdown">--:--</div>
+        <div class="cta-locked-hint">Continue assistindo ao vídeo</div>
+      </div>
+
+      <!-- desbloqueado -->
+      <div class="cta-unlocked" id="ctaUnlocked">
+        <!--
+          Substitua href="#checkout" pelo link real (Hotmart, Kiwify, etc.)
+        -->
+        <a href="#checkout" class="cta-btn">
+          <span>Quero garantir minha vaga agora</span>
+          <span class="cta-btn-arrow">
+            <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+        <div class="trust-badges">
+          <span><span class="stars">★★★★</span>½&nbsp;4,9/5</span>
+          <span>🔒 Compra segura</span>
+          <span>✓ 7 dias de Garantia</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BENEFITS GRID -->
+  <div class="benefits-card">
+
+    <div class="benefit-col">
+      <div class="benefit-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="benefit-title">Método i+1 exclusivo</div>
+      <div class="benefit-desc">A única abordagem baseada em aquisição natural de linguagem aplicada à Libras — sem decoreba, sem listas de sinais.</div>
+    </div>
+
+    <div class="benefit-col">
+      <div class="benefit-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="benefit-title">Comunidade exclusiva</div>
+      <div class="benefit-desc">Acesso ao grupo de alunos para tirar dúvidas, praticar e trocar experiências com outros estudantes de Libras.</div>
+    </div>
+
+    <div class="benefit-col">
+      <div class="benefit-icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <div class="benefit-title">100% online, no seu tempo</div>
+      <div class="benefit-desc">Acesse do celular, tablet ou computador. Aulas gravadas disponíveis 24h por dia, sem prazo de expiração.</div>
+    </div>
+
+    <div class="benefit-col">
+      <div class="benefit-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="benefit-title">Garantia de 7 dias</div>
+      <div class="benefit-desc">Teste o curso sem risco. Se não estiver satisfeito, devolvemos 100% do seu investimento sem perguntas.</div>
+    </div>
+
+  </div>
+
+  <!-- DEPOIMENTOS -->
+  <h2 class="section-title">O que dizem os alunos</h2>
 
   <div class="depoimentos">
 
     <div class="dep-card">
       <div class="dep-stars">★★★★★</div>
-      <p class="dep-text">
-        "Em menos de um mês eu já conseguia me comunicar com a minha colega surda no trabalho.
-        O método da Lorena é <strong>completamente diferente</strong> de tudo que eu já tentei antes."
-      </p>
+      <p class="dep-text">"Em menos de um mês eu já conseguia me comunicar com a minha colega surda no trabalho. O método da Lorena é <strong>completamente diferente</strong> de tudo que eu já tentei antes."</p>
       <div class="dep-author">
         <div class="dep-avatar">A</div>
         <div>
@@ -443,10 +449,7 @@
 
     <div class="dep-card">
       <div class="dep-stars">★★★★★</div>
-      <p class="dep-text">
-        "Eu tinha medo de não conseguir aprender porque sou mais velho.
-        Mas o curso é tão bem explicado que <strong>na segunda semana já estava praticando</strong> com surdos de verdade."
-      </p>
+      <p class="dep-text">"Eu tinha medo de não conseguir aprender porque sou mais velho. Mas o curso é tão bem explicado que <strong>na segunda semana já estava praticando com surdos de verdade.</strong>"</p>
       <div class="dep-author">
         <div class="dep-avatar">C</div>
         <div>
@@ -458,10 +461,7 @@
 
     <div class="dep-card">
       <div class="dep-stars">★★★★★</div>
-      <p class="dep-text">
-        "Comprei com o coração na mão, mas valeu cada centavo.
-        A Lorena tem uma <strong>didática incrível</strong> e o suporte é ótimo. Super recomendo!"
-      </p>
+      <p class="dep-text">"Comprei com o coração na mão, mas valeu cada centavo. A Lorena tem uma <strong>didática incrível</strong> e o suporte é ótimo. Super recomendo!"</p>
       <div class="dep-author">
         <div class="dep-avatar">J</div>
         <div>
@@ -473,105 +473,16 @@
 
   </div>
 
-  <!-- ══ PROVA SOCIAL ══ -->
-  <div class="social-proof">
-    <div class="sp-item">
-      <div class="sp-num">+500</div>
-      <div class="sp-label">Alunos<br/>formados</div>
-    </div>
-    <div class="sp-item">
-      <div class="sp-num">15+</div>
-      <div class="sp-label">Anos de<br/>experiência</div>
-    </div>
-    <div class="sp-item">
-      <div class="sp-num">🇧🇷</div>
-      <div class="sp-label">Todo o<br/>Brasil</div>
-    </div>
-    <div class="sp-item">
-      <div class="sp-num">⭐ 5.0</div>
-      <div class="sp-label">Avaliação<br/>dos alunos</div>
-    </div>
-  </div>
-
-  <!-- ══ BENEFÍCIOS ══ -->
-  <div class="section-label">✦ O que você vai aprender ✦</div>
-
-  <div class="benefits">
-    <div class="benefit-row">
-      <div class="benefit-icon">🤟</div>
-      <div class="benefit-text">
-        <div class="benefit-title">Comunique-se com surdos do zero</div>
-        <div class="benefit-desc">Método i+1 exclusivo da Profa. Lorena — você evolui no ritmo certo, sem decoreba.</div>
-      </div>
-    </div>
-    <div class="benefit-row">
-      <div class="benefit-icon">📲</div>
-      <div class="benefit-text">
-        <div class="benefit-title">Aulas 100% online e no seu tempo</div>
-        <div class="benefit-desc">Acesse do celular, tablet ou computador — onde e quando quiser.</div>
-      </div>
-    </div>
-    <div class="benefit-row">
-      <div class="benefit-icon">🎯</div>
-      <div class="benefit-text">
-        <div class="benefit-title">Do absoluto zero à comunicação real</div>
-        <div class="benefit-desc">Em <strong style="color:#fff">30 dias</strong> você já consegue se comunicar em situações do cotidiano.</div>
-      </div>
-    </div>
-    <div class="benefit-row">
-      <div class="benefit-icon">🏆</div>
-      <div class="benefit-text">
-        <div class="benefit-title">Certificado reconhecido</div>
-        <div class="benefit-desc">Receba seu certificado de conclusão ao terminar o curso.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ 4. CTA COM TIMER ══ -->
-  <div class="cta-section">
-
-    <!-- bloqueado -->
-    <div class="cta-locked" id="ctaLocked">
-      <div class="cta-locked-icon">🔒</div>
-      <div class="cta-locked-text">O botão de compra será liberado em</div>
-      <div class="cta-countdown" id="ctaCountdown">--:--</div>
-      <div class="cta-locked-hint">Continue assistindo ao vídeo</div>
-    </div>
-
-    <!-- desbloqueado -->
-    <div class="cta-unlocked" id="ctaUnlocked">
-      <div class="cta-label">Pronto para começar?</div>
-
-      <!--
-        Substitua href="#checkout" pelo link real do seu checkout
-        (Hotmart, Kiwify, Eduzz, etc.)
-      -->
-      <a href="#checkout" class="cta-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" style="flex-shrink:0"><path d="M5 12l5 5L20 7"/></svg>
-        Quero garantir minha vaga agora →
-      </a>
-
-      <div class="cta-sub">
-        <span>🔒 Pagamento seguro</span>
-        <span>·</span>
-        <span>💳 Cartão, boleto ou Pix</span>
-        <span>·</span>
-        <span>📦 Acesso imediato</span>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ══ GARANTIA ══ -->
+  <!-- GARANTIA -->
   <div class="garantia">
     <div class="garantia-icon">🛡️</div>
     <div>
       <div class="garantia-title">Garantia incondicional de 7 dias</div>
-      <div class="garantia-desc">Se por qualquer motivo você não gostar do curso, devolvemos <strong>100% do seu dinheiro</strong> — sem perguntas, sem burocracia.</div>
+      <div class="garantia-desc">Se por qualquer motivo você não gostar do curso, devolvemos <strong>100% do seu dinheiro</strong> — sem perguntas, sem burocracia. Você não tem nada a perder.</div>
     </div>
   </div>
 
-  <!-- ══ BIO ══ -->
+  <!-- BIO -->
   <div class="bio-card">
     <div class="bio-photo">
       <img src="fotos/IMG_4966.jpg" alt="Prof. Lorena" />
@@ -579,46 +490,62 @@
     <div>
       <div class="bio-name">Prof. Lorena</div>
       <div class="bio-role">Intérprete &amp; Professora de Libras</div>
-      <div class="bio-desc">Fundadora da <strong style="color:rgba(255,255,255,.75)">Nerds da Libras LTDA</strong>. 15 anos transformando vidas através da comunicação inclusiva. Criadora do método i+1 aplicado à Libras — exclusivo no Brasil.</div>
+      <div class="bio-desc">Fundadora da <strong>Nerds da Libras LTDA</strong>. 15 anos transformando vidas através da comunicação inclusiva. Criadora do método i+1 aplicado à Libras — exclusivo no Brasil.</div>
     </div>
   </div>
 
-  <!-- ══ FOOTER — sem links externos ══ -->
+  <!-- CTA FINAL -->
+  <div class="cta-final" id="ctaFinal">
+    <p class="cta-final-label">Pronto para começar?</p>
+    <div class="cta-final-inner">
+      <a href="#checkout" class="cta-btn">
+        <span>Quero garantir minha vaga agora</span>
+        <span class="cta-btn-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+        </span>
+      </a>
+      <div class="trust-badges">
+        <span><span class="stars">★★★★</span>½&nbsp;4,9/5</span>
+        <span>🔒 Compra segura</span>
+        <span>✓ 7 dias de Garantia</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
   <div class="footer">
-    <p>© 2026 <span>Nerds da Libras LTDA</span> · Prof. Lorena</p>
+    <p>© 2026 Nerds da Libras LTDA · Prof. Lorena</p>
     <p>Presente em todo o Brasil 🇧🇷</p>
   </div>
 
 </div>
 
 <script>
-  // ════════════════════════════════════════════════════
+  // ════════════════════════════════════════════
   // TIMER DO BOTÃO DE COMPRA
-  // Altere CTA_DELAY_SECONDS para o número de segundos
-  // que o visitante precisa esperar antes do botão aparecer.
-  // Exemplos: 180 = 3 min | 300 = 5 min | 600 = 10 min
-  // ════════════════════════════════════════════════════
+  // 180 = 3 min | 300 = 5 min | 600 = 10 min
+  // ════════════════════════════════════════════
   const CTA_DELAY_SECONDS = 180;
 
   (function () {
     const locked    = document.getElementById('ctaLocked');
     const unlocked  = document.getElementById('ctaUnlocked');
+    const ctaFinal  = document.getElementById('ctaFinal');
     const countdown = document.getElementById('ctaCountdown');
 
     let remaining = CTA_DELAY_SECONDS;
-
     function pad(n) { return String(n).padStart(2, '0'); }
 
     function tick() {
       if (remaining <= 0) {
-        locked.style.display   = 'none';
+        locked.style.display = 'none';
         unlocked.classList.add('visible');
+        ctaFinal.classList.add('visible');
         unlocked.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
-      const m = Math.floor(remaining / 60);
-      const s = remaining % 60;
-      countdown.textContent = pad(m) + ':' + pad(s);
+      countdown.textContent = pad(Math.floor(remaining / 60)) + ':' + pad(remaining % 60);
       remaining--;
       setTimeout(tick, 1000);
     }
