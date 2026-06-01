@@ -14,14 +14,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --teal:     #0BBFAD;
-      --teal-dk:  #089E8E;
+      --teal:     #E91E8C;
+      --teal-dk:  #C2177A;
       --verde:    #22C55E;
       --verde-dk: #16A34A;
       --escuro:   #111111;
       --cinza:    #444444;
       --cinza-lt: #888888;
-      --bg:       #F2F2F2;
+      --bg:       #FFFFFF;
       --bg-card:  #FFFFFF;
       --borda:    #E0E0E0;
     }
@@ -41,11 +41,47 @@
       background: linear-gradient(90deg, var(--teal), var(--verde), var(--teal));
     }
 
+    /* ── HERO BG COM FOTOS ── */
+    .hero-bg {
+      width: 100%; position: relative;
+      background: #fafafa;
+      overflow: hidden;
+    }
+    .hero-bg-photos {
+      position: absolute; inset: 0;
+      display: flex; align-items: stretch;
+      pointer-events: none; z-index: 0;
+    }
+    .hero-photo-left,
+    .hero-photo-right {
+      position: absolute; top: 0; bottom: 0;
+      width: 220px;
+      display: flex; flex-direction: column; gap: 12px;
+      padding: 20px 0;
+    }
+    .hero-photo-left  { left: 0; }
+    .hero-photo-right { right: 0; }
+    .hero-photo-left img,
+    .hero-photo-right img {
+      width: 100%; border-radius: 14px;
+      object-fit: cover;
+      opacity: .18;
+      filter: blur(1px) grayscale(20%);
+    }
+    .hero-photo-left::after,
+    .hero-photo-right::after {
+      content: '';
+      position: absolute; inset: 0;
+    }
+    .hero-photo-left::after  { background: linear-gradient(to right, #fafafa 0%, transparent 100%); }
+    .hero-photo-right::after { background: linear-gradient(to left, #fafafa 0%, transparent 100%); }
+
     .wrapper {
       max-width: 780px;
       margin: 0 auto;
       padding: 36px 20px 80px;
       display: flex; flex-direction: column; align-items: center;
+      position: relative; z-index: 1;
     }
 
     /* ── LOGO ── */
@@ -290,6 +326,20 @@
 
 <div class="top-bar"></div>
 
+<div class="hero-bg">
+  <div class="hero-bg-photos">
+    <div class="hero-photo-left">
+      <img src="fotos/IMG_4910.jpg" alt="" />
+      <img src="fotos/IMG_4952.jpg" alt="" />
+      <img src="fotos/IMG_4977.jpg" alt="" />
+    </div>
+    <div class="hero-photo-right">
+      <img src="fotos/IMG_4966.jpg" alt="" />
+      <img src="fotos/IMG_4993.jpg" alt="" />
+      <img src="fotos/IMG_4945.jpg" alt="" />
+    </div>
+  </div>
+
 <div class="wrapper">
 
   <!-- LOGO -->
@@ -347,6 +397,8 @@
 
     </div>
   </div>
+
+  </div><!-- /hero-bg -->
 
   <!-- APÓS VÍDEO -->
   <div class="after-video">
