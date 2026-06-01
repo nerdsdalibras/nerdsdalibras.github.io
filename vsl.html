@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Do ZERO a LIBRAS — Assista ao vídeo completo</title>
-  <meta name="description" content="Aprenda Libras do zero em 30 dias com o método exclusivo i+1 da Profa. Lorena." />
+  <title>Nerds da Libras — Assista ao vídeo completo</title>
+  <meta name="description" content="O método que mais gerou resultado nos últimos anos. Input Compreensível aplicado pela primeira vez a Libras." />
   <meta name="robots" content="noindex, nofollow" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,112 +14,170 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --teal:     #E91E8C;
-      --teal-dk:  #C2177A;
-      --verde:    #22C55E;
-      --verde-dk: #16A34A;
-      --escuro:   #111111;
-      --cinza:    #444444;
-      --cinza-lt: #888888;
-      --bg:       #FFFFFF;
-      --bg-card:  #FFFFFF;
-      --borda:    #E0E0E0;
+      --verde:      #22C55E;
+      --verde-dk:   #16A34A;
+      --verde-lt:   #4ADE80;
+      --amarelo:    #A3E635;
+      --bg:         #060e06;
+      --bg2:        #0b160b;
+      --card:       #0f1f0f;
+      --borda:      rgba(34,197,94,.18);
+      --borda-lt:   rgba(34,197,94,.08);
+      --texto:      #ffffff;
+      --texto-sec:  rgba(255,255,255,.65);
+      --texto-dim:  rgba(255,255,255,.35);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
-      color: var(--escuro);
+      color: var(--texto);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    .top-bar {
-      width: 100%; height: 3px;
-      background: linear-gradient(90deg, var(--teal), var(--verde), var(--teal));
-    }
-
-    /* ── HERO BG COM FOTOS ── */
-    .hero-bg {
-      width: 100%; position: relative;
-      background: #fafafa;
-      overflow: hidden;
-    }
-    .hero-bg-photos {
-      position: absolute; inset: 0;
-      display: flex; align-items: stretch;
-      pointer-events: none; z-index: 0;
-    }
-    .hero-photo-left,
-    .hero-photo-right {
-      position: absolute; top: 0; bottom: 0;
-      width: 220px;
-      display: flex; flex-direction: column; gap: 12px;
-      padding: 20px 0;
-    }
-    .hero-photo-left  { left: 0; }
-    .hero-photo-right { right: 0; }
-    .hero-photo-left img,
-    .hero-photo-right img {
-      width: 100%; border-radius: 14px;
-      object-fit: cover;
-      opacity: .18;
-      filter: blur(1px) grayscale(20%);
-    }
-    .hero-photo-left::after,
-    .hero-photo-right::after {
+    /* ── GRID TEXTURE ── */
+    body::before {
       content: '';
-      position: absolute; inset: 0;
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(34,197,94,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,197,94,.04) 1px, transparent 1px);
+      background-size: 44px 44px;
     }
-    .hero-photo-left::after  { background: linear-gradient(to right, #fafafa 0%, transparent 100%); }
-    .hero-photo-right::after { background: linear-gradient(to left, #fafafa 0%, transparent 100%); }
+    /* radial glow top center */
+    body::after {
+      content: '';
+      position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 600px; z-index: 0; pointer-events: none;
+      background: radial-gradient(ellipse at center, rgba(34,197,94,.12) 0%, transparent 70%);
+    }
 
+    /* ── PAGE ── */
+    .page { position: relative; z-index: 1; }
+
+    /* ── TOP BADGE BAR ── */
+    .badge-bar {
+      display: flex; justify-content: center; padding: 20px 20px 0;
+    }
+    .badge-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; border-radius: 999px;
+      border: 1px solid var(--borda);
+      background: rgba(34,197,94,.07);
+      font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+      color: var(--verde-lt); text-transform: uppercase;
+    }
+    .badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--verde);
+      box-shadow: 0 0 6px var(--verde);
+      animation: blink 1.8s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── WRAPPER ── */
     .wrapper {
-      max-width: 900px;
+      max-width: 860px;
       margin: 0 auto;
-      padding: 36px 20px 80px;
+      padding: 0 20px 80px;
       display: flex; flex-direction: column; align-items: center;
-      position: relative; z-index: 1;
     }
-
-    /* ── LOGO ── */
-    .logo-wrap {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
-    }
-    .logo-ring {
-      width: 44px; height: 44px; border-radius: 50%; padding: 2px; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--teal), var(--teal-dk));
-    }
-    .logo-ring img {
-      width: 100%; height: 100%; border-radius: 50%;
-      object-fit: cover; object-position: top center; display: block; background: #ddd;
-    }
-    .logo-name { font-size: .9rem; font-weight: 800; color: var(--escuro); line-height: 1.2; }
-    .logo-sub  { font-size: .65rem; color: var(--teal); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 
     /* ── HEADLINE ── */
-    .headline-wrap { width: 100%; text-align: center; margin-bottom: 28px; }
+    .headline-wrap { width: 100%; text-align: center; padding: 36px 0 28px; }
     .headline {
-      font-size: 3rem; font-weight: 900; line-height: 1.12;
-      color: var(--escuro); margin-bottom: 12px;
-      letter-spacing: -.01em;
+      font-size: 3.4rem; font-weight: 900; line-height: 1.08;
+      color: var(--texto); letter-spacing: -.02em;
+      margin-bottom: 16px;
     }
-    .headline .teal { color: var(--teal); display: block; font-size: 2.4rem; }
-    .subheadline {
-      font-size: 1.15rem; color: var(--cinza); line-height: 1.65;
-      max-width: 640px; margin: 10px auto 0;
+    .headline .verde  { color: var(--verde); }
+    .headline .amarelo { color: var(--amarelo); }
+
+    .feature-pills {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 10px; margin-top: 24px;
+    }
+    .fpill {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: 999px;
+      border: 1px solid var(--borda);
+      background: rgba(34,197,94,.06);
+      font-size: .78rem; font-weight: 600; color: var(--texto-sec);
+    }
+    .fpill-icon { font-size: .9rem; }
+
+    /* ── MOCKUP / FOTO SECTION ── */
+    .mockup-section {
+      width: 100%; position: relative;
+      display: flex; justify-content: center; align-items: flex-end;
+      min-height: 280px; margin-bottom: -12px;
+      overflow: hidden;
+    }
+    .mockup-grid {
+      display: flex; align-items: flex-end; gap: 12px;
+      width: 100%; max-width: 760px; padding: 0 10px;
+    }
+    .mockup-img {
+      border-radius: 16px; overflow: hidden; flex-shrink: 0;
+      border: 1px solid var(--borda);
+      box-shadow: 0 8px 40px rgba(0,0,0,.6);
+    }
+    .mockup-img img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+    .mockup-img.main { width: 52%; height: 260px; }
+    .mockup-img.side { width: 23%; height: 200px; }
+    .mockup-img.side.tall { height: 220px; }
+    /* profit card overlay */
+    .profit-card {
+      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(15,31,15,.92); backdrop-filter: blur(10px);
+      border: 1px solid var(--borda); border-radius: 14px;
+      padding: 14px 20px; text-align: center; min-width: 220px;
+      box-shadow: 0 4px 32px rgba(34,197,94,.18);
+    }
+    .profit-label { font-size: .62rem; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+    .profit-value { font-size: 1.6rem; font-weight: 900; color: var(--verde); letter-spacing: -.01em; }
+    .profit-sub   { font-size: .68rem; color: var(--verde); margin-top: 3px; }
+    /* bottom fade */
+    .mockup-section::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+      background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+      pointer-events: none;
     }
 
     /* ── VÍDEO ── */
+    .video-section { width: 100%; margin-bottom: 8px; }
     .player-wrap {
-      width: 100%; border-radius: 16px; overflow: hidden;
-      box-shadow: 0 4px 40px rgba(0,0,0,.13);
-      background: #000; border: 1px solid var(--borda);
+      width: 100%; border-radius: 18px; overflow: hidden;
+      box-shadow: 0 0 0 1px var(--borda), 0 8px 60px rgba(34,197,94,.12);
+      background: #000;
     }
     .player-ratio { position: relative; padding-bottom: 56.25%; height: 0; }
     .player-ratio iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+    .player-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 18px;
+      background: linear-gradient(135deg, #0b1a0b 0%, #111f11 100%);
+      cursor: pointer;
+    }
+    .play-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--verde);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 0 rgba(34,197,94,.4);
+      animation: pulsePlay 2s ease-in-out infinite;
+    }
+    @keyframes pulsePlay {
+      0%  { box-shadow: 0 0 0 0 rgba(34,197,94,.5); }
+      70% { box-shadow: 0 0 0 22px rgba(34,197,94,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+    }
+    .play-circle svg { width: 30px; height: 30px; fill: #fff; margin-left: 5px; }
+    .placeholder-text { font-size: .74rem; color: rgba(255,255,255,.4); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
 
     /* ── FULLSCREEN OVERLAY ── */
     #fsOverlay {
@@ -132,327 +190,471 @@
     #fsOverlay .fs-inner iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
     #fsClose {
       position: fixed; top: 16px; right: 20px; z-index: 10000;
-      background: rgba(255,255,255,.15); border: none; cursor: pointer;
-      color: #fff; font-size: 1.4rem; line-height: 1;
+      background: rgba(255,255,255,.12); border: none; cursor: pointer;
+      color: #fff; font-size: 1.2rem;
       width: 40px; height: 40px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
     }
-    #fsClose:hover { background: rgba(255,255,255,.3); }
-
-    .player-placeholder {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 16px;
-      background: #1a1a1a; cursor: pointer;
-    }
-    .play-circle {
-      width: 72px; height: 72px; border-radius: 50%;
-      background: var(--teal);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 0 14px rgba(11,191,173,.15);
-      animation: pulsePlay 2s ease-in-out infinite;
-    }
-    @keyframes pulsePlay { 0%,100%{box-shadow:0 0 0 14px rgba(11,191,173,.15)} 50%{box-shadow:0 0 0 22px rgba(11,191,173,.05)} }
-    .play-circle svg { width: 28px; height: 28px; fill: #fff; margin-left: 4px; }
-    .placeholder-text { font-size: .78rem; color: rgba(255,255,255,.5); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+    #fsClose:hover { background: rgba(255,255,255,.25); }
 
     /* ── APÓS VÍDEO ── */
     .after-video {
-      width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;
-      padding: 24px 0 0;
+      width: 100%; display: flex; flex-direction: column; align-items: center;
+      gap: 24px; padding: 32px 0 0;
     }
 
-    .avatars-row { display: flex; align-items: center; gap: 10px; }
-    .avatar-stack { display: flex; }
+    /* social proof */
+    .social-proof {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .av-stack { display: flex; }
     .av {
-      width: 36px; height: 36px; border-radius: 50%;
+      width: 34px; height: 34px; border-radius: 50%;
       border: 2px solid var(--bg);
       margin-left: -10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: .7rem; font-weight: 800; color: #fff;
-      flex-shrink: 0;
+      font-size: .7rem; font-weight: 800; color: #fff; flex-shrink: 0;
     }
     .av:first-child { margin-left: 0; }
-    .avatars-text { font-size: .95rem; font-weight: 700; color: var(--escuro); }
+    .av-text { font-size: .9rem; font-weight: 700; color: var(--texto-sec); }
 
     /* ── CTA ── */
-    .cta-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .cta-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+    .cta-headline {
+      text-align: center; font-size: 2rem; font-weight: 900;
+      color: var(--texto); line-height: 1.2;
+      max-width: 580px;
+    }
+    .cta-headline .verde  { color: var(--verde); }
+    .cta-headline .amarelo { color: var(--amarelo); }
+
+    .cta-arrows {
+      display: flex; align-items: center; gap: 200px;
+      color: var(--verde); font-size: 1.4rem;
+    }
 
     .cta-locked {
       display: flex; flex-direction: column; align-items: center; gap: 8px;
-      padding: 18px 28px; border-radius: 16px;
-      border: 1px solid var(--borda); background: #fff;
-      width: 100%; max-width: 520px; text-align: center;
+      padding: 20px 32px; border-radius: 18px;
+      border: 1px solid var(--borda);
+      background: var(--card);
+      width: 100%; max-width: 540px; text-align: center;
     }
-    .cta-locked-icon { font-size: 1.4rem; }
-    .cta-locked-text { font-size: .82rem; color: var(--cinza); }
+    .cta-locked-icon { font-size: 1.5rem; }
+    .cta-locked-text { font-size: .82rem; color: var(--texto-sec); }
     .cta-countdown {
-      font-size: 1.8rem; font-weight: 900; color: var(--escuro);
-      letter-spacing: .05em; font-variant-numeric: tabular-nums;
+      font-size: 2rem; font-weight: 900; color: var(--verde);
+      letter-spacing: .06em; font-variant-numeric: tabular-nums;
     }
-    .cta-locked-hint { font-size: .68rem; color: var(--cinza-lt); }
+    .cta-locked-hint { font-size: .68rem; color: var(--texto-dim); }
 
-    .cta-unlocked { display: none; width: 100%; max-width: 520px; }
+    .cta-unlocked { display: none; width: 100%; max-width: 540px; }
     .cta-unlocked.visible {
-      display: flex; flex-direction: column; align-items: center; gap: 12px;
-      animation: fadeUp .5s ease-out forwards;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      animation: fadeUp .6s ease-out forwards;
     }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
     .cta-btn {
       width: 100%;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 18px 18px 28px; border-radius: 999px;
+      padding: 20px 18px 20px 32px; border-radius: 999px;
       background: var(--verde); color: #fff;
       font-weight: 800; font-size: 1.05rem;
       text-decoration: none; border: none; cursor: pointer;
-      box-shadow: 0 4px 24px rgba(34,197,94,.4);
+      box-shadow: 0 4px 32px rgba(34,197,94,.45);
       transition: background .2s, transform .15s, box-shadow .2s;
       position: relative; overflow: hidden;
+      text-transform: uppercase; letter-spacing: .04em;
     }
-    .cta-btn:hover { background: var(--verde-dk); box-shadow: 0 6px 32px rgba(34,197,94,.55); transform: translateY(-1px); }
+    .cta-btn:hover { background: var(--verde-dk); box-shadow: 0 6px 40px rgba(34,197,94,.6); transform: translateY(-2px); }
     .cta-btn:active { transform: scale(.98); }
     .cta-btn-arrow {
-      width: 42px; height: 42px; border-radius: 50%;
-      background: rgba(0,0,0,.18);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(0,0,0,.2);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .cta-btn-arrow svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2.5; }
     .cta-btn::after {
       content: ''; position: absolute; top: -20%; left: -80%;
-      width: 45%; height: 140%;
-      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
+      width: 40%; height: 140%;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.3) 50%, transparent 70%);
       transform: skewX(-15deg);
-      animation: shimmer 2.6s ease-in-out infinite;
+      animation: shimmer 2.8s ease-in-out infinite;
     }
     @keyframes shimmer { 0%{left:-80%;opacity:1} 55%{left:130%;opacity:1} 56%{opacity:0} 100%{left:130%;opacity:0} }
 
     .trust-badges {
       display: flex; align-items: center; justify-content: center;
-      gap: 16px; flex-wrap: wrap; font-size: .78rem; color: var(--cinza);
+      gap: 16px; flex-wrap: wrap; font-size: .76rem; color: var(--texto-dim);
     }
     .trust-badges span { display: flex; align-items: center; gap: 5px; }
     .stars { color: #F59E0B; }
 
-    /* ── BENEFITS ── */
+    /* ── BENEFITS GRID ── */
     .benefits-card {
-      width: 100%; margin-top: 36px;
-      background: var(--bg-card); border-radius: 20px;
-      border: 1px solid var(--borda); padding: 32px 28px;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+      width: 100%; margin-top: 48px;
+      background: var(--card); border-radius: 22px;
+      border: 1px solid var(--borda-lt);
+      padding: 36px 28px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
     }
-    .benefit-col { display: flex; flex-direction: column; gap: 10px; }
+    .benefit-col { display: flex; flex-direction: column; gap: 12px; }
     .benefit-icon-wrap {
-      width: 52px; height: 52px; border-radius: 50%;
-      background: var(--teal);
+      width: 52px; height: 52px; border-radius: 14px;
+      background: rgba(34,197,94,.12);
+      border: 1px solid var(--borda);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .benefit-icon-wrap svg { width: 24px; height: 24px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .benefit-title { font-size: .95rem; font-weight: 800; color: var(--escuro); line-height: 1.3; }
-    .benefit-desc  { font-size: .8rem; color: var(--cinza); line-height: 1.55; }
+    .benefit-icon-wrap svg { width: 22px; height: 22px; stroke: var(--verde); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .benefit-title { font-size: .95rem; font-weight: 800; color: var(--texto); line-height: 1.3; }
+    .benefit-desc  { font-size: .8rem; color: var(--texto-sec); line-height: 1.6; }
 
-    /* ── SEÇÃO ── */
+    /* ── SEÇÃO TÍTULO ── */
     .section-title {
-      width: 100%; text-align: center; margin: 44px 0 16px;
-      font-size: 2rem; font-weight: 900; color: var(--escuro); line-height: 1.2;
+      width: 100%; text-align: center; margin: 56px 0 20px;
+      font-size: 2rem; font-weight: 900; color: var(--texto); line-height: 1.2;
     }
+    .section-title .verde { color: var(--verde); }
 
     /* ── DEPOIMENTOS ── */
     .depoimentos { width: 100%; display: flex; flex-direction: column; gap: 14px; }
     .dep-card {
-      background: var(--bg-card); border-radius: 16px;
-      border: 1px solid var(--borda); padding: 20px 20px;
+      background: var(--card); border-radius: 16px;
+      border: 1px solid var(--borda-lt); padding: 22px;
     }
-    .dep-stars { color: #F59E0B; font-size: .82rem; margin-bottom: 10px; letter-spacing: 1px; }
-    .dep-text  { font-size: .88rem; color: var(--cinza); line-height: 1.65; font-style: italic; }
-    .dep-text strong { color: var(--escuro); font-style: normal; }
+    .dep-stars { color: #F59E0B; font-size: .82rem; margin-bottom: 10px; letter-spacing: 2px; }
+    .dep-text  { font-size: .88rem; color: var(--texto-sec); line-height: 1.7; font-style: italic; }
+    .dep-text strong { color: var(--texto); font-style: normal; }
     .dep-author { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
     .dep-avatar {
       width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-      background: var(--teal);
+      background: var(--verde);
       display: flex; align-items: center; justify-content: center;
       font-size: .85rem; font-weight: 800; color: #fff;
     }
-    .dep-name  { font-size: .84rem; font-weight: 700; color: var(--escuro); }
-    .dep-label { font-size: .68rem; color: var(--cinza-lt); }
+    .dep-name  { font-size: .84rem; font-weight: 700; color: var(--texto); }
+    .dep-label { font-size: .68rem; color: var(--texto-dim); }
 
     /* ── GARANTIA ── */
     .garantia {
-      width: 100%; margin-top: 36px; padding: 24px;
-      border-radius: 16px; border: 2px solid var(--teal);
-      background: rgba(11,191,173,.05);
-      display: flex; align-items: flex-start; gap: 16px;
+      width: 100%; margin-top: 40px; padding: 26px;
+      border-radius: 18px; border: 1px solid var(--borda);
+      background: rgba(34,197,94,.06);
+      display: flex; align-items: flex-start; gap: 18px;
     }
-    .garantia-icon { font-size: 2.2rem; flex-shrink: 0; line-height: 1; }
-    .garantia-title { font-size: 1rem; font-weight: 800; color: var(--escuro); margin-bottom: 5px; }
-    .garantia-desc  { font-size: .83rem; color: var(--cinza); line-height: 1.6; }
-    .garantia-desc strong { color: var(--escuro); }
+    .garantia-icon { font-size: 2.4rem; flex-shrink: 0; line-height: 1; }
+    .garantia-title { font-size: 1rem; font-weight: 800; color: var(--texto); margin-bottom: 6px; }
+    .garantia-desc  { font-size: .83rem; color: var(--texto-sec); line-height: 1.65; }
+    .garantia-desc strong { color: var(--verde); }
 
     /* ── BIO ── */
     .bio-card {
-      width: 100%; margin-top: 32px; padding: 24px;
-      background: var(--bg-card); border-radius: 16px;
-      border: 1px solid var(--borda);
-      display: flex; align-items: center; gap: 18px;
+      width: 100%; margin-top: 36px; padding: 26px;
+      background: var(--card); border-radius: 18px;
+      border: 1px solid var(--borda-lt);
+      display: flex; align-items: center; gap: 20px;
     }
     .bio-photo {
-      width: 72px; height: 72px; flex-shrink: 0; border-radius: 50%; padding: 2px;
-      background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+      width: 78px; height: 78px; flex-shrink: 0; border-radius: 50%;
+      border: 2px solid var(--verde);
+      overflow: hidden;
     }
     .bio-photo img {
-      width: 100%; height: 100%; border-radius: 50%;
-      object-fit: cover; object-position: top center; display: block; background: #ddd;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center; display: block;
     }
-    .bio-name  { font-size: 1rem; font-weight: 800; color: var(--escuro); }
-    .bio-role  { font-size: .68rem; color: var(--teal); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
-    .bio-desc  { font-size: .78rem; color: var(--cinza); line-height: 1.55; margin-top: 6px; }
+    .bio-name  { font-size: 1rem; font-weight: 800; color: var(--texto); }
+    .bio-role  { font-size: .68rem; color: var(--verde); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-top: 3px; }
+    .bio-desc  { font-size: .78rem; color: var(--texto-sec); line-height: 1.6; margin-top: 8px; }
 
     /* ── CTA FINAL ── */
     .cta-final {
-      width: 100%; margin-top: 40px;
-      flex-direction: column; align-items: center; gap: 12px;
+      width: 100%; margin-top: 48px;
+      flex-direction: column; align-items: center; gap: 14px;
       display: none;
     }
     .cta-final.visible { display: flex; }
-    .cta-final-label { font-size: .8rem; color: var(--cinza-lt); }
-    .cta-final-inner { width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .cta-final-label { font-size: .8rem; color: var(--texto-dim); }
+    .cta-final-inner { width: 100%; max-width: 540px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+    /* ── DIVISOR ── */
+    .divider { width: 100%; height: 1px; background: var(--borda-lt); margin: 48px 0 0; }
 
     /* ── FOOTER ── */
-    .divider { width: 100%; height: 1px; background: var(--borda); margin: 40px 0 0; }
     .footer {
       margin-top: 28px; text-align: center;
-      font-size: .7rem; color: var(--cinza-lt); line-height: 1.9;
+      font-size: .7rem; color: var(--texto-dim); line-height: 2;
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      .headline { font-size: 2rem; }
-      .headline .teal { font-size: 1.7rem; }
-      .section-title { font-size: 1.5rem; }
-      .benefits-card { grid-template-columns: 1fr; padding: 24px 20px; gap: 22px; }
-      .cta-btn { font-size: .95rem; padding: 16px 16px 16px 22px; }
+    @media (max-width: 700px) {
+      .headline { font-size: 2.2rem; }
+      .mockup-img.side { display: none; }
+      .mockup-img.main { width: 100%; }
+      .benefits-card { grid-template-columns: 1fr; padding: 24px 18px; gap: 24px; }
+      .cta-btn { font-size: .9rem; padding: 18px 14px 18px 22px; }
       .bio-card { flex-direction: column; text-align: center; }
       .bio-photo { margin: 0 auto; }
       .garantia { flex-direction: column; }
+      .cta-arrows { gap: 100px; }
+      .cta-headline { font-size: 1.55rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .cta-btn::after, .play-circle { animation: none; }
+      .cta-btn::after, .play-circle, .badge-dot { animation: none; }
       .cta-unlocked.visible { animation: none; }
     }
   </style>
 </head>
 <body>
+<div class="page">
 
-<div class="top-bar"></div>
-
-<div class="hero-bg">
-  <div class="hero-bg-photos">
-    <div class="hero-photo-left">
-      <img src="fotos/IMG_4910.jpg" alt="" />
-      <img src="fotos/IMG_4952.jpg" alt="" />
-      <img src="fotos/IMG_4977.jpg" alt="" />
-    </div>
-    <div class="hero-photo-right">
-      <img src="fotos/IMG_4966.jpg" alt="" />
-      <img src="fotos/IMG_4993.jpg" alt="" />
-      <img src="fotos/IMG_4945.jpg" alt="" />
+  <!-- BADGE BAR -->
+  <div class="badge-bar">
+    <div class="badge-pill">
+      <span class="badge-dot"></span>
+      ⚡ Acesso Especial Limitado
     </div>
   </div>
 
-<div class="wrapper">
+  <div class="wrapper">
 
-  <!-- LOGO -->
-  <div class="logo-wrap">
-    <div class="logo-ring">
-      <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena" />
+    <!-- HEADLINE -->
+    <div class="headline-wrap">
+      <h1 class="headline">
+        Tudo que você precisa para<br/>
+        aprender Libras de verdade<br/>
+        no <span class="verde">automático</span> e<br/>
+        <span class="amarelo">ter resultado:</span><br/>
+        Método Completo.
+      </h1>
+
+      <div class="feature-pills">
+        <div class="fpill"><span class="fpill-icon">🧠</span> Input Compreensível aplicado a Libras</div>
+        <div class="fpill"><span class="fpill-icon">🏆</span> Método mais eficaz dos últimos anos</div>
+        <div class="fpill"><span class="fpill-icon">📱</span> Estrutura que ensina por você</div>
+      </div>
     </div>
-    <div>
-      <div class="logo-name">Prof. Lorena</div>
-      <div class="logo-sub">Nerds da Libras</div>
-    </div>
-  </div>
 
-  <!-- HEADLINE -->
-  <div class="headline-wrap">
-    <h1 class="headline">
-      Esse Foi o Método que mais Gerou<br/>Resultado nos Últimos Anos
-      <span class="teal">Input Compreensível aplicado pela<br/>Primeira vez a Libras</span>
-    </h1>
-    <p class="subheadline">
-      Prof. Lorena trouxe para o Brasil o Maior Método de Aprendizado de idiomas,<br/>aplicado pela primeira vez à Libras
-    </p>
-  </div>
-
-  <!-- VÍDEO -->
-  <div class="player-wrap">
-    <div class="player-ratio">
-
-      <!--
-        ════════════════════════════════════════════════
-        COMO ADICIONAR SEU VÍDEO:
-
-        • YouTube:
-          Substitua .player-placeholder por:
-          <iframe src="https://www.youtube.com/embed/SEU_ID?autoplay=1&rel=0"
-                  allow="autoplay; fullscreen" allowfullscreen></iframe>
-
-        • Vimeo:
-          <iframe src="https://player.vimeo.com/video/SEU_ID?autoplay=1"
-                  allow="autoplay; fullscreen" allowfullscreen></iframe>
-
-        • Panda Video / VTurb:
-          Cole o iframe da plataforma aqui dentro.
-
-        Depois ajuste CTA_DELAY_SECONDS no script abaixo.
-        ════════════════════════════════════════════════
-      -->
-
-      <div class="player-placeholder" id="videoPlaceholder">
-        <div class="play-circle">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    <!-- MOCKUP / FOTOS ── -->
+    <div class="mockup-section">
+      <div class="profit-card">
+        <div class="profit-label">Alunos formados</div>
+        <div class="profit-value">+500</div>
+        <div class="profit-sub">↑ crescendo todo mês</div>
+      </div>
+      <div class="mockup-grid">
+        <div class="mockup-img side">
+          <img src="fotos/IMG_4910.jpg" alt="Prof. Lorena" />
         </div>
-        <span class="placeholder-text">🎬 Seu vídeo de vendas aqui</span>
+        <div class="mockup-img main">
+          <img src="fotos/IMG_4966.jpg" alt="Prof. Lorena" />
+        </div>
+        <div class="mockup-img side tall">
+          <img src="fotos/IMG_4977.jpg" alt="Prof. Lorena" />
+        </div>
+      </div>
+    </div>
+
+    <!-- VÍDEO -->
+    <div class="video-section">
+      <div class="player-wrap">
+        <div class="player-ratio">
+
+          <!--
+            ════════════════════════════════════════════════
+            COMO ADICIONAR SEU VÍDEO:
+
+            • YouTube:
+              Substitua .player-placeholder por:
+              <iframe src="https://www.youtube.com/embed/SEU_ID?autoplay=1&rel=0"
+                      allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+            • Vimeo:
+              <iframe src="https://player.vimeo.com/video/SEU_ID?autoplay=1"
+                      allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+            • Panda Video / VTurb:
+              Cole o iframe da plataforma aqui dentro.
+
+            Depois ajuste CTA_DELAY_SECONDS no script abaixo.
+            ════════════════════════════════════════════════
+          -->
+
+          <div class="player-placeholder" id="videoPlaceholder">
+            <div class="play-circle">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <span class="placeholder-text">🎬 Assista ao vídeo completo</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- APÓS VÍDEO -->
+    <div class="after-video">
+
+      <div class="social-proof">
+        <div class="av-stack">
+          <div class="av" style="background:#16a34a;margin-left:0">A</div>
+          <div class="av" style="background:#15803d">C</div>
+          <div class="av" style="background:#166534">J</div>
+          <div class="av" style="background:#14532d">M</div>
+          <div class="av" style="background:#16a34a">R</div>
+        </div>
+        <span class="av-text">+500 alunos já transformaram suas vidas</span>
+      </div>
+
+      <div class="cta-wrap">
+
+        <p class="cta-headline">
+          Clique e garanta o <span class="verde">método</span><br/>
+          <span class="amarelo">aplicável</span> agora.
+        </p>
+
+        <div class="cta-arrows">
+          <span>↓</span>
+          <span>↓</span>
+        </div>
+
+        <!-- bloqueado -->
+        <div class="cta-locked" id="ctaLocked">
+          <div class="cta-locked-icon">🔒</div>
+          <div class="cta-locked-text">O botão será liberado em</div>
+          <div class="cta-countdown" id="ctaCountdown">--:--</div>
+          <div class="cta-locked-hint">Continue assistindo ao vídeo</div>
+        </div>
+
+        <!-- desbloqueado — substitua href pelo link real da Kiwify -->
+        <div class="cta-unlocked" id="ctaUnlocked">
+          <a href="#kiwify" class="cta-btn">
+            <span>Quero garantir minha vaga agora</span>
+            <span class="cta-btn-arrow">
+              <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+          <div class="trust-badges">
+            <span><span class="stars">★★★★</span>½&nbsp;4,9/5</span>
+            <span>🔒 Compra segura</span>
+            <span>✓ 7 dias de Garantia</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BENEFITS GRID -->
+    <div class="benefits-card">
+
+      <div class="benefit-col">
+        <div class="benefit-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="benefit-title">Método Input Compreensível</div>
+        <div class="benefit-desc">A única abordagem baseada em aquisição natural de linguagem aplicada à Libras — sem decoreba, sem listas de sinais.</div>
+      </div>
+
+      <div class="benefit-col">
+        <div class="benefit-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="benefit-title">Comunidade exclusiva</div>
+        <div class="benefit-desc">Acesso ao grupo de alunos para praticar e tirar dúvidas com outros estudantes de Libras do Brasil inteiro.</div>
+      </div>
+
+      <div class="benefit-col">
+        <div class="benefit-icon-wrap">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="benefit-title">100% online, no seu tempo</div>
+        <div class="benefit-desc">Acesse do celular, tablet ou computador. Aulas gravadas disponíveis 24h por dia, sem prazo de expiração.</div>
+      </div>
+
+      <div class="benefit-col">
+        <div class="benefit-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="benefit-title">Garantia de 7 dias</div>
+        <div class="benefit-desc">Teste sem risco. Se não estiver satisfeito, devolvemos 100% do seu investimento — sem perguntas.</div>
       </div>
 
     </div>
-  </div>
 
-  </div><!-- /hero-bg -->
+    <!-- DEPOIMENTOS -->
+    <h2 class="section-title">O que dizem os <span class="verde">alunos</span></h2>
 
-  <!-- APÓS VÍDEO -->
-  <div class="after-video">
+    <div class="depoimentos">
 
-    <div class="avatars-row">
-      <div class="avatar-stack">
-        <div class="av" style="background:#0BBFAD;margin-left:0">A</div>
-        <div class="av" style="background:#089E8E">C</div>
-        <div class="av" style="background:#06857A">J</div>
-        <div class="av" style="background:#0BBFAD">M</div>
-        <div class="av" style="background:#089E8E">R</div>
+      <div class="dep-card">
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">"Em menos de um mês eu já conseguia me comunicar com a minha colega surda no trabalho. O método da Lorena é <strong>completamente diferente</strong> de tudo que eu já tentei antes."</p>
+        <div class="dep-author">
+          <div class="dep-avatar">A</div>
+          <div>
+            <div class="dep-name">Ana Paula M.</div>
+            <div class="dep-label">Recife, PE · Aluna da turma 4</div>
+          </div>
+        </div>
       </div>
-      <span class="avatars-text">+500 alunos formados</span>
+
+      <div class="dep-card">
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">"Eu tinha medo de não conseguir aprender porque sou mais velho. Mas o curso é tão bem explicado que <strong>na segunda semana já estava praticando com surdos de verdade.</strong>"</p>
+        <div class="dep-author">
+          <div class="dep-avatar">C</div>
+          <div>
+            <div class="dep-name">Carlos Eduardo S.</div>
+            <div class="dep-label">Belo Horizonte, MG · Aluno da turma 6</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dep-card">
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">"Comprei com o coração na mão, mas valeu cada centavo. A Lorena tem uma <strong>didática incrível</strong> e o suporte é ótimo. Super recomendo!"</p>
+        <div class="dep-author">
+          <div class="dep-avatar">J</div>
+          <div>
+            <div class="dep-name">Juliana R.</div>
+            <div class="dep-label">São Paulo, SP · Aluna da turma 5</div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <div class="cta-wrap">
-
-      <!-- bloqueado -->
-      <div class="cta-locked" id="ctaLocked">
-        <div class="cta-locked-icon">🔒</div>
-        <div class="cta-locked-text">O botão de compra será liberado em</div>
-        <div class="cta-countdown" id="ctaCountdown">--:--</div>
-        <div class="cta-locked-hint">Continue assistindo ao vídeo</div>
+    <!-- GARANTIA -->
+    <div class="garantia">
+      <div class="garantia-icon">🛡️</div>
+      <div>
+        <div class="garantia-title">Garantia incondicional de 7 dias</div>
+        <div class="garantia-desc">Se por qualquer motivo você não gostar do curso, devolvemos <strong>100% do seu dinheiro</strong> — sem perguntas, sem burocracia. Você não tem nada a perder.</div>
       </div>
+    </div>
 
-      <!-- desbloqueado -->
-      <div class="cta-unlocked" id="ctaUnlocked">
-        <!--
-          Substitua href="#checkout" pelo link real (Hotmart, Kiwify, etc.)
-        -->
-        <a href="#checkout" class="cta-btn">
+    <!-- BIO -->
+    <div class="bio-card">
+      <div class="bio-photo">
+        <img src="fotos/IMG_4966.jpg" alt="Prof. Lorena" />
+      </div>
+      <div>
+        <div class="bio-name">Prof. Lorena</div>
+        <div class="bio-role">Intérprete &amp; Professora de Libras</div>
+        <div class="bio-desc">Fundadora da <strong>Nerds da Libras LTDA</strong>. Pioneira no Brasil ao trazer o método Input Compreensível para a Libras. 15 anos transformando vidas através da comunicação inclusiva.</div>
+      </div>
+    </div>
+
+    <!-- CTA FINAL -->
+    <div class="cta-final" id="ctaFinal">
+      <p class="cta-final-label">Pronto para começar?</p>
+      <div class="cta-final-inner">
+        <a href="#kiwify" class="cta-btn">
           <span>Quero garantir minha vaga agora</span>
           <span class="cta-btn-arrow">
-            <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
           </span>
         </a>
         <div class="trust-badges">
@@ -461,137 +663,17 @@
           <span>✓ 7 dias de Garantia</span>
         </div>
       </div>
-
-    </div>
-  </div>
-
-  <!-- BENEFITS GRID -->
-  <div class="benefits-card">
-
-    <div class="benefit-col">
-      <div class="benefit-icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      </div>
-      <div class="benefit-title">Método i+1 exclusivo</div>
-      <div class="benefit-desc">A única abordagem baseada em aquisição natural de linguagem aplicada à Libras — sem decoreba, sem listas de sinais.</div>
     </div>
 
-    <div class="benefit-col">
-      <div class="benefit-icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
-      <div class="benefit-title">Comunidade exclusiva</div>
-      <div class="benefit-desc">Acesso ao grupo de alunos para tirar dúvidas, praticar e trocar experiências com outros estudantes de Libras.</div>
+    <div class="divider"></div>
+
+    <div class="footer">
+      <p>© 2026 Nerds da Libras LTDA · Prof. Lorena</p>
+      <p>Presente em todo o Brasil 🇧🇷</p>
     </div>
 
-    <div class="benefit-col">
-      <div class="benefit-icon-wrap">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      </div>
-      <div class="benefit-title">100% online, no seu tempo</div>
-      <div class="benefit-desc">Acesse do celular, tablet ou computador. Aulas gravadas disponíveis 24h por dia, sem prazo de expiração.</div>
-    </div>
-
-    <div class="benefit-col">
-      <div class="benefit-icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      </div>
-      <div class="benefit-title">Garantia de 7 dias</div>
-      <div class="benefit-desc">Teste o curso sem risco. Se não estiver satisfeito, devolvemos 100% do seu investimento sem perguntas.</div>
-    </div>
-
-  </div>
-
-  <!-- DEPOIMENTOS -->
-  <h2 class="section-title">O que dizem os alunos</h2>
-
-  <div class="depoimentos">
-
-    <div class="dep-card">
-      <div class="dep-stars">★★★★★</div>
-      <p class="dep-text">"Em menos de um mês eu já conseguia me comunicar com a minha colega surda no trabalho. O método da Lorena é <strong>completamente diferente</strong> de tudo que eu já tentei antes."</p>
-      <div class="dep-author">
-        <div class="dep-avatar">A</div>
-        <div>
-          <div class="dep-name">Ana Paula M.</div>
-          <div class="dep-label">Recife, PE · Aluna da turma 4</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="dep-card">
-      <div class="dep-stars">★★★★★</div>
-      <p class="dep-text">"Eu tinha medo de não conseguir aprender porque sou mais velho. Mas o curso é tão bem explicado que <strong>na segunda semana já estava praticando com surdos de verdade.</strong>"</p>
-      <div class="dep-author">
-        <div class="dep-avatar">C</div>
-        <div>
-          <div class="dep-name">Carlos Eduardo S.</div>
-          <div class="dep-label">Belo Horizonte, MG · Aluno da turma 6</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="dep-card">
-      <div class="dep-stars">★★★★★</div>
-      <p class="dep-text">"Comprei com o coração na mão, mas valeu cada centavo. A Lorena tem uma <strong>didática incrível</strong> e o suporte é ótimo. Super recomendo!"</p>
-      <div class="dep-author">
-        <div class="dep-avatar">J</div>
-        <div>
-          <div class="dep-name">Juliana R.</div>
-          <div class="dep-label">São Paulo, SP · Aluna da turma 5</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- GARANTIA -->
-  <div class="garantia">
-    <div class="garantia-icon">🛡️</div>
-    <div>
-      <div class="garantia-title">Garantia incondicional de 7 dias</div>
-      <div class="garantia-desc">Se por qualquer motivo você não gostar do curso, devolvemos <strong>100% do seu dinheiro</strong> — sem perguntas, sem burocracia. Você não tem nada a perder.</div>
-    </div>
-  </div>
-
-  <!-- BIO -->
-  <div class="bio-card">
-    <div class="bio-photo">
-      <img src="fotos/IMG_4966.jpg" alt="Prof. Lorena" />
-    </div>
-    <div>
-      <div class="bio-name">Prof. Lorena</div>
-      <div class="bio-role">Intérprete &amp; Professora de Libras</div>
-      <div class="bio-desc">Fundadora da <strong>Nerds da Libras LTDA</strong>. 15 anos transformando vidas através da comunicação inclusiva. Criadora do método i+1 aplicado à Libras — exclusivo no Brasil.</div>
-    </div>
-  </div>
-
-  <!-- CTA FINAL -->
-  <div class="cta-final" id="ctaFinal">
-    <p class="cta-final-label">Pronto para começar?</p>
-    <div class="cta-final-inner">
-      <a href="#checkout" class="cta-btn">
-        <span>Quero garantir minha vaga agora</span>
-        <span class="cta-btn-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-        </span>
-      </a>
-      <div class="trust-badges">
-        <span><span class="stars">★★★★</span>½&nbsp;4,9/5</span>
-        <span>🔒 Compra segura</span>
-        <span>✓ 7 dias de Garantia</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="footer">
-    <p>© 2026 Nerds da Libras LTDA · Prof. Lorena</p>
-    <p>Presente em todo o Brasil 🇧🇷</p>
-  </div>
-
-</div>
+  </div><!-- /wrapper -->
+</div><!-- /page -->
 
 <!-- FULLSCREEN OVERLAY -->
 <div id="fsOverlay">
@@ -641,17 +723,12 @@
     const fsClose     = document.getElementById('fsClose');
 
     function openFullscreen() {
-      // If there's already an iframe in the main player, clone it into overlay
       const existingIframe = document.querySelector('.player-ratio iframe');
-      let iframeSrc = '';
-      if (existingIframe) {
-        iframeSrc = existingIframe.src;
-      }
-      // Build a fullscreen iframe — if no src, show placeholder message
+      const iframeSrc = existingIframe ? existingIframe.src : '';
       if (iframeSrc) {
         fsInner.innerHTML = '<iframe src="' + iframeSrc + '?autoplay=1" allow="autoplay; fullscreen" allowfullscreen></iframe>';
       } else {
-        fsInner.innerHTML = '<div style="color:#fff;text-align:center;padding:40px;font-size:1.2rem;">Cole o link do vídeo no iframe do player para ativar o fullscreen.</div>';
+        fsInner.innerHTML = '<div style="color:#fff;text-align:center;padding:40px;font-size:1.1rem;">Cole o link do vídeo no iframe do player para ativar o fullscreen.</div>';
       }
       overlay.classList.add('open');
       document.body.style.overflow = 'hidden';
