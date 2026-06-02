@@ -814,6 +814,7 @@ function _mostrarCardMentoria() {
 }
 
 function _mostrarCardVSL() {
+  const vslUrl = 'https://www.clubedalibras.com/vsl?s=' + encodeURIComponent(lead.sessionId);
   const el = document.createElement('div');
   el.className = 'vsl-wrap show';
   el.innerHTML = `
@@ -822,7 +823,7 @@ function _mostrarCardVSL() {
         <div class="vsl-badge">🔥 Exclusivo</div>
         <div class="vsl-tag">Só para quem fez a avaliação</div>
       </div>
-      <div class="vsl-thumb" onclick="registrarCliqueVSL();window.location.href='https://www.clubedalibras.com/vsl'" style="cursor:pointer">
+      <div class="vsl-thumb" onclick="registrarCliqueVSL();window.location.href='${vslUrl}'" style="cursor:pointer">
         <div class="vsl-thumb-bg"></div>
         <div class="vsl-play">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -832,7 +833,7 @@ function _mostrarCardVSL() {
       <div class="vsl-body">
         <div class="vsl-title">Você vai se arrepender se não ver <span class="orange">esse vídeo</span> — confia em mim</div>
         <div class="vsl-sub">A Lorena gravou um vídeo especial para quem está <strong>exatamente no seu nível</strong>. É curto, direto e pode mudar completamente o seu caminho em Libras.</div>
-        <a class="btn-vsl" href="https://www.clubedalibras.com/vsl" onclick="registrarCliqueVSL()">
+        <a class="btn-vsl" href="${vslUrl}" onclick="registrarCliqueVSL()">
           ▶ Quero ver o vídeo agora
         </a>
         <div class="vsl-disclaimer">Gratuito · Sem cadastro · Menos de 10 minutos</div>

@@ -772,6 +772,7 @@ body {
 .mini-funnel { display:flex; align-items:center; gap:3px; margin:6px 0 4px; font-size:.72rem; }
 .mf { opacity:.2; transition:opacity .15s; line-height:1; }
 .mf.done { opacity:1; }
+.mf.partial { opacity:.65; filter:sepia(1) saturate(3) hue-rotate(5deg); }
 .mf-arr { color:var(--td); font-size:.6rem; line-height:1; }
 .mini-wpp-btn {
   display:block; margin-top:8px; padding:6px 10px; border-radius:8px;

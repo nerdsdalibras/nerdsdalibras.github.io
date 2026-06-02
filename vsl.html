@@ -673,7 +673,7 @@
 
         <!-- desbloqueado -->
         <div class="cta-unlocked" id="ctaUnlocked">
-          <a href="https://pay.kiwify.com.br/1sIyvVL" class="cta-btn">
+          <a href="https://pay.kiwify.com.br/1sIyvVL" class="cta-btn" onclick="_trackVSL('vslClicouCTA')">
             <span>Garantir essa oferta</span>
             <span class="cta-btn-arrow">
               <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -706,9 +706,31 @@
 
 <script>
   // ════════════════════════════════════════════
-  // TIMER DO BOTÃO DE COMPRA
-  // 180 = 3 min | 300 = 5 min | 600 = 10 min
+  // VSL TRACKING — rastreia progresso por lead
   // ════════════════════════════════════════════
+  var _vslSessionId = (function() {
+    try { return new URLSearchParams(window.location.search).get('s'); } catch(e) { return null; }
+  })();
+
+  var _vslTracked = { iniciou: false, p25: false, p50: false, p75: false, fim: false };
+
+  function _trackVSL(field) {
+    if (!_vslSessionId) return;
+    try {
+      var KEY = 'ndl_leads';
+      var leads = JSON.parse(localStorage.getItem(KEY) || '[]');
+      var idx = leads.findIndex(function(l) { return l.sessionId === _vslSessionId; });
+      if (idx < 0) return;
+      leads[idx][field] = true;
+      leads[idx].updatedAt = new Date().toISOString();
+      localStorage.setItem(KEY, JSON.stringify(leads));
+      try {
+        var sheetsUrl = 'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec';
+        navigator.sendBeacon(sheetsUrl, JSON.stringify(leads[idx]));
+      } catch(e2) {}
+    } catch(e) {}
+  }
+
   // ════════════════════════════════════════════
   // YOUTUBE PLAYER API — botão aparece ao fim do vídeo
   // ════════════════════════════════════════════
@@ -757,6 +779,12 @@
 
     // Vídeo tocando → monitora posição + atualiza contador
     if (event.data === YT.PlayerState.PLAYING) {
+      // Rastreia início do vídeo (primeira vez)
+      if (!_vslTracked.iniciou) {
+        _vslTracked.iniciou = true;
+        _trackVSL('vslIniciou');
+      }
+
       seekGuard = false;
       clearInterval(timerInterval);
       timerInterval = setInterval(function () {
@@ -769,6 +797,14 @@
           ytPlayer.seekTo(maxReached, true);
           setTimeout(function () { seekGuard = false; }, 800);
           return;
+        }
+
+        // Rastreia marcos de porcentagem (apenas em reprodução orgânica)
+        if (duration > 0) {
+          var pct = (current / duration) * 100;
+          if (!_vslTracked.p25 && pct >= 25) { _vslTracked.p25 = true; _trackVSL('vslPct25'); }
+          if (!_vslTracked.p50 && pct >= 50) { _vslTracked.p50 = true; _trackVSL('vslPct50'); }
+          if (!_vslTracked.p75 && pct >= 75) { _vslTracked.p75 = true; _trackVSL('vslPct75'); }
         }
 
         // Atualiza o máximo alcançado organicamente
@@ -787,9 +823,10 @@
       if (!seekGuard) lastKnownTime = ytPlayer.getCurrentTime();
     }
 
-    // Vídeo terminou → abre o cadeado
+    // Vídeo terminou → rastreia + abre o cadeado
     if (event.data === YT.PlayerState.ENDED) {
       clearInterval(timerInterval);
+      if (!_vslTracked.fim) { _vslTracked.fim = true; _trackVSL('vslAssistiuFim'); }
       unlock(locked, unlocked, countdown, lockScene, librasSign, librasMsg);
     }
   }

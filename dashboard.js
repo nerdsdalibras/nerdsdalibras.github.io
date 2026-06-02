@@ -768,7 +768,11 @@ function renderLeadCard(l, idx) {
         ${l.oferta ? `<div class="info-chip">${l.oferta === 'curso' ? '📚 Curso' : '🎯 Mentoria'}</div>` : ''}
         ${statusKey === 'comprou'  ? `<div class="info-chip green">✅ Compra confirmada</div>` : ''}
         ${viuCheckout              ? `<div class="info-chip" style="color:var(--yellow)">🛒 Viu checkout</div>` : ''}
-        ${l.clicouVSL              ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">▶ Viu VSL</div>` : ''}
+        ${l.vslClicouCTA    ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">🛒 VSL→CTA</div>` :
+          l.vslAssistiuFim  ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">✔ VSL completo</div>` :
+          l.vslPct50        ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">⏱ VSL 50%</div>` :
+          l.vslPct25        ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">⏱ VSL 25%</div>` :
+          (l.vslIniciou||l.clicouVSL) ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">▶ Abriu VSL</div>` : ''}
         ${l.clicouGrupo            ? `<div class="info-chip blue">💬 Grupo</div>` : ''}
         ${hasAlert                 ? `<div class="ai-alert">⚡ Abordar agora</div>` : ''}
         ${tags.map(t => `<span class="tag-chip" style="background:${tagColor(t)}">${t}</span>`).join('')}
@@ -925,7 +929,15 @@ function renderTab(tab) {
             ${statusKey === 'comprou' ? '✅ Compra confirmada (Kiwify)' : viuCheck ? '🛒 Viu, não comprou' : '—'}
           </span>
         </div>
-        <div class="panel-field"><span class="pf-label">Clicou no VSL</span><span class="pf-val" style="color:${l.clicouVSL ? '#FB923C' : 'inherit'}">${l.clicouVSL ? '▶ Sim — assistiu o vídeo' : '—'}</span></div>
+        <div class="panel-field"><span class="pf-label">VSL</span><span class="pf-val" style="color:${(l.vslIniciou||l.clicouVSL) ? '#FB923C' : 'inherit'}">${
+          l.vslClicouCTA    ? '🛒 Clicou no CTA — foi ao checkout' :
+          l.vslAssistiuFim  ? '✔ Assistiu até o fim' :
+          l.vslPct75        ? '⏱ Parou em 75%' :
+          l.vslPct50        ? '⏱ Parou em 50%' :
+          l.vslPct25        ? '⏱ Parou em 25%' :
+          l.vslIniciou      ? '▶ Abriu o vídeo' :
+          l.clicouVSL       ? '▶ Clicou no link' : '—'
+        }</span></div>
         <div class="panel-field"><span class="pf-label">Entrou no grupo</span><span class="pf-val">${l.clicouGrupo ? '💬 Sim' : '—'}</span></div>
         ${l.statusCloser ? `<div class="panel-field"><span class="pf-label">Nota closer</span><span class="pf-val">${l.statusCloser}</span></div>` : ''}
       </div>
@@ -1021,14 +1033,26 @@ function renderTab(tab) {
 /* ── FUNNEL JOURNEY ── */
 function buildFunilSteps(l) {
   const statusKey = l.status || 'novo';
+
+  // VSL progress note: highest milestone reached
+  const vslMaxPct = l.vslPct75 ? 75 : l.vslPct50 ? 50 : l.vslPct25 ? 25 : 0;
+  const vslAbriuNote = l.vslIniciou
+    ? (vslMaxPct > 0 ? `Assistiu ${vslMaxPct}%` : 'Iniciou o vídeo')
+    : (l.clicouVSL ? 'Clicou (sem rastreio detalhado)' : '—');
+  const vslFimNote = l.vslAssistiuFim
+    ? 'Assistiu até o fim'
+    : (vslMaxPct > 0 ? `Parou em ${vslMaxPct}%` : '—');
+
   return [
-    { icon: '📋', label: 'Fez a avaliação',     note: l.createdAt ? formatDate(l.createdAt) : '—', done: !!l.createdAt },
+    { icon: '📋', label: 'Fez a avaliação',       note: l.createdAt ? formatDate(l.createdAt) : '—',   done: !!l.createdAt },
     { icon: l.oferta === 'mentoria' ? '🎯' : '📚', label: 'Oferta definida',
-      note: l.oferta === 'mentoria' ? 'Mentoria' : l.oferta === 'curso' ? 'Curso' : '—', done: !!l.oferta },
-    { icon: '▶', label: 'Assistiu o VSL',        note: l.clicouVSL ? 'Sim' : '—',   done: !!l.clicouVSL },
-    { icon: '💬', label: 'Entrou no grupo',       note: l.clicouGrupo ? 'Sim' : '—', done: !!l.clicouGrupo },
-    { icon: '🛒', label: 'Viu o checkout',        note: l.clicouCheckout ? 'Sim' : '—', done: !!l.clicouCheckout },
-    { icon: '✅', label: 'Comprou',               note: statusKey === 'comprou' ? (l.updatedAt ? formatDate(l.updatedAt) : 'Sim') : '—', done: statusKey === 'comprou' },
+      note: l.oferta === 'mentoria' ? 'Mentoria' : l.oferta === 'curso' ? 'Curso' : '—',                done: !!l.oferta },
+    { icon: '▶',  label: 'Abriu o VSL',            note: vslAbriuNote,                                   done: !!(l.vslIniciou || l.clicouVSL) },
+    { icon: '⏱',  label: 'Assistiu até o fim',     note: vslFimNote,                                     done: !!l.vslAssistiuFim },
+    { icon: '🖱',  label: 'Clicou no CTA do VSL',  note: l.vslClicouCTA ? 'Sim' : '—',                   done: !!l.vslClicouCTA },
+    { icon: '💬', label: 'Entrou no grupo',         note: l.clicouGrupo ? 'Sim' : '—',                   done: !!l.clicouGrupo },
+    { icon: '🛒', label: 'Viu o checkout',          note: l.clicouCheckout ? 'Sim' : '—',                 done: !!l.clicouCheckout },
+    { icon: '✅', label: 'Comprou',                 note: statusKey === 'comprou' ? (l.updatedAt ? formatDate(l.updatedAt) : 'Sim') : '—', done: statusKey === 'comprou' },
   ];
 }
 
@@ -1049,10 +1073,16 @@ function copyTemplatePanel(templateId) {
 
 function buildTimeline(l) {
   const events = [];
-  if (l.createdAt)    events.push({ time: formatTime(l.createdAt), text: 'Concluiu o diagnóstico' });
-  if (l.concluiuQuiz) events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0} / 48 pts` });
-  if (l.clicouVSL)    events.push({ time: '—', text: '▶ Clicou no vídeo VSL — foi para a página de compra' });
-  if (l.clicouGrupo)  events.push({ time: '—', text: '💬 Clicou para entrar no grupo de WhatsApp' });
+  if (l.createdAt)       events.push({ time: formatTime(l.createdAt), text: 'Concluiu o diagnóstico' });
+  if (l.concluiuQuiz)   events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0} / 48 pts` });
+  if (l.clicouVSL && !l.vslIniciou) events.push({ time: '—', text: '▶ Clicou no link do VSL' });
+  if (l.vslIniciou)     events.push({ time: '—', text: '▶ Abriu o vídeo VSL' });
+  if (l.vslPct25)       events.push({ time: '—', text: '⏱ Assistiu 25% do VSL' });
+  if (l.vslPct50)       events.push({ time: '—', text: '⏱ Assistiu 50% do VSL' });
+  if (l.vslPct75)       events.push({ time: '—', text: '⏱ Assistiu 75% do VSL' });
+  if (l.vslAssistiuFim) events.push({ time: '—', text: '✔ Assistiu o VSL até o fim' });
+  if (l.vslClicouCTA)   events.push({ time: '—', text: '🛒 Clicou no CTA do VSL (checkout)' });
+  if (l.clicouGrupo)    events.push({ time: '—', text: '💬 Clicou para entrar no grupo de WhatsApp' });
   if (l.clicouCheckout && l.status !== 'comprou')
     events.push({ time: '—', text: '🛒 Visitou a página de checkout (não confirmado)' });
   if (l.status === 'comprou')
@@ -1189,7 +1219,7 @@ async function renderPipeline() {
                     <div class="mini-funnel">
                       <span class="mf done" title="Fez a avaliação">📋</span><span class="mf-arr">›</span>
                       <span class="mf ${l.oferta ? 'done' : ''}" title="Oferta">${ofIcon || '·'}</span><span class="mf-arr">›</span>
-                      <span class="mf ${l.clicouVSL ? 'done' : ''}" title="Assistiu o VSL">▶</span><span class="mf-arr">›</span>
+                      <span class="mf ${l.vslAssistiuFim ? 'done' : (l.vslIniciou||l.clicouVSL) ? 'partial' : ''}" title="${l.vslClicouCTA ? 'VSL: clicou no CTA' : l.vslAssistiuFim ? 'VSL: assistiu até o fim' : l.vslPct75 ? 'VSL: assistiu 75%' : l.vslPct50 ? 'VSL: assistiu 50%' : l.vslPct25 ? 'VSL: assistiu 25%' : l.vslIniciou ? 'VSL: abriu o vídeo' : l.clicouVSL ? 'VSL: clicou no link' : 'VSL: não abriu'}">▶</span><span class="mf-arr">›</span>
                       <span class="mf ${l.clicouGrupo ? 'done' : ''}" title="Entrou no grupo">💬</span><span class="mf-arr">›</span>
                       <span class="mf ${l.clicouCheckout ? 'done' : ''}" title="Viu o checkout">🛒</span><span class="mf-arr">›</span>
                       <span class="mf ${(l.status||'') === 'comprou' ? 'done' : ''}" title="Comprou">✅</span>
