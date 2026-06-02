@@ -846,7 +846,6 @@ function _mostrarCardVSL() {
 // ── TRACKING ──
 function registrarCliqueVSL() {
   lead.clicouVSL    = true;
-  lead.clicouGrupo  = true;
   lead.statusCloser = 'Clicou no vídeo VSL';
   Storage.upsert({ ...lead });
 }
