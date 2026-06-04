@@ -823,6 +823,46 @@
       white-space: nowrap; flex-shrink: 0;
     }
 
+    /* ── MENTORIA LISTA ── */
+    .mentoria-lista {
+      display: flex; flex-direction: column; gap: 5px;
+      margin-top: 10px;
+    }
+    .mentoria-lista span {
+      font-size: .82rem; color: rgba(255,255,255,.75);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .mentoria-lista span::before {
+      content: '✔';
+      color: #A78BFA;
+      font-size: .75rem;
+      flex-shrink: 0;
+    }
+
+    /* ── LIVE BOX ── */
+    .mentoria-live-box {
+      margin-top: 14px;
+      background: rgba(248,113,113,.08);
+      border: 1px solid rgba(248,113,113,.3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      position: relative; z-index: 1;
+    }
+    .live-data {
+      display: inline-block;
+      background: #F87171;
+      color: #fff;
+      font-size: .72rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 6px;
+      margin-bottom: 7px;
+      letter-spacing: .03em;
+    }
+    .mentoria-live-box p {
+      font-size: .82rem; color: rgba(255,255,255,.85);
+      line-height: 1.45; margin: 0;
+    }
+    .mentoria-live-box strong { color: #fff; }
+
 
 
     /* ═══ MOBILE ≤ 480px ═══ */
@@ -1068,7 +1108,7 @@
   </a>
 
   <!-- CURSOS + MENTORIA -->
-  <div class="section-label" data-aos="fade-up">✦ Meus Produtos ✦</div>
+  <div class="section-label" data-aos="fade-up">✦ Curiosidades ✦</div>
   <div class="cards">
 
     <a href="https://www.clubedalibras.com/vsl" class="card curso" data-aos="fade-up" data-aos-duration="550" style="text-decoration:none;">
@@ -1077,30 +1117,38 @@
         <img src="fotos/image-1777402957527.jpg" alt="Prof. Lorena — Curso Online Do Zero a Libras">
       </div>
       <div class="card-type">📚 Curso Online</div>
-      <div class="card-title">Esse foi o método que mais gerou resultado nos últimos anos</div>
-      <div class="card-desc"><strong style="color:#fff">Não usar esse método</strong> pode ser o que está fazendo você <strong style="color:#4ADE80">travar na Libras.</strong></div>
+      <div class="card-title">95% das pessoas que tentam aprender Libras desistem no terceiro mês.</div>
+      <div class="card-desc"><strong style="color:#fff">O motivo não é falta de dedicação.</strong></div>
       <div class="cta-verde">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0;vertical-align:middle;margin-right:6px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        Ver a página de vendas →
+        Qual o motivo? →
       </div>
     </a>
 
-    <div class="card mentoria" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550" onclick="window.open('https://wa.me/5534996608012?text=Oi%20Lorena%20quero%20saber%20mais%20sobre%20sua%20mentoria','_blank')">
-      <span class="offer-pill">💜 O Mais Desejado pelos Intérpretes</span>
+    <div class="card mentoria" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550">
+      <span class="offer-pill">🔴 AO VIVO · 15 DE JUNHO</span>
       <div class="card-photo-wrap">
         <img src="fotos/image-1777403006556.jpg" alt="Prof. Lorena — Mentoria Profissional">
       </div>
       <div class="card-type">🎯 Mentoria Profissional</div>
-      <div class="card-title">Destrava Libras</div>
-      <div class="card-desc">Para intérpretes que querem <strong style="color:#C4B5FD">avançar de verdade</strong>. Mentoria direta com a Profa. Lorena — <strong style="color:#fff">vagas limitadas.</strong></div>
-      <div class="card-metodo">
-        <span class="pill-m">i+1</span>
-        Método exclusivo da Profa. Lorena aplicado à Mentoria
+      <div class="card-title">Existe um motivo pelo qual intérpretes qualificados <span style="color:#F87171">travam na hora H.</span></div>
+      <div class="card-desc">
+        Isso acontece com quem tem:
+        <div class="mentoria-lista">
+          <span>Curso Técnico em Interpretação</span>
+          <span>Graduação em Letras Libras</span>
+          <span>Pós-graduação em Interpretação</span>
+          <span>Anos de atuação como intérprete</span>
+        </div>
+      </div>
+      <div class="mentoria-live-box">
+        <span class="live-data">📅 15 de junho — ao vivo</span>
+        <p>Vou explicar exatamente qual é esse motivo — <strong>só para quem estiver no grupo.</strong></p>
       </div>
     </div>
     <a href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" class="cta-verde" style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-      Quero entrar na próxima turma →
+      👇 Acesse o grupo e garanta o link da live →
     </a>
 
   </div>
