@@ -645,8 +645,8 @@
       width: 100%; margin-top: 20px;
       padding: 22px 20px 18px;
       border-radius: 24px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
       backdrop-filter: blur(10px);
     }
     .redes-titulo {
@@ -783,6 +783,11 @@
       animation: shimmerCta 2.8s ease-in-out infinite;
       animation-delay: 1.4s;
     }
+    /* WhatsApp */
+    .rede-row.whatsapp .rede-icon-sm { background:#25D366; }
+    .rede-row.whatsapp .rede-btn { background:#25D366; color:#fff; border:none; box-shadow:0 0 14px rgba(37,211,102,.35); }
+    .rede-row.whatsapp .rede-btn::after { animation-delay:0s; }
+
     /* Instagram */
     .rede-row.instagram .rede-icon-sm { background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); }
     .rede-row.instagram .rede-btn { background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); color:#fff; border:none; box-shadow:0 0 14px rgba(221,42,123,.35); }
@@ -842,10 +847,6 @@
     /* ── LIVE BOX ── */
     .mentoria-live-box {
       margin-top: 14px;
-      background: rgba(248,113,113,.08);
-      border: 1px solid rgba(248,113,113,.3);
-      border-radius: 12px;
-      padding: 12px 14px;
       position: relative; z-index: 1;
     }
     .live-data {
@@ -1008,12 +1009,145 @@
       transform: skewX(-15deg);
       animation: shimmerCta 2.5s ease-in-out infinite;
     }
+
+    /* ══════════════════════════════════════════════
+       PALETA TRANSFORMAÇÃO — TEMA CLARO
+    ══════════════════════════════════════════════ */
+
+    body {
+      background: #FFFDF7;
+      color: #111827;
+    }
+
+    .bg-noise {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -5%, rgba(201,150,58,.09) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 95% 100%, rgba(76,29,149,.06) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 0% 60%, rgba(76,29,149,.04) 0%, transparent 50%);
+    }
+
+    /* Fotos espalhadas no fundo */
+    .bg-scatter {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+    .bg-scatter img {
+      position: absolute;
+      border-radius: 16px;
+      object-fit: cover;
+      filter: grayscale(10%) brightness(0.93) saturate(0.8);
+      opacity: 0.28;
+    }
+    .bg-s1 { width: 180px; height: 240px; top: 5%;    left: calc(50% - 380px); transform: rotate(-6deg); }
+    .bg-s2 { width: 165px; height: 220px; top: 28%;   right: calc(50% - 375px); transform: rotate(5deg); }
+    .bg-s3 { width: 170px; height: 230px; top: 56%;   left: calc(50% - 370px); transform: rotate(4deg); }
+    .bg-s4 { width: 160px; height: 210px; bottom: 4%; right: calc(50% - 365px); transform: rotate(-5deg); }
+
+    @media (max-width: 700px) { .bg-scatter { display: none; } }
+
+    /* Hero */
+    .hero-name {
+      background: linear-gradient(135deg, #1a0a4f 30%, var(--ouro-lt));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-bio { color: #374151; }
+    .hero-bio strong { color: #111827; }
+    .photo-dots span { background: rgba(76,29,149,.18); }
+    .photo-dots span.active { background: var(--ouro); }
+    .photo-inner { background: #EDE9FE; }
+    .verified { border-color: #FFFDF7; }
+
+    /* Method badge */
+    .method-badge {
+      background: rgba(76,29,149,.07);
+      border-color: rgba(76,29,149,.22);
+      color: #4C1D95;
+    }
+    .method-badge .pill { background: #4C1D95; color: #fff; }
+
+    /* Cards */
+    .card {
+      background: rgba(255,255,255,.92);
+      border-color: rgba(76,29,149,.1);
+      box-shadow: 0 4px 32px rgba(76,29,149,.07), 0 1px 4px rgba(0,0,0,.03);
+      color: #111827;
+      backdrop-filter: none;
+    }
+    .card.curso {
+      border-color: rgba(22,163,74,.2);
+      background: rgba(255,255,255,.95);
+    }
+    .card.curso:hover { box-shadow: 0 12px 40px rgba(22,163,74,.15); border-color: rgba(22,163,74,.4); }
+    .card.mentoria {
+      border-color: rgba(76,29,149,.18);
+      background: rgba(255,255,255,.95);
+    }
+    .card.mentoria:hover { box-shadow: 0 12px 40px rgba(76,29,149,.15); border-color: rgba(76,29,149,.35); }
+
+    .card-photo-wrap::after {
+      background: linear-gradient(to top, #fff, transparent) !important;
+    }
+    .card.curso    .card-photo-wrap::after { background: linear-gradient(to top, #f0fdf4, transparent) !important; }
+    .card.mentoria .card-photo-wrap::after { background: linear-gradient(to top, #faf5ff, transparent) !important; }
+
+    .card-title { color: #111827; }
+    .card-desc  { color: #374151; }
+    .card-desc strong { color: #111827; }
+
+    .card-type {
+      background: rgba(76,29,149,.08);
+      border: 1px solid rgba(76,29,149,.15);
+      color: #4C1D95;
+    }
+
+    .offer-pill {
+      background: linear-gradient(90deg, #4C1D95, #7C3AED);
+      color: #fff;
+    }
+
+    /* Mentoria lista e live */
+    .mentoria-lista span { color: #374151; }
+    .mentoria-lista span::before { color: #4C1D95; }
+    .live-data { background: #4C1D95; color: #fff; }
+    .mentoria-live-box p { color: #374151; }
+    .mentoria-live-box strong { color: #111827; }
+
+    /* Card metodo */
+    .card-metodo { color: rgba(76,29,149,.7); }
+    .card-metodo .pill-m { background: rgba(76,29,149,.12); color: #4C1D95; }
+
+    /* Section label */
+    .section-label { color: var(--ouro); }
+
+    /* Redes card */
+    .redes-card {
+      background: rgba(255,255,255,.95);
+      border-color: rgba(76,29,149,.1);
+      box-shadow: 0 4px 24px rgba(76,29,149,.06);
+    }
+    .rede-row { border-color: rgba(76,29,149,.08); }
+    .rede-name { color: #111827; }
+    .rede-desc { color: #4B5563; }
+
+    /* Footer */
+    .footer { color: #9CA3AF; }
+    .footer p { color: #9CA3AF; }
+    .footer span { color: var(--ouro); opacity: .7; }
+
   </style>
 </head>
 <body>
 
 <div class="top-bar"></div>
 <div class="bg-noise"></div>
+
+<!-- Fotos decorativas espalhadas no fundo -->
+<div class="bg-scatter">
+  <img class="bg-s1" src="fotos/palestra.1.png"  alt="">
+  <img class="bg-s3" src="fotos/palestras.3.jpg" alt="">
+  <img class="bg-s2" src="fotos/alunos.1.png"    alt="">
+  <img class="bg-s4" src="fotos/alunos.1.png"    alt="">
+</div>
 
 <div class="wrapper">
 
@@ -1048,7 +1182,7 @@
     <p class="hero-title">Intérprete &amp; Professora de Libras</p>
 
     <p class="hero-bio">
-      <strong>Fundadora da Nerds da Libras LTDA</strong> — presente em todo o Brasil.<br/>
+      <strong>Parceira da Nerds da Libras Ltda</strong> — maior empresa de acessibilidade do Brasil.<br/>
       15 anos transformando vidas através da comunicação inclusiva.
     </p>
 
@@ -1057,20 +1191,6 @@
       Método Krashen aplicado à Libras — exclusivo no Brasil
     </div>
 
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-num" id="counter15">15+</div>
-        <div class="stat-label">Anos de<br/>experiência</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">🇧🇷</div>
-        <div class="stat-label">Todo o<br/>Brasil</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">#1</div>
-        <div class="stat-label">Canal Libras<br/>Telegram</div>
-      </div>
-    </div>
 
   </div>
 
@@ -1116,7 +1236,6 @@
       <div class="card-photo-wrap">
         <img src="fotos/image-1777402957527.jpg" alt="Prof. Lorena — Curso Online Do Zero a Libras">
       </div>
-      <div class="card-type">📚 Curso Online</div>
       <div class="card-title">95% das pessoas que tentam aprender Libras desistem no terceiro mês.</div>
       <div class="card-desc"><strong style="color:#fff">O motivo não é falta de dedicação.</strong></div>
       <div class="cta-verde">
@@ -1145,11 +1264,11 @@
         <span class="live-data">📅 15 de junho — ao vivo</span>
         <p>Vou explicar exatamente qual é esse motivo — <strong>só para quem estiver no grupo.</strong></p>
       </div>
+      <a href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" class="cta-verde" style="margin-top:14px; display:flex; align-items:center; justify-content:center; gap:8px; position:relative; z-index:1;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        Grupo exclusivo para a live · 15 de junho às 20h →
+      </a>
     </div>
-    <a href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" class="cta-verde" style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-      👇 Acesse o grupo e garanta o link da live →
-    </a>
 
   </div>
 
@@ -1162,6 +1281,12 @@
     <div style="text-align:center; font-size:.65rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.25); padding: 14px 0 4px;">Também nos siga nas redes</div>
 
     <!-- Redes compactas -->
+    <a href="https://chat.whatsapp.com/LoPTCaxnrN922JMQaSQVWx" target="_blank" class="rede-row rede-sm whatsapp" id="btn-whatsapp">
+      <div class="rede-icon-sm"><svg viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg></div>
+      <div class="rede-info"><div class="rede-name">Clã da Libras</div><div class="rede-desc">Networking · interações · aulas gratuitas</div></div>
+      <div class="rede-btn">Entrar →</div>
+    </a>
+
     <a href="https://www.tiktok.com/@nerds.da.libras" target="_blank" class="rede-row rede-sm tiktok" id="btn-tiktok">
       <div class="rede-icon-sm"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg></div>
       <div class="rede-info"><div class="rede-name">TikTok</div><div class="rede-desc">Aprenda o sinal de cada situação</div></div>
