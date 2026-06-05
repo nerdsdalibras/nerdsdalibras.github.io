@@ -1015,7 +1015,7 @@
     ══════════════════════════════════════════════ */
 
     body {
-      background: #FFFDF7;
+      background: #EDE8DC;
       color: #111827;
     }
 
@@ -1073,8 +1073,38 @@
       color: #111827;
       backdrop-filter: none;
     }
+    /* stat grande */
+    .card-stat {
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 10px; position: relative; z-index: 1;
+    }
+    .stat-big {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.8rem; font-weight: 800; line-height: 1;
+      color: #4C1D95;
+    }
+    .stat-label-txt {
+      font-size: .88rem; color: #374151; line-height: 1.4;
+      text-align: center; margin-top: 4px;
+    }
+    .stat-label-txt strong { color: #111827; }
+
+    /* destaque vermelho/urgência */
+    .card-desc-destaque {
+      display: inline-block;
+      background: rgba(239,68,68,.08);
+      border: 1px solid rgba(239,68,68,.2);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: .84rem; color: #374151;
+      margin-bottom: 4px;
+      position: relative; z-index: 1;
+    }
+    .card-desc-destaque strong { color: #DC2626; }
+
     .card.curso {
       border-color: rgba(22,163,74,.2);
+      border-top: 3px solid #4C1D95;
       background: rgba(255,255,255,.95);
     }
     .card.curso:hover { box-shadow: 0 12px 40px rgba(22,163,74,.15); border-color: rgba(22,163,74,.4); }
@@ -1125,14 +1155,213 @@
       border-color: rgba(76,29,149,.1);
       box-shadow: 0 4px 24px rgba(76,29,149,.06);
     }
+    .redes-titulo {
+      background: linear-gradient(135deg, #9A6A1A 0%, #C9963A 40%, #9A6A1A 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
     .rede-row { border-color: rgba(76,29,149,.08); }
     .rede-name { color: #111827; }
     .rede-desc { color: #4B5563; }
+
+    /* Botões no tema claro */
+    .rede-row.tiktok .rede-btn { background: #111827; color: #fff; border: none; }
+    .rede-row.youtube .rede-btn { background: #FF0000; color: #fff; border: none; }
+
+    /* Clã da Libras — card especial */
+    .cla-card {
+      width: 100%;
+      background: linear-gradient(135deg, #1a0a4f 0%, #2D1B69 60%, #4C1D95 100%);
+      border-radius: 18px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      position: relative; overflow: hidden;
+      text-decoration: none;
+      display: block;
+      border: 1.5px solid rgba(201,150,58,.35);
+      box-shadow: 0 8px 32px rgba(76,29,149,.25);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .cla-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(76,29,149,.35); }
+    .cla-card::before {
+      content: '';
+      position: absolute; top: -50%; right: -20%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(201,150,58,.15), transparent 70%);
+      pointer-events: none;
+    }
+    .cla-inner { display: flex; align-items: center; gap: 14px; position: relative; z-index:1; }
+    .cla-icon {
+      width: 48px; height: 48px; flex-shrink: 0;
+      background: #25D366; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 18px rgba(37,211,102,.4);
+    }
+    .cla-info { flex: 1; }
+    .cla-titulo { font-size: 1rem; font-weight: 800; color: #fff; line-height: 1.2; }
+    .cla-sub { font-size: .75rem; color: rgba(255,255,255,.6); margin-top: 2px; }
+    .cla-badge {
+      display: flex; align-items: center; gap: 5px;
+      margin-top: 8px; position: relative; z-index:1;
+    }
+    .cla-dot { width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; animation: pulse-dot 1.5s infinite; flex-shrink:0; }
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:.5; transform:scale(1.3); }
+    }
+    .cla-live-txt { font-size: .72rem; color: #4ADE80; font-weight: 700; }
+    .cla-btn {
+      background: linear-gradient(90deg, var(--ouro), var(--ouro-lt));
+      color: #1a0a4f; font-size: .72rem; font-weight: 900;
+      padding: 8px 14px; border-radius: 10px; white-space: nowrap;
+      flex-shrink: 0;
+    }
 
     /* Footer */
     .footer { color: #9CA3AF; }
     .footer p { color: #9CA3AF; }
     .footer span { color: var(--ouro); opacity: .7; }
+
+    /* ── HOOK EMOCIONAL ── */
+    .hero-hook {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.25rem, 5vw, 1.6rem);
+      font-weight: 800; color: #111827;
+      line-height: 1.4; margin: 16px 0 8px; text-align: center;
+    }
+    .hero-hook strong { color: #4C1D95; }
+    .hero-proof {
+      font-size: clamp(.72rem, 2.8vw, .82rem); color: #6B7280;
+      text-align: center; margin-top: 6px; line-height: 1.7;
+    }
+    .hero-proof span { color: var(--ouro); font-weight: 600; }
+
+    /* ── QUALIFICAÇÃO ── */
+    .qualif-section {
+      width: 100%; margin-top: 28px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .qualif-titulo {
+      text-align: center; font-size: .98rem; font-weight: 700;
+      color: #374151; letter-spacing: .01em;
+    }
+    .qualif-divisor {
+      display: flex; align-items: center; gap: 10px;
+      margin: 4px 0;
+    }
+    .qualif-divisor::before, .qualif-divisor::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(76,29,149,.12);
+    }
+    .qualif-divisor span { font-size: .7rem; color: #9CA3AF; white-space: nowrap; }
+
+    .qualif-card {
+      width: 100%; border-radius: 20px; padding: 22px 20px 20px;
+      text-decoration: none; display: flex; flex-direction: column;
+      gap: 8px; transition: transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
+    }
+    .qualif-card:hover { transform: translateY(-3px); }
+    .qualif-card:active { transform: scale(.98); }
+
+    .q-zero {
+      background: rgba(255,255,255,.97);
+      border: 1.5px solid rgba(22,163,74,.3);
+      box-shadow: 0 4px 28px rgba(22,163,74,.1);
+    }
+    .q-interprete {
+      background: rgba(255,255,255,.97);
+      border: 1.5px solid rgba(76,29,149,.3);
+      border-top: 3px solid #4C1D95;
+      box-shadow: 0 4px 28px rgba(76,29,149,.1);
+    }
+    .q-emoji { font-size: 2rem; line-height: 1; }
+    .q-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 800;
+      color: #111827; line-height: 1.25;
+    }
+    .q-sub {
+      font-size: .83rem; color: #4B5563;
+      line-height: 1.5; margin-top: 2px;
+    }
+    .q-btn {
+      display: block; margin-top: 10px;
+      background: #16A34A; color: #fff;
+      font-size: .82rem; font-weight: 800;
+      padding: 13px 16px; border-radius: 12px;
+      text-align: center; line-height: 1.35;
+    }
+    .q-interprete .q-btn {
+      background: linear-gradient(90deg, #4C1D95, #7C3AED);
+    }
+
+    /* ── TERCEIRA VIA ── */
+    .terceira-via {
+      width: 100%; text-align: center;
+      margin-top: 6px; padding: 14px 16px 10px;
+    }
+    .tv-label {
+      font-size: .76rem; color: #9CA3AF; margin-bottom: 8px;
+    }
+    .tv-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .83rem; color: #4B5563; font-weight: 600;
+      text-decoration: underline; text-underline-offset: 3px;
+      text-decoration-color: rgba(76,29,149,.3);
+    }
+    .tv-link:hover { color: #4C1D95; }
+
+    /* Redes — peso reduzido */
+    .redes-card { opacity: .92; }
+    .redes-titulo { font-size: .95rem !important; }
+
+    /* ── DIA DOS NAMORADOS ── */
+    .namorados-card {
+      width: 100%; margin-top: 6px;
+      background: linear-gradient(135deg, #fff0f3 0%, #fff5f7 50%, #fff0f3 100%);
+      border: 1.5px solid rgba(225,29,72,.2);
+      border-radius: 20px;
+      padding: 20px 20px 18px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .namorados-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #f43f5e, #fb7185, #f43f5e);
+    }
+    .laco-wrap {
+      font-size: 2.4rem; line-height: 1;
+      margin-bottom: 6px;
+      animation: pulse-heart 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse-heart {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+    .namorados-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 800;
+      color: #be123c; margin-bottom: 4px;
+    }
+    .namorados-sub {
+      font-size: .8rem; color: #9f1239; opacity: .8;
+      margin-bottom: 14px; line-height: 1.45;
+    }
+    .namorados-cta {
+      display: block; width: 100%;
+      background: linear-gradient(90deg, #e11d48, #f43f5e);
+      color: #fff; font-size: .88rem; font-weight: 800;
+      padding: 13px 16px; border-radius: 12px;
+      text-decoration: none; text-align: center;
+      box-shadow: 0 4px 20px rgba(225,29,72,.3);
+      transition: transform .2s, box-shadow .2s;
+      line-height: 1.4;
+    }
+    .namorados-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(225,29,72,.4); }
+    .namorados-cta:active { transform: scale(.98); }
 
   </style>
 </head>
@@ -1181,128 +1410,51 @@
     <h1 class="hero-name">Prof. Lorena</h1>
     <p class="hero-title">Intérprete &amp; Professora de Libras</p>
 
-    <p class="hero-bio">
-      <strong>Parceira da Nerds da Libras Ltda</strong> — maior empresa de acessibilidade do Brasil.<br/>
-      15 anos transformando vidas através da comunicação inclusiva.
+    <p class="hero-hook">
+      Você sabe — ou está aprendendo — Libras, mas <strong>trava na hora de usar de verdade?</strong>
+    </p>
+    <p class="hero-proof">
+      <span>Prof. Lorena</span> · Parceira da Nerds da Libras · 15 anos · Método i+1 exclusivo no Brasil
     </p>
 
-    <div class="method-badge">
-      <span class="pill">i+1</span>
-      Método Krashen aplicado à Libras — exclusivo no Brasil
-    </div>
-
-
   </div>
 
-  <!-- TELEGRAM BANNER — logo abaixo das stats -->
-  <a href="https://t.me/lorenanerddalibras" target="_blank" class="tg-banner" id="btn-telegram" data-aos="fade-up" data-aos-duration="600">
+  <!-- ── QUALIFICAÇÃO ── -->
+  <div class="qualif-section" data-aos="fade-up">
 
-    <!-- estrelas decorativas -->
-    <span class="tg-star" style="top:10px;left:14px;font-size:.85rem;opacity:.6">✦</span>
-    <span class="tg-star" style="top:18px;right:50px;font-size:.55rem;opacity:.4">✦</span>
-    <span class="tg-star" style="bottom:14px;left:38px;font-size:.5rem;opacity:.35">✦</span>
+    <div class="qualif-titulo">Qual desses soa mais como você?</div>
+    <div class="qualif-divisor"><span>escolha o seu caminho</span></div>
 
-    <div class="tg-banner-inner">
-      <!-- lado esquerdo: ícone Telegram grande -->
-      <div class="tg-banner-icon">
-        <svg viewBox="0 0 24 24" width="52" height="52"><path fill="#fff" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      </div>
-      <!-- lado direito: texto -->
-      <div class="tg-banner-text">
-        <div class="tg-banner-titulo">AULAS <span class="tg-amarelo">GRATUITAS</span></div>
-        <div class="tg-banner-sub">Aprenda Libras de um jeito direto,<br/>prático e acessível — todo dia.</div>
-      </div>
-    </div>
-
-    <div class="tg-banner-items">
-      <span>🤟 Sacadas diárias</span>
-      <span>📲 Sinais do cotidiano</span>
-      <span>🎁 Conteúdo exclusivo</span>
-    </div>
-
-    <div class="tg-banner-btn">
-      <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#0A2540" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      Entrar no canal grátis →
-    </div>
-
-  </a>
-
-  <!-- CURSOS + MENTORIA -->
-  <div class="section-label" data-aos="fade-up">✦ Curiosidades ✦</div>
-  <div class="cards">
-
-    <a href="https://www.clubedalibras.com/vsl" class="card curso" data-aos="fade-up" data-aos-duration="550" style="text-decoration:none;">
-      <span class="offer-pill">⚡ Veja Agora</span>
-      <div class="card-photo-wrap">
-        <img src="fotos/image-1777402957527.jpg" alt="Prof. Lorena — Curso Online Do Zero a Libras">
-      </div>
-      <div class="card-title">95% das pessoas que tentam aprender Libras desistem no terceiro mês.</div>
-      <div class="card-desc"><strong style="color:#fff">O motivo não é falta de dedicação.</strong></div>
-      <div class="cta-verde">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0;vertical-align:middle;margin-right:6px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        Qual o motivo? →
-      </div>
+    <!-- Caminho 1: Do Zero -->
+    <a href="https://www.clubedalibras.com/vsl" target="_blank" class="qualif-card q-zero">
+      <div class="q-emoji">📚</div>
+      <div class="q-label">Quero aprender<br/>Libras do zero</div>
+      <div class="q-sub">Do absoluto zero à comunicação com surdos em 30 dias — sem decorar sinais, sem enrolação.</div>
+      <div class="q-btn">Quero começar do zero →</div>
     </a>
 
-    <div class="card mentoria" data-aos="fade-up" data-aos-delay="80" data-aos-duration="550">
-      <span class="offer-pill">🔴 AO VIVO · 15 DE JUNHO</span>
-      <div class="card-photo-wrap">
-        <img src="fotos/image-1777403006556.jpg" alt="Prof. Lorena — Mentoria Profissional">
-      </div>
-      <div class="card-type">🎯 Mentoria Profissional</div>
-      <div class="card-title">Existe um motivo pelo qual intérpretes qualificados <span style="color:#F87171">travam na hora H.</span></div>
-      <div class="card-desc">
-        Isso acontece com quem tem:
-        <div class="mentoria-lista">
-          <span>Curso Técnico em Interpretação</span>
-          <span>Graduação em Letras Libras</span>
-          <span>Pós-graduação em Interpretação</span>
-          <span>Anos de atuação como intérprete</span>
-        </div>
-      </div>
-      <div class="mentoria-live-box">
-        <span class="live-data">📅 15 de junho — ao vivo</span>
-        <p>Vou explicar exatamente qual é esse motivo — <strong>só para quem estiver no grupo.</strong></p>
-      </div>
-      <a href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" class="cta-verde" style="margin-top:14px; display:flex; align-items:center; justify-content:center; gap:8px; position:relative; z-index:1;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        Grupo exclusivo para a live · 15 de junho às 20h →
-      </a>
-    </div>
+    <!-- Caminho 2: Intérprete -->
+    <a href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" class="qualif-card q-interprete">
+      <div class="q-emoji">🎯</div>
+      <div class="q-label">Sou intérprete<br/>e travo na hora H</div>
+      <div class="q-sub">95% dos intérpretes formados travam — e o motivo <strong>não é falta de dedicação.</strong> Descubra ao vivo.</div>
+      <div class="q-btn">VOCÊ NUNCA MAIS VAI TRAVAR NA HORA H.... DESCUBRA NO GRUPO VIP →</div>
+    </a>
 
   </div>
 
-
-  <!-- ── CARD UNIFICADO REDES SOCIAIS ── -->
+  <!-- ── COMUNIDADE ── -->
   <div class="redes-card" data-aos="fade-up" data-aos-duration="600">
-    <div class="redes-titulo">Siga a gente nas redes e se torne um Nerd da Libras 🤟</div>
+    <div class="redes-titulo">Entre para a comunidade 🤟</div>
 
-    <!-- Divisor -->
-    <div style="text-align:center; font-size:.65rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.25); padding: 14px 0 4px;">Também nos siga nas redes</div>
-
-    <!-- Redes compactas -->
     <a href="https://chat.whatsapp.com/LoPTCaxnrN922JMQaSQVWx" target="_blank" class="rede-row rede-sm whatsapp" id="btn-whatsapp">
       <div class="rede-icon-sm"><svg viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg></div>
-      <div class="rede-info"><div class="rede-name">Clã da Libras</div><div class="rede-desc">Networking · interações · aulas gratuitas</div></div>
+      <div class="rede-info">
+        <div class="rede-name">Clã da Libras</div>
+        <div class="rede-desc">Networking · interações · aulas gratuitas</div>
+        <div class="rede-desc" style="margin-top:3px; color:#4C1D95; font-weight:600;">🎁 Ainda não tenho certeza — quero experimentar de graça primeiro</div>
+      </div>
       <div class="rede-btn">Entrar →</div>
-    </a>
-
-    <a href="https://www.tiktok.com/@nerds.da.libras" target="_blank" class="rede-row rede-sm tiktok" id="btn-tiktok">
-      <div class="rede-icon-sm"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg></div>
-      <div class="rede-info"><div class="rede-name">TikTok</div><div class="rede-desc">Aprenda o sinal de cada situação</div></div>
-      <div class="rede-btn">Seguir</div>
-    </a>
-
-    <a href="https://www.youtube.com/@nerdsdalibras?sub_confirmation=1" target="_blank" class="rede-row rede-sm youtube" id="btn-youtube">
-      <div class="rede-icon-sm"><svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg></div>
-      <div class="rede-info"><div class="rede-name">YouTube</div><div class="rede-desc">Aprenda a interpretar músicas em Libras</div></div>
-      <div class="rede-btn">▶ Inscrever</div>
-    </a>
-
-    <a href="https://www.instagram.com/nerdsdalibras" target="_blank" class="rede-row rede-sm instagram" id="btn-instagram">
-      <div class="rede-icon-sm"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>
-      <div class="rede-info"><div class="rede-name">Instagram</div><div class="rede-desc">Aulas completas da série Destrava Libras</div></div>
-      <div class="rede-btn">Seguir →</div>
     </a>
 
   </div>
