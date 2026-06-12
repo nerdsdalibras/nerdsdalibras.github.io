@@ -87,10 +87,10 @@
     .concierge-card > *{position:relative;z-index:2;}
     .concierge-icon{
       width:44px;height:44px;border-radius:50%;
-      background:#2a2a2a;
-      display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;font-size:20px;
+      overflow:hidden;
+      flex-shrink:0;
     }
+    .concierge-icon img{width:100%;height:100%;object-fit:cover;object-position:top center;}
     .concierge-texts{flex:1;}
     .concierge-title{font-size:15px;font-weight:800;color:#fff;line-height:1.28;}
     .concierge-sub{font-size:13px;color:#999;margin-top:4px;line-height:1.45;}
@@ -436,7 +436,7 @@
 
   <!-- ═══ SEÇÃO 3: CONCIERGE IA ═══ -->
   <div class="concierge-card" onclick="window.open('https://nerdsdalibras.github.io/quiz-libras.html','_blank')">
-    <div class="concierge-icon">⚡</div>
+    <div class="concierge-icon"><img src="fotos/IMG_4952.jpg" alt="Prof. Lorena"/></div>
     <div class="concierge-texts">
       <div class="concierge-title">Faça uma avaliação gratuita e descubra seu nível na Libras: básico, intermediário ou avançado. Quer ir para o próximo nível?</div>
     </div>
