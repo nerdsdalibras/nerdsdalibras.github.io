@@ -2,127 +2,154 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Descubra seu nível em Libras — Nerds da Libras</title>
-  <meta name="description" content="Avaliação gratuita em 7 perguntas. Descubra seu nível em Libras e qual o próximo passo certo para você."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Descubra seu nível em Libras — Avaliação Gratuita | Nerds da Libras</title>
+  <meta name="description" content="Avaliação gratuita em 7 perguntas com a Profa. Lorena. Descubra seu nível em Libras e o próximo passo certo para a sua evolução."/>
+  <meta name="theme-color" content="#0D1117"/>
+  <meta property="og:type" content="website"/>
   <meta property="og:title" content="Diagnóstico de Libras — Profa. Lorena"/>
+  <meta property="og:description" content="Responda 7 perguntas e descubra seu nível em Libras com diagnóstico personalizado."/>
   <meta property="og:image" content="https://nerdsdalibras.github.io/fotos/IMG_4952.jpg"/>
+  <meta property="og:url" content="https://nerdsdalibras.github.io/quiz-libras.html"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
 
     :root {
-      --bg:       #0D1117;
-      --bg2:      #161B22;
-      --bg3:      #1C2333;
-      --border:   rgba(255,255,255,.08);
-      --blue:     #1A73E8;
-      --blue-lt:  #4D9EFF;
-      --gold:     #C9982A;
-      --gold-lt:  #F0BC44;
-      --text:     #E6EDF3;
-      --muted:    #8B949E;
-      --bubble-bot: #1C2333;
+      --bg:          #0D1117;
+      --surface:     #161B22;
+      --surface-2:   #1C2333;
+      --border:      rgba(255,255,255,.08);
+      --border-soft: rgba(255,255,255,.05);
+      --blue:        #1A73E8;
+      --blue-lt:     #4D9EFF;
+      --blue-dim:    rgba(26,115,232,.14);
+      --gold:        #C9982A;
+      --gold-lt:     #F0BC44;
+      --text:        #E6EDF3;
+      --muted:       #8B949E;
+      --success:     #22C55E;
+      --error:       #F87171;
       --bubble-user: #1A3A5C;
+      --radius:      14px;
     }
+
+    html { height: 100%; }
 
     body {
       background: var(--bg);
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       color: var(--text);
-      min-height: 100vh;
+      height: 100dvh;
+      display: flex; flex-direction: column;
       -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
     }
 
-    /* ── TOPBAR ── */
+    /* ═══════════ TOPBAR ═══════════ */
     .topbar {
-      background: var(--bg2);
+      background: rgba(22,27,34,.92);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 20px;
-      position: sticky; top: 0; z-index: 100;
+      gap: 12px;
+      padding: 10px max(16px, env(safe-area-inset-left));
+      flex-shrink: 0;
+      z-index: 100;
     }
-    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .topbar-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
     .topbar-logo {
-      width: 32px; height: 32px; border-radius: 50%;
-      overflow: hidden; border: 1.5px solid rgba(255,255,255,.15);
+      width: 38px; height: 38px; border-radius: 50%;
+      overflow: hidden; flex-shrink: 0;
+      border: 2px solid rgba(77,158,255,.35);
     }
     .topbar-logo img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-    .topbar-name { font-weight: 700; font-size: .88rem; color: var(--text); }
-    .topbar-sub  { font-size: .7rem; color: var(--muted); }
-    .topbar-back { font-size: .78rem; color: var(--muted); text-decoration: none; transition: color .2s; }
-    .topbar-back:hover { color: var(--text); }
+    .topbar-name { font-weight: 700; font-size: .9rem; line-height: 1.2; }
+    .topbar-status {
+      display: flex; align-items: center; gap: 5px;
+      font-size: .72rem; color: var(--success); margin-top: 2px;
+    }
+    .dot-online {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 6px rgba(34,197,94,.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+    .topbar-back {
+      font-size: .78rem; font-weight: 600; color: var(--muted);
+      text-decoration: none; white-space: nowrap;
+      padding: 7px 12px; border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: color .2s, border-color .2s;
+    }
+    .topbar-back:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
 
-    /* ── LAYOUT ── */
-    .page { display: flex; flex-direction: column; height: calc(100vh - 53px); }
-
-    /* ── CHAT AREA ── */
+    /* ═══════════ CHAT ═══════════ */
     .chat-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px 16px 12px;
-      display: flex; flex-direction: column;
-      gap: 0;
+      flex: 1; overflow-y: auto;
+      padding: 24px 16px 16px;
       scroll-behavior: smooth;
     }
-    .chat-area::-webkit-scrollbar { width: 4px; }
-    .chat-area::-webkit-scrollbar-track { background: transparent; }
-    .chat-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+    .chat-area::-webkit-scrollbar { width: 5px; }
+    .chat-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 5px; }
 
-    /* ── MENSAGEM ── */
+    .chat-inner {
+      max-width: 540px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
     .msg-row {
       display: flex; align-items: flex-end; gap: 10px;
-      max-width: 520px; width: 100%; margin: 0 auto;
-      margin-bottom: 6px;
-      opacity: 0; transform: translateY(10px);
-      animation: msgIn .35s ease forwards;
+      opacity: 0; transform: translateY(12px);
+      animation: msgIn .35s cubic-bezier(.21,1.02,.55,1) forwards;
     }
     @keyframes msgIn { to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) {
+      .msg-row, .result-card, .produto-wrap { animation-duration: .01s !important; }
+    }
 
     .msg-row.bot  { justify-content: flex-start; }
     .msg-row.user { justify-content: flex-end; }
 
     .msg-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
+      width: 34px; height: 34px; border-radius: 50%;
       overflow: hidden; flex-shrink: 0;
       border: 1.5px solid rgba(255,255,255,.12);
     }
     .msg-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-    .msg-avatar-spacer { width: 36px; flex-shrink: 0; }
+    /* avatar só na última bolha de uma sequência */
+    .msg-avatar.ghost { visibility: hidden; }
 
     .msg-bubble {
       padding: 11px 15px;
-      border-radius: 18px;
-      font-size: .88rem; line-height: 1.6;
-      max-width: calc(100% - 50px);
+      border-radius: 16px;
+      font-size: .89rem; line-height: 1.6;
+      max-width: min(82%, 420px);
+      word-wrap: break-word;
     }
-    .bot  .msg-bubble {
-      background: var(--bubble-bot);
-      border: 1px solid var(--border);
+    .bot .msg-bubble {
+      background: var(--surface-2);
+      border: 1px solid var(--border-soft);
       border-bottom-left-radius: 4px;
-      color: var(--text);
     }
     .user .msg-bubble {
       background: var(--bubble-user);
-      border: 1px solid rgba(26,115,232,.25);
+      border: 1px solid rgba(26,115,232,.22);
       border-bottom-right-radius: 4px;
       color: #fff;
     }
-    .msg-bubble strong { color: var(--gold-lt); }
+    .msg-bubble strong { color: var(--gold-lt); font-weight: 700; }
 
-    /* ── DIGITANDO ── */
-    .typing-row {
-      display: flex; align-items: flex-end; gap: 10px;
-      max-width: 520px; width: 100%; margin: 0 auto 8px;
-    }
+    /* ── digitando ── */
+    .typing-row { display: flex; align-items: flex-end; gap: 10px; }
     .typing-bubble {
-      background: var(--bubble-bot);
-      border: 1px solid var(--border);
-      border-bottom-left-radius: 4px;
-      border-radius: 18px;
-      padding: 12px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-soft);
+      border-radius: 16px; border-bottom-left-radius: 4px;
+      padding: 13px 17px;
       display: flex; gap: 5px; align-items: center;
     }
     .typing-dot {
@@ -130,100 +157,73 @@
       background: var(--muted);
       animation: typeDot 1.3s ease-in-out infinite;
     }
-    .typing-dot:nth-child(2) { animation-delay: .2s; }
-    .typing-dot:nth-child(3) { animation-delay: .4s; }
+    .typing-dot:nth-child(2) { animation-delay: .18s; }
+    .typing-dot:nth-child(3) { animation-delay: .36s; }
     @keyframes typeDot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
 
-    /* ── INPUT AREA ── */
+    /* ═══════════ INPUT AREA ═══════════ */
     .input-area {
+      flex-shrink: 0;
       border-top: 1px solid var(--border);
-      background: var(--bg2);
-      padding: 14px 16px;
+      background: var(--surface);
+      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
     }
     .input-inner {
-      max-width: 520px; margin: 0 auto;
+      max-width: 540px; margin: 0 auto;
       display: flex; flex-direction: column; gap: 10px;
     }
+    .input-inner:empty { display: none; }
+    .input-area:has(.input-inner:empty) { padding: 0; border-top: none; }
 
-    /* ── CAMPO DE TEXTO ── */
     .field-wrap { display: flex; gap: 10px; }
     .field-input {
-      flex: 1;
-      background: var(--bg3);
+      flex: 1; min-width: 0;
+      background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: 12px;
       color: var(--text);
-      font-family: 'Inter', sans-serif; font-size: .9rem;
-      padding: 12px 14px;
-      outline: none; transition: border-color .2s;
+      font: inherit; font-size: .92rem;
+      padding: 13px 15px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
     }
-    .field-input:focus { border-color: rgba(26,115,232,.5); }
+    .field-input:focus { border-color: rgba(26,115,232,.55); box-shadow: 0 0 0 3px rgba(26,115,232,.12); }
     .field-input::placeholder { color: var(--muted); }
-    .field-input.error { border-color: rgba(220,50,50,.5); }
+    .field-input.error { border-color: rgba(248,113,113,.55); }
+    .field-error {
+      font-size: .76rem; color: var(--error);
+      padding-left: 4px; margin-top: -4px;
+      display: none;
+    }
+    .field-error.show { display: block; }
 
     .btn-send {
       background: var(--blue);
       border: none; border-radius: 12px;
-      color: #fff; font-family: 'Inter', sans-serif;
-      font-weight: 700; font-size: .88rem;
-      padding: 12px 20px; cursor: pointer;
-      transition: background .2s, transform .15s;
+      color: #fff; font: inherit; font-weight: 700; font-size: .88rem;
+      padding: 13px 22px; cursor: pointer;
+      transition: background .2s, transform .15s, opacity .2s;
       white-space: nowrap;
     }
-    .btn-send:hover { background: var(--blue-lt); transform: translateY(-1px); }
-    .btn-send:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+    .btn-send:hover:not(:disabled) { background: var(--blue-lt); transform: translateY(-1px); }
+    .btn-send:disabled { opacity: .4; cursor: not-allowed; }
 
-    /* ── OPÇÕES DE RESPOSTA ── */
-    .options-wrap {
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .opt-btn {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      cursor: pointer; text-align: left;
-      color: var(--text); font-family: 'Inter', sans-serif;
-      font-size: .85rem; line-height: 1.45;
-      transition: all .15s;
-      width: 100%;
-    }
-    .opt-btn:hover {
-      background: rgba(26,115,232,.12);
-      border-color: rgba(26,115,232,.35);
-      color: #fff;
-      transform: translateX(2px);
-    }
-    .opt-btn.selected {
-      background: rgba(26,115,232,.18);
-      border-color: rgba(26,115,232,.6);
-      color: #fff;
-    }
-    .opt-letter {
-      width: 28px; height: 28px; flex-shrink: 0;
-      border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,.15);
-      display: flex; align-items: center; justify-content: center;
-      font-size: .72rem; font-weight: 700; color: var(--muted);
-      transition: all .15s;
-    }
-    .opt-btn.selected .opt-letter {
-      background: var(--blue); border-color: var(--blue); color: #fff;
-    }
-
-    /* ── BARRA DE PROGRESSO ── */
+    /* ── progresso ── */
     .progress-wrap {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 12px 15px;
     }
     .progress-label {
       display: flex; justify-content: space-between; align-items: center;
-      font-size: .75rem; color: var(--muted); margin-bottom: 8px;
+      font-size: .76rem; color: var(--muted); margin-bottom: 9px;
+      font-weight: 500;
     }
-    .progress-label strong { color: var(--gold-lt); }
+    .progress-label strong { color: var(--gold-lt); font-weight: 800; }
     .progress-track {
-      height: 3px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden;
+      height: 4px; background: rgba(255,255,255,.07);
+      border-radius: 999px; overflow: hidden;
     }
     .progress-fill {
       height: 100%; border-radius: 999px;
@@ -231,461 +231,503 @@
       transition: width .5s ease;
     }
 
-    /* ── BOTÃO CONFIRMAR ── */
-    .btn-confirm {
-      background: var(--blue); border: none; border-radius: 12px;
-      color: #fff; font-family: 'Inter', sans-serif;
-      font-weight: 700; font-size: .9rem;
-      padding: 13px 20px; cursor: pointer;
-      transition: background .2s, transform .15s;
+    /* ── opções ── */
+    .options-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .opt-btn {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 15px;
+      cursor: pointer; text-align: left;
+      color: var(--text); font: inherit;
+      font-size: .86rem; line-height: 1.45;
+      transition: background .15s, border-color .15s, transform .15s;
       width: 100%;
     }
-    .btn-confirm:hover { background: var(--blue-lt); transform: translateY(-1px); }
-    .btn-confirm:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+    .opt-btn:hover {
+      background: var(--blue-dim);
+      border-color: rgba(26,115,232,.35);
+      transform: translateX(3px);
+    }
+    .opt-btn.selected {
+      background: rgba(26,115,232,.2);
+      border-color: rgba(26,115,232,.65);
+      color: #fff;
+    }
+    .opt-btn:focus-visible { outline: 2px solid var(--blue-lt); outline-offset: 2px; }
+    .opt-letter {
+      width: 28px; height: 28px; flex-shrink: 0;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.16);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 800; color: var(--muted);
+      transition: all .15s;
+    }
+    .opt-btn.selected .opt-letter {
+      background: var(--blue); border-color: var(--blue); color: #fff;
+    }
 
-    /* ── RESULTADO ── */
+    .btn-confirm {
+      background: var(--blue);
+      border: none; border-radius: 12px;
+      color: #fff; font: inherit; font-weight: 800; font-size: .92rem;
+      padding: 14px 22px; cursor: pointer; width: 100%;
+      transition: background .2s, transform .15s, opacity .2s;
+    }
+    .btn-confirm:hover:not(:disabled) { background: var(--blue-lt); transform: translateY(-1px); }
+    .btn-confirm:disabled { opacity: .3; cursor: not-allowed; }
+
+    /* ═══════════ RESULTADO ═══════════ */
     .result-card {
-      background: var(--bg2);
-      border: 1px solid rgba(201,152,42,.25);
-      border-radius: 16px; padding: 22px 18px;
-      max-width: 520px; margin: 0 auto 8px;
-      width: 100%;
-      animation: msgIn .4s ease forwards;
+      background: linear-gradient(165deg, var(--surface) 0%, var(--surface-2) 100%);
+      border: 1px solid rgba(201,152,42,.3);
+      border-radius: 18px;
+      padding: 26px 22px;
+      opacity: 0; transform: translateY(12px);
+      animation: msgIn .45s cubic-bezier(.21,1.02,.55,1) forwards;
+      box-shadow: 0 12px 48px rgba(0,0,0,.35);
     }
     .result-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(201,152,42,.12); border: 1px solid rgba(201,152,42,.3);
-      color: var(--gold-lt); border-radius: 999px;
-      padding: 4px 14px; font-size: .7rem; font-weight: 800;
-      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 14px;
+      background: rgba(201,152,42,.12);
+      border: 1px solid rgba(201,152,42,.35);
+      color: var(--gold-lt);
+      border-radius: 999px;
+      padding: 5px 16px;
+      font-size: .7rem; font-weight: 800;
+      letter-spacing: .08em; text-transform: uppercase;
+      margin-bottom: 16px;
     }
     .result-title {
-      font-size: 1.3rem; font-weight: 800; color: #fff;
-      line-height: 1.3; margin-bottom: 14px;
+      font-size: 1.32rem; font-weight: 800; color: #fff;
+      line-height: 1.35; margin-bottom: 16px;
+      letter-spacing: -.01em;
     }
     .result-diag {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 12px; padding: 14px 16px;
-      font-size: .86rem; color: #ccc; line-height: 1.7;
-      margin-bottom: 18px;
-    }
-    .result-diag strong { color: #fff; }
-
-    /* ── CARD PRODUTO ── */
-    .produto-card {
-      background: var(--bg3);
-      border: 1px solid rgba(26,115,232,.25);
-      border-radius: 14px; padding: 18px 16px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-size: .87rem; color: #C9D1D9; line-height: 1.75;
       margin-bottom: 14px;
     }
+    .result-diag strong { color: var(--gold-lt); }
+    .score-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: .72rem; font-weight: 600; color: var(--muted);
+    }
+
+    /* ── produto ── */
+    .produto-wrap {
+      opacity: 0; transform: translateY(12px);
+      animation: msgIn .45s cubic-bezier(.21,1.02,.55,1) forwards;
+    }
+    .produto-card {
+      background: var(--surface-2);
+      border: 1px solid rgba(26,115,232,.3);
+      border-radius: 16px;
+      padding: 20px 18px;
+      box-shadow: 0 8px 36px rgba(0,0,0,.3);
+    }
     .produto-tag {
-      font-size: .68rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--blue-lt); margin-bottom: 8px;
+      font-size: .68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--blue-lt); margin-bottom: 9px;
     }
     .produto-nome {
-      font-weight: 800; font-size: 1rem; color: #fff; margin-bottom: 6px;
+      font-weight: 800; font-size: 1.08rem; color: #fff;
+      margin-bottom: 7px; letter-spacing: -.01em;
     }
     .produto-desc {
-      font-size: .82rem; color: var(--muted); line-height: 1.55; margin-bottom: 16px;
+      font-size: .84rem; color: var(--muted);
+      line-height: 1.6; margin-bottom: 18px;
     }
     .btn-cta {
       display: block; width: 100%;
-      background: linear-gradient(135deg, var(--blue), var(--blue-lt));
-      color: #fff; text-decoration: none;
-      border-radius: 12px; padding: 14px 18px;
-      font-weight: 800; font-size: .92rem;
-      text-align: center;
-      transition: opacity .2s, transform .15s;
-      border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-lt) 100%);
+      color: #fff; text-decoration: none; text-align: center;
+      border-radius: 12px;
+      padding: 15px 20px;
+      font-weight: 800; font-size: .95rem;
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(26,115,232,.35);
     }
-    .btn-cta:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-cta:hover {
+      opacity: .92; transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(26,115,232,.45);
+    }
 
     .btn-restart {
-      display: block; width: 100%; max-width: 520px; margin: 4px auto 0;
-      background: transparent; border: 1px solid var(--border);
+      background: transparent;
+      border: 1px solid var(--border);
       color: var(--muted); border-radius: 10px;
-      padding: 10px 18px; font-size: .8rem; font-weight: 600;
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all .2s; text-align: center;
+      padding: 11px 18px;
+      font: inherit; font-size: .8rem; font-weight: 600;
+      cursor: pointer; width: 100%;
+      transition: color .2s, border-color .2s;
+      text-align: center;
     }
     .btn-restart:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
 
-    /* ── SCORE PILL ── */
-    .score-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,.06); border: 1px solid var(--border);
-      border-radius: 999px; padding: 3px 12px;
-      font-size: .7rem; color: var(--muted); margin-top: 6px;
-    }
-
-    /* ── UTIL ── */
-    .hidden { display: none !important; }
-    .dot-online {
-      width: 7px; height: 7px; border-radius: 50%; background: #22C55E;
-      display: inline-block;
-      box-shadow: 0 0 6px rgba(34,197,94,.5);
-      animation: pulse 1.5s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.5)} }
-
-    .topbar-status {
-      display: flex; align-items: center; gap: 5px;
-      font-size: .7rem; color: #4ADE80;
-    }
-
     @media (max-width: 480px) {
-      .chat-area { padding: 16px 10px 8px; }
-      .input-area { padding: 10px 10px; }
-      .msg-bubble { font-size: .84rem; }
+      .chat-area { padding: 18px 12px 12px; }
+      .input-area { padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
+      .msg-bubble { font-size: .86rem; max-width: 88%; }
+      .result-card { padding: 22px 18px; }
+      .result-title { font-size: 1.18rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
+<!-- ═══════════ TOPBAR ═══════════ -->
+<header class="topbar">
   <div class="topbar-brand">
     <div class="topbar-logo">
-      <img src="fotos/IMG_4952.jpg" alt="Lorena" onerror="this.src='fotos/IMG_4977.jpg'"/>
+      <img src="fotos/IMG_4952.jpg" alt="Foto da Profa. Lorena" onerror="this.src='fotos/IMG_4977.jpg'"/>
     </div>
     <div>
       <div class="topbar-name">Prof. Lorena</div>
-      <div class="topbar-sub">Nerds da Libras · Diagnóstico Gratuito</div>
+      <div class="topbar-status"><span class="dot-online"></span> Online agora</div>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:14px;">
-    <div class="topbar-status"><div class="dot-online"></div> Online</div>
-    <a class="topbar-back" href="https://nerdsdalibras.github.io">← Site</a>
-  </div>
-</div>
+  <a class="topbar-back" href="https://nerdsdalibras.github.io">← Voltar ao site</a>
+</header>
 
-<div class="page">
+<!-- ═══════════ CHAT ═══════════ -->
+<main class="chat-area" id="chat-area" aria-live="polite">
+  <div class="chat-inner" id="chat-inner"></div>
+</main>
 
-  <!-- CHAT -->
-  <div class="chat-area" id="chat-area"></div>
-
-  <!-- INPUT / OPÇÕES -->
-  <div class="input-area" id="input-area">
-    <div class="input-inner" id="input-inner">
-      <!-- preenchido dinamicamente -->
-    </div>
-  </div>
-
+<!-- ═══════════ INPUT ═══════════ -->
+<div class="input-area">
+  <div class="input-inner" id="input-inner"></div>
 </div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec';
-const LINK_CURSO    = 'https://pay.kiwify.com.br/1sIyvVL';
-const LINK_MENTORIA = 'https://chk.eduzz.com/pykhq6gg';
+'use strict';
 
-// ─── PERGUNTAS ────────────────────────────────────────────
+/* ═══════════════ CONFIGURAÇÃO ═══════════════ */
+const CONFIG = {
+  SHEETS_URL:    'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec',
+  LINK_CURSO:    'https://pay.kiwify.com.br/1sIyvVL',
+  LINK_MENTORIA: 'https://chk.eduzz.com/pykhq6gg',
+  AVATAR:        'fotos/IMG_4952.jpg',
+  AVATAR_FALLBACK: 'fotos/IMG_4977.jpg',
+};
+
+/* ═══════════════ PERGUNTAS ═══════════════ */
 const QUESTIONS = [
   {
     text: 'Quando você tenta conversar em Libras, qual situação mais parece com você?',
     opts: [
-      { l:'A', t:'Não sei praticamente nada.', p:1 },
-      { l:'B', t:'Sei alguns sinais e o alfabeto.', p:2 },
-      { l:'C', t:'Consigo formar frases simples.', p:3 },
-      { l:'D', t:'Consigo conversar, mas ainda não com total naturalidade.', p:4 },
-    ]
+      { l: 'A', t: 'Não sei praticamente nada.', p: 1 },
+      { l: 'B', t: 'Sei alguns sinais e o alfabeto.', p: 2 },
+      { l: 'C', t: 'Consigo formar frases simples.', p: 3 },
+      { l: 'D', t: 'Consigo conversar, mas ainda não com total naturalidade.', p: 4 },
+    ],
   },
   {
     text: 'Quando um surdo sinaliza com você:',
     opts: [
-      { l:'A', t:'Não consigo entender.', p:1 },
-      { l:'B', t:'Entendo alguns sinais isolados.', p:2 },
-      { l:'C', t:'Entendo partes da conversa.', p:3 },
-      { l:'D', t:'Entendo bem, mas ainda perco alguns detalhes.', p:4 },
-    ]
+      { l: 'A', t: 'Não consigo entender.', p: 1 },
+      { l: 'B', t: 'Entendo alguns sinais isolados.', p: 2 },
+      { l: 'C', t: 'Entendo partes da conversa.', p: 3 },
+      { l: 'D', t: 'Entendo bem, mas ainda perco alguns detalhes.', p: 4 },
+    ],
   },
   {
     text: 'Quando preciso me apresentar em Libras:',
     opts: [
-      { l:'A', t:'Não consigo.', p:1 },
-      { l:'B', t:'Consigo com muita dificuldade.', p:2 },
-      { l:'C', t:'Consigo falar informações básicas.', p:3 },
-      { l:'D', t:'Consigo me expressar com tranquilidade.', p:4 },
-    ]
+      { l: 'A', t: 'Não consigo.', p: 1 },
+      { l: 'B', t: 'Consigo com muita dificuldade.', p: 2 },
+      { l: 'C', t: 'Consigo falar informações básicas.', p: 3 },
+      { l: 'D', t: 'Consigo me expressar com tranquilidade.', p: 4 },
+    ],
   },
   {
     text: 'Quando não conheço um sinal:',
     opts: [
-      { l:'A', t:'A conversa para.', p:1 },
-      { l:'B', t:'Tento soletrar.', p:2 },
-      { l:'C', t:'Tento explicar de outra forma.', p:3 },
-      { l:'D', t:'Consigo contornar a situação naturalmente.', p:4 },
-    ]
+      { l: 'A', t: 'A conversa para.', p: 1 },
+      { l: 'B', t: 'Tento soletrar.', p: 2 },
+      { l: 'C', t: 'Tento explicar de outra forma.', p: 3 },
+      { l: 'D', t: 'Consigo contornar a situação naturalmente.', p: 4 },
+    ],
   },
   {
-    text: 'Quando assisto a um vídeo em Libras sem legenda:',
+    text: 'Quando assiste a um vídeo em Libras sem legenda:',
     opts: [
-      { l:'A', t:'Não entendo nada.', p:1 },
-      { l:'B', t:'Reconheço poucos sinais.', p:2 },
-      { l:'C', t:'Entendo parte da mensagem.', p:3 },
-      { l:'D', t:'Entendo quase tudo.', p:4 },
-    ]
+      { l: 'A', t: 'Não entendo nada.', p: 1 },
+      { l: 'B', t: 'Reconheço poucos sinais.', p: 2 },
+      { l: 'C', t: 'Entendo parte da mensagem.', p: 3 },
+      { l: 'D', t: 'Entendo quase tudo.', p: 4 },
+    ],
   },
   {
     text: 'Qual frase mais representa você hoje?',
     opts: [
-      { l:'A', t:'Quero começar do zero.', p:1 },
-      { l:'B', t:'Quero construir uma base sólida.', p:2 },
-      { l:'C', t:'Quero me comunicar melhor.', p:3 },
-      { l:'D', t:'Quero alcançar fluência.', p:4 },
-    ]
+      { l: 'A', t: 'Quero começar do zero.', p: 1 },
+      { l: 'B', t: 'Quero construir uma base sólida.', p: 2 },
+      { l: 'C', t: 'Quero me comunicar melhor.', p: 3 },
+      { l: 'D', t: 'Quero alcançar fluência.', p: 4 },
+    ],
   },
   {
     text: 'Qual é seu maior objetivo com Libras?',
     opts: [
-      { l:'A', t:'Aprender o básico para começar.', p:1 },
-      { l:'B', t:'Conseguir conversar em situações simples.', p:2 },
-      { l:'C', t:'Me comunicar com mais segurança.', p:3 },
-      { l:'D', t:'Ser fluente e/ou atuar profissionalmente.', p:4 },
-    ]
+      { l: 'A', t: 'Aprender o básico para começar.', p: 1 },
+      { l: 'B', t: 'Conseguir conversar em situações simples.', p: 2 },
+      { l: 'C', t: 'Me comunicar com mais segurança.', p: 3 },
+      { l: 'D', t: 'Ser fluente e/ou atuar profissionalmente.', p: 4 },
+    ],
   },
 ];
 
-// ─── RESULTADOS ───────────────────────────────────────────
+/* ═══════════════ DIAGNÓSTICOS ═══════════════ */
 function getResult(nome, score) {
   if (score <= 14) {
     return {
       badge: '🌱 Base em Construção',
       title: `${nome}, você está no momento de construir uma base sólida em Libras.`,
-      diag: `Isso significa que seu foco agora deve ser aprender os sinais essenciais, entender como formar frases simples e começar a se comunicar com mais segurança.\n\nO próximo passo mais indicado para você é o <strong>Do Zero à Libras</strong>.`,
+      diag: 'Isso significa que seu foco agora deve ser aprender os sinais essenciais, entender como formar frases simples e começar a se comunicar com mais segurança.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero à Libras</strong>.',
       produto: {
         tag: '⭐ Indicado para você',
         nome: 'Do Zero à Libras',
-        desc: 'Método exclusivo da Profa. Lorena. Do absoluto zero à comunicação real com surdos — aprenda como a mente surda pensa, não como tradução do português.',
+        desc: 'Método exclusivo da Profa. Lorena. Do absoluto zero à comunicação real com surdos — você aprende como a mente surda processa a língua, não como tradução do português.',
         cta: 'Quero começar do jeito certo →',
-        link: LINK_CURSO,
-      }
-    };
-  } else if (score <= 21) {
-    return {
-      badge: '🚀 Comunicação em Desenvolvimento',
-      title: `${nome}, você já tem contato com a Libras.`,
-      diag: `Provavelmente você conhece alguns sinais importantes. Mas talvez ainda sinta que falta organização para formar frases, entender melhor o que o surdo sinaliza e se comunicar com mais segurança.\n\nO próximo passo mais indicado para você é o <strong>Do Zero à Libras</strong>.`,
-      produto: {
-        tag: '✅ Ideal para sua fase',
-        nome: 'Do Zero à Libras',
-        desc: 'Organize tudo que você já sabe e dê o próximo passo com método, estrutura e prática real.',
-        cta: 'Quero organizar minha Libras →',
-        link: LINK_CURSO,
-      }
-    };
-  } else {
-    return {
-      badge: '💎 Rumo à Fluência',
-      title: `${nome}, você já tem uma boa base em Libras.`,
-      diag: `Agora, seu próximo desafio não é apenas aprender mais sinais, mas desenvolver naturalidade, compreensão, estrutura e fluência para se comunicar em situações reais.\n\nO próximo passo mais indicado para você é a <strong>Mentoria Destrava Libras</strong>.`,
-      produto: {
-        tag: '💜 Próximo passo para você',
-        nome: 'Mentoria Destrava Libras',
-        desc: 'Acompanhamento direto e personalizado com a Profa. Lorena. Ela analisa sua sinalização e te direciona para sinalizar com clareza, naturalidade e segurança.',
-        cta: 'Quero acelerar minha fluência →',
-        link: LINK_MENTORIA,
-      }
+        link: CONFIG.LINK_CURSO,
+      },
     };
   }
+  if (score <= 21) {
+    return {
+      badge: '🚀 Comunicação em Desenvolvimento',
+      title: `${nome}, você já tem contato com a Libras e conhece sinais importantes.`,
+      diag: 'Mas talvez ainda sinta que falta organização para formar frases, entender melhor o que o surdo sinaliza e se comunicar com mais segurança.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero à Libras</strong>.',
+      produto: {
+        tag: '✅ Ideal para a sua fase',
+        nome: 'Do Zero à Libras',
+        desc: 'Organize tudo o que você já sabe e avance com método, estrutura e prática real — do nível base ao intermediário.',
+        cta: 'Quero organizar minha Libras →',
+        link: CONFIG.LINK_CURSO,
+      },
+    };
+  }
+  return {
+    badge: '💎 Rumo à Fluência',
+    title: `${nome}, você já tem uma boa base em Libras.`,
+    diag: 'Agora, seu próximo desafio não é apenas aprender mais sinais, mas desenvolver naturalidade, compreensão, estrutura e fluência para se comunicar em situações reais.<br/><br/>O próximo passo mais indicado para você é a <strong>Mentoria Destrava Libras</strong>.',
+    produto: {
+      tag: '💜 Próximo passo para você',
+      nome: 'Mentoria Destrava Libras',
+      desc: 'Acompanhamento direto e personalizado com a Profa. Lorena. Ela analisa sua sinalização e te direciona para sinalizar com clareza, naturalidade e segurança.',
+      cta: 'Quero acelerar minha fluência →',
+      link: CONFIG.LINK_MENTORIA,
+    },
+  };
 }
 
-// ─── ESTADO ───────────────────────────────────────────────
-let state = {
-  fase: 'intro',   // intro | nome | email | quiz | resultado
-  nome: '',
-  email: '',
-  qIdx: 0,
-  score: 0,
-  respostas: [],
+/* ═══════════════ ESTADO ═══════════════ */
+const state = {
+  sessionId:   `qz_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+  nome:        '',
+  email:       '',
+  qIdx:        0,
+  score:       0,
+  respostas:   [],
   selectedOpt: null,
+  busy:        false,   // trava contra cliques duplos
 };
 
-const $chat   = document.getElementById('chat-area');
-const $inner  = document.getElementById('input-inner');
+const $chat  = document.getElementById('chat-area');
+const $inner = document.getElementById('chat-inner');
+const $input = document.getElementById('input-inner');
 
-// ─── HELPERS ──────────────────────────────────────────────
+/* ═══════════════ HELPERS ═══════════════ */
+const escapeHTML = (s) => s.replace(/[&<>"']/g, (c) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+}[c]));
+
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
 function scrollBottom() {
-  setTimeout(() => { $chat.scrollTop = $chat.scrollHeight; }, 60);
+  requestAnimationFrame(() => { $chat.scrollTop = $chat.scrollHeight; });
 }
 
-function addMsg(text, type = 'bot', delay = 0) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const row = document.createElement('div');
-      row.className = `msg-row ${type}`;
+function avatarHTML() {
+  return `<div class="msg-avatar"><img src="${CONFIG.AVATAR}" alt="" onerror="this.src='${CONFIG.AVATAR_FALLBACK}'"/></div>`;
+}
 
-      if (type === 'bot') {
-        row.innerHTML = `
-          <div class="msg-avatar">
-            <img src="fotos/IMG_4952.jpg" alt="Lorena" onerror="this.src='fotos/IMG_4977.jpg'"/>
-          </div>
-          <div class="msg-bubble">${text}</div>`;
-      } else {
-        row.innerHTML = `
-          <div class="msg-avatar-spacer"></div>
-          <div class="msg-bubble">${text}</div>`;
-      }
-
-      $chat.appendChild(row);
-      scrollBottom();
-      resolve();
-    }, delay);
-  });
+function addMsg(html, type) {
+  const row = document.createElement('div');
+  row.className = `msg-row ${type}`;
+  row.innerHTML = type === 'bot'
+    ? `${avatarHTML()}<div class="msg-bubble">${html}</div>`
+    : `<div class="msg-bubble">${html}</div>`;
+  $inner.appendChild(row);
+  scrollBottom();
 }
 
 function showTyping() {
   const row = document.createElement('div');
   row.className = 'typing-row';
-  row.id = 'typing-indicator';
-  row.innerHTML = `
-    <div class="msg-avatar">
-      <img src="fotos/IMG_4952.jpg" alt="Lorena" onerror="this.src='fotos/IMG_4977.jpg'"/>
-    </div>
-    <div class="typing-bubble">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>`;
-  $chat.appendChild(row);
+  row.id = 'typing';
+  row.innerHTML = `${avatarHTML()}<div class="typing-bubble" aria-label="Lorena está digitando">
+    <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+  </div>`;
+  $inner.appendChild(row);
   scrollBottom();
 }
 
 function hideTyping() {
-  const el = document.getElementById('typing-indicator');
-  if (el) el.remove();
+  document.getElementById('typing')?.remove();
 }
 
-function botSay(messages) {
-  // messages: array de { text, delay }
-  return messages.reduce((p, m, i) => {
-    return p.then(() => {
-      return new Promise(resolve => {
-        showTyping();
-        const typingDuration = Math.min(800 + m.text.length * 18, 1800);
-        setTimeout(() => {
-          hideTyping();
-          addMsg(m.text, 'bot').then(resolve);
-        }, typingDuration);
-      });
-    });
-  }, Promise.resolve());
+/** Exibe mensagens do bot em sequência, com indicador de digitação proporcional ao texto. */
+async function botSay(messages) {
+  for (const text of messages) {
+    showTyping();
+    await wait(Math.min(700 + text.length * 16, 1700));
+    hideTyping();
+    addMsg(text, 'bot');
+    await wait(180);
+  }
 }
 
-function clearInput() {
-  $inner.innerHTML = '';
-}
+function setInput(html) { $input.innerHTML = html; }
+function clearInput()   { $input.innerHTML = ''; }
 
-function setInput(html) {
-  $inner.innerHTML = html;
-}
-
-// ─── FLUXO ────────────────────────────────────────────────
-
-// 1. INTRO
+/* ═══════════════ FLUXO ═══════════════ */
 async function startIntro() {
-  state.fase = 'intro';
   clearInput();
-
   await botSay([
-    { text: 'Oi! Eu sou a Lorena, da Nerds da Libras 💙' },
-    { text: 'Preparei uma avaliação rápida para te ajudar a descobrir seu nível atual em Libras.' },
-    { text: 'São só 7 perguntas. No final, eu vou te mostrar qual é o seu momento atual e qual o próximo passo mais indicado para você.' },
-    { text: 'Antes de começar, como posso te chamar?' },
+    'Oi! Eu sou a Lorena, da Nerds da Libras 💙',
+    'Preparei uma avaliação rápida para te ajudar a descobrir seu nível atual em Libras.',
+    'São só 7 perguntas. No final, eu vou te mostrar qual é o seu momento atual e qual o próximo passo mais indicado para você.',
+    'Antes de começar, como posso te chamar?',
   ]);
-
   showNameInput();
 }
 
-// 2. INPUT NOME
+/* ── Nome ── */
 function showNameInput() {
-  state.fase = 'nome';
   setInput(`
     <div class="field-wrap">
-      <input class="field-input" id="inp-nome" type="text" placeholder="Digite seu nome" maxlength="40" autocomplete="given-name"
-        onkeydown="if(event.key==='Enter')submitNome()"/>
-      <button class="btn-send" onclick="submitNome()">Enviar</button>
+      <input class="field-input" id="inp-nome" type="text"
+        placeholder="Digite seu nome" maxlength="40"
+        autocomplete="given-name" aria-label="Seu nome" autofocus/>
+      <button class="btn-send" id="btn-nome" type="button">Enviar</button>
     </div>
+    <span class="field-error" id="err-nome">Por favor, digite seu nome para continuar.</span>
   `);
-  document.getElementById('inp-nome').focus();
+  const inp = document.getElementById('inp-nome');
+  inp.focus();
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitNome(); });
+  document.getElementById('btn-nome').addEventListener('click', submitNome);
 }
 
 async function submitNome() {
+  if (state.busy) return;
   const inp = document.getElementById('inp-nome');
-  if (!inp) return;
-  const nome = inp.value.trim();
-  if (!nome) {
+  const raw = inp.value.trim().replace(/\s+/g, ' ');
+  if (raw.length < 2) {
     inp.classList.add('error');
-    inp.placeholder = 'Por favor, digita seu nome 😊';
-    inp.focus(); return;
+    document.getElementById('err-nome').classList.add('show');
+    inp.focus();
+    return;
   }
-  state.nome = nome;
-  clearInput();
-  await addMsg(nome, 'user');
+  state.busy = true;
+  // Capitaliza o primeiro nome
+  const primeiro = raw.split(' ')[0];
+  state.nome = primeiro.charAt(0).toUpperCase() + primeiro.slice(1).toLowerCase();
 
+  clearInput();
+  addMsg(escapeHTML(raw), 'user');
   await botSay([
-    { text: `Prazer, <strong>${nome}</strong>! Agora me passa seu melhor e-mail para eu salvar seu diagnóstico.` },
+    `Prazer, <strong>${escapeHTML(state.nome)}</strong>! Agora me passa seu melhor e-mail para eu salvar seu diagnóstico.`,
   ]);
+  state.busy = false;
   showEmailInput();
 }
 
-// 3. INPUT EMAIL
+/* ── E-mail ── */
 function showEmailInput() {
-  state.fase = 'email';
   setInput(`
     <div class="field-wrap">
-      <input class="field-input" id="inp-email" type="email" placeholder="Digite seu melhor e-mail" maxlength="80" autocomplete="email"
-        onkeydown="if(event.key==='Enter')submitEmail()"/>
-      <button class="btn-send" onclick="submitEmail()">Enviar</button>
+      <input class="field-input" id="inp-email" type="email"
+        placeholder="Digite seu melhor e-mail" maxlength="80"
+        autocomplete="email" inputmode="email" aria-label="Seu e-mail"/>
+      <button class="btn-send" id="btn-email" type="button">Enviar</button>
     </div>
+    <span class="field-error" id="err-email">Hmm, esse e-mail não parece válido. Confere e tenta de novo 😊</span>
   `);
-  document.getElementById('inp-email').focus();
+  const inp = document.getElementById('inp-email');
+  inp.focus();
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitEmail(); });
+  inp.addEventListener('input', () => {
+    inp.classList.remove('error');
+    document.getElementById('err-email').classList.remove('show');
+  });
+  document.getElementById('btn-email').addEventListener('click', submitEmail);
 }
 
-function validEmail(e) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-}
+const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(e);
 
 async function submitEmail() {
+  if (state.busy) return;
   const inp = document.getElementById('inp-email');
-  if (!inp) return;
-  const email = inp.value.trim();
-  if (!validEmail(email)) {
+  const email = inp.value.trim().toLowerCase();
+  if (!isValidEmail(email)) {
     inp.classList.add('error');
-    inp.value = '';
-    inp.placeholder = 'E-mail inválido. Tenta de novo 😊';
-    inp.focus(); return;
+    document.getElementById('err-email').classList.add('show');
+    inp.focus();
+    return;
   }
+  state.busy = true;
   state.email = email;
-  clearInput();
-  await addMsg(email, 'user');
 
-  // Salva lead inicial no CRM
-  sendCRM({ fase: 'lead_capturado' });
+  clearInput();
+  addMsg(escapeHTML(email), 'user');
+
+  sendCRM('lead_capturado');
 
   await botSay([
-    { text: `Perfeito, <strong>${state.nome}</strong>! Agora vamos começar sua avaliação. Responda com sinceridade, combinado? 🎯` },
+    `Perfeito, <strong>${escapeHTML(state.nome)}</strong>! Agora vamos começar sua avaliação. Responda com sinceridade, combinado? 🎯`,
   ]);
 
+  state.busy = false;
   state.qIdx = 0;
   state.score = 0;
   state.respostas = [];
-  showQuestion();
+  askQuestion();
 }
 
-// 4. QUIZ
-function showQuestion() {
-  state.fase = 'quiz';
-  state.selectedOpt = null;
+/* ── Perguntas ── */
+async function askQuestion() {
   const q = QUESTIONS[state.qIdx];
-  const n = state.qIdx + 1;
+  state.selectedOpt = null;
+
+  showTyping();
+  await wait(650);
+  hideTyping();
+  addMsg(escapeHTML(q.text), 'bot');
+
+  renderOptions(q);
+}
+
+function renderOptions(q) {
+  const n   = state.qIdx + 1;
   const pct = Math.round((n / QUESTIONS.length) * 100);
 
-  const optsHtml = q.opts.map((op, i) => `
-    <button class="opt-btn" id="opt-${i}" onclick="selectOpt(${i})">
+  const optsHTML = q.opts.map((op, i) => `
+    <button class="opt-btn" type="button" data-idx="${i}" role="radio" aria-checked="false">
       <span class="opt-letter">${op.l}</span>
-      <span>${op.t}</span>
+      <span>${escapeHTML(op.t)}</span>
     </button>`).join('');
 
   setInput(`
@@ -694,84 +736,82 @@ function showQuestion() {
         <span>Pergunta <strong>${n}</strong> de ${QUESTIONS.length}</span>
         <span>${pct}%</span>
       </div>
-      <div class="progress-track">
+      <div class="progress-track" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
         <div class="progress-fill" style="width:${pct}%"></div>
       </div>
     </div>
-    <div class="options-wrap">${optsHtml}</div>
-    <button class="btn-confirm" id="btn-confirm" onclick="confirmOpt()" disabled>
-      Confirmar resposta →
-    </button>
+    <div class="options-wrap" role="radiogroup" aria-label="Alternativas">${optsHTML}</div>
+    <button class="btn-confirm" id="btn-confirm" type="button" disabled>Confirmar resposta →</button>
   `);
+
+  $input.querySelectorAll('.opt-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.selectedOpt = Number(btn.dataset.idx);
+      $input.querySelectorAll('.opt-btn').forEach((b) => {
+        const sel = b === btn;
+        b.classList.toggle('selected', sel);
+        b.setAttribute('aria-checked', sel);
+      });
+      document.getElementById('btn-confirm').disabled = false;
+    });
+  });
+  document.getElementById('btn-confirm').addEventListener('click', confirmAnswer);
 }
 
-function selectOpt(idx) {
-  state.selectedOpt = idx;
-  document.querySelectorAll('.opt-btn').forEach((b, i) =>
-    b.classList.toggle('selected', i === idx)
-  );
-  const btn = document.getElementById('btn-confirm');
-  if (btn) btn.disabled = false;
-}
+async function confirmAnswer() {
+  if (state.busy || state.selectedOpt === null) return;
+  state.busy = true;
 
-async function confirmOpt() {
-  if (state.selectedOpt === null) return;
   const q   = QUESTIONS[state.qIdx];
   const opt = q.opts[state.selectedOpt];
 
   state.score += opt.p;
-  state.respostas.push({ pergunta: q.text, resposta: opt.t, pontos: opt.p });
+  state.respostas.push({ pergunta: q.text, alternativa: opt.l, resposta: opt.t, pontos: opt.p });
 
   clearInput();
-  await addMsg(opt.t, 'user');
+  addMsg(escapeHTML(opt.t), 'user');
+  await wait(350);
+
+  state.busy = false;
 
   if (state.qIdx < QUESTIONS.length - 1) {
     state.qIdx++;
-    // breve pausa antes da próxima
-    await new Promise(r => setTimeout(r, 300));
-    showQuestion();
+    askQuestion();
   } else {
-    await showResult();
+    showResult();
   }
 }
 
-// 5. RESULTADO
+/* ── Resultado ── */
 async function showResult() {
-  state.fase = 'resultado';
   clearInput();
 
   await botSay([
-    { text: 'Ótimo! Analisei suas respostas...' },
-    { text: `<strong>${state.nome}</strong>, aqui está seu diagnóstico 👇` },
+    'Pronto! Analisei suas respostas com carinho... ✨',
+    `<strong>${escapeHTML(state.nome)}</strong>, aqui está o seu diagnóstico 👇`,
   ]);
 
-  const r = getResult(state.nome, state.score);
+  const r = getResult(escapeHTML(state.nome), state.score);
 
-  // Card de resultado
   const card = document.createElement('div');
   card.className = 'result-card';
   card.innerHTML = `
     <div class="result-badge">${r.badge}</div>
-    <div class="result-title">${r.title}</div>
-    <div class="result-diag">${r.diag.replace(/\n/g,'<br/>')}</div>
-    <div class="score-pill">Pontuação: ${state.score} de ${QUESTIONS.length * 4}</div>
+    <h2 class="result-title">${r.title}</h2>
+    <div class="result-diag">${r.diag}</div>
+    <span class="score-pill">📊 Pontuação: ${state.score} de ${QUESTIONS.length * 4}</span>
   `;
-  $chat.appendChild(card);
+  $inner.appendChild(card);
   scrollBottom();
 
-  // Mensagem final da Lorena
+  await wait(900);
   await botSay([
-    { text: 'Esse diagnóstico mostra seu ponto de partida. Agora o mais importante é escolher o próximo passo certo para evoluir com mais clareza e segurança.' },
+    'Esse diagnóstico mostra seu ponto de partida. Agora o mais importante é escolher o próximo passo certo para evoluir com mais clareza e segurança.',
   ]);
 
-  // Card produto
   const p = r.produto;
   const prod = document.createElement('div');
-  prod.style.maxWidth = '520px';
-  prod.style.width = '100%';
-  prod.style.margin = '0 auto 8px';
-  prod.style.animation = 'msgIn .4s ease forwards';
-  prod.style.opacity = '0';
+  prod.className = 'produto-wrap';
   prod.innerHTML = `
     <div class="produto-card">
       <div class="produto-tag">${p.tag}</div>
@@ -780,54 +820,54 @@ async function showResult() {
       <a class="btn-cta" href="${p.link}" target="_blank" rel="noopener">${p.cta}</a>
     </div>
   `;
-  $chat.appendChild(prod);
+  $inner.appendChild(prod);
 
-  const restart = document.createElement('button');
-  restart.className = 'btn-restart';
-  restart.textContent = '↩ Refazer o diagnóstico';
-  restart.onclick = restartQuiz;
-  $chat.appendChild(restart);
-
+  setInput(`<button class="btn-restart" type="button" id="btn-restart">↩ Refazer o diagnóstico</button>`);
+  document.getElementById('btn-restart').addEventListener('click', restartQuiz);
   scrollBottom();
 
-  // Salva dados completos no CRM
-  sendCRM({
-    fase: 'diagnostico_completo',
-    diagnostico: r.badge,
+  sendCRM('diagnostico_completo', {
+    diagnostico:         r.badge.replace(/^\S+\s/, ''),
     produto_recomendado: p.nome,
   });
 }
 
-// ─── CRM ─────────────────────────────────────────────────
-function sendCRM(extra) {
+/* ═══════════════ CRM ═══════════════ */
+function sendCRM(fase, extra = {}) {
   try {
     const payload = {
-      sessionId:  Date.now() + '_' + Math.random().toString(36).slice(2,8),
-      nome:       state.nome,
-      email:      state.email,
-      score:      state.score,
-      respostas:  JSON.stringify(state.respostas),
-      fonte:      'quiz-libras',
-      createdAt:  new Date().toISOString(),
+      sessionId: state.sessionId,
+      nome:      state.nome,
+      email:     state.email,
+      score:     state.score,
+      respostas: JSON.stringify(state.respostas),
+      fase,
+      fonte:     'quiz-libras',
+      updatedAt: new Date().toISOString(),
       ...extra,
     };
-    fetch(SHEETS_URL, {
-      method: 'POST', mode: 'no-cors',
+    fetch(CONFIG.SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload),
     }).catch(() => {});
-  } catch(e) {}
+  } catch (_) { /* nunca quebra a experiência por falha de rede */ }
 }
 
-// ─── RESTART ─────────────────────────────────────────────
+/* ═══════════════ RESTART ═══════════════ */
 function restartQuiz() {
-  state = { fase:'intro', nome:'', email:'', qIdx:0, score:0, respostas:[], selectedOpt:null };
-  $chat.innerHTML = '';
+  Object.assign(state, {
+    sessionId:   `qz_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    nome: '', email: '', qIdx: 0, score: 0,
+    respostas: [], selectedOpt: null, busy: false,
+  });
+  $inner.innerHTML = '';
   clearInput();
   startIntro();
 }
 
-// ─── INIT ─────────────────────────────────────────────────
+/* ═══════════════ INIT ═══════════════ */
 startIntro();
 </script>
 </body>
