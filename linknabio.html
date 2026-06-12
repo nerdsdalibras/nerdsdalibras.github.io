@@ -312,7 +312,44 @@
       margin-top:6px;
     }
 
-    /* ── SEÇÃO 8: WHATSAPP ── */
+    /* ── CARD CAS ── */
+    .cas-card{
+      background:linear-gradient(135deg,#0a3d1f 0%,#1a6b3a 60%,#0e4d25 100%);
+      border-radius:18px;padding:20px 18px;
+      display:flex;align-items:center;gap:16px;
+      cursor:pointer;
+      text-decoration:none;
+      border:1.5px solid rgba(255,255,255,.12);
+      transition:transform .2s,box-shadow .2s;
+      position:relative;overflow:hidden;
+    }
+    .cas-card::before{
+      content:"";position:absolute;top:-40px;right:-40px;
+      width:130px;height:130px;border-radius:50%;
+      background:rgba(255,255,255,.05);pointer-events:none;
+    }
+    .cas-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.5);}
+    .cas-logo{
+      width:64px;height:64px;border-radius:50%;
+      object-fit:cover;flex-shrink:0;
+      border:2px solid rgba(255,255,255,.3);
+      background:#fff;
+    }
+    .cas-texts{flex:1;}
+    .cas-badge{
+      display:inline-block;font-size:10px;font-weight:800;
+      text-transform:uppercase;letter-spacing:.1em;
+      background:rgba(255,255,255,.18);color:#a8f0c0;
+      border-radius:20px;padding:3px 10px;margin-bottom:7px;
+    }
+    .cas-title{font-size:15px;font-weight:800;color:#fff;line-height:1.35;}
+    .cas-date{
+      display:flex;align-items:center;gap:6px;
+      font-size:12px;color:#a8f0c0;font-weight:600;margin-top:6px;
+    }
+    .cas-arrow{font-size:20px;color:#a8f0c0;flex-shrink:0;}
+
+
     .whatsapp-card{
       background:#c8e6c9;border-radius:14px;padding:14px 16px;
       display:flex;align-items:center;gap:12px;
@@ -464,6 +501,17 @@
 
     </div>
   </div>
+
+  <!-- ═══ CARD CAS ═══ -->
+  <a href="#" class="cas-card">
+    <img src="fotos/logo.cas.png" alt="CAS-MG" class="cas-logo"/>
+    <div class="cas-texts">
+      <div class="cas-badge">📋 Preparatório</div>
+      <div class="cas-title">Preparatório para Banca do CAS-MG</div>
+      <div class="cas-date">📅 Próxima turma: 10 de agosto de 2026</div>
+    </div>
+    <div class="cas-arrow">→</div>
+  </a>
 
   <a href="https://chat.whatsapp.com/LoPTCaxnrN922JMQaSQVWx" target="_blank" class="whatsapp-card">
     <div class="whatsapp-card-icon">
