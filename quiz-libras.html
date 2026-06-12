@@ -417,111 +417,144 @@ const CONFIG = {
   SHEETS_URL:    'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec',
   LINK_CURSO:    'https://nerdsdalibras.github.io/vsl.html',
   LINK_MENTORIA: 'https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe',
+  LINK_CAS:      'https://chat.whatsapp.com/EMWYw5cLQPv3IdmgOu1PdP',
   AVATAR:        'fotos/IMG_4952.jpg',
   AVATAR_FALLBACK: 'fotos/IMG_4977.jpg',
 };
 
-/* ═══════════════ PERGUNTAS ═══════════════ */
+/* ═══════════════ PERGUNTAS ═══════════════
+   Q1–Q6 pontuam o nível (mín. 6, máx. 24):
+     Básico ≤ 11 · Intermediário 12–18 · Avançado 19–24
+   Q7 não pontua: detecta intenção de fazer a banca do CAS-MG,
+   que define o produto Preparatório independente do nível.   */
 const QUESTIONS = [
   {
-    text: 'Quando você tenta conversar em Libras, qual situação mais parece com você?',
+    text: 'Qual é o seu contato com a Libras hoje?',
     opts: [
-      { l: 'A', t: 'Não sei praticamente nada.', p: 1 },
-      { l: 'B', t: 'Sei alguns sinais e o alfabeto.', p: 2 },
-      { l: 'C', t: 'Consigo formar frases simples.', p: 3 },
-      { l: 'D', t: 'Consigo conversar, mas ainda não com total naturalidade.', p: 4 },
+      { l: 'A', t: 'Nenhum — ainda não sei Libras.', p: 1 },
+      { l: 'B', t: 'Vejo vídeos na internet, sei o alfabeto manual e alguns sinais soltos.', p: 2 },
+      { l: 'C', t: 'Já fiz curso de Libras e me comunico em algum nível.', p: 3 },
+      { l: 'D', t: 'Tenho formação na área (técnico, pós ou Letras Libras) e uso a Libras com frequência.', p: 4 },
     ],
   },
   {
-    text: 'Quando um surdo sinaliza com você:',
+    text: 'Como é a sua comunicação com pessoas surdas?',
     opts: [
-      { l: 'A', t: 'Não consigo entender.', p: 1 },
-      { l: 'B', t: 'Entendo alguns sinais isolados.', p: 2 },
-      { l: 'C', t: 'Entendo partes da conversa.', p: 3 },
-      { l: 'D', t: 'Entendo bem, mas ainda perco alguns detalhes.', p: 4 },
+      { l: 'A', t: 'Não consigo me comunicar.', p: 1 },
+      { l: 'B', t: 'Uso sinais soltos e o alfabeto para me virar.', p: 2 },
+      { l: 'C', t: 'Formo frases e converso sobre alguns assuntos.', p: 3 },
+      { l: 'D', t: 'Converso bem, mas minha fluência ainda não é totalmente limpa.', p: 4 },
     ],
   },
   {
-    text: 'Quando preciso me apresentar em Libras:',
+    text: 'E quando um surdo sinaliza com você, o quanto você entende?',
     opts: [
-      { l: 'A', t: 'Não consigo.', p: 1 },
-      { l: 'B', t: 'Consigo com muita dificuldade.', p: 2 },
-      { l: 'C', t: 'Consigo falar informações básicas.', p: 3 },
-      { l: 'D', t: 'Consigo me expressar com tranquilidade.', p: 4 },
+      { l: 'A', t: 'Quase nada.', p: 1 },
+      { l: 'B', t: 'Sinais isolados.', p: 2 },
+      { l: 'C', t: 'Partes da conversa, quando sinalizam com calma.', p: 3 },
+      { l: 'D', t: 'Entendo bem, mas ainda não entendo completamente.', p: 4 },
     ],
   },
   {
-    text: 'Quando não conheço um sinal:',
+    text: 'Qual é a sua formação em Libras?',
     opts: [
-      { l: 'A', t: 'A conversa para.', p: 1 },
-      { l: 'B', t: 'Tento soletrar.', p: 2 },
-      { l: 'C', t: 'Tento explicar de outra forma.', p: 3 },
-      { l: 'D', t: 'Consigo contornar a situação naturalmente.', p: 4 },
+      { l: 'A', t: 'Nenhuma, nunca fiz curso.', p: 1 },
+      { l: 'B', t: 'Curso básico de Libras.', p: 2 },
+      { l: 'C', t: 'Curso técnico de Tradução e Interpretação de Libras.', p: 3 },
+      { l: 'D', t: 'Pós-graduação na área ou Letras Libras (cursando ou concluído).', p: 4 },
     ],
   },
   {
-    text: 'Quando assiste a um vídeo em Libras sem legenda:',
+    text: 'Você já passou por alguma avaliação ou banca de proficiência em Libras?',
     opts: [
-      { l: 'A', t: 'Não entendo nada.', p: 1 },
-      { l: 'B', t: 'Reconheço poucos sinais.', p: 2 },
-      { l: 'C', t: 'Entendo parte da mensagem.', p: 3 },
-      { l: 'D', t: 'Entendo quase tudo.', p: 4 },
+      { l: 'A', t: 'Nunca fiz.', p: 1 },
+      { l: 'B', t: 'Nunca fiz, mas tenho interesse.', p: 2 },
+      { l: 'C', t: 'Sim, já passei por avaliação (CAS ou outra).', p: 4 },
     ],
   },
   {
-    text: 'Qual frase mais representa você hoje?',
-    opts: [
-      { l: 'A', t: 'Quero começar do zero.', p: 1 },
-      { l: 'B', t: 'Quero construir uma base sólida.', p: 2 },
-      { l: 'C', t: 'Quero me comunicar melhor.', p: 3 },
-      { l: 'D', t: 'Quero alcançar fluência.', p: 4 },
-    ],
-  },
-  {
-    text: 'Qual é seu maior objetivo com Libras?',
+    text: 'Qual é o seu maior objetivo com a Libras?',
     opts: [
       { l: 'A', t: 'Aprender o básico para começar.', p: 1 },
-      { l: 'B', t: 'Conseguir conversar em situações simples.', p: 2 },
-      { l: 'C', t: 'Me comunicar com mais segurança.', p: 3 },
-      { l: 'D', t: 'Ser fluente e/ou atuar profissionalmente.', p: 4 },
+      { l: 'B', t: 'Conversar com surdos no dia a dia.', p: 2 },
+      { l: 'C', t: 'Me comunicar com mais segurança e fluência.', p: 3 },
+      { l: 'D', t: 'Atuar profissionalmente como intérprete de Libras.', p: 4 },
+    ],
+  },
+  {
+    text: 'Você pretende fazer a banca do CAS-MG para atuar como intérprete nas escolas da rede estadual de Minas Gerais?',
+    opts: [
+      { l: 'A', t: 'Sim! Quero essa certificação.', p: 0, cas: true },
+      { l: 'B', t: 'Talvez no futuro.', p: 0, cas: false },
+      { l: 'C', t: 'Não é meu objetivo.', p: 0, cas: false },
     ],
   },
 ];
 
 /* ═══════════════ DIAGNÓSTICOS ═══════════════ */
-function getResult(nome, score) {
-  if (score <= 14) {
+function getNivel(score) {
+  if (score <= 11) return { badge: '🌱 Nível Básico', nivel: 'Básico' };
+  if (score <= 18) return { badge: '📈 Nível Intermediário', nivel: 'Intermediário' };
+  return { badge: '💎 Nível Avançado', nivel: 'Avançado' };
+}
+
+function getResult(nome, score, casIntent) {
+  const n = getNivel(score);
+
+  // Quem quer a banca do CAS recebe o Preparatório, independente do nível
+  if (casIntent) {
     return {
-      badge: '🌱 Nível Básico',
-      title: `${nome}, você está no momento de construir uma base sólida em Libras.`,
-      diag: 'Isso significa que seu foco agora deve ser aprender os sinais essenciais, entender como formar frases simples e começar a se comunicar com mais segurança.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero à Libras</strong>.',
+      badge: n.badge,
+      nivel: n.nivel,
+      title: `${nome}, seu nível atual é ${n.nivel} — e você tem um objetivo claro: a banca do CAS-MG.`,
+      diag: 'Você quer a certificação do CAS para atuar como intérprete de Libras nas escolas da rede estadual de Minas Gerais. Essa banca exige preparo específico: não basta saber Libras, é preciso saber exatamente o que a avaliação cobra.<br/><br/>O próximo passo mais indicado para você é o <strong>Preparatório Banca CAS-MG</strong>.',
+      produto: {
+        tag: '🎯 Indicado para o seu objetivo',
+        nome: 'Preparatório Banca CAS-MG',
+        desc: 'Preparação direcionada para a banca do CAS — Centro de Apoio às pessoas com Surdez. Saiba o que será cobrado, treine da forma certa e chegue confiante na avaliação para conquistar sua certificação.',
+        cta: 'Quero me preparar para a banca →',
+        link: CONFIG.LINK_CAS,
+      },
+    };
+  }
+
+  if (n.nivel === 'Básico') {
+    return {
+      badge: n.badge,
+      nivel: n.nivel,
+      title: `${nome}, seu nível atual é Básico — você está no momento de construir sua base em Libras.`,
+      diag: 'Isso significa que seu foco agora deve ser aprender os sinais essenciais, entender como formar frases e começar a se comunicar de verdade com pessoas surdas.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero a Libras</strong>.',
       produto: {
         tag: '⭐ Indicado para você',
-        nome: 'Do Zero à Libras',
+        nome: 'Do Zero a Libras',
         desc: 'Método exclusivo da Profa. Lorena. Do absoluto zero à comunicação real com surdos — você aprende como a mente surda processa a língua, não como tradução do português.',
         cta: 'Quero começar do jeito certo →',
         link: CONFIG.LINK_CURSO,
       },
     };
   }
-  if (score <= 21) {
+
+  if (n.nivel === 'Intermediário') {
     return {
-      badge: '📈 Nível Intermediário',
-      title: `${nome}, você já tem contato com a Libras e conhece sinais importantes.`,
-      diag: 'Mas talvez ainda sinta que falta organização para formar frases, entender melhor o que o surdo sinaliza e se comunicar com mais segurança.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero à Libras</strong>.',
+      badge: n.badge,
+      nivel: n.nivel,
+      title: `${nome}, seu nível atual é Intermediário — você já se comunica em Libras.`,
+      diag: 'Você já tem base: sabe o alfabeto, forma frases e conversa em algum nível. O que falta agora é organização, vocabulário e estrutura para se comunicar com mais naturalidade e segurança.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero a Libras</strong>.',
       produto: {
         tag: '✅ Ideal para a sua fase',
-        nome: 'Do Zero à Libras',
+        nome: 'Do Zero a Libras',
         desc: 'Organize tudo o que você já sabe e avance com método, estrutura e prática real — do nível base ao intermediário.',
         cta: 'Quero organizar minha Libras →',
         link: CONFIG.LINK_CURSO,
       },
     };
   }
+
   return {
-    badge: '💎 Nível Avançado',
-    title: `${nome}, você já tem uma boa base em Libras.`,
-    diag: 'Agora, seu próximo desafio não é apenas aprender mais sinais, mas desenvolver naturalidade, compreensão, estrutura e fluência para se comunicar em situações reais.<br/><br/>O próximo passo mais indicado para você é a <strong>Mentoria Destrava Libras</strong>.',
+    badge: n.badge,
+    nivel: n.nivel,
+    title: `${nome}, seu nível atual é Avançado — você já tem uma trajetória sólida em Libras.`,
+    diag: 'Você se comunica bem com surdos e tem formação na área. Seu desafio agora não é aprender mais sinais — é lapidar a fluência: naturalidade, compreensão completa e clareza na sinalização.<br/><br/>O próximo passo mais indicado para você é a <strong>Mentoria Destrava Libras</strong>.',
     produto: {
       tag: '💜 Próximo passo para você',
       nome: 'Mentoria Destrava Libras',
@@ -541,7 +574,8 @@ const state = {
   score:       0,
   respostas:   [],
   selectedOpt: null,
-  busy:        false,   // trava contra cliques duplos
+  casIntent:   false,  // quer fazer a banca do CAS-MG
+  busy:        false,  // trava contra cliques duplos
 };
 
 const $chat  = document.getElementById('chat-area');
@@ -766,6 +800,7 @@ async function confirmAnswer() {
   const opt = q.opts[state.selectedOpt];
 
   state.score += opt.p;
+  if (typeof opt.cas === 'boolean') state.casIntent = opt.cas;
   state.respostas.push({ pergunta: q.text, alternativa: opt.l, resposta: opt.t, pontos: opt.p });
 
   clearInput();
@@ -791,7 +826,7 @@ async function showResult() {
     `<strong>${escapeHTML(state.nome)}</strong>, aqui está o seu diagnóstico 👇`,
   ]);
 
-  const r = getResult(escapeHTML(state.nome), state.score);
+  const r = getResult(escapeHTML(state.nome), state.score, state.casIntent);
 
   const card = document.createElement('div');
   card.className = 'result-card';
@@ -799,7 +834,7 @@ async function showResult() {
     <div class="result-badge">${r.badge}</div>
     <h2 class="result-title">${r.title}</h2>
     <div class="result-diag">${r.diag}</div>
-    <span class="score-pill">📊 Pontuação: ${state.score} de ${QUESTIONS.length * 4}</span>
+    <span class="score-pill">📊 Pontuação: ${state.score} de 24</span>
   `;
   $inner.appendChild(card);
   scrollBottom();
@@ -827,7 +862,8 @@ async function showResult() {
   scrollBottom();
 
   sendCRM('diagnostico_completo', {
-    diagnostico:         r.badge.replace(/^\S+\s/, ''),
+    diagnostico:         r.nivel,
+    interesse_banca_cas: state.casIntent ? 'sim' : 'nao',
     produto_recomendado: p.nome,
   });
 }
@@ -860,7 +896,7 @@ function restartQuiz() {
   Object.assign(state, {
     sessionId:   `qz_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     nome: '', email: '', qIdx: 0, score: 0,
-    respostas: [], selectedOpt: null, busy: false,
+    respostas: [], selectedOpt: null, casIntent: false, busy: false,
   });
   $inner.innerHTML = '';
   clearInput();
