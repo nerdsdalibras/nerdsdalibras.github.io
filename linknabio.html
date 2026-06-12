@@ -87,11 +87,10 @@
     .concierge-card > *{position:relative;z-index:2;}
     .concierge-icon{
       width:44px;height:44px;border-radius:50%;
-      overflow:hidden;
-      flex-shrink:0;
-      border:2px solid rgba(255,255,255,.3);
+      background:#2a2a2a;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;font-size:22px;
     }
-    .concierge-icon img{width:100%;height:100%;object-fit:cover;object-position:center top;}
     .concierge-texts{flex:1;}
     .concierge-title{font-size:15px;font-weight:800;color:#fff;line-height:1.28;}
     .concierge-sub{font-size:13px;color:#999;margin-top:4px;line-height:1.45;}
@@ -474,7 +473,7 @@
 
   <!-- ═══ SEÇÃO 3: CONCIERGE IA ═══ -->
   <div class="concierge-card" onclick="window.open('https://nerdsdalibras.github.io/quiz-libras.html','_blank')">
-    <div class="concierge-icon"><img src="fotos/IMG_4907.jpg" alt="Prof. Lorena"/></div>
+    <div class="concierge-icon">⭐</div>
     <div class="concierge-texts">
       <div class="concierge-title">Faça uma avaliação gratuita e descubra seu nível na Libras: básico, intermediário ou avançado. Quer ir para o próximo nível?</div>
     </div>
@@ -498,20 +497,17 @@
         <button class="vitrine-card-btn">VER DETALHES</button>
       </div>
 
+      <div class="vitrine-card" onclick="#">
+        <img src="fotos/logo.cas.png" alt="Preparatório CAS-MG" style="background:#fff;padding:8px;"/>
+        <div class="vitrine-card-title">Preparatório Banca CAS-MG</div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:6px;">📅 10 de agosto de 2026</div>
+        <button class="vitrine-card-btn">SAIBA MAIS</button>
+      </div>
+
 
     </div>
   </div>
 
-  <!-- ═══ CARD CAS ═══ -->
-  <a href="#" class="cas-card">
-    <img src="fotos/logo.cas.png" alt="CAS-MG" class="cas-logo"/>
-    <div class="cas-texts">
-      <div class="cas-badge">📋 Preparatório</div>
-      <div class="cas-title">Preparatório para Banca do CAS-MG</div>
-      <div class="cas-date">📅 Próxima turma: 10 de agosto de 2026</div>
-    </div>
-    <div class="cas-arrow">→</div>
-  </a>
 
   <a href="https://chat.whatsapp.com/LoPTCaxnrN922JMQaSQVWx" target="_blank" class="whatsapp-card">
     <div class="whatsapp-card-icon">
