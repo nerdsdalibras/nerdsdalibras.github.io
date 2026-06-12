@@ -416,7 +416,7 @@
 const CONFIG = {
   SHEETS_URL:    'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec',
   LINK_CURSO:    'https://pay.kiwify.com.br/1sIyvVL',
-  LINK_MENTORIA: 'https://chk.eduzz.com/pykhq6gg',
+  LINK_MENTORIA: 'https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe',
   AVATAR:        'fotos/IMG_4952.jpg',
   AVATAR_FALLBACK: 'fotos/IMG_4977.jpg',
 };
@@ -492,7 +492,7 @@ const QUESTIONS = [
 function getResult(nome, score) {
   if (score <= 14) {
     return {
-      badge: '🌱 Base em Construção',
+      badge: '🌱 Nível Básico',
       title: `${nome}, você está no momento de construir uma base sólida em Libras.`,
       diag: 'Isso significa que seu foco agora deve ser aprender os sinais essenciais, entender como formar frases simples e começar a se comunicar com mais segurança.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero à Libras</strong>.',
       produto: {
@@ -506,7 +506,7 @@ function getResult(nome, score) {
   }
   if (score <= 21) {
     return {
-      badge: '🚀 Comunicação em Desenvolvimento',
+      badge: '📈 Nível Intermediário',
       title: `${nome}, você já tem contato com a Libras e conhece sinais importantes.`,
       diag: 'Mas talvez ainda sinta que falta organização para formar frases, entender melhor o que o surdo sinaliza e se comunicar com mais segurança.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero à Libras</strong>.',
       produto: {
@@ -519,7 +519,7 @@ function getResult(nome, score) {
     };
   }
   return {
-    badge: '💎 Rumo à Fluência',
+    badge: '💎 Nível Avançado',
     title: `${nome}, você já tem uma boa base em Libras.`,
     diag: 'Agora, seu próximo desafio não é apenas aprender mais sinais, mas desenvolver naturalidade, compreensão, estrutura e fluência para se comunicar em situações reais.<br/><br/>O próximo passo mais indicado para você é a <strong>Mentoria Destrava Libras</strong>.',
     produto: {
