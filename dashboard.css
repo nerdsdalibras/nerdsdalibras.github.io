@@ -294,6 +294,15 @@ body {
   transition: border-color .2s, transform .15s;
 }
 .stat-card:hover { border-color: var(--bdrb); transform: translateY(-1px); }
+.stat-card.stat-alert {
+  border-color: #EA580C;
+  box-shadow: 0 0 0 1px #EA580C, 0 0 16px rgba(234,88,12,.25);
+  animation: statPulse 2.2s ease-in-out infinite;
+}
+@keyframes statPulse {
+  0%, 100% { box-shadow: 0 0 0 1px #EA580C, 0 0 12px rgba(234,88,12,.2); }
+  50%      { box-shadow: 0 0 0 1px #EA580C, 0 0 22px rgba(234,88,12,.45); }
+}
 .stat-card::before {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(135deg, rgba(255,255,255,.015) 0%, transparent 60%);

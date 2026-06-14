@@ -20,6 +20,7 @@ const lead = {
   quisAvancar:       '',
   comprouKiwify:     false,
   clicouCheckout:    false,
+  checkoutEm:        '',
   clicouVSL:         false,
   clicouGrupo:       false,
   statusCloser:      '',
@@ -856,19 +857,20 @@ function registrarClique() {
   Storage.upsert({ ...lead });
 }
 
+// Clicar no botão de comprar NÃO confirma a compra — só registra que o lead
+// foi para o checkout. A confirmação real vem do webhook da Kiwify.
+// Assim conseguimos detectar carrinho abandonado (clicou mas não pagou).
 function registrarCompra(plataforma) {
-  lead.comprouKiwify  = true;
   lead.clicouCheckout = true;
-  lead.status         = 'comprou';
-  lead.statusCloser   = `Clicou comprar — ${lead.resultado}`;
+  lead.checkoutEm     = new Date().toISOString();
+  lead.statusCloser   = `Foi para o checkout (${lead.resultado}) — aguardando pagamento`;
   Storage.upsert({ ...lead });
 }
 
 function registrarCompraMentoria() {
-  lead.comprouKiwify  = true;
   lead.clicouCheckout = true;
-  lead.status         = 'comprou';
-  lead.statusCloser   = 'Clicou comprar — Mentoria Eduzz (preço cheio)';
+  lead.checkoutEm     = new Date().toISOString();
+  lead.statusCloser   = 'Foi para o checkout (Mentoria) — aguardando pagamento';
   Storage.upsert({ ...lead });
 }
 

@@ -489,11 +489,11 @@ function renderAISuggestions(leads) {
       sub: 'Ação urgente — entre em contato agora' });
   }
 
-  const checkoutNoBuy = leads.filter(l => l.clicouCheckout && l.status !== 'comprou');
+  const checkoutNoBuy = leads.filter(isCarrinhoAbandonado);
   if (checkoutNoBuy.length) {
     suggestions.push({ dot: 'orange',
-      text: `${checkoutNoBuy.length} lead${checkoutNoBuy.length > 1 ? 's' : ''} viu o checkout mas não comprou`,
-      sub: 'Carrinho abandonado — recuperação tem alta conversão' });
+      text: `${checkoutNoBuy.length} lead${checkoutNoBuy.length > 1 ? 's' : ''} abandonou${checkoutNoBuy.length > 1 ? 'ram' : ''} o carrinho`,
+      sub: 'Clicaram pra comprar e não finalizaram — recuperação tem alta conversão' });
   }
 
   const newStale = leads.filter(l => {
@@ -544,7 +544,7 @@ function renderStats(leads) {
   const muitoQuente = leads.filter(l => l.status === 'muito_quente').length;
   const prioridade  = leads.filter(l => l.status === 'prioridade_maxima').length;
   const comprou     = leads.filter(l => l.status === 'comprou').length;
-  const viuCheckout = leads.filter(l => l.clicouCheckout && l.status !== 'comprou').length;
+  const carrinho    = leads.filter(isCarrinhoAbandonado).length;
   const semContato  = leads.filter(l =>
     !l.status || l.status === 'novo' ||
     (l.statusCloser === 'Aguardando resposta sobre próximo nível' && l.status !== 'comprou' && l.status !== 'nao_quis')
@@ -578,10 +578,10 @@ function renderStats(leads) {
       <div class="stat-val sv-green">${comprou}</div>
       <div class="stat-label">Compraram</div>
     </div>
-    <div class="stat-card animate-up" style="animation-delay:.15s">
+    <div class="stat-card animate-up ${carrinho > 0 ? 'stat-alert' : ''}" style="animation-delay:.15s;cursor:pointer" onclick="filtrar('carrinho')">
       <div class="stat-icon">🛒</div>
-      <div class="stat-val sv-yellow">${viuCheckout}</div>
-      <div class="stat-label">Viu Checkout</div>
+      <div class="stat-val sv-orange">${carrinho}</div>
+      <div class="stat-label">Carrinho Abandonado</div>
     </div>
     <div class="stat-card animate-up" style="animation-delay:.18s">
       <div class="stat-icon">📈</div>
@@ -611,7 +611,7 @@ function renderFilters(leads) {
     quente:            leads.filter(l => l.status === 'quente').length,
     morno:             leads.filter(l => l.status === 'morno').length,
     comprou:           leads.filter(l => l.status === 'comprou').length,
-    viu_checkout:      leads.filter(l => l.clicouCheckout && l.status !== 'comprou').length,
+    carrinho:          leads.filter(isCarrinhoAbandonado).length,
     aguardando:        leads.filter(l => l.status === 'aguardando').length,
     nao_quis:          leads.filter(l => l.status === 'nao_quis').length,
   };
@@ -621,7 +621,7 @@ function renderFilters(leads) {
     { key: 'muito_quente',      label: '🔥🔥 Muito Quente' },
     { key: 'quente',            label: '🔥 Quente' },
     { key: 'morno',             label: '🌡 Morno' },
-    { key: 'viu_checkout',      label: '🛒 Viu Checkout' },
+    { key: 'carrinho',          label: '🛒 Carrinho Abandonado' },
     { key: 'comprou',           label: '✅ Compraram' },
     { key: 'aguardando',        label: '⏳ Aguardando' },
     { key: 'nao_quis',          label: '❌ Não Quiseram' },
@@ -686,8 +686,8 @@ async function renderLeads() {
 
   if (tagFilter) {
     filtered = filtered.filter(l => getLeadTags(l).includes(tagFilter));
-  } else if (filtroAtivo === 'viu_checkout') {
-    filtered = filtered.filter(l => l.clicouCheckout && l.status !== 'comprou');
+  } else if (filtroAtivo === 'carrinho') {
+    filtered = filtered.filter(isCarrinhoAbandonado);
   } else if (filtroAtivo !== 'todos') {
     filtered = filtered.filter(l => l.status === filtroAtivo);
   }
@@ -729,7 +729,7 @@ function renderLeadCard(l, idx) {
   const avatarColor = getAvatarColor(String(l.sessionId || l.nome || ''));
   const hasAlert    = (statusKey === 'muito_quente' || statusKey === 'prioridade_maxima') &&
                       (!l.statusCloser || l.statusCloser === 'Aguardando resposta sobre próximo nível');
-  const viuCheckout = l.clicouCheckout && statusKey !== 'comprou';
+  const carrinhoAbandonado = isCarrinhoAbandonado(l);
   const tags        = getLeadTags(l);
   const isSel       = selectedLeads.has(l.sessionId);
 
@@ -767,7 +767,7 @@ function renderLeadCard(l, idx) {
         ${l.nivelIdentificado ? `<div class="info-chip"><strong>${l.nivelIdentificado}</strong></div>` : ''}
         ${l.oferta ? `<div class="info-chip">${l.oferta === 'curso' ? '📚 Curso' : '🎯 Mentoria'}</div>` : ''}
         ${statusKey === 'comprou'  ? `<div class="info-chip green">✅ Compra confirmada</div>` : ''}
-        ${viuCheckout              ? `<div class="info-chip" style="color:var(--yellow)">🛒 Viu checkout</div>` : ''}
+        ${carrinhoAbandonado       ? `<div class="info-chip" style="color:#fff;background:#EA580C;border-color:#EA580C">🛒 Carrinho abandonado</div>` : ''}
         ${l.vslClicouCTA    ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">🛒 VSL→CTA</div>` :
           l.vslAssistiuFim  ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">✔ VSL completo</div>` :
           l.vslPct50        ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">⏱ VSL 50%</div>` :
@@ -881,7 +881,7 @@ function renderTab(tab) {
 
   if (tab === 'dados') {
     const statusKey = l.status || 'novo';
-    const viuCheck  = l.clicouCheckout && statusKey !== 'comprou';
+    const viuCheck  = isCarrinhoAbandonado(l);
     const tags      = getLeadTags(l);
     const tpls      = getRelevantTemplates(l);
     body.innerHTML = `
@@ -925,10 +925,11 @@ function renderTab(tab) {
         <div class="panel-field"><span class="pf-label">Tempo no quiz</span><span class="pf-val">${l.tempoNoQuiz ? l.tempoNoQuiz + 's' : '—'}</span></div>
         <div class="panel-field">
           <span class="pf-label">Checkout</span>
-          <span class="pf-val" style="color:${statusKey === 'comprou' ? 'var(--g)' : viuCheck ? 'var(--yellow)' : 'var(--td)'}">
-            ${statusKey === 'comprou' ? '✅ Compra confirmada (Kiwify)' : viuCheck ? '🛒 Viu, não comprou' : '—'}
+          <span class="pf-val" style="color:${statusKey === 'comprou' ? 'var(--g)' : viuCheck ? '#EA580C' : 'var(--td)'};font-weight:${viuCheck ? '700' : '400'}">
+            ${statusKey === 'comprou' ? '✅ Compra confirmada (Kiwify)' : viuCheck ? '🛒 Carrinho abandonado — clicou, não pagou' : '—'}
           </span>
         </div>
+        ${l.checkoutEm ? `<div class="panel-field"><span class="pf-label">Foi ao checkout</span><span class="pf-val">${new Date(l.checkoutEm).toLocaleString('pt-BR')}</span></div>` : ''}
         <div class="panel-field"><span class="pf-label">VSL</span><span class="pf-val" style="color:${(l.vslIniciou||l.clicouVSL) ? '#FB923C' : 'inherit'}">${
           l.vslClicouCTA    ? '🛒 Clicou no CTA — foi ao checkout' :
           l.vslAssistiuFim  ? '✔ Assistiu até o fim' :
@@ -1051,7 +1052,7 @@ function buildFunilSteps(l) {
     { icon: '⏱',  label: 'Assistiu até o fim',     note: vslFimNote,                                     done: !!l.vslAssistiuFim },
     { icon: '🖱',  label: 'Clicou no CTA do VSL',  note: l.vslClicouCTA ? 'Sim' : '—',                   done: !!l.vslClicouCTA },
     { icon: '💬', label: 'Entrou no grupo',         note: l.clicouGrupo ? 'Sim' : '—',                   done: !!l.clicouGrupo },
-    { icon: '🛒', label: 'Viu o checkout',          note: l.clicouCheckout ? 'Sim' : '—',                 done: !!l.clicouCheckout },
+    { icon: '🛒', label: 'Foi ao checkout',          note: l.clicouCheckout ? (statusKey === 'comprou' ? 'Sim' : 'Abandonou') : '—', done: !!l.clicouCheckout },
     { icon: '✅', label: 'Comprou',                 note: statusKey === 'comprou' ? (l.updatedAt ? formatDate(l.updatedAt) : 'Sim') : '—', done: statusKey === 'comprou' },
   ];
 }
@@ -1083,8 +1084,8 @@ function buildTimeline(l) {
   if (l.vslAssistiuFim) events.push({ time: '—', text: '✔ Assistiu o VSL até o fim' });
   if (l.vslClicouCTA)   events.push({ time: '—', text: '🛒 Clicou no CTA do VSL (checkout)' });
   if (l.clicouGrupo)    events.push({ time: '—', text: '💬 Clicou para entrar no grupo de WhatsApp' });
-  if (l.clicouCheckout && l.status !== 'comprou')
-    events.push({ time: '—', text: '🛒 Visitou a página de checkout (não confirmado)' });
+  if (l.clicouCheckout)
+    events.push({ time: l.checkoutEm ? formatTime(l.checkoutEm) : '—', text: l.status === 'comprou' ? '🛒 Foi para o checkout' : '🛒 Carrinho abandonado — foi ao checkout e não finalizou' });
   if (l.status === 'comprou')
     events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '✅ Compra confirmada pela Kiwify' });
   if (l.status === 'nao_quis')
@@ -1112,15 +1113,16 @@ function getIASuggestions(l) {
   const nome      = l.nome || 'o lead';
   const statusKey = l.status || 'novo';
   const nivel     = l.nivelIdentificado || '';
-  const viuCheck  = l.clicouCheckout && statusKey !== 'comprou';
+  const viuCheck  = isCarrinhoAbandonado(l);
 
   let msg = '';
-  if (statusKey === 'prioridade_maxima') {
+  if (viuCheck) {
+    const oferta = l.oferta === 'mentoria' ? 'a Mentoria' : 'o Curso do Zero à Libras';
+    msg = `Oi, ${nome}! 🤟 Vi que você chegou a iniciar a inscrição n${l.oferta === 'mentoria' ? 'a Mentoria' : 'o Curso'} mas a compra não foi concluída. Aconteceu algum problema no pagamento? Posso te ajudar a finalizar agora — e garanto uma condição especial pra você. 💚`;
+  } else if (statusKey === 'prioridade_maxima') {
     msg = `Oi, ${nome}! 🤟 Aqui é a Lorena.\n\nVi seu diagnóstico e seu perfil chamou minha atenção — você está num ponto muito importante da sua jornada em Libras.\n\nQuero te fazer uma proposta personalizada. Posso te contar mais?`;
   } else if (statusKey === 'muito_quente') {
     msg = `Oi, ${nome}! 🤟 Sou a Lorena da Nerds da Libras.\n\nVi que você fez o diagnóstico e seu nível é ${nivel}. Tenho algo preparado especialmente para o seu perfil — posso te explicar?`;
-  } else if (viuCheck) {
-    msg = `Oi, ${nome}! Vi que você chegou a ver o checkout mas não finalizou. Posso te ajudar com alguma dúvida? Às vezes um detalhe pequeno impede uma decisão que muda tudo.`;
   } else if (statusKey === 'quente') {
     msg = `Oi, ${nome}! 🤟 Vi que você fez o diagnóstico com a Lorena. Ainda tem interesse em evoluir em Libras? Posso te contar como funciona ${l.oferta === 'mentoria' ? 'a mentoria' : 'o curso'}?`;
   } else {
@@ -1549,9 +1551,22 @@ function updateBadges(leads) {
 /* ═══════════════════════════════════════════
    ACTIONS
 ═══════════════════════════════════════════ */
+// Carrinho abandonado = clicou para comprar (checkout ou CTA do VSL) mas a
+// compra nunca foi confirmada (webhook da Kiwify não marcou 'comprou').
+function isCarrinhoAbandonado(l) {
+  return (l.clicouCheckout || l.vslClicouCTA) && l.status !== 'comprou';
+}
+
 function gerarMensagem(l) {
   const nome  = l.nome || 'você';
   const nivel = l.nivelIdentificado || '—';
+
+  // Remarketing de carrinho abandonado — maior intenção de compra
+  if (isCarrinhoAbandonado(l)) {
+    const oferta = l.oferta === 'mentoria' ? 'Mentoria Ciclo da Fluência' : 'Curso do Zero à Libras';
+    return `Oi, ${nome}! 🤟 Vi que você chegou a iniciar a inscrição no ${oferta}, mas a compra não foi concluída. Aconteceu algum problema no pagamento? Posso te ajudar a finalizar agora — e ainda garanto uma condição especial pra você. 💚`;
+  }
+
   if (l.oferta === 'mentoria') {
     return `Oi, ${nome}! 🤟 Vi sua avaliação com a Lorena — seu perfil é ${nivel}. Você havia demonstrado interesse na Mentoria Ciclo da Fluência. Posso te passar mais detalhes?`;
   }
