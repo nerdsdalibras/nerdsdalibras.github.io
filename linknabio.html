@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Link na Bio — Prof. Lorena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    a{text-decoration:none;}
+    html{scroll-behavior:smooth}
+    body{
+      background:#555555;
+      font-family:'Inter',sans-serif;
+      color:#fff;
+      min-height:100vh;
+      padding:32px 16px 56px;
+    }
+    .wrapper{
+      max-width:460px;
+      margin:0 auto;
+      display:flex;flex-direction:column;gap:16px;
+    }
+
+    /* ── SEÇÃO 1: HEADER ── */
+    .profile-header{text-align:center;margin-bottom:4px;}
+    .profile-photo-wrap{
+      width:100px;height:100px;
+      border-radius:50%;
+      border:3px solid #fff;
+      overflow:hidden;
+      margin:0 auto 14px;
+      background:#666;
+      box-shadow:0 4px 20px rgba(0,0,0,.3);
+    }
+    .profile-photo-wrap img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+    .profile-name{font-size:24px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.3px;}
+    .profile-tagline{font-size:15px;color:#ddd;line-height:1.6;max-width:320px;margin:0 auto;}
+
+    /* ── SEÇÃO 2: ÍCONES SOCIAIS ── */
+    .social-icons{
+      display:flex;justify-content:center;gap:14px;
+      flex-wrap:wrap;margin-top:4px;
+    }
+    .social-icon{
+      width:54px;height:54px;border-radius:50%;
+      background:rgba(255,255,255,0.14);
+      display:flex;align-items:center;justify-content:center;
+      text-decoration:none;
+      transition:background .2s,transform .15s;
+      flex-shrink:0;
+    }
+    .social-icon:hover{background:rgba(255,255,255,0.26);transform:scale(1.08);}
+    .social-icon svg{width:22px;height:22px;fill:#fff;}
+
+    /* ── SEÇÃO 3: CONCIERGE IA ── */
+    .concierge-card{
+      position:relative;overflow:hidden;
+      background:#111;border-radius:18px;
+      padding:16px 18px;
+      display:flex;align-items:center;gap:14px;
+      cursor:pointer;
+      transition:transform .2s,box-shadow .2s;
+      isolation:isolate;
+    }
+    /* ✨ Efeito diamante: brilho que varre o card em diagonal */
+    .concierge-card::before{
+      content:"";position:absolute;top:0;left:-150%;
+      width:75%;height:100%;z-index:1;pointer-events:none;
+      background:linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(255,255,255,.04) 35%,
+        rgba(255,255,255,.55) 50%,
+        rgba(255,255,255,.04) 65%,
+        transparent 100%
+      );
+      transform:skewX(-22deg);
+      animation:diamondShine 6s ease-in-out infinite;
+    }
+    @keyframes diamondShine{
+      0%{left:-150%;}
+      55%,100%{left:160%;}
+    }
+    .concierge-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.55);}
+    .concierge-card > *{position:relative;z-index:2;}
+    .concierge-icon{
+      width:44px;height:44px;border-radius:50%;
+      background:#2a2a2a;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;font-size:22px;
+    }
+    .concierge-texts{flex:1;}
+    .concierge-title{font-size:15px;font-weight:800;color:#fff;line-height:1.28;}
+    .concierge-sub{font-size:13px;color:#999;margin-top:4px;line-height:1.45;}
+    .concierge-arrow{
+      width:36px;height:36px;border-radius:50%;
+      background:#2a2a2a;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;font-size:18px;color:#fff;
+    }
+
+    /* ── SEÇÃO 4: VITRINE ── */
+    .vitrine-label{
+      font-size:11px;font-weight:800;text-transform:uppercase;
+      color:#fff;letter-spacing:.12em;margin-bottom:12px;
+      display:flex;align-items:center;gap:7px;
+    }
+    .vitrine-scroll{
+      display:flex;gap:12px;
+      overflow-x:auto;
+      padding-bottom:8px;
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+    }
+    .vitrine-scroll::-webkit-scrollbar{display:none;}
+    .vitrine-card{
+      flex-shrink:0;width:110px;
+      cursor:pointer;
+      transition:transform .2s;
+    }
+    .vitrine-card:hover{transform:translateY(-3px);}
+    .vitrine-card img{
+      width:110px;height:124px;border-radius:10px;
+      object-fit:cover;display:block;
+    }
+    .vitrine-card-title{
+      font-size:11px;font-weight:800;text-transform:uppercase;
+      color:#fff;margin:7px 0 6px;line-height:1.3;
+      letter-spacing:.01em;
+    }
+    .vitrine-card-btn{
+      display:inline-block;
+      font-size:10px;font-weight:700;
+      background:rgba(255,255,255,.14);color:#fff;
+      border-radius:20px;padding:5px 12px;
+      border:none;cursor:pointer;
+      transition:background .2s;
+      letter-spacing:.04em;
+    }
+    .vitrine-card-btn:hover{background:rgba(255,255,255,.25);}
+
+    /* ── SEÇÃO 5: LINK SIMPLES ── */
+    .link-card{
+      background:#111;border-radius:16px;padding:14px 16px;
+      display:flex;align-items:center;gap:14px;
+      text-decoration:none;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .link-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.5);}
+    .link-card-thumb{
+      width:58px;height:58px;border-radius:12px;
+      object-fit:cover;flex-shrink:0;
+      background:#333;
+    }
+    .link-card-texts{flex:1;}
+    .link-card-title{font-size:15px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.01em;}
+    .link-card-sub{font-size:12px;color:#888;margin-top:4px;font-weight:500;}
+    .link-card-ext{font-size:22px;color:#888;flex-shrink:0;}
+
+    /* ── SEÇÃO 6: PODCAST ── */
+    .podcast-card{
+      background:#fff;border-radius:14px;
+      overflow:hidden;color:#000;
+    }
+    .podcast-header{
+      background:#1a3a1a;padding:14px 16px;
+      display:flex;align-items:center;gap:10px;
+    }
+    .spotify-icon svg{width:24px;height:24px;}
+    .podcast-name{font-size:13px;font-weight:700;color:#fff;}
+    .podcast-body{padding:14px 16px;}
+    .podcast-ep-wrap{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
+    .podcast-thumb{
+      width:64px;height:64px;border-radius:8px;
+      object-fit:cover;background:#ddd;flex-shrink:0;
+    }
+    .podcast-ep-title{font-size:13px;font-weight:700;color:#111;line-height:1.4;}
+    .podcast-ep-date{font-size:11px;color:#777;margin-top:4px;}
+    .podcast-controls{
+      display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:10px;
+    }
+    .podcast-btn{
+      background:none;border:none;cursor:pointer;
+      font-size:22px;color:#111;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .podcast-play-btn{
+      width:44px;height:44px;border-radius:50%;
+      background:#1DB954;
+      display:flex;align-items:center;justify-content:center;
+      border:none;cursor:pointer;
+    }
+    .podcast-play-btn svg{width:20px;height:20px;fill:#fff;margin-left:2px;}
+    .podcast-progress{
+      background:#e0e0e0;border-radius:4px;height:4px;margin-bottom:12px;
+      position:relative;
+    }
+    .podcast-progress-fill{
+      background:#1DB954;border-radius:4px;
+      height:100%;width:35%;
+    }
+    .podcast-save-btn{
+      display:flex;align-items:center;gap:8px;
+      background:#f0f0f0;border:none;border-radius:20px;
+      padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;color:#111;
+      width:100%;justify-content:center;
+    }
+
+    /* ── SEÇÃO 7: AGENDAMENTO ── */
+    .agenda-card{
+      background:rgba(30,30,30,.85);border-radius:14px;padding:16px;
+    }
+    .agenda-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+    .agenda-icon{font-size:24px;}
+    .agenda-title{font-size:16px;font-weight:700;color:#fff;}
+    .agenda-sub{font-size:12px;color:#aaa;margin-top:2px;}
+    /* Stepper */
+    .stepper{
+      display:flex;align-items:center;gap:4px;margin-bottom:18px;
+      overflow-x:auto;scrollbar-width:none;
+    }
+    .stepper::-webkit-scrollbar{display:none;}
+    .step{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+    .step-circle{
+      width:26px;height:26px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:700;flex-shrink:0;
+    }
+    .step-circle.active{background:#fff;color:#000;}
+    .step-circle.done{background:#4CAF50;color:#fff;}
+    .step-circle.inactive{background:transparent;border:1.5px solid #555;color:#777;}
+    .step-label{font-size:11px;font-weight:600;color:#aaa;white-space:nowrap;}
+    .step-label.active{color:#fff;}
+    .step-connector{flex:1;height:1px;background:#444;min-width:16px;}
+    /* Calendar */
+    .cal-header{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:12px;
+    }
+    .cal-month{font-size:15px;font-weight:700;color:#fff;}
+    .cal-nav{
+      background:rgba(255,255,255,.1);border:none;
+      color:#fff;width:30px;height:30px;border-radius:50%;
+      cursor:pointer;font-size:16px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .cal-nav:hover{background:rgba(255,255,255,.2);}
+    .cal-weekdays{
+      display:grid;grid-template-columns:repeat(7,1fr);
+      text-align:center;margin-bottom:6px;
+    }
+    .cal-weekdays span{font-size:11px;font-weight:600;color:#888;padding:4px 0;}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+    .cal-day{
+      aspect-ratio:1;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:500;cursor:pointer;
+      transition:background .15s,color .15s;
+      border:none;background:transparent;color:#fff;
+    }
+    .cal-day.available:hover{background:rgba(255,255,255,.18);}
+    .cal-day.selected{background:#fff;color:#000;font-weight:700;}
+    .cal-day.busy{color:#555;cursor:default;}
+    .cal-day.past{color:#444;cursor:default;}
+    .cal-day.empty{cursor:default;}
+    /* Time slots */
+    .time-slots{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+    .time-slot{
+      padding:8px 14px;border-radius:10px;
+      background:rgba(255,255,255,.1);color:#fff;
+      font-size:13px;font-weight:600;cursor:pointer;border:none;
+      transition:background .15s;
+    }
+    .time-slot:hover{background:rgba(255,255,255,.25);}
+    .time-slot.selected{background:#fff;color:#000;}
+    /* Services */
+    .service-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+    .service-item{
+      background:rgba(255,255,255,.08);border-radius:12px;
+      padding:12px 14px;cursor:pointer;border:1.5px solid transparent;
+      transition:border-color .2s,background .2s;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .service-item:hover{background:rgba(255,255,255,.14);}
+    .service-item.selected{border-color:#fff;background:rgba(255,255,255,.15);}
+    .service-name{font-size:14px;font-weight:700;color:#fff;}
+    .service-meta{font-size:12px;color:#aaa;margin-top:2px;}
+    .service-price{font-size:14px;font-weight:700;color:#fff;}
+    /* Form */
+    .agenda-form{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+    .agenda-input{
+      background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+      border-radius:10px;padding:11px 14px;
+      color:#fff;font-size:14px;font-family:'Inter',sans-serif;
+      outline:none;
+    }
+    .agenda-input::placeholder{color:#888;}
+    .agenda-input:focus{border-color:rgba(255,255,255,.5);}
+    .agenda-confirm-btn{
+      background:#fff;color:#000;border:none;
+      border-radius:12px;padding:14px;
+      font-size:15px;font-weight:800;cursor:pointer;
+      transition:opacity .2s;
+    }
+    .agenda-confirm-btn:hover{opacity:.88;}
+    .agenda-step-back{
+      background:none;border:none;color:#aaa;
+      font-size:13px;cursor:pointer;text-decoration:underline;
+      margin-top:6px;
+    }
+
+    /* ── CARD CAS ── */
+    .cas-card{
+      background:linear-gradient(135deg,#0a3d1f 0%,#1a6b3a 60%,#0e4d25 100%);
+      border-radius:18px;padding:20px 18px;
+      display:flex;align-items:center;gap:16px;
+      cursor:pointer;
+      text-decoration:none;
+      border:1.5px solid rgba(255,255,255,.12);
+      transition:transform .2s,box-shadow .2s;
+      position:relative;overflow:hidden;
+    }
+    .cas-card::before{
+      content:"";position:absolute;top:-40px;right:-40px;
+      width:130px;height:130px;border-radius:50%;
+      background:rgba(255,255,255,.05);pointer-events:none;
+    }
+    .cas-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.5);}
+    .cas-logo{
+      width:64px;height:64px;border-radius:50%;
+      object-fit:cover;flex-shrink:0;
+      border:2px solid rgba(255,255,255,.3);
+      background:#fff;
+    }
+    .cas-texts{flex:1;}
+    .cas-badge{
+      display:inline-block;font-size:10px;font-weight:800;
+      text-transform:uppercase;letter-spacing:.1em;
+      background:rgba(255,255,255,.18);color:#a8f0c0;
+      border-radius:20px;padding:3px 10px;margin-bottom:7px;
+    }
+    .cas-title{font-size:15px;font-weight:800;color:#fff;line-height:1.35;}
+    .cas-date{
+      display:flex;align-items:center;gap:6px;
+      font-size:12px;color:#a8f0c0;font-weight:600;margin-top:6px;
+    }
+    .cas-arrow{font-size:20px;color:#a8f0c0;flex-shrink:0;}
+
+
+    .whatsapp-card{
+      background:#c8e6c9;border-radius:14px;padding:14px 16px;
+      display:flex;align-items:center;gap:12px;
+      text-decoration:none;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .whatsapp-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.25);}
+    .whatsapp-card-icon{
+      width:44px;height:44px;border-radius:12px;
+      background:#25D366;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+    }
+    .whatsapp-card-icon svg{width:24px;height:24px;fill:#fff;}
+    .whatsapp-card-texts{flex:1;}
+    .whatsapp-card-title{font-size:15px;font-weight:700;color:#111;}
+    .whatsapp-card-sub{font-size:12px;color:#388E3C;margin-top:2px;font-weight:500;}
+    .whatsapp-card-arrow{font-size:20px;color:#388E3C;}
+
+    /* ── MODAIS ── */
+    .modal-overlay{
+      position:fixed;inset:0;z-index:100;
+      background:rgba(0,0,0,.7);
+      display:flex;align-items:flex-end;justify-content:center;
+      opacity:0;pointer-events:none;transition:opacity .3s;
+    }
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal-drawer{
+      background:#1a1a1a;border-radius:24px 24px 0 0;
+      width:100%;max-width:480px;padding:24px 20px 36px;
+      transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);
+      max-height:85vh;overflow-y:auto;
+    }
+    .modal-overlay.open .modal-drawer{transform:translateY(0);}
+    .modal-handle{
+      width:40px;height:4px;background:#444;border-radius:4px;
+      margin:0 auto 20px;
+    }
+    .modal-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px;}
+    .modal-sub{font-size:14px;color:#aaa;margin-bottom:20px;line-height:1.5;}
+    .modal-close{
+      position:absolute;top:20px;right:20px;
+      background:rgba(255,255,255,.1);border:none;
+      color:#fff;width:32px;height:32px;border-radius:50%;
+      font-size:18px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .modal-drawer{position:relative;}
+    /* Concierge steps */
+    .conc-step{display:none;}
+    .conc-step.active{display:block;}
+    .conc-question{font-size:16px;font-weight:700;color:#fff;margin-bottom:14px;}
+    .conc-options{display:flex;flex-direction:column;gap:10px;}
+    .conc-option{
+      background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);
+      border-radius:12px;padding:14px 16px;cursor:pointer;
+      font-size:14px;color:#fff;font-weight:600;text-align:left;
+      transition:background .2s,border-color .2s;
+    }
+    .conc-option:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3);}
+    .conc-option.selected{background:rgba(255,255,255,.2);border-color:#fff;}
+    .conc-result{
+      background:rgba(255,255,255,.06);border-radius:16px;
+      padding:20px;text-align:center;
+    }
+    .conc-result-icon{font-size:3rem;margin-bottom:12px;}
+    .conc-result-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:8px;}
+    .conc-result-desc{font-size:14px;color:#aaa;line-height:1.55;margin-bottom:20px;}
+    .conc-result-cta{
+      display:block;background:#fff;color:#000;
+      font-size:15px;font-weight:800;padding:14px;border-radius:12px;
+      text-decoration:none;text-align:center;
+    }
+    /* Product modal */
+    .prod-modal-img{width:100%;border-radius:14px;object-fit:cover;margin-bottom:14px;max-height:200px;}
+    .prod-modal-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:8px;}
+    .prod-modal-desc{font-size:14px;color:#aaa;line-height:1.6;margin-bottom:20px;}
+    .prod-modal-cta{
+      display:block;background:#fff;color:#000;
+      font-size:15px;font-weight:800;padding:14px;border-radius:12px;
+      text-decoration:none;text-align:center;
+    }
+
+    /* ── UTILITÁRIOS ── */
+    .section-wrap{}
+    @media(max-width:480px){
+      body{padding:16px 12px 48px;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- ═══ SEÇÃO 1: HEADER ═══ -->
+  <div class="profile-header">
+    <div class="profile-photo-wrap">
+      <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena"/>
+    </div>
+    <div class="profile-name">Prof. Lorena</div>
+    <div class="profile-tagline">
+      Intérprete &amp; Professora de Libras<br/>
+      Parceira da Nerds da Libras · Método i+1 exclusivo
+    </div>
+  </div>
+
+  <!-- ═══ SEÇÃO 2: ÍCONES SOCIAIS ═══ -->
+  <div class="social-icons">
+    <a href="https://www.instagram.com/nerdsdalibras" target="_blank" class="social-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+    <a href="https://www.tiktok.com/@nerds.da.libras" target="_blank" class="social-icon">
+      <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg>
+    </a>
+    <a href="https://www.youtube.com/@nerdsdalibras" target="_blank" class="social-icon">
+      <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/lorena-libras" target="_blank" class="social-icon">
+      <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+  </div>
+
+  <!-- ═══ SEÇÃO 3: CONCIERGE IA ═══ -->
+  <div class="concierge-card" onclick="window.open('https://nerdsdalibras.github.io/quiz-libras.html','_blank')">
+    <div class="concierge-icon">⭐</div>
+    <div class="concierge-texts">
+      <div class="concierge-title">Faça uma avaliação gratuita e descubra seu nível na Libras: básico, intermediário ou avançado. Quer ir para o próximo nível?</div>
+    </div>
+    <div class="concierge-arrow">→</div>
+  </div>
+
+  <!-- ═══ SEÇÃO 4: VITRINE ═══ -->
+  <div class="section-wrap">
+    <div class="vitrine-label"><span>▶</span> Como posso te ajudar hoje:</div>
+    <div class="vitrine-scroll" id="vitrineScroll">
+
+      <div class="vitrine-card" onclick="window.open('https://clubedalibras.com/vsl','_blank')">
+        <img src="fotos/image-1777402957527.jpg" alt="Curso Do Zero a Libras"/>
+        <div class="vitrine-card-title">Do Zero a Libras</div>
+        <button class="vitrine-card-btn">VER DETALHES</button>
+      </div>
+
+      <div class="vitrine-card" onclick="window.open('https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe','_blank')">
+        <img src="fotos/image-1777403006556.jpg" alt="Mentoria Destrava Libras"/>
+        <div class="vitrine-card-title">Mentoria Destrava Libras</div>
+        <button class="vitrine-card-btn">VER DETALHES</button>
+      </div>
+
+      <div class="vitrine-card" onclick="window.open('https://chat.whatsapp.com/EMWYw5cLQPv3IdmgOu1PdP?s=cl&p=a&ilr=4','_blank')">
+        <img src="fotos/IMG_4907.jpg" alt="Preparatório CAS-MG" style="object-position:top center;"/>
+        <div class="vitrine-card-title">Preparatório Banca CAS-MG</div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:6px;">📅 10 de agosto de 2026</div>
+        <button class="vitrine-card-btn">SAIBA MAIS</button>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <a href="https://chat.whatsapp.com/LoPTCaxnrN922JMQaSQVWx" target="_blank" class="whatsapp-card">
+    <div class="whatsapp-card-icon">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    </div>
+    <div class="whatsapp-card-texts">
+      <div class="whatsapp-card-title">Clã da Libras</div>
+      <div class="whatsapp-card-sub">Networking · interações · aulas gratuitas</div>
+    </div>
+    <div class="whatsapp-card-arrow">→</div>
+  </a>
+
+</div><!-- /wrapper -->
+
+
+<!-- ═══ MODAL: CONCIERGE IA ═══ -->
+<div class="modal-overlay" id="conciergeModal" onclick="closeConcierge(event)">
+  <div class="modal-drawer">
+    <button class="modal-close" onclick="closeConcierge()">×</button>
+    <div class="modal-handle"></div>
+    <div class="modal-title">Vamos descobrir juntos 🤝</div>
+    <div class="modal-sub">Responda 2 perguntas rápidas e te indico o caminho certo.</div>
+
+    <!-- Passo 1 -->
+    <div class="conc-step active" id="cStep1">
+      <div class="conc-question">Qual melhor descreve você agora?</div>
+      <div class="conc-options">
+        <button class="conc-option" onclick="concNext(1,'zero')">📚 Quero aprender Libras do zero</button>
+        <button class="conc-option" onclick="concNext(1,'interprete')">🎯 Sou intérprete e travo na hora H</button>
+        <button class="conc-option" onclick="concNext(1,'empresa')">🏢 Tenho uma empresa e preciso de acessibilidade</button>
+        <button class="conc-option" onclick="concNext(1,'curiosidade')">👀 Só estou explorando por enquanto</button>
+      </div>
+    </div>
+
+    <!-- Passo 2A: zero -->
+    <div class="conc-step" id="cStep2zero">
+      <div class="conc-question">Qual é seu objetivo principal?</div>
+      <div class="conc-options">
+        <button class="conc-option" onclick="concResult('curso')">💬 Comunicar com meu filho/familiar surdo</button>
+        <button class="conc-option" onclick="concResult('curso')">👩‍🏫 Trabalhar como intérprete</button>
+        <button class="conc-option" onclick="concResult('telegram')">🌱 Só quero experimentar primeiro</button>
+      </div>
+    </div>
+
+    <!-- Passo 2B: intérprete -->
+    <div class="conc-step" id="cStep2interprete">
+      <div class="conc-question">Com que frequência você trava?</div>
+      <div class="conc-options">
+        <button class="conc-option" onclick="concResult('mentoria')">😰 Em toda interpretação importante</button>
+        <button class="conc-option" onclick="concResult('mentoria')">😬 Só em contextos formais/ao vivo</button>
+        <button class="conc-option" onclick="concResult('telegram')">🤔 Às vezes — quero entender o motivo</button>
+      </div>
+    </div>
+
+    <!-- Passo 2C: empresa -->
+    <div class="conc-step" id="cStep2empresa">
+      <div class="conc-question">Qual é a urgência?</div>
+      <div class="conc-options">
+        <button class="conc-option" onclick="concResult('whatsapp')">🔥 Preciso de solução agora</button>
+        <button class="conc-option" onclick="concResult('whatsapp')">📋 Estou pesquisando opções</button>
+      </div>
+    </div>
+
+    <!-- Passo 2D: curiosidade -->
+    <div class="conc-step" id="cStep2curiosidade">
+      <div class="conc-question">Por onde quer começar?</div>
+      <div class="conc-options">
+        <button class="conc-option" onclick="concResult('telegram')">🎁 Conteúdo gratuito primeiro</button>
+        <button class="conc-option" onclick="concResult('curso')">🚀 Já quero algo mais completo</button>
+      </div>
+    </div>
+
+    <!-- Resultado: Curso -->
+    <div class="conc-step" id="cResultcurso">
+      <div class="conc-result">
+        <div class="conc-result-icon">📚</div>
+        <div class="conc-result-title">Seu caminho é o Curso Do Zero a Libras!</div>
+        <div class="conc-result-desc">Em 30 dias você vai do absoluto zero à comunicação real com surdos — sem decorar sinais, sem enrolação. Método i+1 exclusivo no Brasil.</div>
+        <a href="https://www.clubedalibras.com/vsl" target="_blank" class="conc-result-cta">Quero começar do zero →</a>
+      </div>
+    </div>
+
+    <!-- Resultado: Mentoria -->
+    <div class="conc-step" id="cResultmentoria">
+      <div class="conc-result">
+        <div class="conc-result-icon">🎯</div>
+        <div class="conc-result-title">Você precisa do Grupo VIP!</div>
+        <div class="conc-result-desc">Você nunca mais vai travar na hora H. Descubra ao vivo no dia 15 de junho exatamente qual é o motivo — e como resolver de uma vez.</div>
+        <a href="https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe" target="_blank" class="conc-result-cta">DESCUBRA NO GRUPO VIP →</a>
+      </div>
+    </div>
+
+    <!-- Resultado: Telegram -->
+    <div class="conc-step" id="cResulttelegram">
+      <div class="conc-result">
+        <div class="conc-result-icon">🎁</div>
+        <div class="conc-result-title">Comece pelo canal gratuito!</div>
+        <div class="conc-result-desc">Aulas gratuitas de Libras todos os dias — sacadas práticas, sinais do cotidiano e conteúdo exclusivo. Sem compromisso.</div>
+        <a href="https://t.me/lorenanerddalibras" target="_blank" class="conc-result-cta">Entrar no canal gratuito →</a>
+      </div>
+    </div>
+
+    <!-- Resultado: WhatsApp -->
+    <div class="conc-step" id="cResultwhatsapp">
+      <div class="conc-result">
+        <div class="conc-result-icon">🏢</div>
+        <div class="conc-result-title">Vamos conversar sobre sua empresa!</div>
+        <div class="conc-result-desc">A Nerds da Libras é a maior empresa de acessibilidade do Brasil. Fale com nossa equipe e encontre a solução ideal para o seu negócio.</div>
+        <a href="https://wa.me/5534996608012?text=Oi%20Lorena%2C%20tenho%20uma%20empresa%20e%20preciso%20de%20acessibilidade" target="_blank" class="conc-result-cta">Falar com a equipe →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ MODAL: PRODUTO ═══ -->
+<div class="modal-overlay" id="productModal" onclick="closeProduct(event)">
+  <div class="modal-drawer">
+    <button class="modal-close" onclick="closeProduct()">×</button>
+    <div class="modal-handle"></div>
+    <img class="prod-modal-img" id="prodImg" src="" alt=""/>
+    <div class="prod-modal-title" id="prodTitle"></div>
+    <div class="prod-modal-desc" id="prodDesc"></div>
+    <a class="prod-modal-cta" id="prodCta" href="#" target="_blank">Ver produto →</a>
+  </div>
+</div>
+
+
+<script>
+// ── DADOS DOS PRODUTOS ──
+const products = [
+  {
+    img: 'fotos/image-1777402957527.jpg',
+    title: 'Do Zero a Libras — Curso Online',
+    desc: 'Do absoluto zero à comunicação com surdos em 30 dias. Método i+1 exclusivo — sem decorar sinais, sem enrolação. +350 horas de conteúdo estruturado para você evoluir de forma natural.',
+    cta: 'https://www.clubedalibras.com/vsl',
+    ctaText: 'Quero começar do zero →'
+  },
+  {
+    img: 'fotos/image-1777403006556.jpg',
+    title: 'Mentoria Destrava Libras',
+    desc: 'Mentoria direta com a Profa. Lorena para intérpretes que querem avançar de verdade. Vagas limitadas. Método i+1 aplicado à interpretação profissional.',
+    cta: 'https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe',
+    ctaText: 'DESCUBRA NO GRUPO VIP →'
+  },
+  {
+    img: 'fotos/ebook-capa.jpg',
+    title: 'E-book: Caminho da Fluência em Libras',
+    desc: 'Guia completo com o método i+1 aplicado ao aprendizado de Libras. Descubra por que 95% das pessoas desistem no terceiro mês — e como você vai ser diferente.',
+    cta: 'https://www.clubedalibras.com/vsl',
+    ctaText: 'Quero o e-book →'
+  }
+];
+
+function openProduct(i){
+  const p = products[i];
+  document.getElementById('prodImg').src = p.img;
+  document.getElementById('prodTitle').textContent = p.title;
+  document.getElementById('prodDesc').textContent = p.desc;
+  const cta = document.getElementById('prodCta');
+  cta.href = p.cta;
+  cta.textContent = p.ctaText;
+  document.getElementById('productModal').classList.add('open');
+}
+function closeProduct(e){
+  if(!e || e.target === document.getElementById('productModal'))
+    document.getElementById('productModal').classList.remove('open');
+}
+
+// ── CONCIERGE ──
+let concProfile = '';
+function openConcierge(){
+  // reset
+  document.querySelectorAll('.conc-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('cStep1').classList.add('active');
+  document.getElementById('conciergeModal').classList.add('open');
+}
+function closeConcierge(e){
+  if(!e || e.target === document.getElementById('conciergeModal'))
+    document.getElementById('conciergeModal').classList.remove('open');
+}
+function concNext(step, profile){
+  concProfile = profile;
+  document.querySelectorAll('.conc-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('cStep2'+profile).classList.add('active');
+}
+function concResult(type){
+  document.querySelectorAll('.conc-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('cResult'+type).classList.add('active');
+}
+
+// ── PODCAST ──
+let playing = false;
+let progVal = 35;
+let progTimer;
+function togglePlay(){
+  playing = !playing;
+  const icon = document.getElementById('playIcon');
+  if(playing){
+    icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+    progTimer = setInterval(()=>{
+      progVal = Math.min(progVal+0.3, 100);
+      document.getElementById('progressFill').style.width = progVal+'%';
+      if(progVal>=100) clearInterval(progTimer);
+    }, 300);
+  } else {
+    icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+    clearInterval(progTimer);
+  }
+}
+
+// ── CALENDÁRIO ──
+let calDate = new Date();
+let selectedDay = null;
+let selectedTime = null;
+let selectedSvc = null;
+
+function renderCal(){
+  const y = calDate.getFullYear(), m = calDate.getMonth();
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('calMonthLabel').textContent = months[m]+' '+y;
+  const first = new Date(y,m,1).getDay();
+  const days = new Date(y,m+1,0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const busy = [3,7,14,21,22,28];
+  let html = '';
+  for(let i=0;i<first;i++) html += '<button class="cal-day empty"></button>';
+  for(let d=1;d<=days;d++){
+    const date = new Date(y,m,d);
+    let cls = 'cal-day';
+    if(date < today) cls += ' past';
+    else if(busy.includes(d)) cls += ' busy';
+    else cls += ' available';
+    if(selectedDay && selectedDay.getDate()===d && selectedDay.getMonth()===m && selectedDay.getFullYear()===y)
+      cls += ' selected';
+    const past = date < today;
+    const isBusy = busy.includes(d);
+    html += `<button class="${cls}" ${(past||isBusy)?'disabled':''} onclick="selectDay(${d})">${d}</button>`;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+}
+
+function changeMonth(dir){
+  calDate.setMonth(calDate.getMonth()+dir);
+  renderCal();
+}
+
+function selectDay(d){
+  const y = calDate.getFullYear(), m = calDate.getMonth();
+  selectedDay = new Date(y,m,d);
+  renderCal();
+  const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  document.getElementById('selectedDateLabel').textContent = `Horários disponíveis — ${d} ${months[m]} ${y}:`;
+  renderTimeSlots();
+  setTimeout(()=>goStep(2), 300);
+}
+
+function renderTimeSlots(){
+  const times = ['09:00','10:00','11:00','14:00','15:00','16:00','17:00'];
+  document.getElementById('timeSlots').innerHTML = times.map(t=>
+    `<button class="time-slot${selectedTime===t?' selected':''}" onclick="selectTime('${t}')">${t}</button>`
+  ).join('');
+}
+
+function selectTime(t){
+  selectedTime = t;
+  renderTimeSlots();
+  setTimeout(()=>goStep(3), 300);
+}
+
+function selectService(el, name, dur, price){
+  document.querySelectorAll('.service-item').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSvc = {name,dur,price};
+  setTimeout(()=>goStep(4), 300);
+}
+
+function goStep(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('agendaStep'+i).style.display = i===n?'block':'none';
+    const sc = document.getElementById('sc'+i);
+    const sl = document.getElementById('sl'+i);
+    if(i < n){ sc.className='step-circle done'; sc.textContent='✓'; sl.className='step-label active'; }
+    else if(i === n){ sc.className='step-circle active'; sl.className='step-label active'; }
+    else { sc.className='step-circle inactive'; sl.className='step-label'; }
+  });
+  if(n===4 && selectedSvc){
+    const d = selectedDay;
+    const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    document.getElementById('bookingSummary').textContent =
+      `📅 ${d.getDate()} ${months[d.getMonth()]} · ⏰ ${selectedTime} · ${selectedSvc.name} · ${selectedSvc.price}`;
+  }
+}
+
+function confirmBooking(){
+  alert('✅ Agendamento confirmado! Em breve você receberá uma confirmação por e-mail e WhatsApp.');
+}
+
+// Init
+renderCal();
+</script>
+
+</body>
+</html>

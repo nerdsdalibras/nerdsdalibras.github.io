@@ -10,7 +10,7 @@
  *       Nome:  ANTHROPIC_API_KEY
  *       Valor: sk-ant-... (sua chave)
  * 5. Copie a URL do worker (ex: lorena-proxy.SEU_USUARIO.workers.dev)
- * 6. Cole essa URL na variável WORKER_URL do arquivo avaliacao.html
+ * 6. Cole essa URL na variável WORKER_URL do arquivo avaliacao-clube.html
  */
 
 const ALLOWED_ORIGIN = 'https://nerdsdalibras.github.io';

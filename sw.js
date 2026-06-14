@@ -15,7 +15,7 @@ self.addEventListener('message', event => {
       tag: 'resultado-lorena',
       requireInteraction: true,
       vibrate: [200, 100, 200],
-      data: { url: self.location.origin + '/avaliacao.html' }
+      data: { url: self.location.origin + '/avaliacao-clube.html' }
     });
   }, delay);
 });
@@ -24,7 +24,7 @@ self.addEventListener('notificationclick', event => {
   event.notification.close();
   const targetUrl = (event.notification.data && event.notification.data.url)
     ? event.notification.data.url
-    : '/avaliacao.html';
+    : '/avaliacao-clube.html';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
