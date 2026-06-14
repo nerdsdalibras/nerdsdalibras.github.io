@@ -38,8 +38,18 @@ const COL_TO_FIELD = {
   'clicouGrupo':      'clicouGrupo',
   'clicouCheckout':   'clicouCheckout',
   'checkoutEm':       'checkoutEm',
+  // ── Eventos da Kiwify (webhook) ──
+  'kiwifyEvento':     'kiwifyEvento',     // último evento recebido (texto)
+  'kiwifyEventoEm':   'kiwifyEventoEm',   // quando chegou
+  'boletoGerado':     'boletoGerado',
+  'pixGerado':        'pixGerado',
+  'carrinhoKiwify':   'carrinhoKiwify',   // carrinho abandonado detectado pela Kiwify
   'cartaoRecusado':   'cartaoRecusado',
   'recusadoEm':       'recusadoEm',
+  'reembolso':        'reembolso',
+  'reembolsoEm':      'reembolsoEm',
+  'chargeback':       'chargeback',
+  'chargebackEm':     'chargebackEm',
   // ── Rastreamento detalhado do VSL ──
   'vslIniciou':       'vslIniciou',
   'vslPct25':         'vslPct25',
@@ -65,7 +75,9 @@ const NEW_COLS = [
   'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
   'status','statusCloser','observacoes',
   'comprouKiwify','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',
-  'cartaoRecusado','recusadoEm',
+  'kiwifyEvento','kiwifyEventoEm',
+  'boletoGerado','pixGerado','carrinhoKiwify',
+  'cartaoRecusado','recusadoEm','reembolso','reembolsoEm','chargeback','chargebackEm',
   'vslIniciou','vslPct25','vslPct50','vslPct75','vslAssistiuFim','vslClicouCTA',
   'email1SentAt','email2SentAt','email3SentAt',
   'tempoNoQuiz','updatedAt'
@@ -77,16 +89,16 @@ function doPost(e) {
     const raw  = e.postData ? e.postData.contents : '{}';
     const data = JSON.parse(raw);
 
-    // Webhook da Kiwify: tem campo "event"
-    if (data.event && data.data && data.data.customer) {
+    // Webhook da Kiwify (qualquer evento: compra, recusa, boleto, pix, carrinho...)
+    if (isKiwifyPayload(data)) {
       handleKiwifyWebhook(data);
       return respond({ ok: true, source: 'kiwify' });
     }
 
-    // Dados do lead vindo do quiz
+    // Dados do lead vindo do quiz / beacon do VSL
     if (data.sessionId || data.nome) {
       upsertLead(data);
-      return respond({ ok: true, source: 'quiz' });
+      return respond({ ok: true, source: 'lead' });
     }
 
     return respond({ ok: true });
@@ -201,61 +213,105 @@ function upsertLead(data) {
   }
 }
 
-// ── WEBHOOK KIWIFY ────────────────────────────────
-// Trata 3 situações:
-//   • Compra aprovada/paga  → status = 'comprou'
-//   • Compra recusada/cartão recusado → cartaoRecusado = true (lead super quente)
-//   • Outros (boleto/pix gerado) → ignora (continua como carrinho)
+// ── DETECTA SE O PAYLOAD É DA KIWIFY ──────────────
+function isKiwifyPayload(d) {
+  return !!(
+    d.webhook_event_type || d.order_id || d.order_status ||
+    (d.data && (d.data.order_status || d.data.order_id || d.data.status)) ||
+    (d.event && d.data)
+  );
+}
+
+// ── WEBHOOK KIWIFY (todos os eventos) ─────────────
+// Trata: Compra aprovada, Compra recusada, Carrinho abandonado, Boleto gerado,
+// Pix gerado, Reembolso e Chargeback. Acha o lead pelo telefone (ou e-mail);
+// se não existir, cria um novo (caso a pessoa tenha ido direto pra Kiwify).
 function handleKiwifyWebhook(data) {
   var sheet   = getSheet();
+  var headers = ensureNewColumns(sheet);
   var lastRow = sheet.getLastRow();
-  if (lastRow < 2) return;
+  var now     = new Date().toISOString();
 
-  var headers  = getHeaders(sheet);
-  var customer = data.data.customer;
-  var phone    = String(customer.mobile || customer.phone || '').replace(/\D/g, '');
+  // ── Extrai cliente em vários formatos possíveis ──
+  var d        = data.data || data;
+  var customer = d.customer || data.customer || d.Customer || {};
+  var phone = String(customer.mobile || customer.phone || customer.phone_number || d.phone || '').replace(/\D/g, '');
+  var email = String(customer.email || d.email || '').toLowerCase().trim();
+  var nome  = customer.full_name || customer.name || customer.nome || d.name || '';
 
-  // Descobre o status do pedido em vários formatos possíveis da Kiwify
-  var rawStatus = String(
-    data.data.order_status || data.data.status ||
-    data.order_status || data.status || data.event || ''
+  // ── Descobre o evento/status ──
+  var ev = String(
+    data.webhook_event_type || data.event ||
+    d.webhook_event_type || d.event ||
+    d.order_status || data.order_status || ''
   ).toLowerCase();
 
-  var aprovado = /paid|approv|aprovad|complet|pago/.test(rawStatus);
-  var recusado = /refus|recusad|declin|denied|reprovad|fail|chargeback|estornad/.test(rawStatus);
+  // ── Classifica o evento e monta o patch ──
+  var patch = { kiwifyEvento: ev || 'kiwify', kiwifyEventoEm: now, updatedAt: now };
 
-  // Boleto/Pix apenas gerado (ainda não pago) → não faz nada
-  if (!aprovado && !recusado) return;
+  if (/approv|aprovad|paid|pago|complet/.test(ev)) {
+    patch.status = 'comprou'; patch.comprouKiwify = true; patch.cartaoRecusado = false;
+    patch.statusCloser = '✅ Compra confirmada pela Kiwify';
+  } else if (/refund|reembols/.test(ev)) {
+    patch.reembolso = true; patch.reembolsoEm = now; patch.status = 'reembolso';
+    patch.statusCloser = '↩️ Compra reembolsada';
+  } else if (/chargeback|estorno/.test(ev)) {
+    patch.chargeback = true; patch.chargebackEm = now; patch.status = 'chargeback';
+    patch.statusCloser = '⚠️ Chargeback (contestação de pagamento)';
+  } else if (/refus|recusad|declin|denied|reprovad|fail/.test(ev)) {
+    patch.cartaoRecusado = true; patch.recusadoEm = now; patch.clicouCheckout = true;
+    patch.statusCloser = '💳 Cartão recusado — tentou pagar e falhou';
+  } else if (/cart|carrinho|abandon/.test(ev)) {
+    patch.carrinhoKiwify = true; patch.clicouCheckout = true;
+    if (phone) patch.checkoutEm = now;
+    patch.statusCloser = '🛒 Carrinho abandonado (detectado pela Kiwify)';
+  } else if (/boleto|billet/.test(ev)) {
+    patch.boletoGerado = true; patch.clicouCheckout = true; patch.checkoutEm = now;
+    patch.statusCloser = '🧾 Boleto gerado — aguardando pagamento';
+  } else if (/pix/.test(ev)) {
+    patch.pixGerado = true; patch.clicouCheckout = true; patch.checkoutEm = now;
+    patch.statusCloser = '⚡ Pix gerado — aguardando pagamento';
+  } else {
+    patch.statusCloser = 'ℹ️ Evento Kiwify: ' + ev;
+  }
 
-  var wppCol    = headers.indexOf('WhatsApp') >= 0 ? headers.indexOf('WhatsApp') : headers.indexOf('whatsapp');
-  var statusCol = headers.indexOf('status');
-  var comprouCol= headers.indexOf('comprouKiwify');
-  var recusaCol = headers.indexOf('cartaoRecusado');
-  var recEmCol  = headers.indexOf('recusadoEm');
-  var closerCol = headers.indexOf('statusCloser');
-  var updCol    = headers.indexOf('updatedAt');
+  // ── Acha a linha pelo telefone, senão pelo e-mail ──
+  var wppCol   = headers.indexOf('WhatsApp') >= 0 ? headers.indexOf('WhatsApp') : headers.indexOf('whatsapp');
+  var emailCol = headers.indexOf('Email')    >= 0 ? headers.indexOf('Email')    : headers.indexOf('email');
+  var row = -1;
 
-  if (wppCol < 0 || !phone) return;
-
-  var now    = new Date().toISOString();
-  var phones = sheet.getRange(2, wppCol + 1, lastRow - 1, 1).getValues();
-  for (var i = 0; i < phones.length; i++) {
-    var rowPhone = String(phones[i][0] || '').replace(/\D/g, '');
-    if (rowPhone && rowPhone.slice(-9) === phone.slice(-9)) {
-      var r = i + 2;
-      if (aprovado) {
-        if (statusCol  >= 0) sheet.getRange(r, statusCol  + 1).setValue('comprou');
-        if (comprouCol >= 0) sheet.getRange(r, comprouCol + 1).setValue(true);
-        if (recusaCol  >= 0) sheet.getRange(r, recusaCol  + 1).setValue(false);
-        if (closerCol  >= 0) sheet.getRange(r, closerCol  + 1).setValue('✅ Compra confirmada pela Kiwify');
-      } else if (recusado) {
-        if (recusaCol  >= 0) sheet.getRange(r, recusaCol  + 1).setValue(true);
-        if (recEmCol   >= 0) sheet.getRange(r, recEmCol   + 1).setValue(now);
-        if (closerCol  >= 0) sheet.getRange(r, closerCol  + 1).setValue('💳 Cartão recusado — tentou pagar e falhou');
+  if (lastRow > 1) {
+    var vals = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+    for (var i = 0; i < vals.length; i++) {
+      var rp = wppCol   >= 0 ? String(vals[i][wppCol]   || '').replace(/\D/g, '')        : '';
+      var re = emailCol >= 0 ? String(vals[i][emailCol] || '').toLowerCase().trim()       : '';
+      if ((phone && rp && rp.slice(-9) === phone.slice(-9)) || (email && re && re === email)) {
+        row = i + 2; break;
       }
-      if (updCol >= 0) sheet.getRange(r, updCol + 1).setValue(now);
-      break;
     }
+  }
+
+  if (row > 0) {
+    // Atualiza só as colunas presentes no patch
+    for (var h = 0; h < headers.length; h++) {
+      var field = COL_TO_FIELD[headers[h]] || headers[h];
+      if (patch.hasOwnProperty(field)) {
+        sheet.getRange(row, h + 1).setValue(patch[field]);
+      }
+    }
+  } else {
+    // Lead não existe → cria (foi direto pra Kiwify sem passar pelo quiz)
+    patch.sessionId = 'kiwify-' + (phone || email || Date.now());
+    patch.nome      = nome;
+    patch.whatsapp  = phone;
+    patch.email     = email;
+    patch.origem    = 'Kiwify (webhook)';
+    patch.createdAt = now;
+    var newRow = headers.map(function (col) {
+      var f = COL_TO_FIELD[col] || col;
+      return patch.hasOwnProperty(f) ? patch[f] : '';
+    });
+    sheet.appendRow(newRow);
   }
 }
 

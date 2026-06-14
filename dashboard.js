@@ -767,6 +767,8 @@ function renderLeadCard(l, idx) {
         ${l.nivelIdentificado ? `<div class="info-chip"><strong>${l.nivelIdentificado}</strong></div>` : ''}
         ${l.oferta ? `<div class="info-chip">${l.oferta === 'curso' ? '📚 Curso' : '🎯 Mentoria'}</div>` : ''}
         ${statusKey === 'comprou'  ? `<div class="info-chip green">✅ Compra confirmada</div>` : ''}
+        ${statusKey === 'reembolso'  ? `<div class="info-chip" style="color:#fff;background:#6B7280;border-color:#6B7280">↩️ Reembolsado</div>` : ''}
+        ${statusKey === 'chargeback' ? `<div class="info-chip" style="color:#fff;background:#7F1D1D;border-color:#7F1D1D">⚠️ Chargeback</div>` : ''}
         ${isCartaoRecusado(l)      ? `<div class="info-chip" style="color:#fff;background:#DC2626;border-color:#DC2626">💳 Cartão recusado</div>`
           : carrinhoAbandonado     ? `<div class="info-chip" style="color:#fff;background:#EA580C;border-color:#EA580C">🛒 Carrinho abandonado</div>` : ''}
         ${l.vslClicouCTA    ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">🛒 VSL→CTA</div>` :
@@ -934,6 +936,9 @@ function renderTab(tab) {
         </div>
         ${l.checkoutEm ? `<div class="panel-field"><span class="pf-label">Foi ao checkout</span><span class="pf-val">${new Date(l.checkoutEm).toLocaleString('pt-BR')}</span></div>` : ''}
         ${l.recusadoEm ? `<div class="panel-field"><span class="pf-label">Cartão recusado em</span><span class="pf-val" style="color:#DC2626">${new Date(l.recusadoEm).toLocaleString('pt-BR')}</span></div>` : ''}
+        ${l.kiwifyEvento ? `<div class="panel-field"><span class="pf-label">Último evento Kiwify</span><span class="pf-val">${l.kiwifyEvento}${l.kiwifyEventoEm ? ' · ' + new Date(l.kiwifyEventoEm).toLocaleString('pt-BR') : ''}</span></div>` : ''}
+        ${l.boletoGerado ? `<div class="panel-field"><span class="pf-label">Boleto</span><span class="pf-val" style="color:var(--yellow)">🧾 Gerado — aguardando pagamento</span></div>` : ''}
+        ${l.pixGerado ? `<div class="panel-field"><span class="pf-label">Pix</span><span class="pf-val" style="color:var(--yellow)">⚡ Gerado — aguardando pagamento</span></div>` : ''}
         <div class="panel-field"><span class="pf-label">VSL</span><span class="pf-val" style="color:${(l.vslIniciou||l.clicouVSL) ? '#FB923C' : 'inherit'}">${
           l.vslClicouCTA    ? '🛒 Clicou no CTA — foi ao checkout' :
           l.vslAssistiuFim  ? '✔ Assistiu até o fim' :
@@ -1560,16 +1565,22 @@ function updateBadges(leads) {
 /* ═══════════════════════════════════════════
    ACTIONS
 ═══════════════════════════════════════════ */
+// Estados finais que tiram o lead da fila de recuperação
+function _statusEncerrado(l) {
+  return l.status === 'comprou' || l.status === 'reembolso' || l.status === 'chargeback';
+}
+
 // Cartão recusado = tentou pagar na Kiwify e o pagamento não passou.
 // É o lead de MAIOR intenção (chegou a digitar o cartão).
 function isCartaoRecusado(l) {
-  return !!l.cartaoRecusado && l.status !== 'comprou';
+  return !!l.cartaoRecusado && !_statusEncerrado(l);
 }
 
-// Carrinho abandonado = clicou para comprar (checkout, CTA do VSL ou cartão
-// recusado) mas a compra nunca foi confirmada (Kiwify não marcou 'comprou').
+// Carrinho abandonado = clicou para comprar (checkout, CTA do VSL, cartão
+// recusado, boleto/pix gerado ou carrinho da Kiwify) e não finalizou.
 function isCarrinhoAbandonado(l) {
-  return (l.clicouCheckout || l.vslClicouCTA || l.cartaoRecusado) && l.status !== 'comprou';
+  return (l.clicouCheckout || l.vslClicouCTA || l.cartaoRecusado ||
+          l.carrinhoKiwify || l.boletoGerado || l.pixGerado) && !_statusEncerrado(l);
 }
 
 function gerarMensagem(l) {
