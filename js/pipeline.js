@@ -12,8 +12,49 @@ const PIPELINE_STAGES = [
   { key: 'nao_quis',          label: 'Perdido',         color: '#52525b' },
 ];
 
+/* Filtro por produto/oferta do pipeline */
+const PIPELINE_OFERTAS = [
+  { key: 'todos',     label: 'Todos',                 icon: ''   },
+  { key: 'curso',     label: 'Curso (Zero à Libras)', icon: '📚' },
+  { key: 'mentoria',  label: 'Mentoria',              icon: '🎯' },
+  { key: 'sem',       label: 'Sem oferta',            icon: '·'  },
+];
+let pipelineOferta = 'todos';
+
+function setPipelineOferta(key) {
+  pipelineOferta = key;
+  renderPipeline();
+}
+
+/* Casa um lead com a oferta selecionada no filtro */
+function leadMatchOferta(l) {
+  if (pipelineOferta === 'todos') return true;
+  if (pipelineOferta === 'sem')   return !l.oferta;
+  return l.oferta === pipelineOferta;
+}
+
+function renderPipelineFilter(allLeads) {
+  const el = document.getElementById('pipeline-filter');
+  if (!el) return;
+  const counts = {
+    todos:    allLeads.length,
+    curso:    allLeads.filter(l => l.oferta === 'curso').length,
+    mentoria: allLeads.filter(l => l.oferta === 'mentoria').length,
+    sem:      allLeads.filter(l => !l.oferta).length,
+  };
+  el.innerHTML = PIPELINE_OFERTAS.map(o => `
+    <button class="filter-btn ${pipelineOferta === o.key ? 'active' : ''}"
+      onclick="setPipelineOferta('${o.key}')">
+      ${o.icon ? o.icon + ' ' : ''}${o.label}
+      <span class="filter-count">${counts[o.key]}</span>
+    </button>`).join('');
+}
+
 async function renderPipeline() {
-  const leads  = await getLeads();
+  const allLeads = await getLeads();
+  renderPipelineFilter(allLeads);
+
+  const leads  = allLeads.filter(leadMatchOferta);
   const kanban = document.getElementById('kanban');
   const total  = calcTotalPipeline(leads);
 
@@ -91,7 +132,7 @@ function initSortable() {
           atualizarStatus(sessionId, newStage);
           const proj = document.getElementById('pipeline-projection');
           if (proj && cachedLeads) {
-            const total = calcTotalPipeline(cachedLeads);
+            const total = calcTotalPipeline(cachedLeads.filter(leadMatchOferta));
             proj.textContent = `💰 Pipeline projetado: R$ ${Math.round(total).toLocaleString('pt-BR')}`;
           }
           const colHeader = evt.to.closest('.kanban-col')?.querySelector('.col-value');
