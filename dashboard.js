@@ -767,7 +767,8 @@ function renderLeadCard(l, idx) {
         ${l.nivelIdentificado ? `<div class="info-chip"><strong>${l.nivelIdentificado}</strong></div>` : ''}
         ${l.oferta ? `<div class="info-chip">${l.oferta === 'curso' ? '📚 Curso' : '🎯 Mentoria'}</div>` : ''}
         ${statusKey === 'comprou'  ? `<div class="info-chip green">✅ Compra confirmada</div>` : ''}
-        ${carrinhoAbandonado       ? `<div class="info-chip" style="color:#fff;background:#EA580C;border-color:#EA580C">🛒 Carrinho abandonado</div>` : ''}
+        ${isCartaoRecusado(l)      ? `<div class="info-chip" style="color:#fff;background:#DC2626;border-color:#DC2626">💳 Cartão recusado</div>`
+          : carrinhoAbandonado     ? `<div class="info-chip" style="color:#fff;background:#EA580C;border-color:#EA580C">🛒 Carrinho abandonado</div>` : ''}
         ${l.vslClicouCTA    ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">🛒 VSL→CTA</div>` :
           l.vslAssistiuFim  ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">✔ VSL completo</div>` :
           l.vslPct50        ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">⏱ VSL 50%</div>` :
@@ -925,11 +926,14 @@ function renderTab(tab) {
         <div class="panel-field"><span class="pf-label">Tempo no quiz</span><span class="pf-val">${l.tempoNoQuiz ? l.tempoNoQuiz + 's' : '—'}</span></div>
         <div class="panel-field">
           <span class="pf-label">Checkout</span>
-          <span class="pf-val" style="color:${statusKey === 'comprou' ? 'var(--g)' : viuCheck ? '#EA580C' : 'var(--td)'};font-weight:${viuCheck ? '700' : '400'}">
-            ${statusKey === 'comprou' ? '✅ Compra confirmada (Kiwify)' : viuCheck ? '🛒 Carrinho abandonado — clicou, não pagou' : '—'}
+          <span class="pf-val" style="color:${statusKey === 'comprou' ? 'var(--g)' : isCartaoRecusado(l) ? '#DC2626' : viuCheck ? '#EA580C' : 'var(--td)'};font-weight:${(viuCheck || isCartaoRecusado(l)) ? '700' : '400'}">
+            ${statusKey === 'comprou' ? '✅ Compra confirmada (Kiwify)'
+              : isCartaoRecusado(l) ? '💳 Cartão recusado — tentou pagar e falhou'
+              : viuCheck ? '🛒 Carrinho abandonado — clicou, não pagou' : '—'}
           </span>
         </div>
         ${l.checkoutEm ? `<div class="panel-field"><span class="pf-label">Foi ao checkout</span><span class="pf-val">${new Date(l.checkoutEm).toLocaleString('pt-BR')}</span></div>` : ''}
+        ${l.recusadoEm ? `<div class="panel-field"><span class="pf-label">Cartão recusado em</span><span class="pf-val" style="color:#DC2626">${new Date(l.recusadoEm).toLocaleString('pt-BR')}</span></div>` : ''}
         <div class="panel-field"><span class="pf-label">VSL</span><span class="pf-val" style="color:${(l.vslIniciou||l.clicouVSL) ? '#FB923C' : 'inherit'}">${
           l.vslClicouCTA    ? '🛒 Clicou no CTA — foi ao checkout' :
           l.vslAssistiuFim  ? '✔ Assistiu até o fim' :
@@ -1086,6 +1090,8 @@ function buildTimeline(l) {
   if (l.clicouGrupo)    events.push({ time: '—', text: '💬 Clicou para entrar no grupo de WhatsApp' });
   if (l.clicouCheckout)
     events.push({ time: l.checkoutEm ? formatTime(l.checkoutEm) : '—', text: l.status === 'comprou' ? '🛒 Foi para o checkout' : '🛒 Carrinho abandonado — foi ao checkout e não finalizou' });
+  if (l.cartaoRecusado && l.status !== 'comprou')
+    events.push({ time: l.recusadoEm ? formatTime(l.recusadoEm) : '—', text: '💳 Cartão recusado — tentou pagar e o pagamento não passou' });
   if (l.status === 'comprou')
     events.push({ time: l.updatedAt ? formatTime(l.updatedAt) : '—', text: '✅ Compra confirmada pela Kiwify' });
   if (l.status === 'nao_quis')
@@ -1116,8 +1122,9 @@ function getIASuggestions(l) {
   const viuCheck  = isCarrinhoAbandonado(l);
 
   let msg = '';
-  if (viuCheck) {
-    const oferta = l.oferta === 'mentoria' ? 'a Mentoria' : 'o Curso do Zero à Libras';
+  if (isCartaoRecusado(l)) {
+    msg = `Oi, ${nome}! 🤟 Vi que você tentou finalizar a inscrição mas o pagamento não foi aprovado (acontece muito com o cartão!). Quer que eu te mande um link novo ou te ajude com outra forma de pagamento, tipo Pix? É rapidinho! 💚`;
+  } else if (viuCheck) {
     msg = `Oi, ${nome}! 🤟 Vi que você chegou a iniciar a inscrição n${l.oferta === 'mentoria' ? 'a Mentoria' : 'o Curso'} mas a compra não foi concluída. Aconteceu algum problema no pagamento? Posso te ajudar a finalizar agora — e garanto uma condição especial pra você. 💚`;
   } else if (statusKey === 'prioridade_maxima') {
     msg = `Oi, ${nome}! 🤟 Aqui é a Lorena.\n\nVi seu diagnóstico e seu perfil chamou minha atenção — você está num ponto muito importante da sua jornada em Libras.\n\nQuero te fazer uma proposta personalizada. Posso te contar mais?`;
@@ -1133,8 +1140,10 @@ function getIASuggestions(l) {
   if (!l.statusCloser || l.statusCloser === 'Aguardando resposta sobre próximo nível') {
     alerts.push({ title: 'Primeiro Contato', text: `${nome} ainda não foi abordad${l.genero === 'feminino' ? 'a' : 'o'}. Sugestão: entrar em contato nas próximas ${statusKey === 'prioridade_maxima' ? '30 minutos' : '2 horas'}.` });
   }
-  if (viuCheck) {
-    alerts.push({ title: 'Recuperar Carrinho', text: 'Visitou o checkout mas não comprou. Alta probabilidade de conversão com uma mensagem de recuperação.' });
+  if (isCartaoRecusado(l)) {
+    alerts.push({ title: '💳 Cartão Recusado — URGENTE', text: 'O pagamento foi tentado mas não passou. Lead de máxima intenção! Ofereça Pix ou link novo o quanto antes.' });
+  } else if (viuCheck) {
+    alerts.push({ title: 'Recuperar Carrinho', text: 'Foi ao checkout mas não comprou. Alta probabilidade de conversão com uma mensagem de recuperação.' });
   }
   if (nivel === 'AVANÇADO' && l.oferta !== 'mentoria') {
     alerts.push({ title: 'Upgrade para Mentoria', text: 'Perfil avançado. Considere oferecer a Mentoria Ciclo da Fluência como próximo passo.' });
@@ -1551,19 +1560,30 @@ function updateBadges(leads) {
 /* ═══════════════════════════════════════════
    ACTIONS
 ═══════════════════════════════════════════ */
-// Carrinho abandonado = clicou para comprar (checkout ou CTA do VSL) mas a
-// compra nunca foi confirmada (webhook da Kiwify não marcou 'comprou').
+// Cartão recusado = tentou pagar na Kiwify e o pagamento não passou.
+// É o lead de MAIOR intenção (chegou a digitar o cartão).
+function isCartaoRecusado(l) {
+  return !!l.cartaoRecusado && l.status !== 'comprou';
+}
+
+// Carrinho abandonado = clicou para comprar (checkout, CTA do VSL ou cartão
+// recusado) mas a compra nunca foi confirmada (Kiwify não marcou 'comprou').
 function isCarrinhoAbandonado(l) {
-  return (l.clicouCheckout || l.vslClicouCTA) && l.status !== 'comprou';
+  return (l.clicouCheckout || l.vslClicouCTA || l.cartaoRecusado) && l.status !== 'comprou';
 }
 
 function gerarMensagem(l) {
   const nome  = l.nome || 'você';
   const nivel = l.nivelIdentificado || '—';
+  const oferta = l.oferta === 'mentoria' ? 'Mentoria Ciclo da Fluência' : 'Curso do Zero à Libras';
 
-  // Remarketing de carrinho abandonado — maior intenção de compra
+  // Cartão recusado — prioridade máxima, pagamento falhou
+  if (isCartaoRecusado(l)) {
+    return `Oi, ${nome}! 🤟 Vi que você tentou finalizar a inscrição no ${oferta}, mas o pagamento não foi aprovado (isso acontece muito com o cartão, viu?). Quer que eu te mande um link novo ou te ajude com outra forma de pagamento, tipo Pix? É rapidinho! 💚`;
+  }
+
+  // Remarketing de carrinho abandonado — alta intenção de compra
   if (isCarrinhoAbandonado(l)) {
-    const oferta = l.oferta === 'mentoria' ? 'Mentoria Ciclo da Fluência' : 'Curso do Zero à Libras';
     return `Oi, ${nome}! 🤟 Vi que você chegou a iniciar a inscrição no ${oferta}, mas a compra não foi concluída. Aconteceu algum problema no pagamento? Posso te ajudar a finalizar agora — e ainda garanto uma condição especial pra você. 💚`;
   }
 
