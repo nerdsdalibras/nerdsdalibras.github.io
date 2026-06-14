@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════
-//  NERDS DA LIBRAS — Google Apps Script v3
+//  NERDS DA LIBRAS — Google Apps Script v3.2
 //  Cole este código e publique como nova versão
 // ═══════════════════════════════════════════════════
 
@@ -11,6 +11,7 @@ const COL_TO_FIELD = {
   'Data':             'createdAt',
   'Nome':             'nome',
   'WhatsApp':         'whatsapp',
+  'Email':            'email',
   'Instagram':        'instagram',
   'Origem':           'origem',
   'Conheceu Lorena':  'conheceuLorena',
@@ -18,20 +19,36 @@ const COL_TO_FIELD = {
   'Concluiu Quiz':    'concluiuQuiz',
   'Dificuldade Q1':   'respostaDificuldade',
   'Objetivo Q2':      'respostaObjetivo',
+  'Objetivo':         'objetivo',
   'Pontuação':        'pontuacao',
   'Nível':            'nivelIdentificado',
   'Resultado':        'resultado',
+  'Quis Avançar':     'quisAvancar',
   // Colunas novas (serão criadas automaticamente se não existirem)
   'sessionId':        'sessionId',
   'genero':           'genero',
   'oferta':           'oferta',
+  'Grupo Indicado':   'grupoIndicado',
   'classificacaoLead':'classificacaoLead',
   'status':           'status',
   'statusCloser':     'statusCloser',
+  'observacoes':      'observacoes',
   'comprouKiwify':    'comprouKiwify',
   'clicouVSL':        'clicouVSL',
   'clicouGrupo':      'clicouGrupo',
   'clicouCheckout':   'clicouCheckout',
+  'checkoutEm':       'checkoutEm',
+  // ── Rastreamento detalhado do VSL ──
+  'vslIniciou':       'vslIniciou',
+  'vslPct25':         'vslPct25',
+  'vslPct50':         'vslPct50',
+  'vslPct75':         'vslPct75',
+  'vslAssistiuFim':   'vslAssistiuFim',
+  'vslClicouCTA':     'vslClicouCTA',
+  // ── E-mail remarketing ──
+  'email1SentAt':     'email1SentAt',
+  'email2SentAt':     'email2SentAt',
+  'email3SentAt':     'email3SentAt',
   'tempoNoQuiz':      'tempoNoQuiz',
   'updatedAt':        'updatedAt',
 };
@@ -41,7 +58,15 @@ const FIELD_TO_COL = {};
 for (var k in COL_TO_FIELD) { FIELD_TO_COL[COL_TO_FIELD[k]] = k; }
 
 // Novas colunas que precisam existir para o sistema funcionar
-const NEW_COLS = ['sessionId','genero','oferta','classificacaoLead','status','statusCloser','comprouKiwify','clicouVSL','clicouGrupo','clicouCheckout','tempoNoQuiz','updatedAt'];
+const NEW_COLS = [
+  'Email','Objetivo','Quis Avançar',
+  'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
+  'status','statusCloser','observacoes',
+  'comprouKiwify','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',
+  'vslIniciou','vslPct25','vslPct50','vslPct75','vslAssistiuFim','vslClicouCTA',
+  'email1SentAt','email2SentAt','email3SentAt',
+  'tempoNoQuiz','updatedAt'
+];
 
 // ── ENTRADA POST ──────────────────────────────────
 function doPost(e) {
@@ -73,7 +98,7 @@ function doGet(e) {
   if (action === 'getLeads') {
     return respond(getAllLeads());
   }
-  return respond({ ok: true, version: '3.0' });
+  return respond({ ok: true, version: '3.2' });
 }
 
 function respond(data) {
