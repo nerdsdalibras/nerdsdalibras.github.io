@@ -74,6 +74,16 @@ function gerarMensagem(l) {
   return `Oi, ${nome}! 💚 Que bom te ver por aqui! Vi sua avaliação com a Lorena e seu nível ${nivel} mostra que você tem tudo pra ir muito longe em Libras. Você estava interessad${sfx} no Curso do Zero à Libras, e eu adoraria caminhar essa jornada ao seu lado. Me chama aqui que eu te mostro o próximo passo com todo carinho. ✨💚`;
 }
 
+// Abre a conversa do lead no WhatsApp WEB (onde o WhatsApp Business está logado),
+// em vez do app de desktop pessoal. Retorna null se o lead não tem número.
+function waLink(phoneRaw, msg) {
+  const phone = String(phoneRaw || '').replace(/\D/g, '');
+  if (!phone) return null;
+  let url = `https://web.whatsapp.com/send?phone=55${phone}`;
+  if (msg) url += `&text=${encodeURIComponent(msg)}`;
+  return url;
+}
+
 function copiarMensagem(sessionId, btn) {
   const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
   if (!lead) return;

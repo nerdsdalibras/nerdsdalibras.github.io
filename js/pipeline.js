@@ -83,8 +83,7 @@ async function renderPipeline() {
         <div class="col-cards" data-stage="${stage.key}">
           ${sl.length
             ? sl.map(l => {
-                const wpp     = l.whatsapp ? String(l.whatsapp).replace(/\D/g,'') : null;
-                const wppHref = wpp ? `https://wa.me/55${wpp}?text=${encodeURIComponent(gerarMensagem(l))}` : null;
+                const wppHref = waLink(l.whatsapp, gerarMensagem(l));
                 const dt      = l.createdAt ? new Date(l.createdAt) : null;
                 const dtTxt   = dt ? dt.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' }) + ' ' + dt.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : '';
                 const ofIcon  = l.oferta === 'mentoria' ? '🎯' : l.oferta === 'curso' ? '📚' : '';

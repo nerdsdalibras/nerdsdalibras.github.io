@@ -263,7 +263,7 @@ function renderLeadCard(l, idx) {
   const statusKey   = l.status || 'novo';
   const statusLabel = DecisionEngine.STATUS_LABELS[statusKey] || statusKey;
   const timeAgo     = l.createdAt ? timeElapsed(l.createdAt) : '';
-  const wppLink     = l.whatsapp ? `https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}?text=${encodeURIComponent(gerarMensagem(l))}` : null;
+  const wppLink     = waLink(l.whatsapp, gerarMensagem(l));
   const pontuacao   = l.pontuacao || 0;
   const scorePct    = Math.min(100, Math.round((pontuacao / 48) * 100));
   const scoreColor  = scorePct >= 65 ? 'var(--g)' : scorePct >= 40 ? 'var(--yellow)' : 'var(--red)';

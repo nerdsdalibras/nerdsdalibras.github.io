@@ -183,13 +183,13 @@ function getSelectedLeads() {
 function bulkCopyLinks() {
   const text = getSelectedLeads()
     .filter(l => l.whatsapp)
-    .map(l => `${l.nome}: https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}`)
+    .map(l => `${l.nome}: ${waLink(l.whatsapp)}`)
     .join('\n');
   navigator.clipboard.writeText(text).then(() => showToast(`${selectedLeads.size} links copiados!`));
 }
 function bulkCopyMsgs() {
   const text = getSelectedLeads().map(l => {
-    const wpp = l.whatsapp ? `https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}` : '';
+    const wpp = waLink(l.whatsapp) || '';
     return `— ${l.nome}\n${wpp}\n${gerarMensagem(l)}`;
   }).join('\n\n---\n\n');
   navigator.clipboard.writeText(text).then(() => showToast(`${selectedLeads.size} mensagens copiadas!`));
