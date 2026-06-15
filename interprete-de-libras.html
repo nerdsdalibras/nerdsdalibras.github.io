@@ -163,6 +163,11 @@
     }
     .btn-ig:hover{transform:translateY(-2px);border-color:#e0a8cf;box-shadow:0 12px 28px rgba(193,48,139,.18)}
     .btn-ig svg{width:22px;height:22px;flex-shrink:0}
+    /* Ícone Instagram (topo e rodapé) */
+    .topbar-actions{display:flex;align-items:center;gap:12px}
+    .ig-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:1.5px solid #eccfe2;transition:transform .15s,border-color .2s;flex-shrink:0}
+    .ig-icon:hover{transform:scale(1.08);border-color:#e0a8cf}
+    .ig-icon svg{width:22px;height:22px}
 
     /* ── HEADER ── */
     .topbar{
@@ -292,7 +297,12 @@
   <header class="topbar">
     <div class="container">
       <a class="brand" href="/"><span class="dot">🤟</span> Nerds da Libras</a>
-      <a class="btn-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1!%20Preciso%20de%20um%20int%C3%A9rprete%20de%20Libras." target="_blank" rel="noopener">Falar agora</a>
+      <div class="topbar-actions">
+        <a class="ig-icon" href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
+          <svg viewBox="0 0 24 24"><defs><linearGradient id="igtop" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#igtop)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#igtop)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#igtop)"/></svg>
+        </a>
+        <a class="btn-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1!%20Preciso%20de%20um%20int%C3%A9rprete%20de%20Libras." target="_blank" rel="noopener">Falar agora</a>
+      </div>
     </div>
   </header>
 
@@ -450,8 +460,13 @@
   <footer>
     <div class="container">
       <a class="brand" href="/"><span class="dot">🤟</span> Nerds da Libras</a>
-      <a class="btn-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1!%20Preciso%20de%20um%20int%C3%A9rprete%20de%20Libras." target="_blank" rel="noopener" style="box-shadow:none">Falar no WhatsApp</a>
-      <p class="mini">© Nerds da Libras — Serviço de intérprete e tradutor de Libras (Língua Brasileira de Sinais), remoto e presencial, em todo o Brasil. Acessibilidade e inclusão para pessoas surdas.</p>
+      <div class="topbar-actions">
+        <a class="ig-icon" href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
+          <svg viewBox="0 0 24 24"><defs><linearGradient id="igfoot" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#igfoot)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#igfoot)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#igfoot)"/></svg>
+        </a>
+        <a class="btn-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1!%20Preciso%20de%20um%20int%C3%A9rprete%20de%20Libras." target="_blank" rel="noopener" style="box-shadow:none">Falar no WhatsApp</a>
+      </div>
+      <p class="mini">© Nerds da Libras — Serviço de intérprete e tradutor de Libras (Língua Brasileira de Sinais), remoto e presencial, em todo o Brasil. Acessibilidade e inclusão para pessoas surdas. · Instagram: <a href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener">@lorena.nerdsdalibras</a></p>
     </div>
   </footer>
 
