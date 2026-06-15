@@ -340,7 +340,7 @@ function renderLeadCard(l, idx) {
               </div>
             </div>
           </div>
-          ${wppLink ? `<a class="quick-btn qb-wpp" href="${wppLink}" target="_blank" rel="noopener">💬 WA</a>` : ''}
+          ${wppLink ? `<a class="quick-btn qb-wpp" href="${wppLink}" target="whatsapp_web">💬 WA</a>` : ''}
           <button class="quick-btn qb-open" onclick="openLead('${l.sessionId}')">Ver →</button>
         </div>
       </div>

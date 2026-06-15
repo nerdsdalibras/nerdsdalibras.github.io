@@ -104,7 +104,7 @@ async function renderPipeline() {
                     </div>
                     ${l.pontuacao ? `<div class="mini-score">Score: ${l.pontuacao}</div>` : ''}
                     ${getLeadTags(l).slice(0,2).map(t => `<span class="tag-chip" style="background:${tagColor(t)};font-size:.6rem;padding:1px 5px;margin-top:3px">${t}</span>`).join('')}
-                    ${wppHref ? `<a class="mini-wpp-btn" href="${wppHref}" target="_blank" rel="noopener" onclick="event.stopPropagation()">💬 Abrir WhatsApp</a>` : ''}
+                    ${wppHref ? `<a class="mini-wpp-btn" href="${wppHref}" target="whatsapp_web" onclick="event.stopPropagation()">💬 Abrir WhatsApp</a>` : ''}
                   </div>`;
               }).join('')
             : '<div class="mini-empty">Vazio</div>'}
