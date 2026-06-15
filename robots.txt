@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nerdsdalibras.com/sitemap.xml
