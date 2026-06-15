@@ -16,6 +16,11 @@
 /youtube              https://www.youtube.com/@nerdsdalibras?sub_confirmation=1  302
 /tiktok               https://www.tiktok.com/@nerds.da.libras                   302
 
+# ── INTÉRPRETE DE LIBRAS (SEO) ──
+/interprete-de-libras            /interprete-de-libras.html                      200
+/interprete                      /interprete-de-libras.html                      200
+/preciso-de-interprete-de-libras /interprete-de-libras.html                      200
+
 # ── DASHBOARD ──
 /dashboard            /dashboard.html                                            200
 
