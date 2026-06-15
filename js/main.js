@@ -59,19 +59,19 @@ function gerarMensagem(l) {
 
   // Cartão recusado — prioridade máxima, pagamento falhou
   if (isCartaoRecusado(l)) {
-    return `Oi, ${nome}! 🤟 Vi que você tentou finalizar a inscrição no ${oferta}, mas o pagamento não foi aprovado (isso acontece muito com o cartão, viu?). Quer que eu te mande um link novo ou te ajude com outra forma de pagamento, tipo Pix? É rapidinho! 💚`;
+    return `Oi, ${nome}! 💚 Vi que você tentou garantir sua vaga no ${oferta} e o pagamento não passou — fica tranquila, isso é super comum com o cartão e a gente resolve rapidinho juntas. Eu não quero de jeito nenhum que você perca essa chance de evoluir em Libras. Me chama aqui que eu te mando um link novo ou faço por Pix, do jeitinho que for melhor pra você. 💚`;
   }
 
   // Remarketing de carrinho abandonado — alta intenção de compra
   if (isCarrinhoAbandonado(l)) {
-    return `Oi, ${nome}! 🤟 Vi que você chegou a iniciar a inscrição no ${oferta}, mas a compra não foi concluída. Aconteceu algum problema no pagamento? Posso te ajudar a finalizar agora — e ainda garanto uma condição especial pra você. 💚`;
+    return `Oi, ${nome}! 💚 Vi que você chegou pertinho de garantir sua vaga no ${oferta}, mas não conseguiu finalizar. Imagino que possa ter surgido alguma dúvida no caminho — e tá tudo bem, eu estou aqui pra te ajudar a dar esse passo tão importante na sua jornada em Libras. Me chama que a gente resolve juntas, e eu ainda garanto uma condição especial pra você. 💚`;
   }
 
   if (l.oferta === 'mentoria') {
-    return `Oi, ${nome}! 🤟 Vi sua avaliação com a Lorena — seu perfil é ${nivel}. Você havia demonstrado interesse na Mentoria Ciclo da Fluência. Posso te passar mais detalhes?`;
+    return `Oi, ${nome}! 💚 Que alegria ter você por aqui! Vi sua avaliação com a Lorena e seu nível ${nivel} me deixou muito animada — dá pra sentir o quanto você quer evoluir em Libras. Você tinha demonstrado interesse na Mentoria Ciclo da Fluência, e eu adoraria te mostrar como ela pode transformar de verdade a sua jornada. Me chama aqui que eu te conto tudo com muito carinho. 💚`;
   }
   const sfx = l.genero === 'masculino' ? 'o' : 'a';
-  return `Oi, ${nome}! 🤟 Vi sua avaliação com a Lorena — seu perfil é ${nivel}. Você estava interessad${sfx} no Curso do Zero à Libras. Ainda posso ajudar você a dar o próximo passo?`;
+  return `Oi, ${nome}! 💚 Que bom te ver por aqui! Vi sua avaliação com a Lorena e seu nível ${nivel} mostra que você tem tudo pra ir muito longe em Libras. Você estava interessad${sfx} no Curso do Zero à Libras, e eu adoraria caminhar essa jornada ao seu lado. Me chama aqui que eu te mostro o próximo passo com todo carinho. ✨💚`;
 }
 
 function copiarMensagem(sessionId, btn) {
