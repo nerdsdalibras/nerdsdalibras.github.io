@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nerdsdalibras.com/sitemap.xml
+Sitemap: https://nerdsdalibras.github.io/sitemap.xml
