@@ -424,25 +424,31 @@ function handleEduzzWebhook(data) {
   // Eduzz = sempre Mentoria
   var patch = { kiwifyEvento: 'eduzz:' + st, kiwifyEventoEm: now, updatedAt: now, oferta: 'mentoria' };
 
-  if (/(^|[^0-9])3([^0-9]|$)|paid|aprovad|complet|venda/.test(st)) {
+  if (/_paid|paid|aprovad|complet|venda|(^|[^0-9])3([^0-9]|$)/.test(st)) {
     patch.status = 'comprou'; patch.comprouKiwify = true; patch.cartaoRecusado = false;
     patch.statusCloser = '✅ Compra confirmada (Eduzz/Mentoria)';
-  } else if (/(^|[^0-9])7([^0-9]|$)|refund|reembols/.test(st)) {
-    patch.reembolso = true; patch.reembolsoEm = now; patch.status = 'reembolso';
-    patch.statusCloser = '↩️ Reembolso (Eduzz)';
   } else if (/chargeback|estorno/.test(st)) {
     patch.chargeback = true; patch.chargebackEm = now; patch.status = 'chargeback';
     patch.statusCloser = '⚠️ Chargeback (Eduzz)';
-  } else if (/recus|declin|reprov|fail|cancel/.test(st)) {
+  } else if (/waiting_refund/.test(st)) {
+    patch.clicouCheckout = true;
+    patch.statusCloser = '↩️ Reembolso solicitado (Eduzz) — em análise';
+  } else if (/_refunded|refunded|reembols|(^|[^0-9])7([^0-9]|$)/.test(st)) {
+    patch.reembolso = true; patch.reembolsoEm = now; patch.status = 'reembolso';
+    patch.statusCloser = '↩️ Reembolso (Eduzz)';
+  } else if (/recus|declin|reprov|fail/.test(st)) {
     patch.cartaoRecusado = true; patch.recusadoEm = now; patch.clicouCheckout = true;
-    patch.statusCloser = '💳 Pagamento recusado/cancelado (Eduzz)';
+    patch.statusCloser = '💳 Pagamento recusado (Eduzz)';
+  } else if (/cancel|expir/.test(st)) {
+    patch.clicouCheckout = true;
+    patch.statusCloser = '🚫 Fatura cancelada/expirada (Eduzz) — não comprou';
   } else if (/boleto/.test(st)) {
     patch.boletoGerado = true; patch.clicouCheckout = true; patch.checkoutEm = now;
     patch.statusCloser = '🧾 Boleto gerado (Eduzz)';
   } else if (/pix/.test(st)) {
     patch.pixGerado = true; patch.clicouCheckout = true; patch.checkoutEm = now;
     patch.statusCloser = '⚡ Pix gerado (Eduzz)';
-  } else if (/open|abert|wait|pending|2/.test(st)) {
+  } else if (/waiting_payment|opened|open|abert|wait|pending|scheduled|schedul|recovering|recover|negotiated/.test(st)) {
     patch.clicouCheckout = true; patch.checkoutEm = now;
     patch.statusCloser = '🛒 Checkout iniciado (Eduzz)';
   } else {
