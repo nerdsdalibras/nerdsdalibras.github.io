@@ -86,11 +86,21 @@ const NEW_COLS = [
 // ── ENTRADA POST ──────────────────────────────────
 function doPost(e) {
   try {
-    const raw  = e.postData ? e.postData.contents : '{}';
-    const data = JSON.parse(raw);
+    var raw = e && e.postData ? e.postData.contents : '{}';
+    var data;
+    try { data = JSON.parse(raw); }
+    catch (_) { data = _parseForm(e); }   // Eduzz pode enviar form-urlencoded
+
+    // Webhook da Eduzz (Mentoria) — checa antes da Kiwify pois tem campos próprios
+    if (isEduzzPayload(data)) {
+      _logWebhook('eduzz', raw);
+      handleEduzzWebhook(data);
+      return respond({ ok: true, source: 'eduzz' });
+    }
 
     // Webhook da Kiwify (qualquer evento: compra, recusa, boleto, pix, carrinho...)
     if (isKiwifyPayload(data)) {
+      _logWebhook('kiwify', raw);
       handleKiwifyWebhook(data);
       return respond({ ok: true, source: 'kiwify' });
     }
@@ -101,10 +111,26 @@ function doPost(e) {
       return respond({ ok: true, source: 'lead' });
     }
 
+    _logWebhook('desconhecido', raw);
     return respond({ ok: true });
   } catch (err) {
     return respond({ error: err.message });
   }
+}
+
+// Lê payload enviado como application/x-www-form-urlencoded (parâmetros do form)
+function _parseForm(e) {
+  if (e && e.parameter && Object.keys(e.parameter).length) return e.parameter;
+  return {};
+}
+
+// Registra o webhook bruto numa aba "WebhookLog" (ajuda a depurar formatos novos)
+function _logWebhook(source, raw) {
+  try {
+    var ss  = SpreadsheetApp.getActiveSpreadsheet();
+    var log = ss.getSheetByName('WebhookLog') || ss.insertSheet('WebhookLog');
+    log.appendRow([new Date(), source, String(raw).slice(0, 4000)]);
+  } catch (e) {}
 }
 
 // ── ENTRADA GET (dashboard busca leads) ──────────
@@ -113,7 +139,7 @@ function doGet(e) {
   if (action === 'getLeads') {
     return respond(getAllLeads());
   }
-  return respond({ ok: true, version: '3.2' });
+  return respond({ ok: true, version: '3.3' });
 }
 
 function respond(data) {
@@ -363,4 +389,212 @@ function getAllLeads() {
   });
 
   return leads;
+}
+
+// ═══════════════════════════════════════════════════
+//  WEBHOOK EDUZZ (Mentoria)
+// ═══════════════════════════════════════════════════
+function isEduzzPayload(d) {
+  if (!d) return false;
+  var dd = d.data || d;
+  return !!(
+    d.trans_cod || d.trans_status || d.cus_email || d.product_cod || d.api_key ||
+    (dd && (dd.trans_cod || dd.trans_status || dd.cus_email || dd.product_cod))
+  );
+}
+
+function handleEduzzWebhook(data) {
+  var now = new Date().toISOString();
+  var d   = data.data || data;
+
+  var email = String(d.cus_email || (d.buyer && d.buyer.email) || d.email || '').toLowerCase().trim();
+  var phone = String(d.cus_tel || d.cus_cel || (d.buyer && (d.buyer.tel || d.buyer.phone)) || '').replace(/\D/g, '');
+  var nome  = d.cus_name || (d.buyer && d.buyer.name) || d.name || '';
+
+  var st = String(
+    d.trans_status || (d.sale && d.sale.status) || data.event || ''
+  ).toLowerCase();
+
+  // Eduzz = sempre Mentoria
+  var patch = { kiwifyEvento: 'eduzz:' + st, kiwifyEventoEm: now, updatedAt: now, oferta: 'mentoria' };
+
+  if (/(^|[^0-9])3([^0-9]|$)|paid|aprovad|complet|venda/.test(st)) {
+    patch.status = 'comprou'; patch.comprouKiwify = true; patch.cartaoRecusado = false;
+    patch.statusCloser = '✅ Compra confirmada (Eduzz/Mentoria)';
+  } else if (/(^|[^0-9])7([^0-9]|$)|refund|reembols/.test(st)) {
+    patch.reembolso = true; patch.reembolsoEm = now; patch.status = 'reembolso';
+    patch.statusCloser = '↩️ Reembolso (Eduzz)';
+  } else if (/chargeback|estorno/.test(st)) {
+    patch.chargeback = true; patch.chargebackEm = now; patch.status = 'chargeback';
+    patch.statusCloser = '⚠️ Chargeback (Eduzz)';
+  } else if (/recus|declin|reprov|fail|cancel/.test(st)) {
+    patch.cartaoRecusado = true; patch.recusadoEm = now; patch.clicouCheckout = true;
+    patch.statusCloser = '💳 Pagamento recusado/cancelado (Eduzz)';
+  } else if (/boleto/.test(st)) {
+    patch.boletoGerado = true; patch.clicouCheckout = true; patch.checkoutEm = now;
+    patch.statusCloser = '🧾 Boleto gerado (Eduzz)';
+  } else if (/pix/.test(st)) {
+    patch.pixGerado = true; patch.clicouCheckout = true; patch.checkoutEm = now;
+    patch.statusCloser = '⚡ Pix gerado (Eduzz)';
+  } else if (/open|abert|wait|2/.test(st)) {
+    patch.clicouCheckout = true; patch.checkoutEm = now;
+    patch.statusCloser = '🛒 Checkout iniciado (Eduzz)';
+  } else {
+    patch.statusCloser = 'ℹ️ Evento Eduzz: ' + st;
+  }
+
+  _upsertByContact(patch, phone, email, nome, 'Eduzz (webhook)');
+}
+
+// Acha a linha pelo telefone (ou e-mail) e aplica o patch; se não existir, cria.
+function _upsertByContact(patch, phone, email, nome, origem) {
+  var sheet    = getSheet();
+  var headers  = ensureNewColumns(sheet);
+  var lastRow  = sheet.getLastRow();
+  var now      = new Date().toISOString();
+  var wppCol   = headers.indexOf('WhatsApp') >= 0 ? headers.indexOf('WhatsApp') : headers.indexOf('whatsapp');
+  var emailCol = headers.indexOf('Email')    >= 0 ? headers.indexOf('Email')    : headers.indexOf('email');
+  var row = -1;
+
+  if (lastRow > 1) {
+    var vals = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+    for (var i = 0; i < vals.length; i++) {
+      var rp = wppCol   >= 0 ? String(vals[i][wppCol]   || '').replace(/\D/g, '')  : '';
+      var re = emailCol >= 0 ? String(vals[i][emailCol] || '').toLowerCase().trim() : '';
+      if ((phone && rp && rp.slice(-9) === phone.slice(-9)) || (email && re && re === email)) {
+        row = i + 2; break;
+      }
+    }
+  }
+
+  if (row > 0) {
+    for (var h = 0; h < headers.length; h++) {
+      var field = COL_TO_FIELD[headers[h]] || headers[h];
+      if (patch.hasOwnProperty(field)) sheet.getRange(row, h + 1).setValue(patch[field]);
+    }
+  } else {
+    patch.sessionId = patch.sessionId || (origem.replace(/\W+/g, '') + '-' + (phone || email || Date.now()));
+    if (!patch.nome)     patch.nome     = nome;
+    if (!patch.whatsapp) patch.whatsapp = phone;
+    if (!patch.email)    patch.email    = email;
+    patch.origem    = origem;
+    patch.createdAt = now;
+    var newRow = headers.map(function (col) {
+      var f = COL_TO_FIELD[col] || col;
+      return patch.hasOwnProperty(f) ? patch[f] : '';
+    });
+    sheet.appendRow(newRow);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  E-MAIL DE REMARKETING AUTOMÁTICO (Gmail)
+//  → Crie um gatilho por TEMPO na função enviarEmailsRemarketing
+//    (Acionadores → Adicionar acionador → a cada 1 hora).
+//  Envia para quem ENTROU no checkout e NÃO comprou (inclui cartão recusado).
+// ═══════════════════════════════════════════════════
+var EMAIL_CFG = {
+  fromName:     'Lorena · Nerds da Libras',
+  cursoNome:    'Curso do Zero à Libras',
+  mentoriaNome: 'Mentoria Ciclo da Fluência',
+  cursoUrl:     'https://pay.kiwify.com.br/1sIyvVL',
+  mentoriaUrl:  'https://chk.eduzz.com/pykhq6gg',
+};
+var EMAIL_DELAYS_H = [2, 24, 48];  // horas após o checkout para e-mail 1, 2 e 3
+
+function _emailRemarketing(lead, num) {
+  var nome = String(lead.nome || 'você').split(' ')[0];
+  var ehMentoria = lead.oferta === 'mentoria';
+  var prod = ehMentoria ? EMAIL_CFG.mentoriaNome : EMAIL_CFG.cursoNome;
+  var link = ehMentoria ? EMAIL_CFG.mentoriaUrl  : EMAIL_CFG.cursoUrl;
+
+  var subjects = [
+    nome + ', você quase começou sua jornada em Libras 💚',
+    nome + ', deixa eu te tirar uma dúvida sobre o ' + prod + '?',
+    'Última mensagem da Lorena pra você, ' + nome + ' 🙏',
+  ];
+
+  var bodies = [
+    'Oi, ' + nome + '! 💚\n\n' +
+    'Aqui é a Lorena, da Nerds da Libras.\n\n' +
+    'Vi que você chegou pertinho de garantir sua vaga no ' + prod + ', mas não finalizou. Fica tranquila, isso acontece bastante!\n\n' +
+    'Se surgiu alguma dúvida ou apareceu algum imprevisto no pagamento, me responde esse e-mail que eu te ajudo pessoalmente — de coração. 💚\n\n' +
+    'Sua vaga (com a condição especial) ainda está reservada aqui:\n' + link + '\n\n' +
+    'Com carinho,\nLorena · Nerds da Libras',
+
+    'Oi, ' + nome + '! 💚\n\n' +
+    'Ontem você esteve quase começando no ' + prod + '. Quero te contar uma coisa que quase ninguém explica:\n\n' +
+    'Libras não é português com as mãos. É uma língua visual, com gramática própria. Quando a gente tenta "traduzir" o português, o cérebro trava — é por isso que tanta gente estuda anos e não destrava.\n\n' +
+    'A metodologia que eu uso inverte isso: você aprende a pensar visualmente, e aí flui de verdade.\n\n' +
+    'Se ficou alguma insegurança, me responde aqui que eu te explico tudo. A condição especial ainda está de pé:\n' + link + '\n\n' +
+    'Lorena 💚\nNerds da Libras',
+
+    'Oi, ' + nome + '. 💚\n\n' +
+    'Essa é minha última mensagem — prometo não insistir mais.\n\n' +
+    'Eu sei que a vida é corrida e que toda decisão tem seu tempo. Mas queria deixar registrado: a barreira entre você e uma comunicação de verdade com pessoas surdas existe, e ela não some sozinha.\n\n' +
+    'Quando você sentir que é a hora, o caminho está aqui:\n' + link + '\n\n' +
+    'Vai ser uma alegria te ver do outro lado. 🤟\n\n' +
+    'Com todo carinho,\nLorena · Nerds da Libras',
+  ];
+
+  return { subject: subjects[num - 1], body: bodies[num - 1] };
+}
+
+function enviarEmailsRemarketing() {
+  var sheet   = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 0;
+  var headers = ensureNewColumns(sheet);
+  var data    = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+  var now     = Date.now();
+
+  function idx(field) {
+    var col = FIELD_TO_COL[field] || field;
+    var i = headers.indexOf(col);
+    if (i < 0) i = headers.indexOf(field);
+    return i;
+  }
+  var iEmail = idx('email'), iStatus = idx('status'), iCheckout = idx('clicouCheckout'),
+      iCheckoutEm = idx('checkoutEm'), iCreated = idx('createdAt'), iComprou = idx('comprouKiwify'),
+      iOferta = idx('oferta'), iNome = idx('nome'), iNivel = idx('nivelIdentificado'),
+      iE = [idx('email1SentAt'), idx('email2SentAt'), idx('email3SentAt')];
+
+  var enviados = 0;
+  for (var r = 0; r < data.length; r++) {
+    var row   = data[r];
+    var email = String(iEmail >= 0 ? row[iEmail] : '').trim();
+    if (!email || email.indexOf('@') < 0) continue;
+
+    var status  = String(iStatus  >= 0 ? row[iStatus]  : '').toLowerCase();
+    var comprou = (iComprou >= 0 && (row[iComprou] === true || row[iComprou] === 'true')) || status === 'comprou';
+    if (comprou) continue;                                    // já comprou → não envia
+
+    var entrou = iCheckout >= 0 && (row[iCheckout] === true || row[iCheckout] === 'true');
+    if (!entrou) continue;                                    // só quem entrou no checkout
+
+    var ancoraRaw = (iCheckoutEm >= 0 && row[iCheckoutEm]) ? row[iCheckoutEm] : (iCreated >= 0 ? row[iCreated] : '');
+    var ancora = ancoraRaw ? new Date(ancoraRaw).getTime() : null;
+    if (!ancora) continue;
+
+    var lead = {
+      nome: iNome >= 0 ? row[iNome] : '',
+      nivelIdentificado: iNivel >= 0 ? row[iNivel] : '',
+      oferta: iOferta >= 0 ? row[iOferta] : '',
+    };
+
+    for (var n = 0; n < 3; n++) {
+      if (iE[n] < 0) continue;
+      if (row[iE[n]]) continue;                               // e-mail n já enviado
+      if (now < ancora + EMAIL_DELAYS_H[n] * 3600000) break;  // ainda não é hora deste e-mail
+      try {
+        var tpl = _emailRemarketing(lead, n + 1);
+        MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, name: EMAIL_CFG.fromName });
+        var ts = new Date().toISOString();
+        sheet.getRange(r + 2, iE[n] + 1).setValue(ts);
+        enviados++;
+      } catch (err) { /* sem cota ou erro de envio: tenta na próxima execução */ }
+      break;                                                  // no máximo 1 e-mail por lead por execução
+    }
+  }
+  return enviados;
 }
