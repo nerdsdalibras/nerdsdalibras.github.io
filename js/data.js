@@ -66,6 +66,7 @@ function setPage(page) {
   document.querySelector(`[data-page="${page}"]`).classList.add('active');
   if (page === 'pipeline')        renderPipeline();
   else if (page === 'analytics')  renderAnalytics();
+  else if (page === 'checkout')   renderCheckout();
   else                            renderLeads();
 }
 function toggleSidebar() {

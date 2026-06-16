@@ -29,6 +29,11 @@ function updateBadges(leads) {
   const hot = leads.filter(l => l.status === 'muito_quente' || l.status === 'prioridade_maxima').length;
   const b = document.getElementById('badge-leads');
   if (b) b.textContent = hot > 0 ? hot : '';
+
+  // Checkout: quantos entraram no checkout mas ainda não compraram
+  const ck = leads.filter(l => (l.clicouCheckout || l.checkoutEm) && l.status !== 'comprou' && !l.comprouKiwify).length;
+  const bc = document.getElementById('badge-checkout');
+  if (bc) bc.textContent = ck > 0 ? ck : '';
 }
 
 /* ═══════════════════════════════════════════
@@ -108,8 +113,9 @@ function contatarLead(sessionId, e) {
   // Marca como "mensagem enviada" (persiste no localStorage + sincroniza)
   if (!lead.contatadoEm) {
     patchLead(sessionId, { contatadoEm: new Date().toISOString() });
-    if (currentPage === 'pipeline')   renderPipeline();
-    else if (currentPage === 'leads') renderLeads();
+    if (currentPage === 'pipeline')      renderPipeline();
+    else if (currentPage === 'leads')    renderLeads();
+    else if (currentPage === 'checkout') renderCheckout();
     if (currentLead && currentLead.sessionId === sessionId) renderTab(currentTab);
   }
 }
@@ -118,8 +124,9 @@ function contatarLead(sessionId, e) {
 function desmarcarContato(sessionId, e) {
   if (e) { e.preventDefault(); e.stopPropagation(); }
   patchLead(sessionId, { contatadoEm: null });
-  if (currentPage === 'pipeline')   renderPipeline();
-  else if (currentPage === 'leads') renderLeads();
+  if (currentPage === 'pipeline')      renderPipeline();
+  else if (currentPage === 'leads')    renderLeads();
+  else if (currentPage === 'checkout') renderCheckout();
 }
 
 function copiarMensagem(sessionId, btn) {

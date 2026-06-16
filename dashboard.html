@@ -50,6 +50,11 @@
         <span class="nav-icon">◎</span>
         <span class="nav-label">Analytics</span>
       </button>
+      <button class="nav-item" onclick="setPage('checkout')" data-page="checkout">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">Checkout</span>
+        <span class="nav-badge" id="badge-checkout"></span>
+      </button>
     </nav>
 
     <div class="sidebar-footer">
@@ -118,6 +123,14 @@
           <h2 class="page-title">Analytics</h2>
         </div>
         <div class="analytics-grid" id="analytics-grid"></div>
+      </div>
+
+      <!-- CHECKOUT -->
+      <div id="page-checkout" class="page">
+        <div class="page-header">
+          <h2 class="page-title">Checkout</h2>
+        </div>
+        <div id="checkout-content"></div>
       </div>
 
     </div>
@@ -196,6 +209,7 @@
 <script src="js/lead-panel.js"></script>
 <script src="js/pipeline.js"></script>
 <script src="js/analytics.js"></script>
+<script src="js/checkout.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
