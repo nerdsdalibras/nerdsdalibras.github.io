@@ -23,7 +23,7 @@ const CONFIG = {
 
   // ── MENTORIA: Ciclo da Fluência ──
   MENTORIA_NOME:         'Mentoria Ciclo da Fluência',
-  MENTORIA_EDUZZ_URL:    'https://chk.eduzz.com/pykhq6gg',
+  MENTORIA_EDUZZ_URL:    'https://chk.eduzz.com/G96RXVVEW1',
   MENTORIA_PRECO_OFERTA: 'R$2.997,00',
   MENTORIA_PARCELAS:     '12x de R$249,75 sem juros',
   MENTORIA_BONUS: [

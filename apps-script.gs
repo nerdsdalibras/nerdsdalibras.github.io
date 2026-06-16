@@ -510,7 +510,7 @@ var EMAIL_CFG = {
   cursoNome:    'Curso do Zero à Libras',
   mentoriaNome: 'Mentoria Ciclo da Fluência',
   cursoUrl:     'https://pay.kiwify.com.br/1sIyvVL',
-  mentoriaUrl:  'https://chk.eduzz.com/pykhq6gg',
+  mentoriaUrl:  'https://chk.eduzz.com/G96RXVVEW1',
 };
 var EMAIL_DELAYS_H = [2, 24, 48];  // horas após o checkout para e-mail 1, 2 e 3
 
