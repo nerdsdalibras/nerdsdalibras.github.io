@@ -397,22 +397,28 @@ function getAllLeads() {
 function isEduzzPayload(d) {
   if (!d) return false;
   var dd = d.data || d;
+  var ev = String(d.event || '').toLowerCase();
   return !!(
     d.trans_cod || d.trans_status || d.cus_email || d.product_cod || d.api_key ||
-    (dd && (dd.trans_cod || dd.trans_status || dd.cus_email || dd.product_cod))
+    (dd && (dd.trans_cod || dd.trans_status || dd.cus_email || dd.product_cod || dd.buyer)) ||
+    ev.indexOf('eduzz') >= 0 || ev.indexOf('invoice') >= 0
   );
 }
 
 function handleEduzzWebhook(data) {
   var now = new Date().toISOString();
   var d   = data.data || data;
+  var buyer = d.buyer || data.buyer || {};
 
-  var email = String(d.cus_email || (d.buyer && d.buyer.email) || d.email || '').toLowerCase().trim();
-  var phone = String(d.cus_tel || d.cus_cel || (d.buyer && (d.buyer.tel || d.buyer.phone)) || '').replace(/\D/g, '');
-  var nome  = d.cus_name || (d.buyer && d.buyer.name) || d.name || '';
+  var email = String(d.cus_email || buyer.email || d.email || '').toLowerCase().trim();
+  var phone = String(
+    d.cus_tel || d.cus_cel || buyer.cellphone || buyer.telephone || buyer.phone || buyer.tel || ''
+  ).replace(/\D/g, '');
+  var nome  = d.cus_name || buyer.name || d.name || '';
 
+  // Evento/status: formato novo (event: "myeduzz.invoice_paid") ou antigo (trans_status)
   var st = String(
-    d.trans_status || (d.sale && d.sale.status) || data.event || ''
+    data.event || d.event || d.trans_status || (d.sale && d.sale.status) || d.status || ''
   ).toLowerCase();
 
   // Eduzz = sempre Mentoria
@@ -436,7 +442,7 @@ function handleEduzzWebhook(data) {
   } else if (/pix/.test(st)) {
     patch.pixGerado = true; patch.clicouCheckout = true; patch.checkoutEm = now;
     patch.statusCloser = '⚡ Pix gerado (Eduzz)';
-  } else if (/open|abert|wait|2/.test(st)) {
+  } else if (/open|abert|wait|pending|2/.test(st)) {
     patch.clicouCheckout = true; patch.checkoutEm = now;
     patch.statusCloser = '🛒 Checkout iniciado (Eduzz)';
   } else {
