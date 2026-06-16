@@ -765,7 +765,19 @@ function _mostrarOfertaCurso(nivel) {
           <div class="offer-guarantee-icon">🛡</div>
           <div>Garantia de <strong>${CONFIG.GARANTIA_DIAS} dias</strong> — se não gostar por qualquer motivo, devolvemos 100% do valor. Sem perguntas.</div>
         </div>
-        <a class="btn-kiwify" href="${CONFIG.KIWIFY_URL}" target="_blank" rel="noopener" onclick="registrarCompra('kiwify')">
+        <div class="offer-email-capture" style="margin:4px 0 12px;text-align:left">
+          <label style="display:block;font-size:.84rem;font-weight:700;margin-bottom:6px;color:#1f2937">
+            📧 Seu melhor e-mail para receber o acesso
+          </label>
+          <input id="offer-email-input" type="email" inputmode="email" autocomplete="email"
+            placeholder="seuemail@exemplo.com" value="${lead.email || ''}"
+            oninput="document.getElementById('offer-email-err').style.display='none';this.style.borderColor='#d1d5db'"
+            style="width:100%;padding:13px 14px;border:1.5px solid #d1d5db;border-radius:12px;font-size:1rem;box-sizing:border-box;outline:none"/>
+          <div id="offer-email-err" style="display:none;color:#dc2626;font-size:.78rem;margin-top:6px;font-weight:600">
+            ⚠️ Por favor, informe um e-mail válido para continuar.
+          </div>
+        </div>
+        <a class="btn-kiwify" href="${CONFIG.KIWIFY_URL}" target="_blank" rel="noopener" onclick="return irParaCheckout('kiwify', event)">
           🔓 Quero começar agora →
         </a>
         <a class="btn-secundario" href="${CONFIG.WA_CURSO}" target="_blank" rel="noopener" onclick="registrarClique()">
@@ -865,6 +877,26 @@ function registrarCompra(plataforma) {
   lead.checkoutEm     = new Date().toISOString();
   lead.statusCloser   = `Foi para o checkout (${lead.resultado}) — aguardando pagamento`;
   Storage.upsert({ ...lead });
+}
+
+// Exige um e-mail válido antes de mandar o lead para o checkout.
+// Salva o e-mail no lead, registra o checkout e abre a página de pagamento.
+function irParaCheckout(plataforma, e) {
+  const input = document.getElementById('offer-email-input');
+  const email = (input ? input.value : '').trim();
+  const valido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!valido) {
+    if (e) e.preventDefault();
+    const err = document.getElementById('offer-email-err');
+    if (err) err.style.display = 'block';
+    if (input) { input.style.borderColor = '#dc2626'; input.focus(); }
+    return false;
+  }
+  lead.email = email;
+  registrarCompra(plataforma);                 // grava clicouCheckout/checkoutEm + e-mail
+  window.open(CONFIG.KIWIFY_URL, '_blank', 'noopener');
+  if (e) e.preventDefault();                    // já abrimos a aba manualmente
+  return false;
 }
 
 function registrarCompraMentoria() {
