@@ -88,12 +88,13 @@ async function renderPipeline() {
                 const dtTxt   = dt ? dt.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' }) + ' ' + dt.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : '';
                 const ofIcon  = l.oferta === 'mentoria' ? '🎯' : l.oferta === 'curso' ? '📚' : '';
                 return `
-                  <div class="mini-card" data-session-id="${l.sessionId}" onclick="openLead('${l.sessionId}')">
+                  <div class="mini-card ${l.contatadoEm ? 'contatado' : ''}" data-session-id="${l.sessionId}" onclick="openLead('${l.sessionId}')">
                     <div class="mini-card-top">
                       <div class="mini-name">${l.nome || 'Lead'}</div>
                       ${dtTxt ? `<div class="mini-date">${dtTxt}</div>` : ''}
                     </div>
                     <div class="mini-sub">${l.whatsapp || '—'}${ofIcon ? ' · ' + ofIcon : ''}</div>
+                    ${l.contatadoEm ? `<div class="mini-sent" title="Clique para desmarcar" onclick="desmarcarContato('${l.sessionId}', event)">✓ Mensagem enviada${l.contatadoEm ? ' · ' + formatDate(l.contatadoEm) : ''}</div>` : ''}
                     <div class="mini-funnel">
                       <span class="mf done" title="Fez a avaliação">📋</span><span class="mf-arr">›</span>
                       <span class="mf ${l.oferta ? 'done' : ''}" title="Oferta">${ofIcon || '·'}</span><span class="mf-arr">›</span>
@@ -104,7 +105,7 @@ async function renderPipeline() {
                     </div>
                     ${l.pontuacao ? `<div class="mini-score">Score: ${l.pontuacao}</div>` : ''}
                     ${getLeadTags(l).slice(0,2).map(t => `<span class="tag-chip" style="background:${tagColor(t)};font-size:.6rem;padding:1px 5px;margin-top:3px">${t}</span>`).join('')}
-                    ${wppHref ? `<a class="mini-wpp-btn" href="${wppHref}" target="whatsapp_web" onclick="event.stopPropagation()">💬 Abrir WhatsApp</a>` : ''}
+                    ${wppHref ? `<a class="mini-wpp-btn ${l.contatadoEm ? 'reenviar' : ''}" href="${wppHref}" onclick="contatarLead('${l.sessionId}', event)">${l.contatadoEm ? '↻ Reenviar' : '💬 Abrir WhatsApp'}</a>` : ''}
                   </div>`;
               }).join('')
             : '<div class="mini-empty">Vazio</div>'}

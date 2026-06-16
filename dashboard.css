@@ -792,6 +792,16 @@ body {
   text-decoration:none; text-align:center; transition:opacity .2s;
 }
 .mini-wpp-btn:hover { opacity:.82; }
+.mini-wpp-btn.reenviar { background:var(--s3); color:var(--ts); border:1px solid var(--bdr); }
+
+/* Lead já contatado (mensagem enviada) */
+.mini-card.contatado { border-left:3px solid var(--g); }
+.mini-sent {
+  display:inline-block; margin-top:5px; font-size:.6rem; font-weight:700;
+  color:var(--g); background:var(--gd); border:1px solid rgba(74,222,128,.25);
+  border-radius:5px; padding:2px 6px; cursor:pointer;
+}
+.qb-wpp.enviada { background:var(--gd); color:var(--g); border-color:rgba(74,222,128,.3); }
 
 /* ── EMAIL REMARKETING ── */
 .email-card { background:var(--s2); border:1px solid var(--bdr); border-radius:12px; padding:12px 14px; }

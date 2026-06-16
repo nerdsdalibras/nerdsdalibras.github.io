@@ -84,6 +84,44 @@ function waLink(phoneRaw, msg) {
   return url;
 }
 
+// Mantém UMA única aba do WhatsApp Web e a reaproveita a cada clique.
+let _waWin = null;
+
+// Clique em "Abrir WhatsApp": reaproveita a aba e marca o lead como contatado.
+function contatarLead(sessionId, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
+  if (!lead) return;
+
+  const url = waLink(lead.whatsapp, gerarMensagem(lead));
+  if (url) {
+    let reaproveitou = false;
+    try {
+      if (_waWin && !_waWin.closed) { _waWin.location.href = url; _waWin.focus(); reaproveitou = true; }
+    } catch (_) { reaproveitou = false; }   // COOP do WhatsApp pode bloquear o acesso
+    if (!reaproveitou) {
+      _waWin = window.open(url, 'whatsapp_web');
+      try { _waWin && _waWin.focus(); } catch (_) {}
+    }
+  }
+
+  // Marca como "mensagem enviada" (persiste no localStorage + sincroniza)
+  if (!lead.contatadoEm) {
+    patchLead(sessionId, { contatadoEm: new Date().toISOString() });
+    if (currentPage === 'pipeline')   renderPipeline();
+    else if (currentPage === 'leads') renderLeads();
+    if (currentLead && currentLead.sessionId === sessionId) renderTab(currentTab);
+  }
+}
+
+// Desmarca o lead (caso tenha clicado por engano)
+function desmarcarContato(sessionId, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  patchLead(sessionId, { contatadoEm: null });
+  if (currentPage === 'pipeline')   renderPipeline();
+  else if (currentPage === 'leads') renderLeads();
+}
+
 function copiarMensagem(sessionId, btn) {
   const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
   if (!lead) return;

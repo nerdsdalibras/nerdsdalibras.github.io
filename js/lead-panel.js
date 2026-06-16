@@ -21,7 +21,7 @@ function openLead(sessionId) {
     </div>`;
 
   document.getElementById('panel-hdr-actions').innerHTML = lead.whatsapp
-    ? `<a class="quick-btn qb-wpp" href="${waLink(lead.whatsapp, gerarMensagem(lead))}" target="whatsapp_web">💬 WA</a>`
+    ? `<a class="quick-btn qb-wpp" href="${waLink(lead.whatsapp, gerarMensagem(lead))}" onclick="contatarLead('${lead.sessionId}', event)">💬 WA</a>`
     : '';
 
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -142,7 +142,7 @@ function renderTab(tab) {
 
       <div class="panel-section">
         <div class="panel-section-title">Ações</div>
-        ${l.whatsapp ? `<a class="panel-big-btn pbb-wpp" href="${waLink(l.whatsapp, gerarMensagem(l))}" target="whatsapp_web">💬 Abrir WhatsApp com mensagem pronta</a>` : ''}
+        ${l.whatsapp ? `<a class="panel-big-btn pbb-wpp" href="${waLink(l.whatsapp, gerarMensagem(l))}" onclick="contatarLead('${l.sessionId}', event)">💬 ${l.contatadoEm ? 'Reenviar mensagem' : 'Abrir WhatsApp com mensagem pronta'}</a>` : ''}
         ${tpls.map(t => `
           <button class="panel-big-btn pbb-copy" onclick="copyTemplatePanel('${t.id}')">📋 ${t.nome}</button>
         `).join('')}

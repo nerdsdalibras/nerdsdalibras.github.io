@@ -319,6 +319,7 @@ function renderLeadCard(l, idx) {
           l.vslPct25        ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">⏱ VSL 25%</div>` :
           (l.vslIniciou||l.clicouVSL) ? `<div class="info-chip" style="color:#FB923C;border-color:#FB923C">▶ Abriu VSL</div>` : ''}
         ${l.clicouGrupo            ? `<div class="info-chip blue">💬 Grupo</div>` : ''}
+        ${l.contatadoEm            ? `<div class="info-chip green">✓ Mensagem enviada</div>` : ''}
         ${hasAlert                 ? `<div class="ai-alert">⚡ Abordar agora</div>` : ''}
         ${tags.map(t => `<span class="tag-chip" style="background:${tagColor(t)}">${t}</span>`).join('')}
       </div>
@@ -340,7 +341,7 @@ function renderLeadCard(l, idx) {
               </div>
             </div>
           </div>
-          ${wppLink ? `<a class="quick-btn qb-wpp" href="${wppLink}" target="whatsapp_web">💬 WA</a>` : ''}
+          ${wppLink ? `<a class="quick-btn qb-wpp ${l.contatadoEm ? 'enviada' : ''}" href="${wppLink}" onclick="contatarLead('${l.sessionId}', event)">${l.contatadoEm ? '✓ WA' : '💬 WA'}</a>` : ''}
           <button class="quick-btn qb-open" onclick="openLead('${l.sessionId}')">Ver →</button>
         </div>
       </div>
