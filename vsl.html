@@ -673,7 +673,7 @@
 
         <!-- desbloqueado -->
         <div class="cta-unlocked" id="ctaUnlocked">
-          <a href="https://pay.kiwify.com.br/1sIyvVL" class="cta-btn" onclick="_trackVSL('vslClicouCTA')">
+          <a href="https://pay.kiwify.com.br/1sIyvVL" class="cta-btn" onclick="return abrirFormCheckout(event)">
             <span>Garantir essa oferta</span>
             <span class="cta-btn-arrow">
               <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -729,6 +729,73 @@
         navigator.sendBeacon(sheetsUrl, JSON.stringify(leads[idx]));
       } catch(e2) {}
     } catch(e) {}
+  }
+
+  // ════════════════════════════════════════════
+  // FORMULÁRIO ANTES DO CHECKOUT (nome + WhatsApp + e-mail)
+  // ════════════════════════════════════════════
+  var _SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec';
+  var _KIWIFY_CHECKOUT = 'https://pay.kiwify.com.br/1sIyvVL';
+
+  function abrirFormCheckout(e) {
+    if (e) e.preventDefault();
+    _trackVSL('vslClicouCTA');
+    // pré-preenche com o que já existe do lead (se estiver no mesmo navegador)
+    try {
+      var leads = JSON.parse(localStorage.getItem('ndl_leads') || '[]');
+      var l = leads.find(function(x){ return x.sessionId === _vslSessionId; });
+      if (l) {
+        if (l.nome)     document.getElementById('ckNome').value  = l.nome;
+        if (l.whatsapp) document.getElementById('ckWpp').value   = l.whatsapp;
+        if (l.email)    document.getElementById('ckEmail').value = l.email;
+      }
+    } catch(_) {}
+    document.getElementById('ckForm').style.display = 'flex';
+    return false;
+  }
+
+  function fecharFormCheckout() {
+    document.getElementById('ckForm').style.display = 'none';
+  }
+
+  function enviarFormCheckout(e) {
+    if (e) e.preventDefault();
+    var nome  = document.getElementById('ckNome').value.trim();
+    var wpp   = document.getElementById('ckWpp').value.trim();
+    var email = document.getElementById('ckEmail').value.trim();
+    var err   = document.getElementById('ckErr');
+
+    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    var wppOk   = wpp.replace(/\D/g, '').length >= 10;
+    if (!nome || !wppOk || !emailOk) {
+      err.textContent = !nome ? 'Por favor, preencha seu nome.'
+        : !wppOk ? 'Informe um WhatsApp válido com DDD.'
+        : 'Informe um e-mail válido.';
+      err.style.display = 'block';
+      return false;
+    }
+
+    var sid = _vslSessionId || ('vsl-' + Date.now());
+    var now = new Date().toISOString();
+    var lead;
+    try {
+      var leads = JSON.parse(localStorage.getItem('ndl_leads') || '[]');
+      var idx = leads.findIndex(function(x){ return x.sessionId === sid; });
+      if (idx < 0) { leads.push({ sessionId: sid, createdAt: now, oferta: 'curso' }); idx = leads.length - 1; }
+      lead = leads[idx];
+      lead.nome = nome; lead.whatsapp = wpp; lead.email = email;
+      lead.clicouCheckout = true; lead.checkoutEm = now; lead.vslClicouCTA = true;
+      if (!lead.oferta) lead.oferta = 'curso';
+      lead.updatedAt = now;
+      localStorage.setItem('ndl_leads', JSON.stringify(leads));
+    } catch(_) {
+      lead = { sessionId: sid, nome: nome, whatsapp: wpp, email: email, clicouCheckout: true,
+               checkoutEm: now, vslClicouCTA: true, oferta: 'curso', createdAt: now, updatedAt: now };
+    }
+    // sendBeacon garante o envio mesmo navegando pro checkout logo em seguida
+    try { navigator.sendBeacon(_SHEETS_URL, JSON.stringify(lead)); } catch(_) {}
+    window.location.href = _KIWIFY_CHECKOUT;
+    return false;
   }
 
   // ════════════════════════════════════════════
@@ -891,6 +958,29 @@
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeFullscreen(); });
   })();
 </script>
+
+<!-- FORMULÁRIO ANTES DO CHECKOUT -->
+<div id="ckForm" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.82);align-items:center;justify-content:center;padding:18px">
+  <div style="background:#fff;color:#1f2937;max-width:420px;width:100%;border-radius:18px;padding:26px 22px;font-family:'Inter',Arial,sans-serif;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="font-size:1.2rem;font-weight:800;margin-bottom:6px">Falta só 1 passo 💚</div>
+    <div style="font-size:.9rem;color:#6b7280;margin-bottom:18px;line-height:1.5">Confirme seus dados para liberar seu acesso e seguir para o pagamento.</div>
+    <input id="ckNome" type="text" placeholder="Seu nome" autocomplete="name"
+      style="width:100%;padding:13px 14px;margin-bottom:10px;border:1.5px solid #d1d5db;border-radius:11px;font-size:1rem;box-sizing:border-box;outline:none"/>
+    <input id="ckWpp" type="tel" inputmode="tel" placeholder="Seu WhatsApp (com DDD)" autocomplete="tel"
+      style="width:100%;padding:13px 14px;margin-bottom:10px;border:1.5px solid #d1d5db;border-radius:11px;font-size:1rem;box-sizing:border-box;outline:none"/>
+    <input id="ckEmail" type="email" inputmode="email" placeholder="Seu melhor e-mail" autocomplete="email"
+      style="width:100%;padding:13px 14px;margin-bottom:6px;border:1.5px solid #d1d5db;border-radius:11px;font-size:1rem;box-sizing:border-box;outline:none"/>
+    <div id="ckErr" style="display:none;color:#dc2626;font-size:.82rem;margin:4px 0 6px;font-weight:600"></div>
+    <button onclick="enviarFormCheckout(event)"
+      style="width:100%;margin-top:10px;padding:15px;border:none;border-radius:12px;background:#22c55e;color:#fff;font-size:1.02rem;font-weight:800;cursor:pointer">
+      Ir para o pagamento →
+    </button>
+    <button onclick="fecharFormCheckout()"
+      style="width:100%;margin-top:8px;padding:10px;border:none;background:none;color:#9ca3af;font-size:.85rem;cursor:pointer">
+      Cancelar
+    </button>
+  </div>
+</div>
 
 </body>
 </html>
