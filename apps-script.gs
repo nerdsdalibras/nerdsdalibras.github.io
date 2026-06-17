@@ -529,7 +529,7 @@ function _emailRemarketing(lead, num) {
   var subjects = [
     nome + ', você quase começou sua jornada em Libras 💚',
     nome + ', deixa eu te tirar uma dúvida sobre o ' + prod + '?',
-    'Última mensagem da Lorena pra você, ' + nome + ' 🙏',
+    '🎁 ' + nome + ', um presente final pra você: 30% OFF (só até 30/06)',
   ];
 
   var bodies = [
@@ -548,10 +548,14 @@ function _emailRemarketing(lead, num) {
     'Lorena 💚\nNerds da Libras',
 
     'Oi, ' + nome + '. 💚\n\n' +
-    'Essa é minha última mensagem — prometo não insistir mais.\n\n' +
-    'Eu sei que a vida é corrida e que toda decisão tem seu tempo. Mas queria deixar registrado: a barreira entre você e uma comunicação de verdade com pessoas surdas existe, e ela não some sozinha.\n\n' +
-    'Quando você sentir que é a hora, o caminho está aqui:\n' + link + '\n\n' +
-    'Vai ser uma alegria te ver do outro lado. 🤟\n\n' +
+    'Essa é minha última mensagem — e quero que ela valha muito a pena.\n\n' +
+    'Eu sei que a vida é corrida e que toda decisão tem seu tempo. Mas a barreira entre você e uma comunicação de verdade com pessoas surdas existe, e ela não some sozinha.\n\n' +
+    'Então preparei um último empurrãozinho, com muito carinho, só pra você:\n\n' +
+    '🎁 30% DE DESCONTO no ' + prod + '\n' +
+    '🏷️ Cupom: CUPOM30\n' +
+    '⏳ Válido só até 30/06/2026\n\n' +
+    'É só aplicar o cupom CUPOM30 no checkout:\n' + link + '\n\n' +
+    'Depois dessa data o valor volta ao normal. Vai ser uma alegria te ver do outro lado. 🤟\n\n' +
     'Com todo carinho,\nLorena · Nerds da Libras',
   ];
 

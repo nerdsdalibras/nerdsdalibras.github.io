@@ -140,7 +140,7 @@ function _emailTemplate(l, num) {
   const subjects = [
     `${nome}, seu diagnóstico em Libras está aqui 🤟`,
     `${nome}, o erro que trava 97% dos que aprendem Libras`,
-    `Última mensagem da Lorena pra você, ${nome} 🙏`,
+    `🎁 ${nome}, um presente final pra você: 30% OFF (só até 30/06)`,
   ];
 
   const bodies = [
@@ -151,7 +151,7 @@ function _emailTemplate(l, num) {
 
     `Oi ${nome}!\n\nOntem você fez o diagnóstico e ficou no nível ${nivel}.\n\nPreciso te contar algo que a maioria dos cursos nunca explica:\n\nA Libras não é português sinalizado. É uma língua completa, com gramática visual própria.\n\nEnquanto você tenta traduzir o português para sinais, seu cérebro fica em conflito. É por isso que pessoas que estudam por anos travam na hora de usar.\n\nO método certo inverte isso: você aprende a pensar visualmente. E aí as coisas fluem.\n\nA ${prod} vai te dar exatamente isso — com acompanhamento, estrutura e o caminho mais curto.\n\nA condição especial que reservei para você ainda está disponível.\n\nPosso te mostrar os detalhes?\n\nLorena 🤟\nNerds da Libras`,
 
-    `Oi ${nome}.\n\nEssa é minha última mensagem.\n\nFizemos o diagnóstico juntos há 2 dias. Você está no nível ${nivel} — e eu sei exatamente o que você precisa para evoluir.\n\nNão vou insistir. Sei que a vida é corrida e as decisões têm tempo.\n\nMas quero deixar uma coisa registrada:\n\nA barreira que existe hoje entre você e uma pessoa surda é real. E ela não vai desaparecer sozinha.\n\nQuando você estiver pronto${sfx}, o link está aqui:\n${link}\n\nVai ser um prazer te ver do outro lado.\n\nCom carinho,\nLorena 🤟\nNerds da Libras`,
+    `Oi ${nome}.\n\nEssa é minha última mensagem — e quero que ela valha muito a pena.\n\nNão vou insistir. Sei que a vida é corrida e as decisões têm tempo. Mas a barreira que existe hoje entre você e uma pessoa surda é real — e ela não vai desaparecer sozinha.\n\nEntão preparei um último empurrãozinho, com muito carinho, só pra você:\n\n🎁 30% DE DESCONTO no ${prod}\n🏷️ Cupom: CUPOM30\n⏳ Válido só até 30/06/2026\n\nÉ só aplicar o cupom CUPOM30 no checkout:\n${link}\n\nDepois dessa data o valor volta ao normal. Vai ser um prazer te ver do outro lado. 🤟\n\nCom carinho,\nLorena\nNerds da Libras`,
   ];
 
   return { subject: subjects[num - 1], body: bodies[num - 1] };
