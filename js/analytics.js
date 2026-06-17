@@ -131,27 +131,24 @@ async function renderAnalytics() {
 const EMAIL_DELAYS = [2, 24, 48];
 
 function _emailTemplate(l, num) {
-  const nome  = l.nome  || 'você';
-  const nivel = l.nivelIdentificado || '—';
-  const sfx   = l.genero === 'feminino' ? 'a' : 'o';
+  const nome  = (l.nome || 'você').split(' ')[0];
   const link  = l.oferta === 'mentoria' ? CONFIG.MENTORIA_EDUZZ_URL : CONFIG.KIWIFY_URL;
-  const prod  = l.oferta === 'mentoria' ? CONFIG.MENTORIA_NOME       : CONFIG.CURSO_NOME;
+  // Próximo sábado (DD/MM) para o prazo do e-mail 3
+  const _s = new Date(); _s.setDate(_s.getDate() + ((6 - _s.getDay() + 7) % 7));
+  const sabado = `${String(_s.getDate()).padStart(2,'0')}/${String(_s.getMonth()+1).padStart(2,'0')}`;
 
   const subjects = [
-    `${nome}, seu diagnóstico em Libras está aqui 🤟`,
-    `${nome}, o erro que trava 97% dos que aprendem Libras`,
-    `🎁 ${nome}, um presente final pra você: 30% OFF (só até 30/06)`,
+    `A primeira conversa de verdade com quem você ama`,
+    `Por que você não vai aprender Libras sozinho(a) (nem precisa)`,
+    `Desconto no PIX (e um bônus que vai te destravar) 💸`,
   ];
 
   const bodies = [
-    `Oi ${nome}!\n\nAqui é a Lorena, da Nerds da Libras.\n\nVocê acabou de fazer o diagnóstico comigo e descobriu que está no nível ${nivel} em Libras.\n\n${l.oferta === 'mentoria'
-      ? `A ${CONFIG.MENTORIA_NOME} é para quem já tem base como você — e precisa destravar a fluência, a interpretação profissional e a confiança para ir mais longe.`
-      : `O ${CONFIG.CURSO_NOME} foi desenvolvido para pessoas exatamente no seu perfil. Com certificado de 350 horas válido em todo o Brasil e metodologia visual exclusiva — você aprende como a mente surda processa, não como tradução.`
-    }\n\nReservei uma condição especial para você por tempo limitado.\n\nResponde esse e-mail ou me chama no WhatsApp para saber mais. 🙏\n\nCom carinho,\nLorena\nNerds da Libras`,
+    `Oi, ${nome} 💜\n\nAqui é a Lorena, e eu quero te fazer uma pergunta sincera:\n\nQuantas vezes você já ficou ali, perto de uma pessoa surda que você ama, querendo dizer algo simples — e as palavras não saíram?\n\nUm "eu te amo". Um "como foi seu dia?". Uma piada boba na mesa do almoço.\n\nEu sei exatamente como isso dói. E é justamente por isso que eu criei o Zero a Libras.\n\nDaqui a algumas semanas, você senta ao lado dessa pessoa e tem uma conversa de verdade. Olho no olho, na língua dela.\n\nFoi pensando em quem está começando do absoluto zero que eu montei esse curso. Sem teoria chata, sem decoreba — você aprende os sinais que importam, na ordem certa, mesmo que só tenha 20 minutinhos por dia.\n\n👉 QUERO CONHECER O ZERO A LIBRAS:\n${link}\n\nVocê ainda pode experimentar o curso por 7 dias.\n\nCom carinho,\nLorena 💜`,
 
-    `Oi ${nome}!\n\nOntem você fez o diagnóstico e ficou no nível ${nivel}.\n\nPreciso te contar algo que a maioria dos cursos nunca explica:\n\nA Libras não é português sinalizado. É uma língua completa, com gramática visual própria.\n\nEnquanto você tenta traduzir o português para sinais, seu cérebro fica em conflito. É por isso que pessoas que estudam por anos travam na hora de usar.\n\nO método certo inverte isso: você aprende a pensar visualmente. E aí as coisas fluem.\n\nA ${prod} vai te dar exatamente isso — com acompanhamento, estrutura e o caminho mais curto.\n\nA condição especial que reservei para você ainda está disponível.\n\nPosso te mostrar os detalhes?\n\nLorena 🤟\nNerds da Libras`,
+    `Oi, ${nome}! 💜\n\nTem uma coisa que separa quem aprende Libras de verdade de quem desiste no meio do caminho: acompanhamento.\n\nVídeo solto no YouTube ensina sinal. Mas não te corrige, não tira sua dúvida, não te segura na mão quando você trava. E é aí que a maioria desiste.\n\nNo Zero a Libras é diferente. Você aprende organizado por níveis e pratica com pessoas no mesmo ponto da jornada que você. 🌱\n\n✅ Tira dúvidas e recebe correção (sinal errado vira vício)\n✅ Pratica sem vergonha de errar\n✅ Não está sozinho(a) nessa\n\nE o mais importante: eu estou junto, acompanhando de perto pra te ajudar a chegar lá. 🤟\n\n👉 QUERO APRENDER COM ACOMPANHAMENTO DE VERDADE:\n${link}\n\nSeu único arrependimento vai ser não ter começado antes.\n\nCom carinho,\nLorena 💜`,
 
-    `Oi ${nome}.\n\nEssa é minha última mensagem — e quero que ela valha muito a pena.\n\nNão vou insistir. Sei que a vida é corrida e as decisões têm tempo. Mas a barreira que existe hoje entre você e uma pessoa surda é real — e ela não vai desaparecer sozinha.\n\nEntão preparei um último empurrãozinho, com muito carinho, só pra você:\n\n🎁 30% DE DESCONTO no ${prod}\n🏷️ Cupom: DESCONTOVIP\n⏳ Válido só até 30/06/2026\n\nÉ só aplicar o cupom DESCONTOVIP no checkout:\n${link}\n\nDepois dessa data o valor volta ao normal. Vai ser um prazer te ver do outro lado. 🤟\n\nCom carinho,\nLorena\nNerds da Libras`,
+    `Oi, ${nome}! 💜\n\nSextou — e hoje é dia de condição especial. 🎉\n\nEm algum momento você se interessou pelo Zero a Libras, mas ainda não começou. Cada dia sem se comunicar com quem você ama é um dia que não volta. Então decidi facilitar pra você dar o primeiro passo HOJE:\n\nPagando no PIX, você ganha 10% de desconto. 🤟\n\n👉 QUERO O DESCONTO NO PIX:\n${link}\n\nE tem mais — bônus exclusivo de quem paga no PIX:\n🎁 Aula extra "Suas primeiras 20 frases em Libras" — as que você mais vai usar no dia a dia, prontas pra usar já na primeira semana.\n\n⚠️ IMPORTANTE: o desconto de 10% e o bônus ficam disponíveis só até sábado, dia ${sabado}, às 23h59.\n\nNão deixa essa conversa pra depois. 💜\n\nCom carinho,\nLorena`,
   ];
 
   return { subject: subjects[num - 1], body: bodies[num - 1] };

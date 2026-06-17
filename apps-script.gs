@@ -520,46 +520,109 @@ var EMAIL_CFG = {
 };
 var EMAIL_DELAYS_H = [2, 24, 48];  // horas após o checkout para e-mail 1, 2 e 3
 
+// Próximo sábado no formato DD/MM (hoje, se já for sábado)
+function _proximoSabado() {
+  var d = new Date();
+  var diff = (6 - d.getDay() + 7) % 7;
+  d.setDate(d.getDate() + diff);
+  return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2);
+}
+function _btn(link, label) {
+  return '<p style="margin:24px 0"><a href="' + link + '" style="display:inline-block;' +
+    'background:#7c3aed;color:#ffffff;text-decoration:none;padding:15px 30px;border-radius:12px;' +
+    'font-weight:700;font-size:16px">' + label + '</a></p>';
+}
+function _emailWrap(preheader, inner) {
+  return '<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">' + preheader + '</div>' +
+    '<div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.65;color:#2d2d33;max-width:600px;margin:0 auto;padding:14px">' +
+    inner +
+    '<p style="color:#9ca3af;font-size:12px;margin-top:30px;border-top:1px solid #eee;padding-top:14px">Nerds da Libras · Você recebe este e-mail porque fez a avaliação de Libras com a Lorena.</p></div>';
+}
+function _p(t) { return '<p style="margin:0 0 15px">' + t + '</p>'; }
+
 function _emailRemarketing(lead, num) {
   var nome = String(lead.nome || 'você').split(' ')[0];
   var ehMentoria = lead.oferta === 'mentoria';
-  var prod = ehMentoria ? EMAIL_CFG.mentoriaNome : EMAIL_CFG.cursoNome;
-  var link = ehMentoria ? EMAIL_CFG.mentoriaUrl  : EMAIL_CFG.cursoUrl;
+  var link = ehMentoria ? EMAIL_CFG.mentoriaUrl : EMAIL_CFG.cursoUrl;
 
-  var subjects = [
-    nome + ', você quase começou sua jornada em Libras 💚',
-    nome + ', deixa eu te tirar uma dúvida sobre o ' + prod + '?',
-    '🎁 ' + nome + ', um presente final pra você: 30% OFF (só até 30/06)',
-  ];
+  if (num === 1) {
+    return {
+      subject: 'A primeira conversa de verdade com quem você ama',
+      htmlBody: _emailWrap('Do zero à sua primeira conversa em Libras (mais perto do que você imagina)',
+        _p('Oi, ' + nome + ' 💜') +
+        _p('Aqui é a Lorena, e eu quero te fazer uma pergunta sincera:') +
+        _p('Quantas vezes você já ficou ali, perto de uma pessoa surda que você ama, querendo dizer algo simples — e as palavras não saíram?') +
+        _p('Um "eu te amo". Um "como foi seu dia?". Uma piada boba na mesa do almoço.') +
+        _p('Eu sei exatamente como isso dói. E é justamente por isso que eu criei o Zero a Libras.') +
+        _p('Imagina comigo… 🌱') +
+        _p('Daqui a algumas semanas, você senta ao lado dessa pessoa e tem uma conversa de verdade. Não gestos soltos, não apontar, não o celular no meio. Uma conversa, olho no olho, na língua dela.') +
+        _p('"Ah, Lorena… mas eu nunca estudei Libras, vou demorar anos…"') +
+        _p('Calma. Foi exatamente pensando em quem está começando do absoluto zero que eu montei esse curso.') +
+        _p('Sem teoria chata, sem decoreba. Você aprende os sinais que realmente importam pro seu dia a dia, na ordem certa, com um método que respeita o seu tempo — mesmo que você só tenha 20 minutinhos por dia.') +
+        _p('Eu sou tradutora e intérprete há anos, e já ensinei centenas de pessoas que chegaram travadas e hoje conversam com naturalidade. Posso fazer isso com você também. 🤟') +
+        _btn(link, '👉 QUERO CONHECER O ZERO A LIBRAS') +
+        _p('Você ainda pode experimentar o curso por 7 dias e sentir na prática como é mais simples do que parece.') +
+        _p('Te espero do outro lado.') +
+        _p('Com carinho,<br>Lorena 💜')),
+      body: 'Oi, ' + nome + ' 💜\n\nAqui é a Lorena, e quero te fazer uma pergunta sincera:\n\n' +
+        'Quantas vezes você ficou perto de uma pessoa surda que ama, querendo dizer algo simples — e as palavras não saíram?\n\n' +
+        'Eu sei como isso dói. Por isso criei o Zero a Libras.\n\nDaqui a algumas semanas você pode ter uma conversa de verdade, olho no olho, na língua dela. Foi pensando em quem começa do zero que montei esse curso — sem teoria chata, na ordem certa, mesmo com 20 minutinhos por dia.\n\n' +
+        '👉 QUERO CONHECER O ZERO A LIBRAS:\n' + link + '\n\nVocê ainda pode experimentar por 7 dias.\n\nCom carinho,\nLorena 💜',
+    };
+  }
 
-  var bodies = [
-    'Oi, ' + nome + '! 💚\n\n' +
-    'Aqui é a Lorena, da Nerds da Libras.\n\n' +
-    'Vi que você chegou pertinho de garantir sua vaga no ' + prod + ', mas não finalizou. Fica tranquila, isso acontece bastante!\n\n' +
-    'Se surgiu alguma dúvida ou apareceu algum imprevisto no pagamento, me responde esse e-mail que eu te ajudo pessoalmente — de coração. 💚\n\n' +
-    'Sua vaga (com a condição especial) ainda está reservada aqui:\n' + link + '\n\n' +
-    'Com carinho,\nLorena · Nerds da Libras',
+  if (num === 2) {
+    return {
+      subject: 'Por que você não vai aprender Libras sozinho(a) (nem precisa)',
+      htmlBody: _emailWrap('Tem uma coisa que separa quem aprende de quem desiste: acompanhamento.',
+        _p('Oi, ' + nome + '! 💜') +
+        _p('Tem uma coisa que separa quem aprende Libras de verdade de quem desiste no meio do caminho: <strong>acompanhamento</strong>.') +
+        _p('Vídeo solto no YouTube ensina sinal. Mas não te corrige, não tira sua dúvida, não te segura na mão quando você trava. E é aí que a maioria desiste.') +
+        _p('No Zero a Libras é diferente.') +
+        _p('Você aprende organizado por níveis — começa do básico e vai subindo de etapa conforme evolui. A cada avanço, você entra em contato com outras pessoas que estão exatamente no mesmo ponto da jornada que você. 🌱') +
+        _p('Isso muda tudo, porque você:') +
+        _p('✅ Tira suas dúvidas e recebe correção (sinal errado vira vício difícil de tirar depois)<br>' +
+           '✅ Pratica com gente que também está aprendendo, sem vergonha de errar<br>' +
+           '✅ Sente que não está sozinho(a) nessa') +
+        _p('E o mais importante: eu estou junto. Não é um curso gravado e abandonado — eu acompanho de perto e estou presente pra te ajudar a chegar lá. 🤟') +
+        _p('Aprender uma língua é repetir, errar, corrigir e repetir de novo. Sozinho isso é solitário. Comigo e com a comunidade, vira leve.') +
+        _btn(link, '👉 QUERO APRENDER COM ACOMPANHAMENTO DE VERDADE') +
+        _p('Te garanto: seu único arrependimento vai ser não ter começado antes.') +
+        _p('Com carinho,<br>Lorena 💜')),
+      body: 'Oi, ' + nome + '! 💜\n\nTem uma coisa que separa quem aprende Libras de quem desiste: acompanhamento.\n\n' +
+        'Vídeo solto no YouTube ensina sinal, mas não te corrige nem te segura quando você trava. No Zero a Libras você aprende por níveis, com correção, praticando com gente no mesmo ponto que você — e comigo presente pra te ajudar a chegar lá. 🤟\n\n' +
+        '✅ Correção (sinal errado vira vício)\n✅ Prática sem vergonha de errar\n✅ Você não está sozinho(a)\n\n' +
+        '👉 QUERO APRENDER COM ACOMPANHAMENTO DE VERDADE:\n' + link + '\n\nCom carinho,\nLorena 💜',
+    };
+  }
 
-    'Oi, ' + nome + '! 💚\n\n' +
-    'Ontem você esteve quase começando no ' + prod + '. Quero te contar uma coisa que quase ninguém explica:\n\n' +
-    'Libras não é português com as mãos. É uma língua visual, com gramática própria. Quando a gente tenta "traduzir" o português, o cérebro trava — é por isso que tanta gente estuda anos e não destrava.\n\n' +
-    'A metodologia que eu uso inverte isso: você aprende a pensar visualmente, e aí flui de verdade.\n\n' +
-    'Se ficou alguma insegurança, me responde aqui que eu te explico tudo. A condição especial ainda está de pé:\n' + link + '\n\n' +
-    'Lorena 💚\nNerds da Libras',
-
-    'Oi, ' + nome + '. 💚\n\n' +
-    'Essa é minha última mensagem — e quero que ela valha muito a pena.\n\n' +
-    'Eu sei que a vida é corrida e que toda decisão tem seu tempo. Mas a barreira entre você e uma comunicação de verdade com pessoas surdas existe, e ela não some sozinha.\n\n' +
-    'Então preparei um último empurrãozinho, com muito carinho, só pra você:\n\n' +
-    '🎁 30% DE DESCONTO no ' + prod + '\n' +
-    '🏷️ Cupom: DESCONTOVIP\n' +
-    '⏳ Válido só até 30/06/2026\n\n' +
-    'É só aplicar o cupom DESCONTOVIP no checkout:\n' + link + '\n\n' +
-    'Depois dessa data o valor volta ao normal. Vai ser uma alegria te ver do outro lado. 🤟\n\n' +
-    'Com todo carinho,\nLorena · Nerds da Libras',
-  ];
-
-  return { subject: subjects[num - 1], body: bodies[num - 1] };
+  // num === 3 — última chamada: 10% no PIX + bônus
+  var sabado = _proximoSabado();
+  return {
+    subject: 'Desconto no PIX (e um bônus que vai te destravar) 💸',
+    htmlBody: _emailWrap('Vai pagar no PIX? Toma desconto + bônus',
+      _p('Oi, ' + nome + '! 💜') +
+      _p('Sextou — e hoje é dia de condição especial. 🎉') +
+      _p('Em algum momento você se interessou pelo Zero a Libras (por isso está recebendo este email). Mas, por algum motivo, ainda não começou.') +
+      _p('O motivo eu não sei. Mas o que eu sei é que cada dia sem se comunicar com quem você ama é um dia que não volta. Então decidi facilitar pra você dar o primeiro passo HOJE:') +
+      _p('<strong>Pagando no PIX, você ganha 10% de desconto.</strong> 🤟') +
+      _btn(link, '👉 QUERO O DESCONTO NO PIX') +
+      _p('E tem mais — bônus exclusivo de quem paga no PIX:') +
+      _p('🎁 <strong>Aula extra "Suas primeiras 20 frases em Libras"</strong> — as frases que você mais vai usar no dia a dia (em casa, no trabalho, com quem você ama), prontas pra você sair usando já na primeira semana.') +
+      _p('É o tipo de conteúdo que tira você do "sei alguns sinais soltos" e te coloca em "consigo conversar". Direto ao ponto, do jeito que eu gosto.') +
+      _p('Tudo isso de bônus — mas só pra quem fecha no PIX, viu? 😉') +
+      _btn(link, '👉 VOU PAGAR AGORA NO PIX') +
+      _p('⚠️ <strong>IMPORTANTE:</strong> O desconto de 10% e o bônus das 20 frases ficam disponíveis só até sábado, dia <strong>' + sabado + '</strong>, às 23h59.') +
+      _p('Não deixa essa conversa pra depois. 💜') +
+      _p('Com carinho,<br>Lorena')),
+    body: 'Oi, ' + nome + '! 💜\n\nSextou — e hoje é dia de condição especial. 🎉\n\n' +
+      'Você se interessou pelo Zero a Libras mas ainda não começou. Cada dia sem se comunicar com quem você ama é um dia que não volta. Então:\n\n' +
+      'Pagando no PIX, você ganha 10% de desconto. 🤟\n\n' +
+      '👉 QUERO O DESCONTO NO PIX:\n' + link + '\n\n' +
+      'E ainda um bônus exclusivo de quem paga no PIX:\n🎁 Aula extra "Suas primeiras 20 frases em Libras" — prontas pra usar já na primeira semana.\n\n' +
+      '⚠️ O desconto de 10% e o bônus ficam disponíveis só até sábado, dia ' + sabado + ', às 23h59.\n\n' +
+      'Não deixa essa conversa pra depois. 💜\n\nCom carinho,\nLorena',
+  };
 }
 
 // Envia o e-mail (1, 2 ou 3) — personalizado com o nome — para uma lista de
@@ -601,7 +664,7 @@ function enviarEmailParaLeads(sessionIds, num) {
     };
     try {
       var tpl = _emailRemarketing(lead, num);
-      MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, name: EMAIL_CFG.fromName });
+      MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName });
       if (iSent >= 0) sheet.getRange(r + 2, iSent + 1).setValue(new Date().toISOString());
       enviados++;
     } catch (err) { /* segue para o próximo */ }
@@ -657,7 +720,7 @@ function enviarEmailsRemarketing() {
       if (now < ancora + EMAIL_DELAYS_H[n] * 3600000) break;  // ainda não é hora deste e-mail
       try {
         var tpl = _emailRemarketing(lead, n + 1);
-        MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, name: EMAIL_CFG.fromName });
+        MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName });
         var ts = new Date().toISOString();
         sheet.getRange(r + 2, iE[n] + 1).setValue(ts);
         enviados++;
