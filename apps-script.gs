@@ -552,9 +552,9 @@ function _emailRemarketing(lead, num) {
     'Eu sei que a vida é corrida e que toda decisão tem seu tempo. Mas a barreira entre você e uma comunicação de verdade com pessoas surdas existe, e ela não some sozinha.\n\n' +
     'Então preparei um último empurrãozinho, com muito carinho, só pra você:\n\n' +
     '🎁 30% DE DESCONTO no ' + prod + '\n' +
-    '🏷️ Cupom: CUPOM30\n' +
+    '🏷️ Cupom: DESCONTOVIP\n' +
     '⏳ Válido só até 30/06/2026\n\n' +
-    'É só aplicar o cupom CUPOM30 no checkout:\n' + link + '\n\n' +
+    'É só aplicar o cupom DESCONTOVIP no checkout:\n' + link + '\n\n' +
     'Depois dessa data o valor volta ao normal. Vai ser uma alegria te ver do outro lado. 🤟\n\n' +
     'Com todo carinho,\nLorena · Nerds da Libras',
   ];
