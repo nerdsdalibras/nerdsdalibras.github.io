@@ -170,6 +170,12 @@ function renderBulkBar() {
     <span class="bulk-count">${selectedLeads.size} selecionado${selectedLeads.size > 1 ? 's' : ''}</span>
     <button class="bulk-btn" onclick="bulkCopyLinks()">💬 Copiar links WA</button>
     <button class="bulk-btn" onclick="bulkCopyMsgs()">📋 Copiar mensagens</button>
+    <select class="sort-select" id="bulk-email-sel" style="font-size:.75rem">
+      <option value="1">📧 E-mail 1 (lembrete)</option>
+      <option value="2">📧 E-mail 2 (objeção)</option>
+      <option value="3">📧 E-mail 3 (última chamada)</option>
+    </select>
+    <button class="bulk-btn" onclick="bulkSendEmail()">Enviar e-mail</button>
     <select class="sort-select" id="bulk-status-sel" style="font-size:.75rem">
       <option value="">📊 Mudar status...</option>
       ${statusOpts}
@@ -193,6 +199,31 @@ function bulkCopyMsgs() {
     return `— ${l.nome}\n${wpp}\n${gerarMensagem(l)}`;
   }).join('\n\n---\n\n');
   navigator.clipboard.writeText(text).then(() => showToast(`${selectedLeads.size} mensagens copiadas!`));
+}
+// Envia em massa (pelo Gmail, via Apps Script) o e-mail escolhido,
+// personalizado com o nome de cada lead. Ignora quem não tem e-mail.
+function bulkSendEmail() {
+  const sel = document.getElementById('bulk-email-sel');
+  const num = parseInt(sel ? sel.value : '1', 10) || 1;
+  const leads = getSelectedLeads().filter(l => l.email);
+  const semEmail = selectedLeads.size - leads.length;
+  if (!leads.length) { showToast('Nenhum selecionado tem e-mail cadastrado'); return; }
+  if (!confirm(`Enviar o E-mail ${num} (personalizado com o nome) para ${leads.length} lead(s)?` +
+      (semEmail ? `\n\n${semEmail} sem e-mail serão ignorados.` : ''))) return;
+
+  const sessionIds = leads.map(l => l.sessionId);
+  fetch(CONFIG.SHEETS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'sendEmails', sessionIds, emailNum: num }),
+  }).catch(() => {});
+
+  // Marca otimisticamente (o servidor também grava ao enviar)
+  const ts = new Date().toISOString();
+  leads.forEach(l => { l[`email${num}SentAt`] = ts; });
+  showToast(`Enviando E-mail ${num} para ${leads.length} lead(s)... 📨`);
+  clearSelection();
+  renderLeads();
 }
 function applyBulkStatus() {
   const sel = document.getElementById('bulk-status-sel');

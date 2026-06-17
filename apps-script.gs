@@ -91,6 +91,12 @@ function doPost(e) {
     try { data = JSON.parse(raw); }
     catch (_) { data = _parseForm(e); }   // Eduzz pode enviar form-urlencoded
 
+    // Envio manual de e-mail em massa, disparado pelo CRM
+    if (data && data.action === 'sendEmails' && data.sessionIds) {
+      var nEnv = enviarEmailParaLeads(data.sessionIds, data.emailNum || 1);
+      return respond({ ok: true, sent: nEnv });
+    }
+
     // Webhook da Eduzz (Mentoria) — checa antes da Kiwify pois tem campos próprios
     if (isEduzzPayload(data)) {
       _logWebhook('eduzz', raw);
@@ -550,6 +556,53 @@ function _emailRemarketing(lead, num) {
   ];
 
   return { subject: subjects[num - 1], body: bodies[num - 1] };
+}
+
+// Envia o e-mail (1, 2 ou 3) — personalizado com o nome — para uma lista de
+// leads escolhidos no CRM. Marca emailNSentAt e retorna quantos foram enviados.
+function enviarEmailParaLeads(sessionIds, num) {
+  if (!sessionIds || !sessionIds.length) return 0;
+  num = parseInt(num, 10) || 1;
+  if (num < 1 || num > 3) num = 1;
+
+  var sheet   = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 0;
+  var headers = ensureNewColumns(sheet);
+  var data    = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+
+  function idx(field) {
+    var col = FIELD_TO_COL[field] || field;
+    var i = headers.indexOf(col);
+    if (i < 0) i = headers.indexOf(field);
+    return i;
+  }
+  var iSid = idx('sessionId'), iEmail = idx('email'), iNome = idx('nome'),
+      iNivel = idx('nivelIdentificado'), iOferta = idx('oferta'), iSent = idx('email' + num + 'SentAt');
+
+  var want = {};
+  for (var k = 0; k < sessionIds.length; k++) want[String(sessionIds[k])] = true;
+
+  var enviados = 0;
+  for (var r = 0; r < data.length; r++) {
+    var sid = String(iSid >= 0 ? data[r][iSid] : '');
+    if (!want[sid]) continue;
+    var email = String(iEmail >= 0 ? data[r][iEmail] : '').trim();
+    if (!email || email.indexOf('@') < 0) continue;
+
+    var lead = {
+      nome: iNome >= 0 ? data[r][iNome] : '',
+      nivelIdentificado: iNivel >= 0 ? data[r][iNivel] : '',
+      oferta: iOferta >= 0 ? data[r][iOferta] : '',
+    };
+    try {
+      var tpl = _emailRemarketing(lead, num);
+      MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, name: EMAIL_CFG.fromName });
+      if (iSent >= 0) sheet.getRange(r + 2, iSent + 1).setValue(new Date().toISOString());
+      enviados++;
+    } catch (err) { /* segue para o próximo */ }
+  }
+  return enviados;
 }
 
 function enviarEmailsRemarketing() {
