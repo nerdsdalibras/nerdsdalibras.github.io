@@ -146,7 +146,7 @@ function _emailTemplate(l, num) {
   const bodies = [
     `Oi ${nome}!\n\nAqui é a Lorena, da Nerds da Libras.\n\nVocê acabou de fazer o diagnóstico comigo e descobriu que está no nível ${nivel} em Libras.\n\n${l.oferta === 'mentoria'
       ? `A ${CONFIG.MENTORIA_NOME} é para quem já tem base como você — e precisa destravar a fluência, a interpretação profissional e a confiança para ir mais longe.`
-      : `O ${CONFIG.CURSO_NOME} foi desenvolvido para pessoas exatamente no seu perfil. Com certificação de 300 horas e metodologia visual exclusiva — você aprende como a mente surda processa, não como tradução.`
+      : `O ${CONFIG.CURSO_NOME} foi desenvolvido para pessoas exatamente no seu perfil. Com certificado de 350 horas válido em todo o Brasil e metodologia visual exclusiva — você aprende como a mente surda processa, não como tradução.`
     }\n\nReservei uma condição especial para você por tempo limitado.\n\nResponde esse e-mail ou me chama no WhatsApp para saber mais. 🙏\n\nCom carinho,\nLorena\nNerds da Libras`,
 
     `Oi ${nome}!\n\nOntem você fez o diagnóstico e ficou no nível ${nivel}.\n\nPreciso te contar algo que a maioria dos cursos nunca explica:\n\nA Libras não é português sinalizado. É uma língua completa, com gramática visual própria.\n\nEnquanto você tenta traduzir o português para sinais, seu cérebro fica em conflito. É por isso que pessoas que estudam por anos travam na hora de usar.\n\nO método certo inverte isso: você aprende a pensar visualmente. E aí as coisas fluem.\n\nA ${prod} vai te dar exatamente isso — com acompanhamento, estrutura e o caminho mais curto.\n\nA condição especial que reservei para você ainda está disponível.\n\nPosso te mostrar os detalhes?\n\nLorena 🤟\nNerds da Libras`,

@@ -5,14 +5,16 @@ const CONFIG = {
 
   // ── CURSO: Do Zero a Libras ──
   KIWIFY_URL:       'https://pay.kiwify.com.br/1sIyvVL',
-  CURSO_NOME:       'Curso do Zero à Libras — Base e Intermediário',
+  CURSO_NOME:       'Curso do Zero à Libras — Básico, Intermediário e Avançado',
   PRECO_CHEIO:      'R$999,00',
   PRECO_OFERTA:     'R$397,00',
   PARCELAS:         '12x de R$41,06',
   GARANTIA_DIAS:    7,
   CURSO_MODULOS: [
-    '1º Nível BASE — Alfabeto, Números, Cumprimentos e Frases do Dia a Dia',
+    '1º Nível BÁSICO — Alfabeto, Números, Cumprimentos e Frases do Dia a Dia',
     '2º Nível INTERMEDIÁRIO — Frases, Diálogos, Estruturas e Fluência',
+    '3º Nível AVANÇADO — Conversação, Interpretação e Fluência completa',
+    'Certificado de 350 horas válido em todo o Brasil',
     'Aulas práticas e exercícios para fixar cada etapa',
     'Acesso vitalício — estude no seu ritmo e onde quiser',
   ],

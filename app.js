@@ -607,9 +607,9 @@ async function mostrarSelecaoOferta(temFormacao) {
   if (temFormacao) {
     await addBubble(`Como você já tem formação em Libras, o próximo passo natural é a <strong>${CONFIG.MENTORIA_NOME}</strong> — para se profissionalizar ainda mais e ter clareza total sobre seu caminho. 💜`, 2500);
     await sleep(4000);
-    await addBubble(`Mas também tenho o <strong>${CONFIG.CURSO_NOME}</strong> — com certificação de <strong>300 horas</strong> — para quem quer consolidar a base com uma formação reconhecida. 📜`, 2000);
+    await addBubble(`Mas também tenho o <strong>${CONFIG.CURSO_NOME}</strong> — com certificado de <strong>350 horas válido em todo o Brasil</strong> — para quem quer consolidar a base com uma formação reconhecida. 📜`, 2000);
   } else {
-    await addBubble(`Como você ainda está construindo sua base, o <strong>${CONFIG.CURSO_NOME}</strong> é o caminho ideal — com certificação de <strong>300 horas</strong> e metodologia visual de verdade. 📜`, 2500);
+    await addBubble(`Como você ainda está construindo sua base, o <strong>${CONFIG.CURSO_NOME}</strong> é o caminho ideal — com certificado de <strong>350 horas válido em todo o Brasil</strong> e metodologia visual de verdade. 📜`, 2500);
     await sleep(4000);
     await addBubble(`Mas se você sente que já tem base e quer acelerar sua profissionalização, também tenho a <strong>${CONFIG.MENTORIA_NOME}</strong>. 💜`, 2000);
   }
@@ -626,7 +626,7 @@ async function mostrarSelecaoOferta(temFormacao) {
       <div class="choice-icon">📜</div>
       <div>
         <div class="choice-label">${CONFIG.CURSO_NOME}</div>
-        <div class="choice-desc">Certificação 300h · Base e Intermediário</div>
+        <div class="choice-desc">Certificado 350h nacional · Básico, Intermediário e Avançado</div>
       </div>
     </button>
     <button class="choice-btn" onclick="escolherOferta('mentoria')">
