@@ -596,31 +596,31 @@ function _emailRemarketing(lead, num) {
     };
   }
 
-  // num === 3 — última chamada: 10% no PIX + bônus
+  // num === 3 — última chamada: 30% OFF com cupom DESCONTO30 + bônus
   var sabado = _proximoSabado();
   return {
-    subject: 'Desconto no PIX (e um bônus que vai te destravar) 💸',
-    htmlBody: _emailWrap('Vai pagar no PIX? Toma desconto + bônus',
+    subject: '30% OFF + um bônus que vai te destravar 💸',
+    htmlBody: _emailWrap('Use o cupom DESCONTO30 e ganhe 30% (+ bônus exclusivo)',
       _p('Oi, ' + nome + '! 💜') +
       _p('Sextou — e hoje é dia de condição especial. 🎉') +
       _p('Em algum momento você se interessou pelo Zero a Libras (por isso está recebendo este email). Mas, por algum motivo, ainda não começou.') +
       _p('O motivo eu não sei. Mas o que eu sei é que cada dia sem se comunicar com quem você ama é um dia que não volta. Então decidi facilitar pra você dar o primeiro passo HOJE:') +
-      _p('<strong>Pagando no PIX, você ganha 10% de desconto.</strong> 🤟') +
-      _btn(link, '👉 QUERO O DESCONTO NO PIX') +
-      _p('E tem mais — bônus exclusivo de quem paga no PIX:') +
+      _p('<strong>Use o cupom DESCONTO30 e ganhe 30% de desconto.</strong> 🤟') +
+      _btn(link, '👉 QUERO MEUS 30% DE DESCONTO') +
+      _p('E tem mais — bônus exclusivo de quem garante a vaga agora:') +
       _p('🎁 <strong>Aula extra "Suas primeiras 20 frases em Libras"</strong> — as frases que você mais vai usar no dia a dia (em casa, no trabalho, com quem você ama), prontas pra você sair usando já na primeira semana.') +
       _p('É o tipo de conteúdo que tira você do "sei alguns sinais soltos" e te coloca em "consigo conversar". Direto ao ponto, do jeito que eu gosto.') +
-      _p('Tudo isso de bônus — mas só pra quem fecha no PIX, viu? 😉') +
-      _btn(link, '👉 VOU PAGAR AGORA NO PIX') +
-      _p('⚠️ <strong>IMPORTANTE:</strong> O desconto de 10% e o bônus das 20 frases ficam disponíveis só até sábado, dia <strong>' + sabado + '</strong>, às 23h59.') +
+      _p('Tudo isso — mas só com o cupom <strong>DESCONTO30</strong>, e por tempo limitado, viu? 😉') +
+      _btn(link, '👉 GARANTIR COM O CUPOM DESCONTO30') +
+      _p('⚠️ <strong>IMPORTANTE:</strong> O cupom <strong>DESCONTO30</strong> (30% OFF) e o bônus das 20 frases ficam disponíveis só até sábado, dia <strong>' + sabado + '</strong>, às 23h59.') +
       _p('Não deixa essa conversa pra depois. 💜') +
       _p('Com carinho,<br>Lorena')),
     body: 'Oi, ' + nome + '! 💜\n\nSextou — e hoje é dia de condição especial. 🎉\n\n' +
       'Você se interessou pelo Zero a Libras mas ainda não começou. Cada dia sem se comunicar com quem você ama é um dia que não volta. Então:\n\n' +
-      'Pagando no PIX, você ganha 10% de desconto. 🤟\n\n' +
-      '👉 QUERO O DESCONTO NO PIX:\n' + link + '\n\n' +
-      'E ainda um bônus exclusivo de quem paga no PIX:\n🎁 Aula extra "Suas primeiras 20 frases em Libras" — prontas pra usar já na primeira semana.\n\n' +
-      '⚠️ O desconto de 10% e o bônus ficam disponíveis só até sábado, dia ' + sabado + ', às 23h59.\n\n' +
+      'Use o cupom DESCONTO30 e ganhe 30% de desconto. 🤟\n\n' +
+      '👉 QUERO MEUS 30% DE DESCONTO:\n' + link + '\n\n' +
+      'E ainda um bônus exclusivo de quem garante a vaga agora:\n🎁 Aula extra "Suas primeiras 20 frases em Libras" — prontas pra usar já na primeira semana.\n\n' +
+      '⚠️ O cupom DESCONTO30 (30% OFF) e o bônus ficam disponíveis só até sábado, dia ' + sabado + ', às 23h59.\n\n' +
       'Não deixa essa conversa pra depois. 💜\n\nCom carinho,\nLorena',
   };
 }
