@@ -100,6 +100,23 @@
       display:flex;align-items:center;justify-content:center;
       flex-shrink:0;font-size:18px;color:#fff;
     }
+    /* Variante mensagem: sem link, texto centralizado e seta para baixo */
+    .concierge-card.concierge-msg{
+      flex-direction:column;align-items:center;text-align:center;
+      cursor:default;gap:12px;padding:20px 22px 14px;
+    }
+    .concierge-card.concierge-msg:hover{transform:none;box-shadow:0 8px 28px rgba(0,0,0,.45);}
+    .concierge-msg .concierge-title{
+      font-size:14.5px;font-weight:700;color:#f3f3f3;line-height:1.5;letter-spacing:.005em;
+    }
+    .concierge-down{
+      display:flex;align-items:center;justify-content:center;
+      animation:bounceDown 1.6s ease-in-out infinite;
+    }
+    @keyframes bounceDown{
+      0%,100%{transform:translateY(0);}
+      50%{transform:translateY(6px);}
+    }
 
     /* ── SEÇÃO 4: VITRINE ── */
     .vitrine-label{
@@ -471,13 +488,14 @@
     </a>
   </div>
 
-  <!-- ═══ SEÇÃO 3: CONCIERGE IA ═══ -->
-  <div class="concierge-card" onclick="window.open('https://nerdsdalibras.github.io/quiz-libras.html','_blank')">
-    <div class="concierge-icon">⭐</div>
+  <!-- ═══ SEÇÃO 3: MENSAGEM ═══ -->
+  <div class="concierge-card concierge-msg">
     <div class="concierge-texts">
-      <div class="concierge-title">Faça uma avaliação gratuita e descubra seu nível na Libras: básico, intermediário ou avançado. Quer ir para o próximo nível?</div>
+      <div class="concierge-title">Eu sei exatamente onde você quer chegar. Sei das suas dificuldades, porque um dia elas foram as minhas. Eu posso te mostrar o caminho — mas o primeiro passo só você pode dar.</div>
     </div>
-    <div class="concierge-arrow">→</div>
+    <div class="concierge-down" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+    </div>
   </div>
 
   <!-- ═══ SEÇÃO 4: VITRINE ═══ -->
