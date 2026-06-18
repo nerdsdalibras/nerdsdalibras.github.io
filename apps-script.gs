@@ -691,20 +691,25 @@ function enviarEmailsRemarketing() {
       iOferta = idx('oferta'), iNome = idx('nome'), iNivel = idx('nivelIdentificado'),
       iE = [idx('email1SentAt'), idx('email2SentAt'), idx('email3SentAt')];
 
-  var enviados = 0;
+  function _tv(v) { if (v === true) return true; var s = String(v).trim().toLowerCase(); return s === 'true' || s === 'verdadeiro' || s === 'sim' || s === '1'; }
+
+  var enviados = 0, comEmail = 0, entraram = 0;
   for (var r = 0; r < data.length; r++) {
     var row   = data[r];
     var email = String(iEmail >= 0 ? row[iEmail] : '').trim();
     if (!email || email.indexOf('@') < 0) continue;
+    comEmail++;
 
     var status  = String(iStatus  >= 0 ? row[iStatus]  : '').toLowerCase();
-    var comprou = (iComprou >= 0 && (row[iComprou] === true || row[iComprou] === 'true')) || status === 'comprou';
+    var comprou = (iComprou >= 0 && _tv(row[iComprou])) || status === 'comprou';
     if (comprou) continue;                                    // já comprou → não envia
 
-    var entrou = iCheckout >= 0 && (row[iCheckout] === true || row[iCheckout] === 'true');
+    var temCheckoutEm = iCheckoutEm >= 0 && row[iCheckoutEm];
+    var entrou = (iCheckout >= 0 && _tv(row[iCheckout])) || !!temCheckoutEm;
     if (!entrou) continue;                                    // só quem entrou no checkout
+    entraram++;
 
-    var ancoraRaw = (iCheckoutEm >= 0 && row[iCheckoutEm]) ? row[iCheckoutEm] : (iCreated >= 0 ? row[iCreated] : '');
+    var ancoraRaw = temCheckoutEm ? row[iCheckoutEm] : (iCreated >= 0 ? row[iCreated] : '');
     var ancora = ancoraRaw ? new Date(ancoraRaw).getTime() : null;
     if (!ancora) continue;
 
@@ -721,12 +726,12 @@ function enviarEmailsRemarketing() {
       try {
         var tpl = _emailRemarketing(lead, n + 1);
         MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName });
-        var ts = new Date().toISOString();
-        sheet.getRange(r + 2, iE[n] + 1).setValue(ts);
+        sheet.getRange(r + 2, iE[n] + 1).setValue(new Date().toISOString());
         enviados++;
-      } catch (err) { /* sem cota ou erro de envio: tenta na próxima execução */ }
+      } catch (err) { Logger.log('Erro ao enviar para ' + email + ': ' + err); }
       break;                                                  // no máximo 1 e-mail por lead por execução
     }
   }
+  Logger.log('Remarketing — com e-mail: ' + comEmail + ' | entraram no checkout e não compraram: ' + entraram + ' | enviados agora: ' + enviados);
   return enviados;
 }
