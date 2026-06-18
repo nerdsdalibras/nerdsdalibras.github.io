@@ -513,7 +513,6 @@ function _upsertByContact(patch, phone, email, nome, origem) {
 // ═══════════════════════════════════════════════════
 var EMAIL_CFG = {
   fromName:     'Lorena · Nerds da Libras',
-  fromEmail:    'nerdsdalibras@gmail.com',   // precisa estar cadastrado em "Enviar e-mail como" da conta que roda o script
   cursoNome:    'Curso do Zero à Libras',
   mentoriaNome: 'Mentoria Ciclo da Fluência',
   cursoUrl:     'https://pay.kiwify.com.br/1sIyvVL',
@@ -665,7 +664,7 @@ function enviarEmailParaLeads(sessionIds, num) {
     };
     try {
       var tpl = _emailRemarketing(lead, num);
-      GmailApp.sendEmail(email, tpl.subject, tpl.body, { htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName, from: EMAIL_CFG.fromEmail });
+      MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName });
       if (iSent >= 0) sheet.getRange(r + 2, iSent + 1).setValue(new Date().toISOString());
       enviados++;
     } catch (err) { /* segue para o próximo */ }
@@ -726,7 +725,7 @@ function enviarEmailsRemarketing() {
       if (now < ancora + EMAIL_DELAYS_H[n] * 3600000) break;  // ainda não é hora deste e-mail
       try {
         var tpl = _emailRemarketing(lead, n + 1);
-        GmailApp.sendEmail(email, tpl.subject, tpl.body, { htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName, from: EMAIL_CFG.fromEmail });
+        MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName });
         sheet.getRange(r + 2, iE[n] + 1).setValue(new Date().toISOString());
         enviados++;
       } catch (err) { Logger.log('Erro ao enviar para ' + email + ': ' + err); }
