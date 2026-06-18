@@ -102,44 +102,67 @@
     }
 
     /* ── SEÇÃO 4: VITRINE ── */
+    .vitrine-heading{margin-bottom:16px;}
     .vitrine-label{
-      font-size:11px;font-weight:800;text-transform:uppercase;
-      color:#fff;letter-spacing:.12em;margin-bottom:12px;
-      display:flex;align-items:center;gap:7px;
+      font-size:18px;font-weight:800;
+      color:#fff;letter-spacing:-.02em;line-height:1.25;
+    }
+    .vitrine-subtitle{
+      font-size:13px;color:#d0d0d0;line-height:1.55;
+      margin-top:7px;max-width:430px;
     }
     .vitrine-scroll{
       display:flex;gap:12px;
       overflow-x:auto;
-      padding-bottom:8px;
+      padding:2px 2px 12px;
       scrollbar-width:none;
       -ms-overflow-style:none;
+      scroll-snap-type:x mandatory;
     }
     .vitrine-scroll::-webkit-scrollbar{display:none;}
     .vitrine-card{
-      flex-shrink:0;width:110px;
+      flex:0 0 275px;min-height:330px;
+      background:linear-gradient(145deg,#181818,#0d0d0d);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;padding:20px;
+      display:flex;flex-direction:column;
       cursor:pointer;
-      transition:transform .2s;
+      transition:transform .22s,box-shadow .22s,border-color .22s;
+      scroll-snap-align:start;
     }
-    .vitrine-card:hover{transform:translateY(-3px);}
-    .vitrine-card img{
-      width:110px;height:124px;border-radius:10px;
-      object-fit:cover;display:block;
+    .vitrine-card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(255,255,255,.28);
+      box-shadow:0 14px 34px rgba(0,0,0,.32);
+    }
+    .vitrine-card-icon{
+      width:52px;height:52px;border-radius:15px;
+      display:flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,.1);
+      font-size:27px;margin-bottom:18px;
     }
     .vitrine-card-title{
-      font-size:11px;font-weight:800;text-transform:uppercase;
-      color:#fff;margin:7px 0 6px;line-height:1.3;
+      font-size:17px;font-weight:800;text-transform:uppercase;
+      color:#fff;margin-bottom:11px;line-height:1.3;
       letter-spacing:.01em;
     }
+    .vitrine-card-desc{
+      font-size:13px;color:#c8c8c8;line-height:1.55;
+      margin-bottom:18px;
+    }
     .vitrine-card-btn{
-      display:inline-block;
-      font-size:10px;font-weight:700;
-      background:rgba(255,255,255,.14);color:#fff;
-      border-radius:20px;padding:5px 12px;
+      display:block;width:100%;margin-top:auto;
+      font-size:12px;font-weight:800;
+      background:#fff;color:#111;
+      border-radius:12px;padding:12px 14px;
       border:none;cursor:pointer;
-      transition:background .2s;
+      transition:transform .2s,background .2s;
       letter-spacing:.04em;
     }
-    .vitrine-card-btn:hover{background:rgba(255,255,255,.25);}
+    .vitrine-card-btn:hover{background:#e8e8e8;transform:scale(1.02);}
+    @media(max-width:480px){
+      .vitrine-card{flex-basis:82vw;max-width:300px;min-height:340px;}
+    }
 
     /* ── SEÇÃO 5: LINK SIMPLES ── */
     .link-card{
@@ -482,35 +505,38 @@
 
   <!-- ═══ SEÇÃO 4: VITRINE ═══ -->
   <div class="section-wrap">
-    <div class="vitrine-label"><span>▶</span> Como posso te ajudar hoje:</div>
+    <div class="vitrine-heading">
+      <div class="vitrine-label">🚀 Onde você quer chegar com a Libras?</div>
+      <div class="vitrine-subtitle">Escolha o caminho que mais combina com seu momento atual e descubra o próximo passo para evoluir com mais clareza e segurança.</div>
+    </div>
     <div class="vitrine-scroll" id="vitrineScroll">
 
       <div class="vitrine-card" onclick="window.open('https://clubedalibras.com/vsl','_blank')">
-        <img src="fotos/image-1777402957527.jpg" alt="Curso Do Zero a Libras"/>
-        <div class="vitrine-card-title">CURSO ONLINE: DO ZERO &#192; FLU&#202;NCIA EM LIBRAS</div>
-        <div style="font-size:11px;color:#aaa;line-height:1.35;margin-bottom:7px;">Forma&#231;&#227;o completa 3 em 1: b&#225;sico, intermedi&#225;rio e avan&#231;ado. Aprenda Libras corretamente, sem v&#237;cios, com certificado de 350 horas e forma&#231;&#227;o profissional em tradu&#231;&#227;o e interpreta&#231;&#227;o.</div>
-        <button class="vitrine-card-btn">QUERO APRENDER LIBRAS</button>
+        <div class="vitrine-card-icon">🚀</div>
+        <div class="vitrine-card-title">Quero aprender Libras</div>
+        <div class="vitrine-card-desc">Aprenda Libras do básico ao avançado através de um método prático, visual e focado na comunicação real com pessoas surdas.</div>
+        <button class="vitrine-card-btn">COMEÇAR AGORA</button>
       </div>
 
-      <div class="vitrine-card" onclick="window.open('https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe','_blank')">
-        <img src="fotos/image-1777403006556.jpg" alt="MENTORIA M&#201;TODO CDF &#8212; CICLO DA FLU&#202;NCIA"/>
-        <div class="vitrine-card-title">MENTORIA M&#201;TODO CDF &#8212; CICLO DA FLU&#202;NCIA</div>
-        <div style="font-size:11px;color:#aaa;line-height:1.35;margin-bottom:7px;">Para int&eacute;rpretes profissionais que querem alcan&ccedil;ar flu&ecirc;ncia e mais seguran&ccedil;a na Libras.</div>
-        <button class="vitrine-card-btn">QUERO SER FLUENTE</button>
+      <div class="vitrine-card" onclick="window.open('https://nerdsdalibras.com/turmamentoriavsl/','_blank')">
+        <div class="vitrine-card-icon">🔥</div>
+        <div class="vitrine-card-title">Quero destravar minha fluência</div>
+        <div class="vitrine-card-desc">Para quem já conhece sinais, mas ainda sente dificuldade para compreender surdos, formar frases naturais e se comunicar com confiança.</div>
+        <button class="vitrine-card-btn">QUERO EVOLUIR</button>
       </div>
 
-      <div class="vitrine-card" onclick="window.open('https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe','_blank')">
-        <img src="fotos/image-1777402995161.jpg" alt="Intérpretes de Sucesso"/>
-        <div class="vitrine-card-title">Intérpretes de Sucesso</div>
-        <div style="font-size:11px;color:#aaa;line-height:1.35;margin-bottom:7px;">O caminho para uma carreira mais valorizada e rentável.</div>
-        <button class="vitrine-card-btn">QUERO CRESCER</button>
+      <div class="vitrine-card" onclick="window.open('https://nerdsdalibras.com/parceiros.html','_blank')">
+        <div class="vitrine-card-icon">💼</div>
+        <div class="vitrine-card-title">Quero crescer com a Nerds da Libras</div>
+        <div class="vitrine-card-desc">Participe da seleção para se tornar parceiro, receber oportunidades profissionais, vender nossos cursos com comissão e expandir sua atuação na Libras.</div>
+        <button class="vitrine-card-btn">QUERO SER PARCEIRO</button>
       </div>
 
       <div class="vitrine-card" onclick="window.open('https://chat.whatsapp.com/EMWYw5cLQPv3IdmgOu1PdP?s=cl&p=a&ilr=4','_blank')">
-        <img src="fotos/IMG_4907.jpg" alt="Preparatório CAS-MG" style="object-position:top center;"/>
-        <div class="vitrine-card-title">Preparatório Banca CAS-MG</div>
-        <div style="font-size:11px;color:#aaa;margin-bottom:6px;">📅 10 de agosto de 2026</div>
-        <button class="vitrine-card-btn">SAIBA MAIS</button>
+        <div class="vitrine-card-icon">🎯</div>
+        <div class="vitrine-card-title">Quero ser aprovado(a) na banca</div>
+        <div class="vitrine-card-desc">Prepare-se para as bancas CAS-MG e CASIES-MT com orientação prática, simulados, feedback e foco nos critérios que realmente são avaliados.</div>
+        <button class="vitrine-card-btn">QUERO ME PREPARAR</button>
       </div>
 
 
