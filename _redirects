@@ -1,6 +1,12 @@
 # Netlify Redirects — Nerds da Libras
 # Formato: /link-curto   destino   302
 
+# ── RAIZ clubedalibras.com → Link na Bio ──
+# /index.html cai na raiz (esconde a home "Prof. Lorena" no clubedalibras.com)
+/index.html           /                                                          301!
+# Mostra linknabio.html na raiz mantendo a URL limpa (rewrite 200)
+/                     /linknabio.html                                            200
+
 # ── VSL ──
 /vsl                  /vsl.html                                                  200
 
