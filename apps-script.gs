@@ -61,6 +61,10 @@ const COL_TO_FIELD = {
   'email1SentAt':     'email1SentAt',
   'email2SentAt':     'email2SentAt',
   'email3SentAt':     'email3SentAt',
+  // ── WhatsApp remarketing (API oficial) ──
+  'waMsg1SentAt':     'waMsg1SentAt',
+  'waMsg2SentAt':     'waMsg2SentAt',
+  'waMsg3SentAt':     'waMsg3SentAt',
   'tempoNoQuiz':      'tempoNoQuiz',
   'updatedAt':        'updatedAt',
 };
@@ -80,6 +84,7 @@ const NEW_COLS = [
   'cartaoRecusado','recusadoEm','reembolso','reembolsoEm','chargeback','chargebackEm',
   'vslIniciou','vslPct25','vslPct50','vslPct75','vslAssistiuFim','vslClicouCTA',
   'email1SentAt','email2SentAt','email3SentAt',
+  'waMsg1SentAt','waMsg2SentAt','waMsg3SentAt',
   'tempoNoQuiz','updatedAt'
 ];
 
@@ -733,5 +738,104 @@ function enviarEmailsRemarketing() {
     }
   }
   Logger.log('Remarketing — com e-mail: ' + comEmail + ' | entraram no checkout e não compraram: ' + entraram + ' | enviados agora: ' + enviados);
+  return enviados;
+}
+
+// ═══════════════════════════════════════════════════
+//  WHATSAPP REMARKETING AUTOMÁTICO (WhatsApp Cloud API — Meta)
+//  → Preencha WA_CFG com seus dados da Meta e crie um gatilho por TEMPO
+//    na função enviarWhatsAppRemarketing (a cada 1 hora).
+//  Envia 1 template por lead por execução, na sequência 0h / 24h / 48h,
+//  só para quem entrou no checkout e NÃO comprou. Para se o lead comprar.
+// ═══════════════════════════════════════════════════
+var WA_CFG = {
+  token:         'COLE_AQUI_O_TOKEN_PERMANENTE',   // Token de acesso da WhatsApp Cloud API
+  phoneNumberId: 'COLE_AQUI_O_PHONE_NUMBER_ID',    // Phone Number ID do número dedicado
+  apiVersion:    'v21.0',
+  lang:          'pt_BR',
+  // Nomes dos 3 templates aprovados na Meta, em ordem (msg 1, 2 e 3):
+  templates:     ['remarketing_1', 'remarketing_2', 'remarketing_3'],
+};
+var WA_DELAYS_H = [0, 24, 48];  // horas após o checkout: msg1 imediata, msg2 +24h, msg3 +48h
+
+// Envia um template (com o primeiro nome em {{1}}) via WhatsApp Cloud API
+function _waSendTemplate(phone, templateName, firstName) {
+  var url = 'https://graph.facebook.com/' + WA_CFG.apiVersion + '/' + WA_CFG.phoneNumberId + '/messages';
+  var payload = {
+    messaging_product: 'whatsapp',
+    to: phone,
+    type: 'template',
+    template: {
+      name: templateName,
+      language: { code: WA_CFG.lang },
+      components: [{ type: 'body', parameters: [{ type: 'text', text: firstName }] }],
+    },
+  };
+  var res = UrlFetchApp.fetch(url, {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + WA_CFG.token },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true,
+  });
+  var code = res.getResponseCode();
+  if (code < 200 || code >= 300) throw new Error('WhatsApp API ' + code + ': ' + res.getContentText());
+  return true;
+}
+
+function enviarWhatsAppRemarketing() {
+  if (!WA_CFG.phoneNumberId || WA_CFG.token.indexOf('COLE_AQUI') === 0) {
+    Logger.log('WhatsApp não configurado — preencha WA_CFG (token, phoneNumberId, templates).');
+    return 0;
+  }
+  var sheet   = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 0;
+  var headers = ensureNewColumns(sheet);
+  var data    = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+  var now     = Date.now();
+
+  function idx(field) { var c = FIELD_TO_COL[field] || field; var i = headers.indexOf(c); if (i < 0) i = headers.indexOf(field); return i; }
+  function _tv(v) { if (v === true) return true; var s = String(v).trim().toLowerCase(); return s === 'true' || s === 'verdadeiro' || s === 'sim' || s === '1'; }
+
+  var iWpp = idx('whatsapp'), iStatus = idx('status'), iCheckout = idx('clicouCheckout'),
+      iCheckoutEm = idx('checkoutEm'), iCreated = idx('createdAt'), iComprou = idx('comprouKiwify'),
+      iNome = idx('nome'), iW = [idx('waMsg1SentAt'), idx('waMsg2SentAt'), idx('waMsg3SentAt')];
+
+  var enviados = 0, entraram = 0;
+  for (var r = 0; r < data.length; r++) {
+    var row = data[r];
+    var wpp = String(iWpp >= 0 ? row[iWpp] : '').replace(/\D/g, '');
+    if (wpp.length < 10) continue;
+    if (wpp.length <= 11) wpp = '55' + wpp;   // garante DDI do Brasil
+
+    var status  = String(iStatus >= 0 ? row[iStatus] : '').toLowerCase();
+    var comprou = (iComprou >= 0 && _tv(row[iComprou])) || status === 'comprou';
+    if (comprou) continue;
+
+    var temCk  = iCheckoutEm >= 0 && row[iCheckoutEm];
+    var entrou = (iCheckout >= 0 && _tv(row[iCheckout])) || !!temCk;
+    if (!entrou) continue;
+    entraram++;
+
+    var ancoraRaw = temCk ? row[iCheckoutEm] : (iCreated >= 0 ? row[iCreated] : '');
+    var ancora = ancoraRaw ? new Date(ancoraRaw).getTime() : null;
+    if (!ancora) continue;
+
+    var nome = String(iNome >= 0 ? row[iNome] : 'você').split(' ')[0];
+
+    for (var n = 0; n < 3; n++) {
+      if (iW[n] < 0) continue;
+      if (row[iW[n]]) continue;
+      if (now < ancora + WA_DELAYS_H[n] * 3600000) break;
+      try {
+        _waSendTemplate(wpp, WA_CFG.templates[n], nome);
+        sheet.getRange(r + 2, iW[n] + 1).setValue(new Date().toISOString());
+        enviados++;
+      } catch (err) { Logger.log('Erro WhatsApp p/ ' + wpp + ': ' + err); }
+      break;   // no máximo 1 mensagem por lead por execução
+    }
+  }
+  Logger.log('WhatsApp remarketing — entraram e não compraram: ' + entraram + ' | enviados agora: ' + enviados);
   return enviados;
 }
