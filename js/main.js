@@ -107,12 +107,42 @@ function _waMsgRemarketing(l, num) {
   const nome = String(l.nome || 'você').split(' ')[0];
   const link = l.oferta === 'mentoria' ? CONFIG.MENTORIA_EDUZZ_URL : CONFIG.KIWIFY_URL;
   if (num === 1) {
-    return `Oi, ${nome}! 💜 Aqui é a Lorena, da Nerds da Libras. Vi que você chegou pertinho de garantir sua vaga no Curso do Zero à Libras, mas não finalizou. Ficou alguma dúvida ou deu algum problema no pagamento? Me chama que eu te ajudo! Sua vaga ainda está reservada aqui: ${link}`;
+    return [
+      `Oi, ${nome} 💜`,
+      `Aqui é a Lorena, pessoalmente.`,
+      `Vi que você chegou bem pertinho de entrar no Zero a Libras… e parou na última etapa. 🥺`,
+      `Acontece, viu? Às vezes bate aquela dúvida de "será que é pra mim?", "será que vou dar conta?".`,
+      `Se foi isso, posso te dizer uma coisa? Quase TODO mundo que hoje conversa em Libras já sentiu exatamente esse friozinho antes de começar. Inclusive eu.`,
+      `Se tiver qualquer dúvida — sobre o curso, o pagamento, o tempo que vai precisar — me responde aqui. Eu mesma te respondo. 🤟`,
+      `Você tava a um passo. Esse passo ainda tá te esperando 💜`,
+    ].join('\n');
   }
   if (num === 2) {
-    return `Oi, ${nome}! 💜 Uma coisa que quase ninguém explica: Libras não é português com as mãos — é uma língua visual, e é por isso que tanta gente trava. No Zero a Libras você aprende do jeito certo, por níveis e com acompanhamento. Quer começar? ${link}`;
+    return [
+      `${nome}, posso ser sincera com você? 💜`,
+      `Ontem você quase começou e eu não consigo deixar isso passar batido — porque eu sei o que tem do outro lado dessa decisão.`,
+      `Pensa na próxima vez que você estiver perto daquela pessoa surda que você ama.`,
+      `O próximo almoço de domingo. O próximo aniversário. Aquele momento em que ela vai querer te contar algo — e você vai poder responder. Não com gestos no escuro, não pedindo pra alguém traduzir. Você. Na língua dela. Olho no olho. 🤟`,
+      `Esse momento existe. Ele tá te esperando do outro lado do "sim".`,
+      `A pergunta que eu te faço com todo carinho é: quantos desses momentos você ainda quer deixar passar em silêncio?`,
+      `Aprender Libras não muda só a sua comunicação. Muda o lugar que você ocupa na vida de quem você ama. 💜`,
+      `Tá tudo pronto pra você continuar de onde parou 👇`,
+      link,
+    ].join('\n');
   }
-  return `Oi, ${nome}! 💜 Última chamada: garantindo hoje você ganha *30% de desconto* com o cupom *DESCONTO30*, além dos cursos bônus de Datilologia e Interpretação de Música, liberados na plataforma. Só até sábado! Garanta aqui: ${link}`;
+  return [
+    `${nome}, essa é a última vez que eu vou te chamar por aqui 💜`,
+    `E vou ser direta, porque é importante demais pra eu enrolar.`,
+    `Tem uma coisa que eu aprendi em todos esses anos ensinando Libras: o que mais separa as pessoas de quem elas amam não é a surdez. É a espera.`,
+    `O "depois eu começo". O "ano que vem eu aprendo". E o tempo vai passando, as conversas que não aconteceram vão se acumulando, e a distância — que era só de uma língua — vira de anos.`,
+    `Você não chegou até o checkout por acaso. Alguma coisa dentro de você sabe que esse é o momento.`,
+    `Eu não quero que você olhe pra trás daqui a um tempo e pense "se eu tivesse começado naquele dia, quantas conversas eu já teria tido".`,
+    `A sua vaga (e a condição que você tinha) ainda estão guardadas — mas só até hoje. Depois disso a página fecha de verdade. ⏳`,
+    `Dá esse passo por você e por quem te espera do outro lado 👇`,
+    link,
+    `Tô aqui torcendo por vocês dois. 💜`,
+    `Lorena`,
+  ].join('\n');
 }
 
 // Clique em "Abrir WhatsApp": reaproveita a aba e marca o lead como contatado.
