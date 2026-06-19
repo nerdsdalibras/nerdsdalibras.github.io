@@ -114,7 +114,8 @@ function _waMsgRemarketing(l, num) {
       `Acontece, viu? Às vezes bate aquela dúvida de "será que é pra mim?", "será que vou dar conta?".`,
       `Se foi isso, posso te dizer uma coisa? Quase TODO mundo que hoje conversa em Libras já sentiu exatamente esse friozinho antes de começar. Inclusive eu.`,
       `Se tiver qualquer dúvida — sobre o curso, o pagamento, o tempo que vai precisar — me responde aqui. Eu mesma te respondo. 🤟`,
-      `Você tava a um passo. Esse passo ainda tá te esperando 💜`,
+      `Você tava a um passo. Esse passo ainda tá te esperando 👇`,
+      link,
     ].join('\n');
   }
   if (num === 2) {
