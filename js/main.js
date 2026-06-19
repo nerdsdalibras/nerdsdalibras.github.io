@@ -90,16 +90,27 @@ function waLink(phoneRaw, msg) {
 }
 
 // Mantém UMA única aba do WhatsApp Web e a reaproveita a cada clique.
+// Obs.: o navegador só reaproveita abas que ESTE site abriu (uma aba que você
+// abriu manualmente por fora não é acessível por segurança). Por isso, deixe
+// o dashboard abrir o WhatsApp da primeira vez — os próximos cliques reusam ela.
 let _waWin = null;
 
 // Abre/reaproveita a aba única do WhatsApp Web numa URL pronta
 function _abrirWa(url) {
   if (!url) return;
+  // 1) Se já temos a referência da aba aberta nesta sessão e dá pra acessá-la,
+  //    navega NELA (troca o contato sem abrir outra aba).
   try {
-    if (_waWin && !_waWin.closed) { _waWin.location.href = url; _waWin.focus(); return; }
-  } catch (_) {}
-  _waWin = window.open(url, 'whatsapp_web');
-  try { _waWin && _waWin.focus(); } catch (_) {}
+    if (_waWin && !_waWin.closed) {
+      _waWin.location.href = url;
+      _waWin.focus();
+      return;
+    }
+  } catch (_) { /* COOP do WhatsApp pode bloquear o acesso ao .location — cai no passo 2 */ }
+  // 2) Senão, abre/reaproveita pelo NOME FIXO 'whatsapp_web': o navegador navega
+  //    a aba existente com esse nome em vez de criar uma nova (sobrevive a reloads).
+  const w = window.open(url, 'whatsapp_web');
+  if (w) { _waWin = w; try { w.focus(); } catch (_) {} }
 }
 
 // Texto da sequência de remarketing por WhatsApp (1, 2 ou 3), personalizado pelo nome
@@ -152,17 +163,7 @@ function contatarLead(sessionId, e) {
   const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
   if (!lead) return;
 
-  const url = waLink(lead.whatsapp, gerarMensagem(lead));
-  if (url) {
-    let reaproveitou = false;
-    try {
-      if (_waWin && !_waWin.closed) { _waWin.location.href = url; _waWin.focus(); reaproveitou = true; }
-    } catch (_) { reaproveitou = false; }   // COOP do WhatsApp pode bloquear o acesso
-    if (!reaproveitou) {
-      _waWin = window.open(url, 'whatsapp_web');
-      try { _waWin && _waWin.focus(); } catch (_) {}
-    }
-  }
+  _abrirWa(waLink(lead.whatsapp, gerarMensagem(lead)));
 
   // Marca como "mensagem enviada" (persiste no localStorage + sincroniza)
   if (!lead.contatadoEm) {
