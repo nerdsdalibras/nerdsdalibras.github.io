@@ -667,7 +667,7 @@
             <div class="libras-msg" id="librasMsg">Você desbloqueou o acesso!<br/>A oferta está disponível abaixo.</div>
 
             <div class="lock-countdown" id="ctaCountdown">08:00</div>
-            <div class="lock-hint">Oferta liberada após o vídeo</div>
+            <div class="lock-hint">Oferta liberada após 1 min de vídeo</div>
           </div>
         </div>
 
@@ -803,6 +803,7 @@
   // ════════════════════════════════════════════
   var ytPlayer;
   var timerInterval;
+  var UNLOCK_AFTER_SECONDS = 60;   // oferta destrava após 1 min de vídeo assistido
 
   // Carrega a API do YouTube
   var tag = document.createElement('script');
@@ -832,8 +833,8 @@
   var seekGuard     = false;  // evita loop ao corrigir posição
 
   function onPlayerReady(event) {
-    var duration = event.target.getDuration();
-    updateCountdown(duration);
+    // Contador começa em 01:00 (tempo até destravar a oferta)
+    updateCountdown(UNLOCK_AFTER_SECONDS);
   }
 
   function onPlayerStateChange(event) {
@@ -878,9 +879,15 @@
         if (current > maxReached) maxReached = current;
         lastKnownTime = current;
 
-        // Atualiza contador (tempo restante)
-        var remaining = Math.max(0, duration - current);
+        // Contador = tempo restante até destravar (1 min de vídeo assistido)
+        var remaining = Math.max(0, UNLOCK_AFTER_SECONDS - maxReached);
         updateCountdown(remaining);
+
+        // Destrava a oferta ao atingir 1 min assistido de forma orgânica
+        if (maxReached >= UNLOCK_AFTER_SECONDS) {
+          clearInterval(timerInterval);
+          unlock(locked, unlocked, countdown, lockScene, librasSign, librasMsg);
+        }
       }, 500);
     }
 
