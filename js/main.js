@@ -92,6 +92,29 @@ function waLink(phoneRaw, msg) {
 // Mantém UMA única aba do WhatsApp Web e a reaproveita a cada clique.
 let _waWin = null;
 
+// Abre/reaproveita a aba única do WhatsApp Web numa URL pronta
+function _abrirWa(url) {
+  if (!url) return;
+  try {
+    if (_waWin && !_waWin.closed) { _waWin.location.href = url; _waWin.focus(); return; }
+  } catch (_) {}
+  _waWin = window.open(url, 'whatsapp_web');
+  try { _waWin && _waWin.focus(); } catch (_) {}
+}
+
+// Texto da sequência de remarketing por WhatsApp (1, 2 ou 3), personalizado pelo nome
+function _waMsgRemarketing(l, num) {
+  const nome = String(l.nome || 'você').split(' ')[0];
+  const link = l.oferta === 'mentoria' ? CONFIG.MENTORIA_EDUZZ_URL : CONFIG.KIWIFY_URL;
+  if (num === 1) {
+    return `Oi, ${nome}! 💜 Aqui é a Lorena, da Nerds da Libras. Vi que você chegou pertinho de garantir sua vaga no Curso do Zero à Libras, mas não finalizou. Ficou alguma dúvida ou deu algum problema no pagamento? Me chama que eu te ajudo! Sua vaga ainda está reservada aqui: ${link}`;
+  }
+  if (num === 2) {
+    return `Oi, ${nome}! 💜 Uma coisa que quase ninguém explica: Libras não é português com as mãos — é uma língua visual, e é por isso que tanta gente trava. No Zero a Libras você aprende do jeito certo, por níveis e com acompanhamento. Quer começar? ${link}`;
+  }
+  return `Oi, ${nome}! 💜 Última chamada: garantindo hoje você ganha *30% de desconto* com o cupom *DESCONTO30*, além dos cursos bônus de Datilologia e Interpretação de Música, liberados na plataforma. Só até sábado! Garanta aqui: ${link}`;
+}
+
 // Clique em "Abrir WhatsApp": reaproveita a aba e marca o lead como contatado.
 function contatarLead(sessionId, e) {
   if (e) { e.preventDefault(); e.stopPropagation(); }

@@ -17,6 +17,58 @@ function _checkoutStatus(l) {
 let checkoutFiltro = 'todos';
 function setCheckoutFiltro(key) { checkoutFiltro = key; renderCheckout(); }
 
+/* ── Sequência de WhatsApp (semi-automática: agenda 0h/24h/48h, envio em 1 clique) ── */
+const WA_SEQ_DELAYS_H = [0, 24, 48];
+
+// Qual mensagem (1/2/3) está na hora de enviar agora; 0 = nenhuma vencida; -1 = não iniciada
+function _waDueNum(l) {
+  if (!l.waSeqStart) return -1;
+  const anchor = new Date(l.waSeqStart).getTime();
+  const sentKeys = ['waMsg1SentAt', 'waMsg2SentAt', 'waMsg3SentAt'];
+  const now = Date.now();
+  for (let n = 0; n < 3; n++) {
+    if (l[sentKeys[n]]) continue;
+    return (now >= anchor + WA_SEQ_DELAYS_H[n] * 3600000) ? (n + 1) : 0;
+  }
+  return 0; // todas enviadas
+}
+
+function _waSeqCell(l) {
+  if (_checkoutStatus(l).key === 'comprou') return '<span class="ck-muted">—</span>';
+  if (!l.whatsapp) return '<span class="ck-muted">sem zap</span>';
+  const sent = [l.waMsg1SentAt, l.waMsg2SentAt, l.waMsg3SentAt].filter(Boolean).length;
+  if (!l.waSeqStart) {
+    return `<button class="quick-btn qb-wpp" onclick="iniciarSeqWhats('${l.sessionId}', event)">📲 Iniciar seq</button>`;
+  }
+  const due = _waDueNum(l);
+  if (due) {
+    return `<button class="quick-btn qb-wpp" onclick="enviarSeqWhats('${l.sessionId}', ${due}, event)">📲 Enviar msg ${due}</button> <span class="ck-muted">${sent}/3</span>`;
+  }
+  if (sent >= 3) return `<span class="ck-badge" style="color:var(--g);border-color:var(--g)">✓ Seq completa</span>`;
+  return `<span class="ck-muted">⏳ ${sent}/3 · próx. agendada</span>`;
+}
+
+function iniciarSeqWhats(sessionId, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
+  if (!lead || !lead.whatsapp) return;
+  const now = new Date().toISOString();
+  _abrirWa(waLink(lead.whatsapp, _waMsgRemarketing(lead, 1)));
+  patchLead(sessionId, { waSeqStart: now, waMsg1SentAt: now });
+  showToast('Sequência iniciada — msg 1 aberta no WhatsApp 📲');
+  if (currentPage === 'checkout') renderCheckout(); else if (currentPage === 'leads') renderLeads();
+}
+
+function enviarSeqWhats(sessionId, num, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  const lead = (cachedLeads || []).find(l => l.sessionId === sessionId);
+  if (!lead || !lead.whatsapp) return;
+  _abrirWa(waLink(lead.whatsapp, _waMsgRemarketing(lead, num)));
+  patchLead(sessionId, { [`waMsg${num}SentAt`]: new Date().toISOString() });
+  showToast(`Msg ${num} aberta no WhatsApp 📲`);
+  if (currentPage === 'checkout') renderCheckout(); else if (currentPage === 'leads') renderLeads();
+}
+
 async function renderCheckout() {
   const leads = await getLeads();
   const all = leads
@@ -79,6 +131,7 @@ async function renderCheckout() {
         <td class="ck-muted">${dt}</td>
         <td><span class="ck-badge" style="color:${st.color};border-color:${st.color}">${st.label}</span></td>
         <td class="ck-muted">${emails}/3</td>
+        <td onclick="event.stopPropagation()">${_waSeqCell(l)}</td>
         <td class="ck-actions" onclick="event.stopPropagation()">
           ${wpp ? `<a class="quick-btn qb-wpp" href="#" onclick="contatarLead('${l.sessionId}', event)">💬</a>` : ''}
           <button class="quick-btn qb-open" onclick="openLead('${l.sessionId}')">Ver →</button>
@@ -92,7 +145,7 @@ async function renderCheckout() {
         <thead>
           <tr>
             <th>Nome</th><th>Contato</th><th>Oferta</th><th>Checkout em</th>
-            <th>Status</th><th title="E-mails de remarketing enviados">E-mails</th><th></th>
+            <th>Status</th><th title="E-mails de remarketing enviados">E-mails</th><th title="Sequência de WhatsApp (0h / 24h / 48h)">Follow-up WA</th><th></th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>

@@ -61,7 +61,8 @@ const COL_TO_FIELD = {
   'email1SentAt':     'email1SentAt',
   'email2SentAt':     'email2SentAt',
   'email3SentAt':     'email3SentAt',
-  // ── WhatsApp remarketing (API oficial) ──
+  // ── WhatsApp remarketing (sequência manual + API oficial) ──
+  'waSeqStart':       'waSeqStart',
   'waMsg1SentAt':     'waMsg1SentAt',
   'waMsg2SentAt':     'waMsg2SentAt',
   'waMsg3SentAt':     'waMsg3SentAt',
@@ -84,7 +85,7 @@ const NEW_COLS = [
   'cartaoRecusado','recusadoEm','reembolso','reembolsoEm','chargeback','chargebackEm',
   'vslIniciou','vslPct25','vslPct50','vslPct75','vslAssistiuFim','vslClicouCTA',
   'email1SentAt','email2SentAt','email3SentAt',
-  'waMsg1SentAt','waMsg2SentAt','waMsg3SentAt',
+  'waSeqStart','waMsg1SentAt','waMsg2SentAt','waMsg3SentAt',
   'tempoNoQuiz','updatedAt'
 ];
 
