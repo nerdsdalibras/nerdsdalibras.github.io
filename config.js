@@ -34,9 +34,4 @@ const CONFIG = {
 
   // ── DASHBOARD ──
   DASHBOARD_PASSWORD: 'lorena',
-
-  // ── CHATBOT ──
-  // Cole aqui a URL do seu Cloudflare Worker após o deploy
-  // Exemplo: 'https://lorena-proxy.SEU_USUARIO.workers.dev'
-  WORKER_URL: '',
 };
