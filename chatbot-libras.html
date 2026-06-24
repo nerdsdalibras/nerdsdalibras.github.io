@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assistente de Libras — Nerds da Libras</title>
+  <meta name="description" content="Aprenda Libras com o assistente inteligente da Nerds da Libras. Tire dúvidas, aprenda sinais e pratique com a IA especialista em Libras." />
+  <meta name="robots" content="noindex" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ouro:    #C9963A;
+      --ouro-lt: #E8B96A;
+      --escuro:  #0D0D0D;
+      --cinza:   #111111;
+      --card:    #161616;
+      --borda:   rgba(255,255,255,0.08);
+      --texto:   rgba(255,255,255,0.60);
+      --branco:  #FFFFFF;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: var(--escuro);
+      color: var(--branco);
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--cinza);
+      border-bottom: 1px solid var(--borda);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ouro), var(--ouro-lt));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .header-info h1 { font-size: 15px; font-weight: 600; }
+    .header-info p  { font-size: 12px; color: var(--ouro-lt); display: flex; align-items: center; gap: 5px; }
+    .dot-online {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22C55E;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .header-back {
+      margin-left: auto;
+      color: var(--ouro);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border: 1px solid var(--ouro);
+      border-radius: 8px;
+      transition: background .2s;
+    }
+    .header-back:hover { background: rgba(201,150,58,.15); }
+
+    /* ── CHAT AREA ── */
+    #chat-wrap {
+      display: flex;
+      flex-direction: column;
+      height: calc(100dvh - 61px);
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+    #messages::-webkit-scrollbar { width: 4px; }
+    #messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 4px; }
+
+    /* ── MENSAGENS ── */
+    .msg {
+      max-width: min(520px, 85%);
+      line-height: 1.55;
+      font-size: 14.5px;
+      border-radius: 16px;
+      padding: 12px 16px;
+      animation: fadeUp .25s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .msg.bot {
+      background: var(--card);
+      border: 1px solid var(--borda);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .msg.user {
+      background: linear-gradient(135deg, var(--ouro), #B07D28);
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.bot strong { color: var(--ouro-lt); }
+    .msg.bot em { color: rgba(255,255,255,.75); font-style: normal; }
+    .msg p + p { margin-top: 8px; }
+    .msg ul { margin: 8px 0 0 16px; }
+    .msg ul li { margin-bottom: 4px; }
+    .msg code {
+      background: rgba(255,255,255,.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: monospace;
+    }
+
+    /* Typing indicator */
+    .typing {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--borda);
+      border-radius: 16px;
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+      width: 60px;
+    }
+    .typing span {
+      width: 7px; height: 7px;
+      background: var(--ouro);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: .2s; }
+    .typing span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    /* Sugestões rápidas */
+    #suggestions {
+      display: flex;
+      gap: 8px;
+      padding: 8px 16px 4px;
+      overflow-x: auto;
+      flex-shrink: 0;
+    }
+    #suggestions::-webkit-scrollbar { display: none; }
+    .chip {
+      white-space: nowrap;
+      background: rgba(201,150,58,.12);
+      border: 1px solid rgba(201,150,58,.3);
+      color: var(--ouro-lt);
+      padding: 6px 13px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+    .chip:hover { background: rgba(201,150,58,.25); }
+
+    /* ── INPUT ── */
+    #input-bar {
+      padding: 10px 16px 14px;
+      background: var(--cinza);
+      border-top: 1px solid var(--borda);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+    #user-input {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--borda);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      resize: none;
+      max-height: 120px;
+      outline: none;
+      transition: border-color .2s;
+      line-height: 1.4;
+    }
+    #user-input:focus { border-color: var(--ouro); }
+    #user-input::placeholder { color: rgba(255,255,255,.3); }
+    #send-btn {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--ouro), #B07D28);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: opacity .2s, transform .1s;
+    }
+    #send-btn:hover { opacity: .88; }
+    #send-btn:active { transform: scale(.93); }
+    #send-btn svg { width: 18px; height: 18px; fill: #fff; }
+    #send-btn:disabled { opacity: .4; cursor: default; }
+
+    /* ── BANNER DE CONFIGURAÇÃO ── */
+    #setup-banner {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.35);
+      color: #FCA5A5;
+      font-size: 13px;
+      padding: 10px 16px;
+      text-align: center;
+      display: none;
+    }
+    #setup-banner a { color: #F87171; }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .msg { font-size: 14px; max-width: 90%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CONFIGURAÇÃO — cole a URL do seu Cloudflare Worker aqui -->
+<script>
+  // 👇 Substitua pela URL do seu Worker após o deploy no Cloudflare
+  // Exemplo: 'https://lorena-proxy.SEU_USUARIO.workers.dev'
+  const WORKER_URL = '';
+</script>
+<script src="config.js"></script>
+
+<header>
+  <div class="avatar">🤟</div>
+  <div class="header-info">
+    <h1>Assistente Nerds da Libras</h1>
+    <p><span class="dot-online"></span> Online · Especialista em Libras</p>
+  </div>
+  <a class="header-back" href="/">← Voltar</a>
+</header>
+
+<div id="setup-banner" id="setup-banner">
+  ⚠️ Worker não configurado. Edite <code>chatbot-libras.html</code> e coloque a URL do Worker.
+  <a href="https://developers.cloudflare.com/workers/" target="_blank">Ver instruções</a>
+</div>
+
+<div id="chat-wrap">
+  <div id="messages"></div>
+
+  <div id="suggestions">
+    <button class="chip" onclick="sendChip(this)">Como aprender Libras do zero?</button>
+    <button class="chip" onclick="sendChip(this)">Mostre o alfabeto em Libras</button>
+    <button class="chip" onclick="sendChip(this)">Como dizer "bom dia" em Libras?</button>
+    <button class="chip" onclick="sendChip(this)">Qual a diferença de Libras e ASL?</button>
+    <button class="chip" onclick="sendChip(this)">Quero praticar números</button>
+    <button class="chip" onclick="sendChip(this)">Me dê uma dica de estudo</button>
+    <button class="chip" onclick="sendChip(this)">O que é classificador?</button>
+    <button class="chip" onclick="sendChip(this)">Conhecer os cursos</button>
+  </div>
+
+  <div id="input-bar">
+    <textarea
+      id="user-input"
+      rows="1"
+      placeholder="Digite sua dúvida sobre Libras…"
+      autocomplete="off"
+    ></textarea>
+    <button id="send-btn" onclick="sendMessage()" title="Enviar">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  SISTEMA PROMPT — especialista em Libras
+// ─────────────────────────────────────────────
+const SYSTEM_PROMPT = `Você é o Assistente Oficial da Nerds da Libras, especialista em Língua Brasileira de Sinais (Libras).
+
+Sua missão é:
+1. ENSINAR Libras de forma clara, didática e acolhedora
+2. RESPONDER dúvidas sobre gramática, vocabulário e cultura surda
+3. GUIAR o aluno no aprendizado progressivo (do zero à fluência)
+4. MOTIVAR e engajar quem está aprendendo
+
+Conhecimentos que você domina:
+- Alfabeto datilológico (A-Z) com descrições dos sinais
+- Números cardinais e ordinais em Libras
+- Saudações e expressões cotidianas
+- Gramática visual-espacial da Libras (ordem: Sujeito-Objeto-Verbo, uso do espaço)
+- Expressões faciais e corporais como elementos gramaticais
+- Parâmetros da Libras: Configuração de Mão (CM), Ponto de Articulação (PA), Movimento (M), Orientação (OR), Expressão não-manual (ENM)
+- Vocabulário por temas: família, cores, números, animais, alimentos, emoções, trabalho, saúde, escola
+- Classificadores em Libras
+- Diferenças culturais entre comunidade surda e ouvinte
+- História da Libras e cultura surda no Brasil
+- Lei 10.436/2002 (oficialização da Libras) e Decreto 5.626/2005
+
+Ao descrever sinais, use este formato padronizado:
+🤟 **SINAL: [palavra]**
+✋ Mão: [configuração]
+📍 Local: [onde na face/corpo]
+↕️ Movimento: [descrição]
+👁️ Expressão: [expressão facial se necessária]
+
+Cursos da Nerds da Libras (mencione quando relevante):
+- **Curso Do Zero à Libras** — Básico, Intermediário e Avançado — Certificado 350h — R$397 (12x R$41,06)
+- **Mentoria Ciclo da Fluência** — para fluência avançada — R$2.997
+
+Regras importantes:
+- Seja sempre acolhedor, paciente e encorajador
+- Use emojis relacionados a Libras (🤟👋✋👁️🧏) para tornar as respostas mais visuais
+- Quando descrever sinais, seja preciso e use analogias visuais para facilitar
+- Adapte a linguagem ao nível do aluno (iniciante, intermediário, avançado)
+- Se o aluno mencionar interesse em se profissionalizar, fale da Mentoria
+- Responda sempre em Português Brasileiro
+- Incentive a prática diária e consistência`;
+
+// ─────────────────────────────────────────────
+//  ESTADO
+// ─────────────────────────────────────────────
+const history = [];
+let isWaiting  = false;
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const workerUrl = (typeof CONFIG !== 'undefined' && CONFIG.WORKER_URL) || WORKER_URL;
+  if (!workerUrl) {
+    document.getElementById('setup-banner').style.display = 'block';
+  }
+
+  appendBot(`Olá! 👋 Sou o **Assistente Nerds da Libras** — estou aqui para te ajudar a aprender e praticar a Língua Brasileira de Sinais! 🤟
+
+Posso te ensinar:
+- 🔤 Alfabeto e números
+- 👋 Saudações e expressões do dia a dia
+- 📚 Gramática e estrutura da Libras
+- 🤟 Vocabulário por temas
+- ❓ Tirar todas as suas dúvidas
+
+Por onde quer começar?`);
+
+  const input = document.getElementById('user-input');
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+});
+
+// ─────────────────────────────────────────────
+//  FUNÇÕES DE UI
+// ─────────────────────────────────────────────
+function appendBot(text, isTyping = false) {
+  const msgs = document.getElementById('messages');
+
+  if (isTyping) {
+    const t = document.createElement('div');
+    t.className = 'typing';
+    t.id = 'typing-indicator';
+    t.innerHTML = '<span></span><span></span><span></span>';
+    msgs.appendChild(t);
+    msgs.scrollTop = msgs.scrollHeight;
+    return;
+  }
+
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = formatMessage(text);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function appendUser(text) {
+  const msgs = document.getElementById('messages');
+  const div  = document.createElement('div');
+  div.className = 'msg user';
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if (t) t.remove();
+}
+
+function formatMessage(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^(.+)$/, '<p>$1</p>');
+}
+
+// ─────────────────────────────────────────────
+//  ENVIAR MENSAGEM
+// ─────────────────────────────────────────────
+async function sendMessage() {
+  if (isWaiting) return;
+
+  const input = document.getElementById('user-input');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+
+  appendUser(text);
+  history.push({ role: 'user', content: text });
+
+  await callAPI();
+}
+
+function sendChip(btn) {
+  if (isWaiting) return;
+  const text = btn.textContent.trim();
+
+  const input = document.getElementById('user-input');
+  input.value = text;
+  sendMessage();
+}
+
+// ─────────────────────────────────────────────
+//  CHAMAR WORKER → CLAUDE
+// ─────────────────────────────────────────────
+async function callAPI() {
+  const workerUrl = (typeof CONFIG !== 'undefined' && CONFIG.WORKER_URL) || WORKER_URL;
+
+  if (!workerUrl) {
+    appendBot('⚠️ O assistente ainda não está configurado. Por favor, configure a URL do Worker no arquivo `chatbot-libras.html`.');
+    return;
+  }
+
+  isWaiting = true;
+  document.getElementById('send-btn').disabled = true;
+  appendBot(null, true); // typing indicator
+
+  try {
+    const res = await fetch(workerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model:      'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        system:     SYSTEM_PROMPT,
+        messages:   history.slice(-20), // últimas 20 mensagens de contexto
+      }),
+    });
+
+    const data = await res.json();
+
+    removeTyping();
+
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      history.push({ role: 'assistant', content: reply });
+      appendBot(reply);
+    } else if (data.error) {
+      appendBot(`❌ Erro: ${data.error.message || 'Tente novamente em instantes.'}`);
+    } else {
+      appendBot('❌ Resposta inesperada. Tente novamente.');
+    }
+  } catch (err) {
+    removeTyping();
+    appendBot('❌ Não consegui conectar ao servidor. Verifique sua conexão e tente novamente.');
+    console.error(err);
+  } finally {
+    isWaiting = false;
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('user-input').focus();
+  }
+}
+</script>
+</body>
+</html>
