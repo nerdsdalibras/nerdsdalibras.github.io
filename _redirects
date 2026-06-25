@@ -30,6 +30,9 @@
 # ── DASHBOARD ──
 /dashboard            /dashboard.html                                            200
 
+# ── MENTORIA VSL ──
+/mentoriavsl          /turmamentoriavsl/index.html                               200
+
 # ── PRODUTOS (preencher quando tiver os links) ──
 /zero-a-libras        https://chat.whatsapp.com/GLQeFyVsR2kFvzcBgggDsV           302
 /mentoria             https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe          302
