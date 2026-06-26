@@ -57,17 +57,40 @@
 
     /* ─── HERO ─── */
     .hero {
-      background: linear-gradient(135deg, var(--cream) 48%, #e8d9f5 100%);
-      padding: 56px 20px 48px;
-      text-align: center;
+      background: linear-gradient(135deg, var(--cream) 45%, #ede0f8 100%);
+      padding: 48px 20px 56px;
     }
+    .hero-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-left { text-align: left; }
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero-flyer {
+      width: 100%;
+      max-width: 440px;
+      border-radius: 20px;
+      box-shadow: 0 24px 64px rgba(42,10,94,0.28);
+      transform: rotate(1.5deg);
+      transition: transform 0.3s;
+    }
+    .hero-flyer:hover { transform: rotate(0deg) scale(1.02); }
+
     .brand {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 800;
       letter-spacing: 0.25em;
       color: var(--purple-mid);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .brand span { color: var(--gold); }
     .badge {
@@ -80,14 +103,13 @@
       letter-spacing: 0.12em;
       padding: 5px 18px;
       border-radius: 20px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .hero h1 {
-      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-size: clamp(2rem, 4vw, 3.2rem);
       font-weight: 900;
       color: var(--text-dark);
-      max-width: 720px;
-      margin: 0 auto 8px;
+      margin-bottom: 8px;
     }
     .hero h1 em {
       font-style: normal;
@@ -95,14 +117,60 @@
     }
     .hero-sub {
       font-family: 'Montserrat', sans-serif;
-      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
       color: var(--text-mid);
-      max-width: 560px;
-      margin: 0 auto 12px;
+      margin-bottom: 28px;
+      line-height: 1.6;
     }
     .hero-sub strong { color: var(--gold); }
 
-    .hero-cta { margin-top: 36px; }
+    /* preço no hero */
+    .hero-price-box {
+      background: linear-gradient(135deg, var(--purple-dark), var(--purple-mid));
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      display: inline-block;
+      width: 100%;
+    }
+    .hero-price-box .from { color: rgba(255,255,255,0.55); font-size:0.85rem; }
+    .hero-price-box .from span { text-decoration:line-through; color:var(--red-strike); font-weight:700; }
+    .hero-price-box .big-price {
+      color: var(--gold-light);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.8rem,6vw,4rem);
+      line-height: 1;
+      margin: 4px 0 8px;
+    }
+    .hero-price-box .big-price sup { font-size:0.42em; vertical-align:top; margin-top:0.7em; }
+    .hero-price-box .big-price sub { font-size:0.38em; vertical-align:bottom; }
+    .hero-price-box .offer-label {
+      display:inline-block;
+      background: var(--gold);
+      color: var(--purple-dark);
+      font-family:'Montserrat',sans-serif;
+      font-weight:800;
+      font-size:0.72rem;
+      letter-spacing:0.1em;
+      padding:3px 12px;
+      border-radius:20px;
+      margin-bottom:10px;
+    }
+
+    .hero-cta { margin-top: 0; }
+
+    @media (max-width: 768px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero-left { text-align: center; }
+      .hero-right { order: -1; }
+      .hero-flyer { max-width: 300px; transform: none; }
+      .hero-price-box { display: block; }
+    }
 
     /* ─── CTA BUTTON ─── */
     .btn-cta {
@@ -474,35 +542,6 @@
       letter-spacing: 0.03em;
     }
 
-    /* ─── COUNTDOWN ─── */
-    .countdown-wrap {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin: 28px 0;
-    }
-    .countdown-block {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 12px;
-      padding: 12px 18px;
-      min-width: 64px;
-      text-align: center;
-    }
-    .countdown-block .num {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: 2rem;
-      color: var(--gold-light);
-      line-height: 1;
-    }
-    .countdown-block .label {
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.6);
-      margin-top: 4px;
-    }
-
     /* ─── TESTIMONIALS ─── */
     .testimonials-grid {
       display: grid;
@@ -568,42 +607,52 @@
 
 <!-- ─── HERO ─── -->
 <section class="hero">
-  <div class="container">
-    <p class="brand">NERDS DA <span>LIBRAS</span></p>
-    <div class="badge">GUIA DE FORMAÇÃO PROFISSIONAL</div>
+  <div class="hero-inner">
 
-    <h1>
-      Seu Caminho para se Tornar<br>
-      <em>Intérprete de Libras</em>
-    </h1>
+    <!-- ESQUERDA: texto + preço + CTA -->
+    <div class="hero-left">
+      <p class="brand">NERDS DA <span>LIBRAS</span></p>
+      <div class="badge">GUIA DE FORMAÇÃO PROFISSIONAL</div>
 
-    <p class="hero-sub" style="margin-top:20px;">
-      Desenvolva fluência, escolha a formação certa e<br>
-      <strong>construa sua carreira</strong> com quem realmente entende o caminho.
-    </p>
+      <h1>
+        Seu Caminho para se Tornar<br>
+        <em>Intérprete de Libras</em>
+      </h1>
 
-    <!-- Countdown -->
-    <div style="background:linear-gradient(135deg,#2A0A5E,#3D1A7E);border-radius:20px;padding:32px 24px;max-width:480px;margin:36px auto 0;">
-      <p style="color:#D4A020;font-family:Montserrat,sans-serif;font-weight:800;font-size:0.82rem;letter-spacing:0.12em;margin-bottom:16px;">⏳ OFERTA EXPIRA EM:</p>
-      <div class="countdown-wrap">
-        <div class="countdown-block"><div class="num" id="cd-h">00</div><div class="label">HORAS</div></div>
-        <div class="countdown-block"><div class="num" id="cd-m">00</div><div class="label">MINUTOS</div></div>
-        <div class="countdown-block"><div class="num" id="cd-s">00</div><div class="label">SEGUNDOS</div></div>
+      <p class="hero-sub" style="margin-top:18px;">
+        Desenvolva fluência, escolha a formação certa e<br>
+        <strong>construa sua carreira</strong> com quem realmente entende o caminho.
+      </p>
+
+      <!-- Caixa de preço -->
+      <div class="hero-price-box">
+        <div class="offer-label">✦ OFERTA ESPECIAL — JUNHO ✦</div>
+        <p class="from">DE: <span>R$97,00</span></p>
+        <p style="color:rgba(255,255,255,0.7);font-size:0.82rem;margin-bottom:2px;">POR APENAS:</p>
+        <p class="big-price"><sup>R$</sup>29<sub>,90</sub></p>
+        <p style="color:rgba(255,255,255,0.55);font-size:0.75rem;">Ebook 100% Digital · Acesso imediato</p>
       </div>
-      <div style="margin-bottom:8px;">
-        <p class="price-from">De: <span>R$97,00</span></p>
-        <p class="price-main" style="color:#F0C040;font-family:Montserrat,sans-serif;font-weight:900;font-size:3.5rem;"><sup>R$</sup>29<sub>,90</sub></p>
-      </div>
+
       <div class="hero-cta">
-        <a href="#comprar" class="btn-cta">
+        <a href="#comprar" class="btn-cta" style="width:100%;text-align:center;display:block;">
           QUERO MEU EBOOK AGORA
-          <small>Acesso imediato · 100% Digital</small>
+          <small>Clique e garanta seu acesso em segundos</small>
         </a>
       </div>
-      <p class="secure-note" style="color:rgba(255,255,255,0.5);margin-top:12px;">
-        <svg viewBox="0 0 24 24" style="fill:rgba(255,255,255,0.5)"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-        Compra 100% segura · Pagamento criptografado
+
+      <p class="secure-note" style="margin-top:14px;">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        Compra 100% segura · Garantia de 7 dias
       </p>
+    </div>
+
+    <!-- DIREITA: imagem do flyer -->
+    <div class="hero-right">
+      <img
+        src="capa.jpg"
+        alt="Ebook Seu Caminho para se Tornar Intérprete de Libras — Prof. Lorena"
+        class="hero-flyer"
+      />
     </div>
 
   </div>
@@ -861,22 +910,6 @@
 </div>
 
 <script>
-  // Countdown até o fim do mês de junho
-  function updateCountdown() {
-    const now = new Date();
-    const endOfJune = new Date(now.getFullYear(), 5, 30, 23, 59, 59); // June = month 5
-    if (now > endOfJune) endOfJune.setFullYear(endOfJune.getFullYear() + 1);
-    const diff = endOfJune - now;
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
-    document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
-    document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-
   // Hide sticky bar when price section is visible
   const observer = new IntersectionObserver(entries => {
     const bar = document.querySelector('.sticky-cta');
