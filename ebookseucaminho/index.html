@@ -57,297 +57,30 @@
 
     /* ─── HERO FLYER ─── */
     .hero {
-      position: relative;
-      overflow: hidden;
-      background: #F5EDE0;
-      padding: 0;
+      background: linear-gradient(160deg, #1E0848 0%, #2A105A 60%, #1A0635 100%);
+      padding: 40px 20px 32px;
+      text-align: center;
     }
-    /* cortina roxa à direita */
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: 0; right: 0;
-      width: 38%;
-      height: 100%;
-      background: linear-gradient(160deg, transparent 0%, rgba(80,20,140,0.18) 40%, rgba(60,10,110,0.55) 100%);
-      pointer-events: none;
+    .hero-img-wrap {
+      max-width: 700px;
+      margin: 0 auto 28px;
     }
-    .hero-wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 1060px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      min-height: 680px;
-    }
-    /* ── LADO ESQUERDO ── */
-    .hero-left {
-      padding: 52px 40px 40px 32px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .brand {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: 0.3em;
-      color: var(--text-dark);
-      margin-bottom: 10px;
-    }
-    .brand span { color: var(--gold); }
-    .badge {
-      display: inline-block;
-      background: var(--purple-dark);
-      color: var(--gold-light);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      padding: 6px 18px;
-      border-radius: 20px;
-      margin-bottom: 22px;
-    }
-    .hero h1 {
-      font-size: clamp(2.2rem, 4vw, 3.6rem);
-      font-weight: 900;
-      color: var(--text-dark);
-      line-height: 1.1;
-      margin-bottom: 0;
-    }
-    .hero h1 .grad-orange {
-      background: linear-gradient(90deg, #C8801A, #E04060);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero h1 .grad-purple {
-      background: linear-gradient(90deg, #9B2D8E, #5A2DA0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    /* linha dourada decorativa */
-    .hero-divider {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 18px 0;
-    }
-    .hero-divider::before,
-    .hero-divider::after {
-      content: '';
-      flex: 1;
-      height: 1.5px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    }
-    .hero-divider span { color: var(--gold); font-size: 0.7rem; }
-
-    .hero-sub {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 1rem;
-      color: var(--text-mid);
-      line-height: 1.65;
-      margin-bottom: 24px;
-    }
-    .hero-sub strong { color: var(--gold); font-weight: 700; }
-
-    /* caixa de preço */
-    .hero-price-box {
-      background: linear-gradient(135deg, #1E0848, #2E1060);
-      border: 1.5px solid var(--gold);
-      border-radius: 14px;
-      padding: 20px 22px 16px;
-      margin-bottom: 20px;
-    }
-    .hero-price-box .offer-stars {
-      color: var(--gold);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      margin-bottom: 4px;
-    }
-    .hero-price-box .offer-month {
-      color: #fff;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.82rem;
-      letter-spacing: 0.04em;
-      margin-bottom: 2px;
-    }
-    .hero-price-box .offer-month strong { color: var(--gold-light); }
-    .hero-price-box .from {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 8px 0 2px;
-      font-size: 0.88rem;
-      color: rgba(255,255,255,0.65);
-    }
-    .hero-price-box .from span {
-      text-decoration: line-through;
-      color: #e05050;
-      font-weight: 700;
-    }
-    .hero-price-box .only { color: rgba(255,255,255,0.65); font-size:0.82rem; margin-bottom:2px; }
-    .hero-price-box .big-price {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: clamp(3rem, 6vw, 4.2rem);
-      color: var(--gold-light);
-      line-height: 1;
-      letter-spacing: -0.01em;
-      margin-bottom: 12px;
-    }
-    .hero-price-box .big-price sup { font-size: 0.4em; vertical-align: top; margin-top: 0.75em; }
-    .hero-price-box .big-price sub { font-size: 0.38em; vertical-align: bottom; }
-    .hero-price-box .lock-note {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--gold);
-      color: var(--purple-dark);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 0.72rem;
-      letter-spacing: 0.06em;
-      padding: 7px 14px;
-      border-radius: 8px;
-      width: 100%;
-      justify-content: center;
-    }
-
-    /* ── LADO DIREITO ── */
-    .hero-right {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 0 0 0 20px;
-    }
-    /* imagem do flyer à direita */
-    .hero-photo {
-      width: 100%;
-      max-width: 420px;
-      position: relative;
-      margin-top: 24px;
-    }
-    .hero-photo img {
+    .hero-main-img {
       width: 100%;
       height: auto;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(42,10,94,0.3);
       display: block;
+      border-radius: 18px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.55);
     }
-    /* mockup de ebook no canto inferior */
-    .hero-ebook-badge {
-      position: absolute;
-      bottom: 24px;
-      right: -10px;
-      background: linear-gradient(135deg, #6B1D9E, #3D0A6E);
-      border: 2px solid var(--gold);
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
+    .hero-cta-bar {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 0.55rem;
-      color: var(--gold-light);
-      letter-spacing: 0.06em;
-      line-height: 1.3;
-      box-shadow: 0 4px 20px rgba(42,10,94,0.4);
+      gap: 4px;
     }
-
-    /* ── BARRA DE BENEFÍCIOS ── */
-    .hero-benefits-bar {
-      background: linear-gradient(90deg, #1E0848, #2A105A, #1E0848);
-      border-top: 2px solid rgba(212,160,32,0.3);
-      padding: 20px 32px;
-    }
-    .hero-benefits-inner {
-      max-width: 1060px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .hb-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .hb-icon {
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-    .hb-text { flex: 1; }
-    .hb-title {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 0.7rem;
-      color: var(--gold-light);
-      letter-spacing: 0.1em;
-      margin-bottom: 2px;
-    }
-    .hb-desc {
-      font-size: 0.78rem;
-      color: rgba(255,255,255,0.65);
-      line-height: 1.4;
-    }
-    /* barra inferior do flyer */
-    .hero-author-bar {
-      background: linear-gradient(90deg, #160535, #220850);
-      border-top: 1px solid rgba(212,160,32,0.2);
-      padding: 14px 32px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .hero-author-bar-inner {
-      max-width: 1060px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      width: 100%;
-    }
-    .hab-icon {
-      width: 36px; height: 36px;
-      background: rgba(212,160,32,0.15);
-      border: 1.5px solid var(--gold);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
-      flex-shrink: 0;
-    }
-    .hab-text {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.75);
-    }
-    .hab-text strong { color: var(--gold-light); font-family: 'Montserrat', sans-serif; }
-
-    .hero-cta { margin-top: 0; }
-
     @media (max-width: 768px) {
-      .hero-wrap { grid-template-columns: 1fr; min-height: auto; }
-      .hero-left { padding: 36px 24px 24px; text-align: center; }
-      .hero-right { order: -1; align-items: center; padding: 24px 24px 0; }
-      .hero-photo { margin-top: 0; max-width: 260px; }
-      .hero::after { width: 100%; background: linear-gradient(180deg, transparent 60%, rgba(60,10,110,0.3) 100%); }
-      .hero-benefits-inner { grid-template-columns: 1fr; }
-      .hero-benefits-bar { padding: 20px 20px; }
-      .hero-author-bar { padding: 12px 20px; }
-      .hero-divider { justify-content: center; }
+      .hero { padding: 28px 16px 24px; }
+      .hero-img-wrap { max-width: 100%; }
     }
 
     /* ─── CTA BUTTON ─── */
@@ -785,97 +518,19 @@
 
 <!-- ─── HERO ─── -->
 <section class="hero">
-  <div class="hero-wrap">
-
-    <!-- ESQUERDA -->
-    <div class="hero-left">
-      <p class="brand">NERDS DA <span>LIBRAS</span></p>
-      <div class="badge">GUIA DE FORMAÇÃO PROFISSIONAL</div>
-
-      <h1>
-        Seu Caminho<br>
-        para se Tornar<br>
-        <span class="grad-orange">Intérprete</span><br>
-        <span class="grad-purple">de Libras</span>
-      </h1>
-
-      <div class="hero-divider"><span>✦</span></div>
-
-      <p class="hero-sub">
-        Desenvolva fluência,<br>
-        escolha a formação certa e<br>
-        <strong>construa sua carreira.</strong>
-      </p>
-
-      <!-- Caixa de preço -->
-      <div class="hero-price-box">
-        <p class="offer-stars">✦ OFERTA ESPECIAL ✦</p>
-        <p class="offer-month">SOMENTE NESTE MÊS DE <strong>JUNHO!</strong></p>
-        <p class="from">DE: <span>R$97,00</span></p>
-        <p class="only">POR APENAS:</p>
-        <p class="big-price"><sup>R$</sup>29<sub>,90</sub></p>
-        <div class="lock-note">🔒 OFERTA POR TEMPO LIMITADO!</div>
-      </div>
-
-      <a href="#comprar" class="btn-cta" style="display:block;text-align:center;margin-bottom:12px;">
-        QUERO MEU EBOOK AGORA
-        <small>Acesso imediato · 100% Digital</small>
-      </a>
-
-      <p class="secure-note">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-        Compra 100% segura · Garantia de 7 dias
-      </p>
-    </div>
-
-    <!-- DIREITA: flyer completo com casal + mockup -->
-    <div class="hero-right">
-      <div class="hero-photo">
-        <img src="SEU%20CAMAMNHO%20JN%20E%20LORENA.png" alt="Seu Caminho para se Tornar Intérprete de Libras — Prof. Lorena e equipe" />
-        <div class="hero-ebook-badge">EBOOK<br>100%<br>DIGITAL<br>⬇</div>
-      </div>
-    </div>
-
+  <div class="hero-img-wrap">
+    <img src="SEU%20CAMAMNHO%20JN%20E%20LORENA.png" alt="Seu Caminho para se Tornar Intérprete de Libras — Prof. Lorena e João" class="hero-main-img" />
   </div>
-
-  <!-- BARRA DE BENEFÍCIOS -->
-  <div class="hero-benefits-bar">
-    <div class="hero-benefits-inner">
-      <div class="hb-item">
-        <div class="hb-icon">📖</div>
-        <div class="hb-text">
-          <div class="hb-title">CONTEÚDO PRÁTICO</div>
-          <div class="hb-desc">Passo a passo para guiar sua jornada com clareza.</div>
-        </div>
-      </div>
-      <div class="hb-item">
-        <div class="hb-icon">🎯</div>
-        <div class="hb-text">
-          <div class="hb-title">FOCO EM RESULTADOS</div>
-          <div class="hb-desc">Estratégias para acelerar seu aprendizado e carreira.</div>
-        </div>
-      </div>
-      <div class="hb-item">
-        <div class="hb-icon">⭐</div>
-        <div class="hb-text">
-          <div class="hb-title">TRANSFORME VIDAS</div>
-          <div class="hb-desc">Seja ponte de comunicação e faça a diferença!</div>
-        </div>
-      </div>
-    </div>
+  <div class="hero-cta-bar">
+    <a href="#comprar" class="btn-cta">
+      QUERO MEU EBOOK AGORA
+      <small>Acesso imediato · 100% Digital · R$29,90</small>
+    </a>
+    <p class="secure-note" style="margin-top:10px;justify-content:center;">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      Compra 100% segura · Garantia de 7 dias
+    </p>
   </div>
-
-  <!-- BARRA DO AUTOR -->
-  <div class="hero-author-bar">
-    <div class="hero-author-bar-inner">
-      <div class="hab-icon">👤</div>
-      <div class="hab-text">
-        <strong>Tradutores, intérpretes e professores</strong><br>
-        <span style="color:var(--gold);">15 anos de experiência</span>
-      </div>
-    </div>
-  </div>
-
 </section>
 
 <div class="divider"></div>
