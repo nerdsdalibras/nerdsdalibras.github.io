@@ -70,7 +70,6 @@
       height: auto;
       display: block;
       border-radius: 18px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.55);
     }
     .hero-cta-bar {
       display: flex;
@@ -84,23 +83,44 @@
     }
 
     /* ─── CTA BUTTON ─── */
+    /* ─── DIAMOND CTA BUTTON ─── */
+    @keyframes diamond-shine {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
     .btn-cta {
       display: inline-block;
-      background: linear-gradient(135deg, #D4A020, #F0C040, #D4A020);
+      position: relative;
+      background: linear-gradient(100deg,
+        #b8860b 0%, #D4A020 15%, #F0C040 30%,
+        #fffbe6 45%, #F0C040 55%, #D4A020 70%,
+        #b8860b 85%, #D4A020 100%);
+      background-size: 200% auto;
+      animation: diamond-shine 2.4s linear infinite;
       color: var(--purple-dark);
       font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
+      font-weight: 900;
       font-size: clamp(1rem, 2.5vw, 1.2rem);
-      padding: 18px 44px;
+      padding: 20px 52px;
       border-radius: 50px;
-      letter-spacing: 0.02em;
-      box-shadow: 0 8px 30px rgba(212,160,32,0.45);
+      letter-spacing: 0.04em;
+      box-shadow: 0 8px 30px rgba(212,160,32,0.55), inset 0 1px 0 rgba(255,255,255,0.4);
       transition: transform 0.2s, box-shadow 0.2s;
       cursor: pointer;
-      border: none;
+      border: 2px solid rgba(255,220,80,0.7);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.3);
     }
-    .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(212,160,32,0.6); }
-    .btn-cta small { display: block; font-size: 0.7rem; font-weight: 600; opacity: 0.75; margin-top: 2px; }
+    .btn-cta:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 50px rgba(212,160,32,0.7), inset 0 1px 0 rgba(255,255,255,0.4); }
+    .btn-cta small { display: block; font-size: 0.72rem; font-weight: 600; opacity: 0.8; margin-top: 4px; letter-spacing: 0.01em; }
+
+    /* ─── BOOK FLOAT ANIMATION ─── */
+    @keyframes book-float {
+      0%, 100% { transform: translateY(0px) rotate(-1deg); filter: drop-shadow(0 30px 60px rgba(0,0,0,0.5)); }
+      50%       { transform: translateY(-18px) rotate(1deg); filter: drop-shadow(0 50px 80px rgba(0,0,0,0.35)); }
+    }
+    .hero-main-img {
+      animation: book-float 4s ease-in-out infinite;
+    }
 
     .btn-secondary {
       display: inline-block;
@@ -515,7 +535,7 @@
 
 <!-- TOP BAR -->
 <div class="topbar">
-  ✦ OFERTA ESPECIAL DE JUNHO — <span>Apenas R$29,90</span> — Vagas Limitadas ✦
+  ✦ OFERTA ESPECIAL DE JUNHO — <span>Apenas R$19,90</span> — Vagas Limitadas ✦
 </div>
 
 <!-- URGENCY BAR -->
@@ -542,7 +562,7 @@
   <div class="hero-cta-bar">
     <a href="#comprar" class="btn-cta">
       QUERO MEU EBOOK AGORA
-      <small>Acesso imediato · 100% Digital · R$29,90</small>
+      <small>Acesso imediato · 100% Digital · R$19,90</small>
     </a>
     <p class="secure-note" style="margin-top:10px;justify-content:center;">
       <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
@@ -697,9 +717,9 @@
       <div class="offer-badge">OFERTA ESPECIAL</div>
       <p class="price-title">SOMENTE NESTE MÊS DE</p>
       <p class="price-month">JUNHO!</p>
-      <p class="price-from">DE: <span>R$97,00</span></p>
+      <p class="price-from">DE: <span>R$97,90</span></p>
       <p style="color:rgba(255,255,255,0.7);font-size:0.88rem;margin-bottom:6px;">POR APENAS:</p>
-      <p class="price-main"><sup>R$</sup>29<sub>,90</sub></p>
+      <p class="price-main"><sup>R$</sup>19<sub>,90</sub></p>
       <p class="price-note">Ebook 100% Digital · Acesso imediato e vitalício</p>
 
       <a href="#" class="btn-cta" style="display:block;text-align:center;">
@@ -743,8 +763,8 @@
         <p>Sim! O arquivo é em PDF e pode ser lido em qualquer dispositivo: celular, tablet, notebook ou computador.</p>
       </details>
       <details class="faq-item">
-        <summary>O preço de R$29,90 é somente em junho?</summary>
-        <p>Sim. Esta é uma oferta especial por tempo limitado. Após junho, o valor retorna para R$97,00. Aproveite enquanto está disponível.</p>
+        <summary>O preço de R$19,90 é somente em junho?</summary>
+        <p>Sim. Esta é uma oferta especial por tempo limitado. Após junho, o valor retorna para R$97,90. Aproveite enquanto está disponível.</p>
       </details>
       <details class="faq-item">
         <summary>E se eu não gostar? Tenho garantia?</summary>
@@ -762,10 +782,10 @@
 <section class="section section--purple" style="text-align:center;">
   <div class="container">
     <h2 class="section-title" style="color:#fff;">Seu caminho começa<br><em style="color:var(--gold-light)">com uma decisão</em></h2>
-    <p style="color:rgba(255,255,255,0.8);max-width:540px;margin:0 auto 36px;font-size:1.05rem;">Cada dia que passa é uma oportunidade perdida de avançar na sua formação. Por R$29,90 você tem o mapa completo nas suas mãos.</p>
+    <p style="color:rgba(255,255,255,0.8);max-width:540px;margin:0 auto 36px;font-size:1.05rem;">Cada dia que passa é uma oportunidade perdida de avançar na sua formação. Por R$19,90 você tem o mapa completo nas suas mãos.</p>
     <a href="#comprar" class="btn-cta">
       GARANTIR MEU ACESSO AGORA
-      <small>Oferta válida somente em Junho · R$29,90</small>
+      <small>Oferta válida somente em Junho · R$19,90</small>
     </a>
     <p class="secure-note" style="color:rgba(255,255,255,0.5);margin-top:14px;">
       <svg viewBox="0 0 24 24" style="fill:rgba(255,255,255,0.5)"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
@@ -783,7 +803,7 @@
 
 <!-- ─── STICKY CTA BAR ─── -->
 <div class="sticky-cta">
-  <p>Oferta de Junho: <span class="price-mini">R$29,90</span></p>
+  <p>Oferta de Junho: <span class="price-mini">R$19,90</span></p>
   <a href="#comprar" class="btn-cta" style="font-size:0.88rem;padding:12px 28px;">
     GARANTIR AGORA
     <small>Oferta por tempo limitado</small>
