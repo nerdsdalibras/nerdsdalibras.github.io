@@ -613,7 +613,7 @@ const QUESTIONS = [
 /* ═══════════ ESTADO ═══════════ */
 const S = {
   id: `qz_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
-  nome:'', email:'', exp:'',
+  nome:'', whatsapp:'', email:'', exp:'',
   qIdx:0, score:0, respostas:[], sel:null, nivelKey:'', busy:false,
 };
 
@@ -714,7 +714,49 @@ async function subNome() {
   S.nome = p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
   clearInp();
   addMsg(esc(raw), 'user');
-  await botSay([`Prazer, <strong>${esc(S.nome)}</strong>! Me passa seu melhor e-mail para eu salvar seu diagnóstico. 📩`]);
+  sendCRM({ etapaQuiz:'1. Informou o nome', statusCloser:'✍️ Começou o quiz (informou o nome)' });
+  await botSay([`Prazer, <strong>${esc(S.nome)}</strong>! Qual é o seu WhatsApp? (com DDD) — é por onde eu te mando o resultado e tiro suas dúvidas. 📱`]);
+  S.busy = false;
+  showWpp();
+}
+
+/* 2.5 WHATSAPP */
+function showWpp() {
+  setInp(`
+    <div class="field-row">
+      <input class="field-box" id="i-wpp" type="tel" placeholder="(34) 99999-9999" maxlength="20"
+        autocomplete="tel" inputmode="tel"/>
+      <button class="btn-wa-send" id="b-wpp" type="button" aria-label="Enviar">
+        <svg viewBox="0 0 24 24"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg>
+      </button>
+    </div>
+    <span class="field-error" id="e-wpp">Coloca um WhatsApp válido com DDD 😊</span>
+  `);
+  const inp = document.getElementById('i-wpp');
+  inp.focus();
+  inp.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); subWpp(); } });
+  inp.addEventListener('input', () => {
+    inp.classList.remove('error');
+    document.getElementById('e-wpp').classList.remove('show');
+  });
+  document.getElementById('b-wpp').addEventListener('click', subWpp);
+}
+
+async function subWpp() {
+  if(S.busy) return;
+  const inp = document.getElementById('i-wpp');
+  const raw = (inp.value || '').trim();
+  if(raw.replace(/\D/g,'').length < 10) {
+    inp.classList.add('error');
+    document.getElementById('e-wpp').classList.add('show');
+    inp.focus(); return;
+  }
+  S.busy = true;
+  S.whatsapp = raw;
+  clearInp();
+  addMsg(esc(raw), 'user');
+  sendCRM({ etapaQuiz:'2. Informou o WhatsApp', statusCloser:'📱 Informou o WhatsApp' });
+  await botSay([`Show! Agora me passa seu melhor e-mail para eu salvar seu diagnóstico. 📩`]);
   S.busy = false;
   showEmail();
 }
@@ -756,7 +798,7 @@ async function subEmail() {
   S.email = email;
   clearInp();
   addMsg(esc(email), 'user');
-  sendCRM('lead_capturado');
+  sendCRM({ etapaQuiz:'3. Informou o e-mail', statusCloser:'✅ Lead capturado (nome, WhatsApp e e-mail)' });
   await botSay([
     `Perfeito! Antes das perguntas, quero te conhecer um pouco melhor, <strong>${esc(S.nome)}</strong> 👇`,
   ]);
@@ -789,6 +831,7 @@ async function subExp() {
   S.exp = val;
   clearInp();
   addMsg(esc(val), 'user');
+  sendCRM({ etapaQuiz:'4. Contou a experiência', statusCloser:'🗣️ Contou a experiência' });
   await botSay([
     `Adorei saber mais sobre você! Isso me ajuda muito a montar o seu diagnóstico. 🙌`,
     `Agora vou te fazer <strong>4 perguntas rápidas</strong> para identificar exatamente o seu nível em Libras. Responde com sinceridade — sem julgamento aqui! Combinado? 🎯`,
@@ -856,6 +899,8 @@ async function confirmAns() {
   addMsg(esc(op.t), 'user');
   await wait(300);
   S.busy = false;
+  const rn = S.qIdx + 1;
+  sendCRM({ etapaQuiz:`Pergunta ${rn}/${QUESTIONS.length} respondida`, statusCloser:`📝 Respondeu ${rn}/${QUESTIONS.length} do quiz` });
   if(S.qIdx < QUESTIONS.length - 1) { S.qIdx++; askQ(); }
   else showResult();
 }
@@ -876,6 +921,12 @@ async function showResult() {
 
   S.nivelKey = nivelKey(S.score);
   const p = CONFIG.PRODUTOS[S.nivelKey];
+
+  sendCRM({
+    concluiuQuiz: true,
+    etapaQuiz:    '5. Concluiu o quiz — viu o diagnóstico',
+    statusCloser: `🎯 Concluiu o quiz — Nível ${p.nivel} · indicado: ${p.nome}`,
+  });
 
   const diags = {
     basico: `Você está dando os primeiros passos — e isso é muito melhor do que ficar parado(a) sem direção. A maioria das pessoas que trava em Libras não travou por falta de esforço: <strong>travou por falta do caminho certo.</strong><br/><br/>Você precisa de uma base sólida e entender o que a profissão realmente exige.`,
@@ -956,7 +1007,7 @@ async function simClick(p) {
   await botSay([`Qualquer dúvida, me chama! Torço muito pela sua evolução em Libras 💙`]);
   setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
   document.getElementById('b-restart').addEventListener('click', restart);
-  sendCRM('oferta_aceita', { produto: p.nome, nivel: p.nivel });
+  sendCRM({ etapaQuiz:'6. Aceitou a oferta', statusCloser:`💚 Aceitou a oferta (${p.nome})` });
 }
 
 async function naoClick(p) {
@@ -971,7 +1022,7 @@ async function naoClick(p) {
   prodCard(p, true);
   setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
   document.getElementById('b-restart').addEventListener('click', restart);
-  sendCRM('oferta_recusada', { produto: p.nome, nivel: p.nivel });
+  sendCRM({ etapaQuiz:'6. Recusou a oferta (quer preço cheio)', statusCloser:`🙅 Recusou a oferta (${p.nome})` });
 }
 
 function prodCard(p, comUrgencia) {
@@ -990,34 +1041,80 @@ function prodCard(p, comUrgencia) {
       </div>
     ` : ''}
     ${comUrgencia ? `<div class="urgencia-chip">⚠️ Oferta expira quando você sair desta página.</div>` : ''}
-    <a class="btn-cta" href="${p.link}" target="_blank" rel="noopener">${p.cta}</a>
+    <a class="btn-cta" href="${p.link}" target="_blank" rel="noopener" onclick="registrarCliqueCTA()">${p.cta}</a>
   </div>`;
   $inner.appendChild(div);
   scrollEnd();
 }
 
 /* ═══════════ CRM ═══════════ */
-function sendCRM(fase, extra = {}) {
+// Mapas nivelKey → campos que o CRM/planilha entende
+const OFERTA_MAP = { basico:'curso', intermediario:'curso', avancado:'mentoria' };
+const NIVEL_MAP  = { basico:'Básico', intermediario:'Intermediário', avancado:'Avançado' };
+const CLASS_MAP  = { basico:'FRIO', intermediario:'MORNO', avancado:'QUENTE' };
+
+// Monta o payload com os MESMOS nomes de campo do CRM (nada se perde)
+function crmPayload(extra = {}) {
+  return {
+    sessionId:         S.id,
+    nome:              S.nome,
+    whatsapp:          S.whatsapp,
+    email:             S.email,
+    origem:            'quiz-libras',
+    iniciouQuiz:       true,
+    experiencia:       S.exp,
+    pontuacao:         S.score,
+    respostasQuiz:     JSON.stringify(S.respostas),
+    nivelIdentificado: S.nivelKey ? NIVEL_MAP[S.nivelKey]  : '',
+    oferta:            S.nivelKey ? OFERTA_MAP[S.nivelKey] : '',
+    resultado:         S.nivelKey ? CONFIG.PRODUTOS[S.nivelKey].nome : '',
+    classificacaoLead: S.nivelKey ? CLASS_MAP[S.nivelKey] : '',
+    updatedAt:         new Date().toISOString(),
+    ...extra,
+  };
+}
+
+function sendCRM(extra = {}) {
   try {
-    fetch(CONFIG.SHEETS_URL, {
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({
-        sessionId: S.id, nome: S.nome, email: S.email,
-        experiencia: S.exp, score: S.score, nivel: S.nivelKey,
-        respostas: JSON.stringify(S.respostas),
-        fase, fonte:'quiz-libras', updatedAt: new Date().toISOString(),
-        ...extra,
-      }),
-    }).catch(()=>{});
+    const body = JSON.stringify(crmPayload(extra));
+    // sendBeacon entrega mesmo se a aba fechar logo depois
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(CONFIG.SHEETS_URL, body);
+    } else {
+      fetch(CONFIG.SHEETS_URL, {
+        method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'text/plain'}, body,
+      }).catch(()=>{});
+    }
   } catch(_){}
 }
+
+// Clique no link da oferta = foi para a página de pagamento
+function registrarCliqueCTA() {
+  sendCRM({
+    clicouOferta: true,
+    ofertaEm:     new Date().toISOString(),
+    etapaQuiz:    '7. Clicou no link da oferta (foi pro checkout)',
+    statusCloser: '🛒 Clicou no link da oferta — foi para a página de pagamento',
+  });
+}
+
+// Se a pessoa fechar a aba NO MEIO das perguntas, registra onde parou
+window.addEventListener('pagehide', () => {
+  const n = S.respostas.length;
+  if (S.email && n > 0 && n < QUESTIONS.length) {
+    sendCRM({
+      etapaQuiz:    `Saiu no meio — última: Pergunta ${n}/${QUESTIONS.length}`,
+      statusCloser: `🚪 Abandonou o quiz na pergunta ${n}/${QUESTIONS.length}`,
+    });
+  }
+});
 
 /* ═══════════ RESTART ═══════════ */
 function restart() {
   Object.assign(S, {
     id:`qz_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
-    nome:'', email:'', exp:'', qIdx:0, score:0,
+    nome:'', whatsapp:'', email:'', exp:'', qIdx:0, score:0,
     respostas:[], sel:null, nivelKey:'', busy:false,
   });
   $inner.innerHTML = '';

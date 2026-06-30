@@ -80,13 +80,19 @@ function renderTab(tab) {
         <div class="panel-section-title">Diagnóstico</div>
         ${l.etapaQuiz ? `<div class="panel-field"><span class="pf-label">Etapa do quiz</span><span class="pf-val" style="font-weight:700;color:${l.concluiuQuiz ? 'var(--g)' : '#EA580C'}">${l.etapaQuiz}</span></div>` : ''}
         <div class="panel-field"><span class="pf-label">Nível</span><span class="pf-val">${l.nivelIdentificado || '—'}</span></div>
-        <div class="panel-field"><span class="pf-label">Pontuação</span><span class="pf-val">${l.pontuacao || 0}${String(l.origem || '').indexOf('quiz-libras') >= 0 ? ' / 24' : ' / 48'} pts</span></div>
+        <div class="panel-field"><span class="pf-label">Pontuação</span><span class="pf-val">${l.pontuacao || 0}${String(l.origem || '').indexOf('quiz-libras') >= 0 ? '' : ' / 48'} pts</span></div>
         <div class="panel-field"><span class="pf-label">Oferta</span><span class="pf-val">${l.oferta === 'curso' ? '📚 Curso' : l.oferta === 'mentoria' ? '🎯 Mentoria' : l.oferta === 'cas' ? '🎯 Prep. Banca CAS' : '—'}</span></div>
         <div class="panel-field"><span class="pf-label">Classificação</span><span class="pf-val">${l.classificacaoLead || '—'}</span></div>
         ${l.interesseCAS === 'sim' ? `<div class="panel-field"><span class="pf-label">Banca CAS-MG</span><span class="pf-val">🎯 Tem interesse</span></div>` : ''}
         ${l.respostaDificuldade ? `<div class="panel-field"><span class="pf-label">Dificuldade</span><span class="pf-val">${l.respostaDificuldade}</span></div>` : ''}
         ${l.respostaObjetivo    ? `<div class="panel-field"><span class="pf-label">Objetivo</span><span class="pf-val">${l.respostaObjetivo}</span></div>` : ''}
       </div>
+
+      ${l.experiencia ? `
+      <div class="panel-section">
+        <div class="panel-section-title">Experiência (contada no quiz)</div>
+        <div style="font-size:.82rem;line-height:1.5;color:var(--tx);background:var(--card2,rgba(0,0,0,.04));padding:8px 10px;border-radius:8px;white-space:pre-wrap">${String(l.experiencia).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))}</div>
+      </div>` : ''}
 
       ${renderRespostasQuiz(l)}
 
@@ -221,7 +227,7 @@ function renderRespostasQuiz(l) {
       ${rs.map((r, i) => `
         <div class="panel-field" style="align-items:flex-start">
           <span class="pf-label" style="white-space:nowrap">Q${i + 1}</span>
-          <span class="pf-val" style="text-align:right">${esc(r.resposta || r.alternativa || '—')}</span>
+          <span class="pf-val" style="text-align:right">${esc(r.r || r.resposta || r.alternativa || '—')}</span>
         </div>`).join('')}
     </div>`;
 }
