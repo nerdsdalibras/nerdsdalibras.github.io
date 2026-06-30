@@ -2,1109 +2,1030 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>Descubra seu nível em Libras — Avaliação Gratuita | Nerds da Libras</title>
-  <meta name="description" content="Avaliação gratuita com a Profa. Lorena. Descubra seu nível em Libras e o próximo passo certo para a sua evolução."/>
-  <meta name="theme-color" content="#0D1117"/>
-  <meta property="og:type" content="website"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <meta name="theme-color" content="#202C33"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>Avaliação de Libras — Profa. Lorena</title>
   <meta property="og:title" content="Diagnóstico de Libras — Profa. Lorena"/>
-  <meta property="og:description" content="Descubra seu nível em Libras com diagnóstico personalizado e o caminho exato para evoluir."/>
+  <meta property="og:description" content="Descubra seu nível em Libras e o próximo passo certo para evoluir."/>
   <meta property="og:image" content="https://nerdsdalibras.github.io/fotos/IMG_4952.jpg"/>
-  <meta property="og:url" content="https://nerdsdalibras.github.io/quiz-libras.html"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:          #0D1117;
-      --surface:     #161B22;
-      --surface-2:   #1C2333;
-      --border:      rgba(255,255,255,.08);
-      --border-soft: rgba(255,255,255,.05);
-      --blue:        #1A73E8;
-      --blue-lt:     #4D9EFF;
-      --blue-dim:    rgba(26,115,232,.14);
-      --green:       #22C55E;
-      --green-dim:   rgba(34,197,94,.14);
-      --gold:        #C9982A;
-      --gold-lt:     #F0BC44;
-      --red:         #EF4444;
-      --red-dim:     rgba(239,68,68,.12);
-      --text:        #E6EDF3;
-      --muted:       #8B949E;
-      --success:     #22C55E;
-      --error:       #F87171;
-      --bubble-user: #1A3A5C;
-      --radius:      14px;
+      --wa-header:   #202C33;
+      --wa-bg:       #0B141A;
+      --wa-bot:      #202C33;
+      --wa-user:     #005C4B;
+      --wa-input-bg: #202C33;
+      --wa-green:    #00A884;
+      --wa-green-dk: #008C6F;
+      --wa-text:     #E9EDEF;
+      --wa-muted:    #8696A0;
+      --wa-border:   rgba(255,255,255,.06);
+      --wa-gold:     #F0BC44;
+      --wa-red:      #F87171;
+      --wa-tick:     #53BDEB;
+      --radius-bot:  0 12px 12px 12px;
+      --radius-user: 12px 0 12px 12px;
     }
 
-    html { height: 100%; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
 
     body {
-      background: var(--bg);
+      background: var(--wa-bg);
       font-family: 'Inter', system-ui, sans-serif;
-      color: var(--text);
-      height: 100dvh;
-      display: flex; flex-direction: column;
+      color: var(--wa-text);
       -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
       overscroll-behavior: none;
+      touch-action: manipulation;
     }
 
-    /* ═══════════ TOPBAR ═══════════ */
-    .topbar {
-      background: rgba(22,27,34,.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px;
-      padding: 10px max(16px, env(safe-area-inset-left));
+    /* ── WhatsApp bg pattern ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+
+    /* ═══════════ LAYOUT ═══════════ */
+    #app {
+      position: fixed; inset: 0; z-index: 1;
+      display: flex; flex-direction: column;
+      height: 100%;
+      height: 100dvh;
+    }
+
+    /* ═══════════ HEADER ═══════════ */
+    .wa-header {
+      background: var(--wa-header);
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px;
+      padding-top: calc(10px + env(safe-area-inset-top));
       flex-shrink: 0;
-      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,.4);
+      z-index: 10;
+      position: relative;
     }
-    .topbar-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
-    .topbar-logo {
-      width: 38px; height: 38px; border-radius: 50%;
+    .wa-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
       overflow: hidden; flex-shrink: 0;
-      border: 2px solid rgba(34,197,94,.45);
+      border: 2px solid rgba(0,168,132,.4);
     }
-    .topbar-logo img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-    .topbar-name { font-weight: 700; font-size: .9rem; line-height: 1.2; }
-    .topbar-status {
+    .wa-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top;
+      display: block;
+    }
+    .wa-info { flex: 1; min-width: 0; }
+    .wa-name {
+      font-size: .95rem; font-weight: 700;
+      color: var(--wa-text); line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .wa-status {
       display: flex; align-items: center; gap: 5px;
-      font-size: .72rem; color: var(--success); margin-top: 2px;
+      font-size: .72rem; color: var(--wa-green); margin-top: 1px;
     }
-    .dot-online {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 6px rgba(34,197,94,.5);
-      animation: pulse 2s ease-in-out infinite;
+    .wa-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--wa-green);
+      animation: waPulse 2s ease-in-out infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
-    .topbar-back {
-      font-size: .78rem; font-weight: 600; color: var(--muted);
-      text-decoration: none; white-space: nowrap;
-      padding: 7px 12px; border-radius: 8px;
-      border: 1px solid var(--border);
-      transition: color .2s, border-color .2s;
+    @keyframes waPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .wa-back {
+      font-size: .78rem; color: var(--wa-muted);
+      text-decoration: none; padding: 6px 0;
+      white-space: nowrap; flex-shrink: 0;
     }
-    .topbar-back:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+    .wa-back:active { color: var(--wa-text); }
 
-    /* ═══════════ CHAT ═══════════ */
-    .chat-area {
-      flex: 1; overflow-y: auto;
-      padding: 24px 16px 16px;
-      scroll-behavior: smooth;
+    /* ═══════════ CHAT AREA ═══════════ */
+    .chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      padding: 12px 12px 8px;
+      position: relative;
+      z-index: 1;
     }
-    .chat-area::-webkit-scrollbar { width: 5px; }
-    .chat-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 5px; }
+    .chat-scroll::-webkit-scrollbar { display: none; }
 
     .chat-inner {
-      max-width: 540px; margin: 0 auto;
-      display: flex; flex-direction: column; gap: 8px;
+      display: flex; flex-direction: column;
+      gap: 3px;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
+    /* ── date chip ── */
+    .date-chip {
+      text-align: center; margin: 10px 0 6px;
+    }
+    .date-chip span {
+      background: rgba(17,27,33,.85);
+      color: var(--wa-muted);
+      font-size: .68rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 8px;
+    }
+
+    /* ── message rows ── */
     .msg-row {
-      display: flex; align-items: flex-end; gap: 10px;
-      opacity: 0; transform: translateY(12px);
-      animation: msgIn .35s cubic-bezier(.21,1.02,.55,1) forwards;
+      display: flex;
+      opacity: 0; transform: translateY(8px);
+      animation: msgIn .25s ease forwards;
     }
-    @keyframes msgIn { to { opacity: 1; transform: translateY(0); } }
+    @keyframes msgIn { to { opacity:1; transform:translateY(0); } }
     @media (prefers-reduced-motion: reduce) {
-      .msg-row, .result-card, .produto-wrap { animation-duration: .01s !important; }
+      .msg-row { animation-duration:.01s !important; }
     }
 
-    .msg-row.bot  { justify-content: flex-start; }
-    .msg-row.user { justify-content: flex-end; }
+    .msg-row.bot  { justify-content: flex-start; padding-left: 4px; }
+    .msg-row.user { justify-content: flex-end;   padding-right: 4px; }
 
-    .msg-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      overflow: hidden; flex-shrink: 0;
-      border: 1.5px solid rgba(255,255,255,.12);
-    }
-    .msg-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-    .msg-avatar.ghost { visibility: hidden; }
+    /* add margin between different senders */
+    .msg-row.bot  + .msg-row.user,
+    .msg-row.user + .msg-row.bot  { margin-top: 6px; }
 
     .msg-bubble {
-      padding: 11px 15px;
-      border-radius: 16px;
-      font-size: .89rem; line-height: 1.65;
-      max-width: min(82%, 420px);
+      position: relative;
+      padding: 9px 12px 20px;
+      border-radius: 12px;
+      font-size: .92rem; line-height: 1.55;
+      max-width: min(78vw, 340px);
       word-wrap: break-word;
+      word-break: break-word;
     }
     .bot .msg-bubble {
-      background: var(--surface-2);
-      border: 1px solid var(--border-soft);
-      border-bottom-left-radius: 4px;
+      background: var(--wa-bot);
+      border-radius: var(--radius-bot);
     }
     .user .msg-bubble {
-      background: var(--bubble-user);
-      border: 1px solid rgba(26,115,232,.22);
-      border-bottom-right-radius: 4px;
-      color: #fff;
+      background: var(--wa-user);
+      border-radius: var(--radius-user);
     }
-    .msg-bubble strong { color: var(--gold-lt); font-weight: 700; }
-    .msg-bubble em { color: var(--blue-lt); font-style: normal; font-weight: 600; }
+    .msg-bubble strong { color: var(--wa-gold); font-weight: 700; }
 
-    /* ── digitando ── */
-    .typing-row { display: flex; align-items: flex-end; gap: 10px; }
+    /* timestamp inside bubble */
+    .msg-time {
+      position: absolute; bottom: 5px; right: 10px;
+      font-size: .62rem; color: rgba(255,255,255,.45);
+      white-space: nowrap;
+    }
+    .user .msg-time { color: rgba(255,255,255,.55); }
+
+    /* ── WhatsApp tail ── */
+    .bot .msg-bubble::before {
+      content: '';
+      position: absolute; top: 0; left: -8px;
+      border: 8px solid transparent;
+      border-top-color: var(--wa-bot);
+      border-right-color: var(--wa-bot);
+      border-top-left-radius: 0;
+    }
+    .user .msg-bubble::before {
+      content: '';
+      position: absolute; top: 0; right: -8px;
+      border: 8px solid transparent;
+      border-top-color: var(--wa-user);
+      border-left-color: var(--wa-user);
+    }
+
+    /* ── typing indicator ── */
+    .typing-row {
+      display: flex; align-items: flex-end;
+      padding-left: 4px; margin-top: 3px;
+    }
     .typing-bubble {
-      background: var(--surface-2);
-      border: 1px solid var(--border-soft);
-      border-radius: 16px; border-bottom-left-radius: 4px;
-      padding: 13px 17px;
-      display: flex; gap: 5px; align-items: center;
+      background: var(--wa-bot);
+      border-radius: var(--radius-bot);
+      padding: 12px 14px;
+      display: flex; gap: 4px; align-items: center;
     }
-    .typing-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--muted);
-      animation: typeDot 1.3s ease-in-out infinite;
+    .typing-bubble::before {
+      content: '';
+      position: absolute; top: 0; left: -8px;
+      border: 8px solid transparent;
+      border-top-color: var(--wa-bot);
+      border-right-color: var(--wa-bot);
     }
-    .typing-dot:nth-child(2) { animation-delay: .18s; }
-    .typing-dot:nth-child(3) { animation-delay: .36s; }
-    @keyframes typeDot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+    .t-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--wa-muted);
+      animation: tDot 1.2s ease-in-out infinite;
+    }
+    .t-dot:nth-child(2) { animation-delay: .2s; }
+    .t-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes tDot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
 
     /* ═══════════ INPUT AREA ═══════════ */
     .input-area {
       flex-shrink: 0;
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+      background: var(--wa-header);
+      padding: 8px 12px;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom));
+      z-index: 10;
     }
     .input-inner {
-      max-width: 540px; margin: 0 auto;
-      display: flex; flex-direction: column; gap: 10px;
+      display: flex; flex-direction: column; gap: 8px;
+      max-width: 600px; margin: 0 auto;
     }
-    .input-inner:empty { display: none; }
-    .input-area:has(.input-inner:empty) { padding: 0; border-top: none; }
+    .input-inner:empty ~ .input-area { display: none; }
 
-    .field-wrap { display: flex; gap: 10px; }
-    .field-input {
+    /* ── text input row ── */
+    .field-row { display: flex; gap: 8px; align-items: flex-end; }
+    .field-box {
       flex: 1; min-width: 0;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      font: inherit; font-size: .92rem;
-      padding: 13px 15px;
+      background: #2A3942;
+      border: none; border-radius: 24px;
+      color: var(--wa-text);
+      font: inherit; font-size: 1rem;
+      padding: 11px 18px;
       outline: none;
-      transition: border-color .2s, box-shadow .2s;
+      line-height: 1.4;
+      -webkit-appearance: none;
     }
-    .field-input:focus { border-color: rgba(26,115,232,.55); box-shadow: 0 0 0 3px rgba(26,115,232,.12); }
-    .field-input::placeholder { color: var(--muted); }
-    .field-input.error { border-color: rgba(248,113,113,.55); }
+    .field-box::placeholder { color: var(--wa-muted); }
+    .field-box.error { box-shadow: 0 0 0 2px rgba(248,113,113,.5); }
 
     .field-textarea {
       width: 100%;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      font: inherit; font-size: .88rem;
-      padding: 13px 15px;
+      background: #2A3942;
+      border: none; border-radius: 16px;
+      color: var(--wa-text);
+      font: inherit; font-size: 1rem;
+      padding: 12px 16px;
       outline: none;
-      resize: vertical;
-      min-height: 90px;
-      line-height: 1.6;
-      transition: border-color .2s, box-shadow .2s;
+      resize: none;
+      min-height: 80px;
+      max-height: 160px;
+      line-height: 1.5;
+      -webkit-appearance: none;
     }
-    .field-textarea:focus { border-color: rgba(26,115,232,.55); box-shadow: 0 0 0 3px rgba(26,115,232,.12); }
-    .field-textarea::placeholder { color: var(--muted); }
+    .field-textarea::placeholder { color: var(--wa-muted); }
 
     .field-error {
-      font-size: .76rem; color: var(--error);
-      padding-left: 4px; margin-top: -4px;
-      display: none;
+      font-size: .75rem; color: var(--wa-red);
+      padding-left: 8px; display: none;
     }
     .field-error.show { display: block; }
 
-    .btn-send {
-      background: var(--blue);
-      border: none; border-radius: 12px;
-      color: #fff; font: inherit; font-weight: 700; font-size: .88rem;
-      padding: 13px 22px; cursor: pointer;
-      transition: background .2s, transform .15s, opacity .2s;
-      white-space: nowrap;
+    /* ── send button ── */
+    .btn-wa-send {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: var(--wa-green);
+      border: none; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-send:hover:not(:disabled) { background: var(--blue-lt); transform: translateY(-1px); }
-    .btn-send:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-wa-send:active { background: var(--wa-green-dk); transform: scale(.94); }
+    .btn-wa-send svg { width: 20px; height: 20px; fill: #fff; }
 
-    .btn-send-full {
+    .btn-wa-full {
       width: 100%;
-      background: var(--blue);
-      border: none; border-radius: 12px;
-      color: #fff; font: inherit; font-weight: 700; font-size: .9rem;
-      padding: 14px 22px; cursor: pointer;
-      transition: background .2s, transform .15s;
+      background: var(--wa-green);
+      border: none; border-radius: 24px;
+      color: #fff; font: inherit; font-weight: 700; font-size: .95rem;
+      padding: 13px 20px; cursor: pointer;
+      transition: background .15s, transform .1s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-send-full:hover { background: var(--blue-lt); transform: translateY(-1px); }
+    .btn-wa-full:active { background: var(--wa-green-dk); transform: scale(.98); }
 
-    /* ── progresso ── */
-    .progress-wrap {
-      background: var(--surface-2);
-      border: 1px solid var(--border-soft);
-      border-radius: var(--radius);
-      padding: 12px 15px;
+    /* ── progress bar ── */
+    .progress-card {
+      background: #2A3942;
+      border-radius: 14px;
+      padding: 10px 14px;
     }
-    .progress-label {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: .76rem; color: var(--muted); margin-bottom: 9px;
-      font-weight: 500;
+    .progress-top {
+      display: flex; justify-content: space-between;
+      font-size: .72rem; color: var(--wa-muted);
+      margin-bottom: 7px; font-weight: 500;
     }
-    .progress-label strong { color: var(--gold-lt); font-weight: 800; }
+    .progress-top strong { color: var(--wa-gold); }
     .progress-track {
-      height: 4px; background: rgba(255,255,255,.07);
+      height: 3px; background: rgba(255,255,255,.1);
       border-radius: 999px; overflow: hidden;
     }
     .progress-fill {
       height: 100%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--blue), var(--blue-lt));
-      transition: width .5s ease;
+      background: linear-gradient(90deg, var(--wa-green), #00D4AA);
+      transition: width .4s ease;
     }
 
-    /* ── opções ── */
-    .options-wrap { display: flex; flex-direction: column; gap: 8px; }
+    /* ── options ── */
+    .opts-wrap { display: flex; flex-direction: column; gap: 7px; }
     .opt-btn {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 11px;
+      background: #2A3942;
+      border: 1.5px solid transparent;
       border-radius: 12px;
-      padding: 13px 15px;
+      padding: 12px 14px;
       cursor: pointer; text-align: left;
-      color: var(--text); font: inherit;
-      font-size: .86rem; line-height: 1.45;
-      transition: background .15s, border-color .15s, transform .15s;
+      color: var(--wa-text); font: inherit;
+      font-size: .9rem; line-height: 1.4;
+      transition: background .12s, border-color .12s;
       width: 100%;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 48px;
     }
-    .opt-btn:hover {
-      background: var(--blue-dim);
-      border-color: rgba(26,115,232,.35);
-      transform: translateX(3px);
+    .opt-btn:active, .opt-btn.selected {
+      background: rgba(0,168,132,.15);
+      border-color: var(--wa-green);
     }
-    .opt-btn.selected {
-      background: rgba(26,115,232,.2);
-      border-color: rgba(26,115,232,.65);
-      color: #fff;
-    }
-    .opt-btn:focus-visible { outline: 2px solid var(--blue-lt); outline-offset: 2px; }
     .opt-letter {
-      width: 28px; height: 28px; flex-shrink: 0;
+      width: 26px; height: 26px; flex-shrink: 0;
       border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,.16);
+      border: 1.5px solid rgba(255,255,255,.18);
       display: flex; align-items: center; justify-content: center;
-      font-size: .72rem; font-weight: 800; color: var(--muted);
-      transition: all .15s;
+      font-size: .7rem; font-weight: 800; color: var(--wa-muted);
+      transition: all .12s;
     }
     .opt-btn.selected .opt-letter {
-      background: var(--blue); border-color: var(--blue); color: #fff;
+      background: var(--wa-green); border-color: var(--wa-green); color: #fff;
     }
 
     .btn-confirm {
-      background: var(--blue);
-      border: none; border-radius: 12px;
-      color: #fff; font: inherit; font-weight: 800; font-size: .92rem;
-      padding: 14px 22px; cursor: pointer; width: 100%;
-      transition: background .2s, transform .15s, opacity .2s;
+      background: var(--wa-green);
+      border: none; border-radius: 24px;
+      color: #fff; font: inherit; font-weight: 700; font-size: .92rem;
+      padding: 13px 20px; cursor: pointer; width: 100%;
+      transition: background .15s, opacity .2s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-confirm:hover:not(:disabled) { background: var(--blue-lt); transform: translateY(-1px); }
-    .btn-confirm:disabled { opacity: .3; cursor: not-allowed; }
+    .btn-confirm:active { background: var(--wa-green-dk); }
+    .btn-confirm:disabled { opacity: .35; cursor: not-allowed; }
 
-    /* ═══════════ RESULTADO ═══════════ */
-    .result-card {
-      background: linear-gradient(165deg, var(--surface) 0%, var(--surface-2) 100%);
-      border: 1px solid rgba(201,152,42,.3);
-      border-radius: 18px;
-      padding: 26px 22px;
-      opacity: 0; transform: translateY(12px);
-      animation: msgIn .45s cubic-bezier(.21,1.02,.55,1) forwards;
-      box-shadow: 0 12px 48px rgba(0,0,0,.35);
-    }
-    .result-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(201,152,42,.12);
-      border: 1px solid rgba(201,152,42,.35);
-      color: var(--gold-lt);
-      border-radius: 999px;
-      padding: 5px 16px;
-      font-size: .7rem; font-weight: 800;
-      letter-spacing: .08em; text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-    .result-title {
-      font-size: 1.25rem; font-weight: 800; color: #fff;
-      line-height: 1.35; margin-bottom: 16px;
-      letter-spacing: -.01em;
-    }
-    .result-diag {
-      background: rgba(0,0,0,.25);
-      border: 1px solid var(--border-soft);
+    /* ═══════════ CARDS (resultado / oferta / produto) ═══════════ */
+    .card {
+      background: var(--wa-bot);
       border-radius: 12px;
-      padding: 16px 18px;
-      font-size: .87rem; color: #C9D1D9; line-height: 1.8;
-      margin-bottom: 14px;
+      padding: 18px 16px;
+      opacity: 0; transform: translateY(8px);
+      animation: msgIn .3s ease forwards;
+      margin: 4px 4px 4px 4px;
+      max-width: min(78vw, 340px);
     }
-    .result-diag strong { color: var(--gold-lt); }
+    .card.full { max-width: 100%; margin: 6px 0; }
 
-    /* ── oferta sim/não ── */
-    .oferta-wrap {
-      opacity: 0; transform: translateY(12px);
-      animation: msgIn .45s cubic-bezier(.21,1.02,.55,1) forwards;
+    .card-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(240,188,68,.12);
+      border: 1px solid rgba(240,188,68,.3);
+      color: var(--wa-gold);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: .67rem; font-weight: 800;
+      letter-spacing: .07em; text-transform: uppercase;
+      margin-bottom: 12px;
     }
-    .oferta-card {
-      background: linear-gradient(135deg, rgba(26,115,232,.1) 0%, rgba(34,197,94,.06) 100%);
-      border: 1px solid rgba(26,115,232,.3);
-      border-radius: 16px;
-      padding: 22px 20px;
-    }
-    .oferta-label {
-      font-size: .7rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--gold-lt); margin-bottom: 10px;
-    }
-    .oferta-titulo {
+    .card-title {
       font-size: 1rem; font-weight: 800; color: #fff;
-      margin-bottom: 8px; line-height: 1.35;
+      line-height: 1.35; margin-bottom: 12px;
+    }
+    .card-body {
+      background: rgba(0,0,0,.2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: .85rem; color: #C9D1D9; line-height: 1.75;
+    }
+    .card-body strong { color: var(--wa-gold); }
+
+    /* oferta */
+    .oferta-tag {
+      font-size: .66rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--wa-green); margin-bottom: 8px;
+    }
+    .oferta-nome {
+      font-size: .97rem; font-weight: 800; color: #fff;
+      margin-bottom: 6px; line-height: 1.3;
     }
     .oferta-desc {
-      font-size: .83rem; color: var(--muted); line-height: 1.6;
-      margin-bottom: 18px;
+      font-size: .82rem; color: var(--wa-muted);
+      line-height: 1.6; margin-bottom: 14px;
     }
-    .preco-wrap {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 18px; flex-wrap: wrap;
+    .preco-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px; flex-wrap: wrap;
     }
     .preco-de {
-      font-size: .85rem; color: var(--muted);
+      font-size: .82rem; color: var(--wa-muted);
       text-decoration: line-through;
     }
     .preco-por {
-      font-size: 1.5rem; font-weight: 900; color: var(--green);
-      letter-spacing: -.02em;
+      font-size: 1.35rem; font-weight: 900;
+      color: #4ADE80; letter-spacing: -.02em;
     }
-    .preco-badge {
-      background: rgba(34,197,94,.15);
-      border: 1px solid rgba(34,197,94,.3);
-      color: var(--green);
+    .preco-tag {
+      background: rgba(74,222,128,.15);
+      border: 1px solid rgba(74,222,128,.3);
+      color: #4ADE80;
       border-radius: 999px;
-      padding: 3px 12px;
-      font-size: .7rem; font-weight: 800;
+      padding: 2px 10px;
+      font-size: .67rem; font-weight: 800;
     }
+
+    /* sim/não buttons */
     .btn-sim {
       display: block; width: 100%;
-      background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+      background: var(--wa-green);
       color: #fff; text-decoration: none; text-align: center;
-      border: none; border-radius: 12px;
-      padding: 16px 20px;
-      font: inherit; font-weight: 800; font-size: .95rem;
-      cursor: pointer;
-      transition: opacity .2s, transform .15s, box-shadow .2s;
-      box-shadow: 0 4px 20px rgba(34,197,94,.35);
-      margin-bottom: 10px;
+      border: none; border-radius: 10px;
+      padding: 14px 18px;
+      font: inherit; font-weight: 800; font-size: .92rem;
+      cursor: pointer; margin-bottom: 8px;
+      transition: background .15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-sim:hover {
-      opacity: .92; transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(34,197,94,.45);
-    }
+    .btn-sim:active { background: var(--wa-green-dk); }
+
     .btn-nao {
       display: block; width: 100%;
       background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted); border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.15);
+      color: var(--wa-muted); border-radius: 10px;
       padding: 12px 18px;
       font: inherit; font-size: .82rem; font-weight: 600;
       cursor: pointer; text-align: center;
-      transition: color .2s, border-color .2s;
+      transition: color .15s, border-color .15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-nao:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
+    .btn-nao:active { border-color: rgba(255,255,255,.3); color: var(--wa-text); }
 
-    /* ── produto final ── */
-    .produto-wrap {
-      opacity: 0; transform: translateY(12px);
-      animation: msgIn .45s cubic-bezier(.21,1.02,.55,1) forwards;
-    }
-    .produto-card {
-      background: var(--surface-2);
-      border: 1px solid rgba(26,115,232,.3);
-      border-radius: 16px;
-      padding: 20px 18px;
-      box-shadow: 0 8px 36px rgba(0,0,0,.3);
-    }
-    .produto-tag {
-      font-size: .68rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .1em;
-      color: var(--blue-lt); margin-bottom: 9px;
-    }
-    .produto-nome {
-      font-weight: 800; font-size: 1.05rem; color: #fff;
-      margin-bottom: 7px; letter-spacing: -.01em;
-    }
-    .produto-desc {
-      font-size: .83rem; color: var(--muted);
-      line-height: 1.6; margin-bottom: 18px;
-    }
     .btn-cta {
       display: block; width: 100%;
-      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-lt) 100%);
+      background: linear-gradient(135deg, var(--wa-green) 0%, #00D4AA 100%);
       color: #fff; text-decoration: none; text-align: center;
-      border-radius: 12px;
-      padding: 15px 20px;
-      font-weight: 800; font-size: .95rem;
-      transition: opacity .2s, transform .15s, box-shadow .2s;
-      box-shadow: 0 4px 20px rgba(26,115,232,.35);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-weight: 800; font-size: .92rem;
+      transition: opacity .15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-cta:hover {
-      opacity: .92; transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(26,115,232,.45);
+    .btn-cta:active { opacity: .88; }
+
+    .urgencia-chip {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(248,113,113,.1);
+      border: 1px solid rgba(248,113,113,.25);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: .76rem; color: #FCA5A5; font-weight: 600;
+      line-height: 1.4; margin-bottom: 12px;
     }
-    .btn-cta.green {
-      background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
-      box-shadow: 0 4px 20px rgba(34,197,94,.35);
-    }
-    .btn-cta.green:hover { box-shadow: 0 8px 28px rgba(34,197,94,.45); }
 
     .btn-restart {
       background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted); border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--wa-muted); border-radius: 10px;
       padding: 11px 18px;
       font: inherit; font-size: .8rem; font-weight: 600;
       cursor: pointer; width: 100%;
-      transition: color .2s, border-color .2s;
       text-align: center;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-restart:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
-
-    /* ── aviso urgência ── */
-    .urgencia-msg {
-      display: flex; align-items: center; gap: 8px;
-      background: rgba(239,68,68,.1);
-      border: 1px solid rgba(239,68,68,.25);
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: .78rem; color: #FCA5A5; font-weight: 600;
-      line-height: 1.4;
-    }
-
-    @media (max-width: 480px) {
-      .chat-area { padding: 18px 12px 12px; }
-      .input-area { padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
-      .msg-bubble { font-size: .86rem; max-width: 88%; }
-      .result-card { padding: 22px 18px; }
-      .result-title { font-size: 1.1rem; }
-    }
+    .btn-restart:active { color: var(--wa-text); }
   </style>
 </head>
 <body>
+<div id="app">
 
-<!-- ═══════════ TOPBAR ═══════════ -->
-<header class="topbar">
-  <div class="topbar-brand">
-    <div class="topbar-logo">
-      <img src="fotos/IMG_4952.jpg" alt="Foto da Profa. Lorena" onerror="this.src='fotos/IMG_4977.jpg'"/>
+  <!-- HEADER -->
+  <header class="wa-header">
+    <div class="wa-avatar">
+      <img src="fotos/IMG_4952.jpg" alt="Profa. Lorena" onerror="this.src='fotos/IMG_4977.jpg'"/>
     </div>
-    <div>
-      <div class="topbar-name">Prof. Lorena · Nerds da Libras</div>
-      <div class="topbar-status"><span class="dot-online"></span> Online agora</div>
+    <div class="wa-info">
+      <div class="wa-name">Prof. Lorena · Nerds da Libras</div>
+      <div class="wa-status"><span class="wa-dot"></span> online agora</div>
     </div>
+    <a class="wa-back" href="https://nerdsdalibras.github.io">← Voltar</a>
+  </header>
+
+  <!-- CHAT -->
+  <div class="chat-scroll" id="chat-scroll">
+    <div class="date-chip"><span>Hoje</span></div>
+    <div class="chat-inner" id="chat-inner"></div>
   </div>
-  <a class="topbar-back" href="https://nerdsdalibras.github.io">← Voltar</a>
-</header>
 
-<!-- ═══════════ CHAT ═══════════ -->
-<main class="chat-area" id="chat-area" aria-live="polite">
-  <div class="chat-inner" id="chat-inner"></div>
-</main>
+  <!-- INPUT -->
+  <div class="input-area" id="input-area">
+    <div class="input-inner" id="input-inner"></div>
+  </div>
 
-<!-- ═══════════ INPUT ═══════════ -->
-<div class="input-area">
-  <div class="input-inner" id="input-inner"></div>
-</div>
+</div><!-- #app -->
 
 <script>
 'use strict';
 
-/* ═══════════════ CONFIG ═══════════════ */
+/* ═══════════ CONFIG ═══════════ */
 const CONFIG = {
-  SHEETS_URL:    'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec',
-  AVATAR:        'fotos/IMG_4952.jpg',
-  AVATAR_FALLBACK: 'fotos/IMG_4977.jpg',
+  SHEETS_URL: 'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec',
+  AVATAR:  'fotos/IMG_4952.jpg',
+  AVATAR2: 'fotos/IMG_4977.jpg',
 
   PRODUTOS: {
     basico: {
-      nivel:     'Básico',
-      badge:     '🌱 Nível Básico',
-      tag:       '📖 Indicado para o seu momento',
-      nome:      'Ebook — O Caminho Para Se Tornar Intérprete de Libras',
-      desc:      'Descubra o que a Lei nº 14.704/2023 exige, entenda o caminho completo para a profissão e pare de perder tempo em cursos que não habilitam. O guia que faltava para você começar do jeito certo.',
-      preco_de:  'R$ 97,90',
-      preco_por: 'R$ 19,90',
-      desconto:  '80% OFF',
-      cta:       'Quero o Ebook por R$ 19,90 →',
-      link:      'https://chk.eduzz.com/KW8Z67RO01',
-      cor:       '',
+      nivel: 'Básico', badge: '🌱 Nível Básico',
+      tag: '📖 Indicado para o seu momento',
+      nome: 'Ebook — O Caminho Para Se Tornar Intérprete de Libras',
+      desc: 'Descubra o que a Lei nº 14.704/2023 exige, entenda o caminho completo e pare de perder tempo em cursos que não habilitam para exercer a profissão.',
+      preco_de: 'R$ 97,90', preco_por: 'R$ 19,90', desconto: '80% OFF',
+      cta: 'Quero o Ebook por R$ 19,90 →',
+      link: 'https://chk.eduzz.com/KW8Z67RO01',
     },
     intermediario: {
-      nivel:     'Intermediário',
-      badge:     '📈 Nível Intermediário',
-      tag:       '⭐ Indicado para a sua fase',
-      nome:      'Do Zero a Libras',
-      desc:      'O método completo que levou mais de 997 intérpretes à fluência. Você vai do básico ao avançado — com certificado de 350h e base profissional em tradução e interpretação.',
-      preco_de:  'R$ 697,00',
-      preco_por: 'R$ 281,87',
-      desconto:  '60% OFF',
-      cta:       'Quero começar o Do Zero a Libras →',
-      link:      'https://pay.kiwify.com.br/1sIyvVL?coupon=DESCONTO29',
-      cor:       '',
+      nivel: 'Intermediário', badge: '📈 Nível Intermediário',
+      tag: '⭐ Indicado para a sua fase',
+      nome: 'Do Zero a Libras',
+      desc: 'O método que levou +997 intérpretes à fluência. Do básico ao avançado — com certificado de 350h e base profissional em tradução e interpretação.',
+      preco_de: 'R$ 697,00', preco_por: 'R$ 281,87', desconto: '60% OFF',
+      cta: 'Quero o Do Zero a Libras →',
+      link: 'https://pay.kiwify.com.br/1sIyvVL?coupon=DESCONTO29',
     },
     avancado: {
-      nivel:     'Avançado',
-      badge:     '💎 Nível Avançado',
-      tag:       '💜 Próximo nível: fluência profissional',
-      nome:      'Ciclo da Fluência — Mentoria com Profa. Lorena',
-      desc:      'Acompanhamento direto e personalizado. A Lorena analisa sua sinalização ao vivo e te leva para a fluência real. 3ª turma abre dia 20 de julho — vagas limitadas.',
-      preco_de:  'R$ 2.997,00',
-      preco_por: 'Oferta especial na abertura',
-      desconto:  'Turma 20/jul',
-      cta:       'Quero garantir minha vaga no grupo →',
-      link:      'https://chat.whatsapp.com/Fx28CG321Go01di2usSiTN',
-      cor:       'green',
+      nivel: 'Avançado', badge: '💎 Nível Avançado',
+      tag: '💜 Fluência profissional',
+      nome: 'Ciclo da Fluência — Mentoria com Profa. Lorena',
+      desc: 'Acompanhamento direto e personalizado. A Lorena analisa sua sinalização ao vivo. 3ª turma abre dia 20 de julho — vagas limitadas.',
+      preco_de: 'R$ 2.997,00', preco_por: 'Oferta especial na abertura', desconto: '20/jul',
+      cta: 'Quero garantir minha vaga →',
+      link: 'https://chat.whatsapp.com/Fx28CG321Go01di2usSiTN',
     },
   },
 };
 
-/* ═══════════════ PERGUNTAS ═══════════════
-   Q1–Q4 pontuam o nível:
-     Básico ≤ 7 · Intermediário 8–13 · Avançado 14–16  */
+/* ═══════════ PERGUNTAS ═══════════ */
 const QUESTIONS = [
   {
     text: 'Como você descreveria seu contato com a Libras hoje?',
     opts: [
-      { l: 'A', t: 'Nenhum — nunca estudei Libras de verdade.', p: 1 },
-      { l: 'B', t: 'Conheço o alfabeto e alguns sinais soltos.', p: 2 },
-      { l: 'C', t: 'Já fiz curso básico e consigo me comunicar em algum nível.', p: 3 },
-      { l: 'D', t: 'Tenho formação ou curso avançado e uso no dia a dia.', p: 4 },
+      { l:'A', t:'Nenhum — nunca estudei Libras de verdade.', p:1 },
+      { l:'B', t:'Conheço o alfabeto e alguns sinais soltos.', p:2 },
+      { l:'C', t:'Já fiz curso básico e consigo me comunicar em algum nível.', p:3 },
+      { l:'D', t:'Tenho formação ou curso avançado e uso no dia a dia.', p:4 },
     ],
   },
   {
     text: 'Se um surdo chegasse até você agora para conversar, o que aconteceria?',
     opts: [
-      { l: 'A', t: 'Ficaria completamente perdido(a), não saberia o que fazer.', p: 1 },
-      { l: 'B', t: 'Tentaria com sinais soltos, mímica e muito esforço.', p: 2 },
-      { l: 'C', t: 'Conseguiria ter uma conversa básica, mas com dificuldade.', p: 3 },
-      { l: 'D', t: 'Me comunicaria bem, mas sinto que posso melhorar minha fluência.', p: 4 },
+      { l:'A', t:'Ficaria completamente perdido(a), não saberia o que fazer.', p:1 },
+      { l:'B', t:'Tentaria com sinais soltos, mímica e muito esforço.', p:2 },
+      { l:'C', t:'Conseguiria ter uma conversa básica, mas com dificuldade.', p:3 },
+      { l:'D', t:'Me comunicaria bem, mas sinto que posso melhorar a fluência.', p:4 },
     ],
   },
   {
     text: 'Qual é o seu maior objetivo com a Libras?',
     opts: [
-      { l: 'A', t: 'Entender o básico e saber por onde começar.', p: 1 },
-      { l: 'B', t: 'Me comunicar com surdos no dia a dia com confiança.', p: 2 },
-      { l: 'C', t: 'Desenvolver fluência e atuar profissionalmente.', p: 3 },
-      { l: 'D', t: 'Ser intérprete de Libras ou já estou nessa área.', p: 4 },
+      { l:'A', t:'Entender o básico e saber por onde começar.', p:1 },
+      { l:'B', t:'Me comunicar com surdos no dia a dia com confiança.', p:2 },
+      { l:'C', t:'Desenvolver fluência e atuar profissionalmente.', p:3 },
+      { l:'D', t:'Ser intérprete de Libras ou já estou nessa área.', p:4 },
     ],
   },
   {
     text: 'Você já teve experiência prática com pessoas surdas?',
     opts: [
-      { l: 'A', t: 'Nunca tive contato real com surdos.', p: 1 },
-      { l: 'B', t: 'Já tive alguns momentos, mas foi difícil me comunicar.', p: 2 },
-      { l: 'C', t: 'Me comunico com surdos, mas ainda falta fluidez.', p: 3 },
-      { l: 'D', t: 'Tenho convivência frequente ou trabalho com a comunidade surda.', p: 4 },
+      { l:'A', t:'Nunca tive contato real com surdos.', p:1 },
+      { l:'B', t:'Já tive alguns momentos, mas foi difícil me comunicar.', p:2 },
+      { l:'C', t:'Me comunico com surdos, mas ainda falta fluidez.', p:3 },
+      { l:'D', t:'Tenho convivência frequente ou trabalho com a comunidade surda.', p:4 },
     ],
   },
 ];
 
-/* ═══════════════ ESTADO ═══════════════ */
-const state = {
-  sessionId:    `qz_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-  nome:         '',
-  email:        '',
-  experiencia:  '',
-  qIdx:         0,
-  score:        0,
-  respostas:    [],
-  selectedOpt:  null,
-  nivelKey:     '',
-  busy:         false,
+/* ═══════════ ESTADO ═══════════ */
+const S = {
+  id: `qz_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+  nome:'', email:'', exp:'',
+  qIdx:0, score:0, respostas:[], sel:null, nivelKey:'', busy:false,
 };
 
-const $chat  = document.getElementById('chat-area');
-const $inner = document.getElementById('chat-inner');
-const $input = document.getElementById('input-inner');
+const $scroll = document.getElementById('chat-scroll');
+const $inner  = document.getElementById('chat-inner');
+const $inp    = document.getElementById('input-inner');
 
-/* ═══════════════ HELPERS ═══════════════ */
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
-  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;',
-}[c]));
+/* ═══════════ HELPERS ═══════════ */
+const esc = s => String(s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const wait = ms => new Promise(r => setTimeout(r, ms));
 
-function scrollBottom() {
-  requestAnimationFrame(() => { $chat.scrollTop = $chat.scrollHeight; });
+function now() {
+  return new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
 }
 
-function avatarHTML() {
-  return `<div class="msg-avatar"><img src="${CONFIG.AVATAR}" alt="" onerror="this.src='${CONFIG.AVATAR_FALLBACK}'"/></div>`;
+function scrollEnd() {
+  requestAnimationFrame(() => { $scroll.scrollTop = $scroll.scrollHeight + 200; });
 }
 
-function addMsg(html, type) {
+function addMsg(html, side) {
   const row = document.createElement('div');
-  row.className = `msg-row ${type}`;
-  row.innerHTML = type === 'bot'
-    ? `${avatarHTML()}<div class="msg-bubble">${html}</div>`
-    : `<div class="msg-bubble">${html}</div>`;
+  row.className = `msg-row ${side}`;
+  row.innerHTML = `<div class="msg-bubble">${html}<span class="msg-time">${now()}</span></div>`;
   $inner.appendChild(row);
-  scrollBottom();
+  scrollEnd();
 }
 
+let typingEl = null;
 function showTyping() {
-  const row = document.createElement('div');
-  row.className = 'typing-row';
-  row.id = 'typing';
-  row.innerHTML = `${avatarHTML()}<div class="typing-bubble" aria-label="Lorena está digitando">
-    <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+  typingEl = document.createElement('div');
+  typingEl.className = 'typing-row';
+  typingEl.innerHTML = `<div class="typing-bubble">
+    <span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span>
   </div>`;
-  $inner.appendChild(row);
-  scrollBottom();
+  $inner.appendChild(typingEl);
+  scrollEnd();
 }
+function hideTyping() { typingEl?.remove(); typingEl = null; }
 
-function hideTyping() { document.getElementById('typing')?.remove(); }
-
-async function botSay(messages) {
-  for (const text of messages) {
+async function botSay(msgs) {
+  for (const txt of msgs) {
     showTyping();
-    await wait(Math.min(800 + text.length * 14, 1900));
+    await wait(Math.min(900 + txt.length * 13, 2000));
     hideTyping();
-    addMsg(text, 'bot');
-    await wait(200);
+    addMsg(txt, 'bot');
+    await wait(180);
   }
 }
 
-function setInput(html) { $input.innerHTML = html; }
-function clearInput()   { $input.innerHTML = ''; }
+function setInp(html) { $inp.innerHTML = html; }
+function clearInp()   { $inp.innerHTML = ''; }
 
-/* ═══════════════ FLUXO ═══════════════ */
+/* ═══════════ FLUXO ═══════════ */
 
-/* ── 1. INTRO ── */
+/* 1. INTRO */
 async function startIntro() {
-  clearInput();
+  clearInp();
   await botSay([
     'Oi! Eu sou a <strong>Lorena</strong> — intérprete de Libras há mais de 15 anos e fundadora da Nerds da Libras 💙',
     'Já ajudei mais de <strong>12 mil pessoas</strong> a aprender Libras do jeito certo, sem decorar sinais soltos que não funcionam na hora H.',
-    'Em poucos minutos, você vai ter um <strong>diagnóstico real do seu nível</strong> — e descobrir qual é o próximo passo exato para você evoluir de vez em Libras.',
+    'Em poucos minutos você vai ter um <strong>diagnóstico real do seu nível</strong> e descobrir qual é o próximo passo exato para evoluir de vez em Libras.',
     'Antes de começar... como posso te chamar? 😊',
   ]);
-  showNameInput();
+  showNome();
 }
 
-/* ── 2. NOME ── */
-function showNameInput() {
-  setInput(`
-    <div class="field-wrap">
-      <input class="field-input" id="inp-nome" type="text"
-        placeholder="Digite seu nome" maxlength="40"
-        autocomplete="given-name" aria-label="Seu nome" autofocus/>
-      <button class="btn-send" id="btn-nome" type="button">Enviar</button>
+/* 2. NOME */
+function showNome() {
+  setInp(`
+    <div class="field-row">
+      <input class="field-box" id="i-nome" type="text" placeholder="Seu nome..." maxlength="40"
+        autocomplete="given-name" inputmode="text"/>
+      <button class="btn-wa-send" id="b-nome" type="button" aria-label="Enviar">
+        <svg viewBox="0 0 24 24"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg>
+      </button>
     </div>
-    <span class="field-error" id="err-nome">Por favor, digite seu nome para continuar.</span>
+    <span class="field-error" id="e-nome">Por favor, escreve seu nome 😊</span>
   `);
-  const inp = document.getElementById('inp-nome');
+  const inp = document.getElementById('i-nome');
   inp.focus();
-  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitNome(); });
-  document.getElementById('btn-nome').addEventListener('click', submitNome);
+  inp.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); subNome(); } });
+  document.getElementById('b-nome').addEventListener('click', subNome);
 }
 
-async function submitNome() {
-  if (state.busy) return;
-  const inp = document.getElementById('inp-nome');
-  const raw = inp.value.trim().replace(/\s+/g, ' ');
-  if (raw.length < 2) {
+async function subNome() {
+  if(S.busy) return;
+  const inp = document.getElementById('i-nome');
+  const raw = inp.value.trim().replace(/\s+/g,' ');
+  if(raw.length < 2) {
     inp.classList.add('error');
-    document.getElementById('err-nome').classList.add('show');
+    document.getElementById('e-nome').classList.add('show');
     inp.focus(); return;
   }
-  state.busy = true;
-  const primeiro = raw.split(' ')[0];
-  state.nome = primeiro.charAt(0).toUpperCase() + primeiro.slice(1).toLowerCase();
-
-  clearInput();
+  S.busy = true;
+  const p = raw.split(' ')[0];
+  S.nome = p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+  clearInp();
   addMsg(esc(raw), 'user');
-  await botSay([
-    `Prazer, <strong>${esc(state.nome)}</strong>! Agora me passa seu melhor e-mail — vou salvar seu diagnóstico por lá.`,
-  ]);
-  state.busy = false;
-  showEmailInput();
+  await botSay([`Prazer, <strong>${esc(S.nome)}</strong>! Me passa seu melhor e-mail para eu salvar seu diagnóstico. 📩`]);
+  S.busy = false;
+  showEmail();
 }
 
-/* ── 3. EMAIL ── */
-function showEmailInput() {
-  setInput(`
-    <div class="field-wrap">
-      <input class="field-input" id="inp-email" type="email"
-        placeholder="Digite seu melhor e-mail" maxlength="80"
-        autocomplete="email" inputmode="email" aria-label="Seu e-mail"/>
-      <button class="btn-send" id="btn-email" type="button">Enviar</button>
+/* 3. EMAIL */
+function showEmail() {
+  setInp(`
+    <div class="field-row">
+      <input class="field-box" id="i-email" type="email" placeholder="Seu e-mail..." maxlength="80"
+        autocomplete="email" inputmode="email"/>
+      <button class="btn-wa-send" id="b-email" type="button" aria-label="Enviar">
+        <svg viewBox="0 0 24 24"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg>
+      </button>
     </div>
-    <span class="field-error" id="err-email">Hmm, esse e-mail não parece válido. Confere e tenta de novo 😊</span>
+    <span class="field-error" id="e-email">E-mail inválido. Confere e tenta de novo 😊</span>
   `);
-  const inp = document.getElementById('inp-email');
+  const inp = document.getElementById('i-email');
   inp.focus();
-  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitEmail(); });
+  inp.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); subEmail(); } });
   inp.addEventListener('input', () => {
     inp.classList.remove('error');
-    document.getElementById('err-email').classList.remove('show');
+    document.getElementById('e-email').classList.remove('show');
   });
-  document.getElementById('btn-email').addEventListener('click', submitEmail);
+  document.getElementById('b-email').addEventListener('click', subEmail);
 }
 
-const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(e);
+const validEmail = e => /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(e);
 
-async function submitEmail() {
-  if (state.busy) return;
-  const inp = document.getElementById('inp-email');
+async function subEmail() {
+  if(S.busy) return;
+  const inp = document.getElementById('i-email');
   const email = inp.value.trim().toLowerCase();
-  if (!isValidEmail(email)) {
+  if(!validEmail(email)) {
     inp.classList.add('error');
-    document.getElementById('err-email').classList.add('show');
+    document.getElementById('e-email').classList.add('show');
     inp.focus(); return;
   }
-  state.busy = true;
-  state.email = email;
-  clearInput();
+  S.busy = true;
+  S.email = email;
+  clearInp();
   addMsg(esc(email), 'user');
   sendCRM('lead_capturado');
   await botSay([
-    `Perfeito! Antes de começar as perguntas estratégicas, quero te conhecer melhor, <strong>${esc(state.nome)}</strong> 👇`,
+    `Perfeito! Antes das perguntas, quero te conhecer um pouco melhor, <strong>${esc(S.nome)}</strong> 👇`,
   ]);
-  state.busy = false;
-  showOpenQuestion();
+  S.busy = false;
+  showExp();
 }
 
-/* ── 4. PERGUNTA ABERTA ── */
-function showOpenQuestion() {
-  setInput(`
-    <textarea class="field-textarea" id="inp-exp"
-      placeholder="Ex: fiz um curso básico há 2 anos, já interpretei na igreja, quero atuar como intérprete nas escolas..."
-      maxlength="600" aria-label="Sua experiência com Libras"></textarea>
-    <span class="field-error" id="err-exp">Escreve pelo menos uma linha para eu entender melhor o seu perfil 😊</span>
-    <button class="btn-send-full" id="btn-exp" type="button">Continuar →</button>
+/* 4. PERGUNTA ABERTA */
+function showExp() {
+  setInp(`
+    <textarea class="field-textarea" id="i-exp" maxlength="600"
+      placeholder="Ex: fiz um curso básico, já interpretei na igreja, quero trabalhar como intérprete nas escolas..."></textarea>
+    <span class="field-error" id="e-exp">Escreve pelo menos uma linha 😊</span>
+    <button class="btn-wa-full" id="b-exp" type="button">Continuar →</button>
   `);
-  const ta = document.getElementById('inp-exp');
-  ta.focus();
-  ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.ctrlKey) submitExp(); });
-  document.getElementById('btn-exp').addEventListener('click', submitExp);
+  document.getElementById('i-exp').focus();
+  document.getElementById('b-exp').addEventListener('click', subExp);
 }
 
-async function submitExp() {
-  if (state.busy) return;
-  const ta = document.getElementById('inp-exp');
+async function subExp() {
+  if(S.busy) return;
+  const ta = document.getElementById('i-exp');
   const val = ta.value.trim();
-  if (val.length < 10) {
-    ta.style.borderColor = 'rgba(248,113,113,.55)';
-    document.getElementById('err-exp').classList.add('show');
+  if(val.length < 10) {
+    ta.style.boxShadow = '0 0 0 2px rgba(248,113,113,.5)';
+    document.getElementById('e-exp').classList.add('show');
     ta.focus(); return;
   }
-  state.busy = true;
-  state.experiencia = val;
-  clearInput();
+  S.busy = true;
+  S.exp = val;
+  clearInp();
   addMsg(esc(val), 'user');
-
   await botSay([
-    `Que trajetória incrível, <strong>${esc(state.nome)}</strong>! Isso me ajuda muito a entender o seu perfil. 🙌`,
-    'Agora vou te fazer <strong>4 perguntas rápidas e estratégicas</strong> para identificar com precisão o seu nível atual em Libras.',
-    'Responde com sinceridade — não tem resposta certa ou errada aqui. Cada resposta vai montar o diagnóstico ideal para você. Combinado? 🎯',
+    `Adorei saber mais sobre você! Isso me ajuda muito a montar o seu diagnóstico. 🙌`,
+    `Agora vou te fazer <strong>4 perguntas rápidas</strong> para identificar exatamente o seu nível em Libras. Responde com sinceridade — sem julgamento aqui! Combinado? 🎯`,
   ]);
-
-  state.busy = false;
-  state.qIdx = 0;
-  state.score = 0;
-  state.respostas = [];
-  askQuestion();
+  S.busy = false;
+  S.qIdx = 0; S.score = 0; S.respostas = [];
+  askQ();
 }
 
-/* ── 5. PERGUNTAS MCQ ── */
-async function askQuestion() {
-  const q = QUESTIONS[state.qIdx];
-  state.selectedOpt = null;
+/* 5. PERGUNTAS */
+async function askQ() {
+  const q = QUESTIONS[S.qIdx];
+  S.sel = null;
   showTyping();
   await wait(700);
   hideTyping();
   addMsg(esc(q.text), 'bot');
-  renderOptions(q);
+  renderOpts(q);
 }
 
-function renderOptions(q) {
-  const n   = state.qIdx + 1;
-  const pct = Math.round((n / QUESTIONS.length) * 100);
-
-  const optsHTML = q.opts.map((op, i) => `
-    <button class="opt-btn" type="button" data-idx="${i}" role="radio" aria-checked="false">
+function renderOpts(q) {
+  const n   = S.qIdx + 1;
+  const pct = Math.round(n / QUESTIONS.length * 100);
+  const optsHTML = q.opts.map((op,i) => `
+    <button class="opt-btn" type="button" data-i="${i}">
       <span class="opt-letter">${op.l}</span>
       <span>${esc(op.t)}</span>
     </button>`).join('');
 
-  setInput(`
-    <div class="progress-wrap">
-      <div class="progress-label">
+  setInp(`
+    <div class="progress-card">
+      <div class="progress-top">
         <span>Pergunta <strong>${n}</strong> de ${QUESTIONS.length}</span>
         <span>${pct}%</span>
       </div>
-      <div class="progress-track" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-track">
         <div class="progress-fill" style="width:${pct}%"></div>
       </div>
     </div>
-    <div class="options-wrap" role="radiogroup" aria-label="Alternativas">${optsHTML}</div>
-    <button class="btn-confirm" id="btn-confirm" type="button" disabled>Confirmar resposta →</button>
+    <div class="opts-wrap">${optsHTML}</div>
+    <button class="btn-confirm" id="b-confirm" type="button" disabled>Confirmar →</button>
   `);
 
-  $input.querySelectorAll('.opt-btn').forEach((btn) => {
+  $inp.querySelectorAll('.opt-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      state.selectedOpt = Number(btn.dataset.idx);
-      $input.querySelectorAll('.opt-btn').forEach((b) => {
-        const sel = b === btn;
-        b.classList.toggle('selected', sel);
-        b.setAttribute('aria-checked', sel);
+      S.sel = Number(btn.dataset.i);
+      $inp.querySelectorAll('.opt-btn').forEach(b => {
+        const on = b === btn;
+        b.classList.toggle('selected', on);
       });
-      document.getElementById('btn-confirm').disabled = false;
+      document.getElementById('b-confirm').disabled = false;
     });
   });
-  document.getElementById('btn-confirm').addEventListener('click', confirmAnswer);
+  document.getElementById('b-confirm').addEventListener('click', confirmAns);
 }
 
-async function confirmAnswer() {
-  if (state.busy || state.selectedOpt === null) return;
-  state.busy = true;
-  const q   = QUESTIONS[state.qIdx];
-  const opt = q.opts[state.selectedOpt];
-  state.score += opt.p;
-  state.respostas.push({ pergunta: q.text, alternativa: opt.l, resposta: opt.t, pontos: opt.p });
-  clearInput();
-  addMsg(esc(opt.t), 'user');
-  await wait(350);
-  state.busy = false;
-
-  if (state.qIdx < QUESTIONS.length - 1) {
-    state.qIdx++;
-    askQuestion();
-  } else {
-    showResult();
-  }
+async function confirmAns() {
+  if(S.busy || S.sel === null) return;
+  S.busy = true;
+  const q = QUESTIONS[S.qIdx];
+  const op = q.opts[S.sel];
+  S.score += op.p;
+  S.respostas.push({ p: q.text, r: op.t, pts: op.p });
+  clearInp();
+  addMsg(esc(op.t), 'user');
+  await wait(300);
+  S.busy = false;
+  if(S.qIdx < QUESTIONS.length - 1) { S.qIdx++; askQ(); }
+  else showResult();
 }
 
-/* ── 6. RESULTADO ── */
-function getNivelKey(score) {
-  if (score <= 7)  return 'basico';
-  if (score <= 13) return 'intermediario';
+/* 6. RESULTADO */
+function nivelKey(s) {
+  if(s <= 7)  return 'basico';
+  if(s <= 13) return 'intermediario';
   return 'avancado';
 }
 
 async function showResult() {
-  clearInput();
+  clearInp();
   await botSay([
     'Pronto! Analisei tuas respostas com cuidado... ✨',
-    `<strong>${esc(state.nome)}</strong>, aqui está o seu diagnóstico 👇`,
+    `<strong>${esc(S.nome)}</strong>, aqui está o seu diagnóstico 👇`,
   ]);
 
-  state.nivelKey = getNivelKey(state.score);
-  const p = CONFIG.PRODUTOS[state.nivelKey];
+  S.nivelKey = nivelKey(S.score);
+  const p = CONFIG.PRODUTOS[S.nivelKey];
 
-  const diagTextos = {
-    basico: `Você está dando os primeiros passos — e isso é muito melhor do que ficar parado(a) sem direção. A maioria das pessoas que trava em Libras não travou por falta de esforço: <strong>travou por falta do caminho certo.</strong><br/><br/>Você precisa de uma base sólida e de entender exatamente o que a profissão exige antes de investir em qualquer curso.`,
-    intermediario: `Você já tem base — já estudou, já se comunicou com surdos. Mas tem uma trava. Sabe por quê? <strong>Você aprendeu sem método, e sem método não existe fluência.</strong><br/><br/>A boa notícia: você não precisa recomeçar do zero. Você precisa de um método que organize tudo o que já sabe e te leve até a comunicação real com surdos.`,
-    avancado: `Você já tem uma trajetória sólida. Já se comunica, já tem experiência. O que separa você da <strong>fluência profissional</strong> não é mais conteúdo — é lapidação, imersão e acompanhamento especializado.<br/><br/>Você não precisa de mais teoria. Você precisa de quem olhe para a sua sinalização e diga exatamente o que falta para você chegar lá.`,
+  const diags = {
+    basico: `Você está dando os primeiros passos — e isso é muito melhor do que ficar parado(a) sem direção. A maioria das pessoas que trava em Libras não travou por falta de esforço: <strong>travou por falta do caminho certo.</strong><br/><br/>Você precisa de uma base sólida e entender o que a profissão realmente exige.`,
+    intermediario: `Você já tem base — já estudou, já se comunicou com surdos. Mas tem uma trava. Sabe por quê? <strong>Você aprendeu sem método, e sem método não existe fluência.</strong><br/><br/>A boa notícia: você não precisa recomeçar do zero. Você precisa de um método que organize o que sabe e te leve até a comunicação real.`,
+    avancado: `Você já tem uma trajetória sólida. Já se comunica, já tem experiência. O que te separa da <strong>fluência profissional</strong> não é mais conteúdo — é lapidação, imersão e acompanhamento especializado.<br/><br/>Você não precisa de mais teoria. Precisa de quem olhe para a sua sinalização e mostre o que falta.`,
   };
 
-  const tituloTextos = {
-    basico:        `${esc(state.nome)}, você está no Nível Básico — e esse é o ponto de partida para tudo mudar.`,
-    intermediario: `${esc(state.nome)}, você está no Nível Intermediário — você tem base, mas está travado(a).`,
-    avancado:      `${esc(state.nome)}, você está no Nível Avançado — e está a um passo da fluência profissional.`,
+  const titulos = {
+    basico:        `${esc(S.nome)}, seu nível é Básico — e esse é o ponto de partida para tudo mudar.`,
+    intermediario: `${esc(S.nome)}, seu nível é Intermediário — você tem base, mas está travado(a).`,
+    avancado:      `${esc(S.nome)}, seu nível é Avançado — você está a um passo da fluência profissional.`,
   };
 
+  // card resultado (alinhado como bot)
   const card = document.createElement('div');
-  card.className = 'result-card';
-  card.innerHTML = `
-    <div class="result-badge">${p.badge}</div>
-    <h2 class="result-title">${tituloTextos[state.nivelKey]}</h2>
-    <div class="result-diag">${diagTextos[state.nivelKey]}</div>
-  `;
+  card.className = 'msg-row bot';
+  card.innerHTML = `<div class="card">
+    <div class="card-badge">${p.badge}</div>
+    <div class="card-title">${titulos[S.nivelKey]}</div>
+    <div class="card-body">${diags[S.nivelKey]}</div>
+  </div>`;
   $inner.appendChild(card);
-  scrollBottom();
+  scrollEnd();
 
-  await wait(1000);
+  await wait(1100);
+  const isGrupo = S.nivelKey === 'avancado';
   await botSay([
-    `O próximo passo para você sair do <strong>${p.nivel}</strong> e chegar no próximo nível é usar o caminho certo — e eu sei exatamente qual é esse caminho para você.`,
+    `O próximo passo para você sair do <strong>${p.nivel}</strong> e avançar de verdade é usar o caminho certo — e eu sei exatamente qual é. 🎯`,
+    isGrupo
+      ? `Se eu te convidar agora para entrar no grupo exclusivo da <strong>3ª Turma do Ciclo da Fluência</strong> — que abre dia 20 de julho com oferta especial de lançamento — você entraria agora?`
+      : `Se eu te fizer uma <strong>oferta única agora com desconto exclusivo</strong> — que não estará disponível depois que sair daqui — você aproveitaria para garantir o seu caminho hoje?`,
   ]);
 
-  await wait(600);
-  showOferta();
+  showOferta(p, isGrupo);
 }
 
-/* ── 7. OFERTA SIM/NÃO ── */
-async function showOferta() {
-  const p = CONFIG.PRODUTOS[state.nivelKey];
+/* 7. OFERTA SIM/NÃO */
+function showOferta(p, isGrupo) {
+  const ofCard = document.createElement('div');
+  ofCard.className = 'msg-row bot';
+  ofCard.innerHTML = `<div class="card">
+    <div class="oferta-tag">${p.tag}</div>
+    <div class="oferta-nome">${p.nome}</div>
+    <div class="oferta-desc">${p.desc}</div>
+    ${isGrupo ? `
+      <div class="preco-row">
+        <span class="preco-de">${p.preco_de}</span>
+        <span class="preco-tag">${p.desconto}</span>
+      </div>
+    ` : `
+      <div class="preco-row">
+        <span class="preco-de">${p.preco_de}</span>
+        <span class="preco-por">${p.preco_por}</span>
+        <span class="preco-tag">${p.desconto}</span>
+      </div>
+    `}
+    <button class="btn-sim" id="b-sim">✅ ${isGrupo ? 'Sim, quero garantir minha vaga!' : 'Sim, quero aproveitar!'}</button>
+    <button class="btn-nao" id="b-nao">❌ Não, prefiro pagar o preço cheio depois</button>
+  </div>`;
+  $inner.appendChild(ofCard);
+  scrollEnd();
+  clearInp();
 
-  const isGrupo = state.nivelKey === 'avancado';
-
-  const descricaoOferta = isGrupo
-    ? `Se eu te convidar agora para entrar no grupo exclusivo da <strong>3ª Turma do Ciclo da Fluência</strong> — que abre dia 20 de julho com uma <strong>oferta especial de lançamento</strong> — você entraria agora?`
-    : `Se eu te fizer uma <strong>oferta única agora</strong> com desconto exclusivo — que não vai estar disponível depois que você sair daqui — você aproveitaria para pegar o seu caminho hoje mesmo?`;
-
-  await botSay([descricaoOferta]);
-
-  const wrap = document.createElement('div');
-  wrap.className = 'oferta-wrap';
-  wrap.innerHTML = `
-    <div class="oferta-card">
-      <div class="oferta-label">${p.tag}</div>
-      <div class="oferta-titulo">${p.nome}</div>
-      <div class="oferta-desc">${p.desc}</div>
-      ${isGrupo ? `
-        <div class="preco-wrap">
-          <span class="preco-de">${p.preco_de}</span>
-          <span class="preco-badge">${p.desconto}</span>
-        </div>
-      ` : `
-        <div class="preco-wrap">
-          <span class="preco-de">${p.preco_de}</span>
-          <span class="preco-por">${p.preco_por}</span>
-          <span class="preco-badge">${p.desconto}</span>
-        </div>
-      `}
-      <button class="btn-sim" id="btn-sim" type="button">✅ ${isGrupo ? 'Sim, quero garantir minha vaga!' : 'Sim, quero aproveitar o desconto!'}</button>
-      <button class="btn-nao" id="btn-nao" type="button">❌ Não, prefiro pagar o preço cheio depois</button>
-    </div>
-  `;
-  $inner.appendChild(wrap);
-  scrollBottom();
-  clearInput();
-
-  document.getElementById('btn-sim').addEventListener('click', () => ofertaSim(p));
-  document.getElementById('btn-nao').addEventListener('click', () => ofertaNao(p));
+  document.getElementById('b-sim').addEventListener('click', () => simClick(p));
+  document.getElementById('b-nao').addEventListener('click', () => naoClick(p));
 }
 
-/* ── 7a. ACEITOU ── */
-async function ofertaSim(p) {
-  document.getElementById('btn-sim').disabled = true;
-  document.getElementById('btn-nao').disabled = true;
-
+async function simClick(p) {
+  document.getElementById('b-sim').disabled = true;
+  document.getElementById('b-nao').disabled = true;
   addMsg('✅ Sim, quero aproveitar!', 'user');
-
   await botSay([
-    `Que decisão incrível, <strong>${esc(state.nome)}</strong>! 🎉 Você fez a escolha certa na hora certa.`,
-    `Aqui está o seu acesso com o desconto já aplicado 👇`,
+    `Que decisão incrível, <strong>${esc(S.nome)}</strong>! 🎉 Você fez a escolha certa na hora certa.`,
+    `Aqui está seu acesso com desconto já aplicado 👇`,
   ]);
-
-  const prod = document.createElement('div');
-  prod.className = 'produto-wrap';
-  prod.innerHTML = `
-    <div class="produto-card">
-      <div class="produto-tag">${p.tag}</div>
-      <div class="produto-nome">${p.nome}</div>
-      <div class="produto-desc">${p.desc}</div>
-      ${state.nivelKey !== 'avancado' ? `
-        <div class="preco-wrap" style="margin-bottom:18px">
-          <span class="preco-de">${p.preco_de}</span>
-          <span class="preco-por">${p.preco_por}</span>
-          <span class="preco-badge">${p.desconto}</span>
-        </div>
-      ` : ''}
-      <a class="btn-cta ${p.cor}" href="${p.link}" target="_blank" rel="noopener">${p.cta}</a>
-    </div>
-  `;
-  $inner.appendChild(prod);
-  scrollBottom();
-
-  await wait(800);
-  await botSay([
-    `Qualquer dúvida, me chama! Estou aqui torcendo muito pela sua evolução em Libras 💙`,
-  ]);
-
-  setInput(`<button class="btn-restart" type="button" id="btn-restart">↩ Refazer o diagnóstico</button>`);
-  document.getElementById('btn-restart').addEventListener('click', restartQuiz);
-
+  prodCard(p, false);
+  await wait(700);
+  await botSay([`Qualquer dúvida, me chama! Torço muito pela sua evolução em Libras 💙`]);
+  setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
+  document.getElementById('b-restart').addEventListener('click', restart);
   sendCRM('oferta_aceita', { produto: p.nome, nivel: p.nivel });
 }
 
-/* ── 7b. RECUSOU ── */
-async function ofertaNao(p) {
-  document.getElementById('btn-sim').disabled = true;
-  document.getElementById('btn-nao').disabled = true;
-
+async function naoClick(p) {
+  document.getElementById('b-sim').disabled = true;
+  document.getElementById('b-nao').disabled = true;
   addMsg('❌ Não, obrigado(a)', 'user');
-
   await botSay([
-    `Tudo bem, <strong>${esc(state.nome)}</strong>! Respeito totalmente. 😊`,
-    `Mas preciso te deixar um aviso importante: <strong>essa oferta com desconto só existe aqui, agora, nesse momento.</strong> Quando você sair, o valor volta ao preço normal — sem exceções.`,
-    `Fica a seu critério. Vou deixar o botão aqui para você pensar com calma. 👇`,
+    `Tudo bem, <strong>${esc(S.nome)}</strong>! Respeito totalmente. 😊`,
+    `Mas preciso te avisar: <strong>essa oferta com desconto só existe aqui, agora, nesse momento.</strong> Quando você sair, o valor volta ao preço normal — sem exceções.`,
+    `Vou deixar o acesso aqui para você pensar com calma. 👇`,
   ]);
-
-  const urgencia = document.createElement('div');
-  urgencia.className = 'produto-wrap';
-  urgencia.innerHTML = `
-    <div class="produto-card">
-      <div class="produto-tag">${p.tag}</div>
-      <div class="produto-nome">${p.nome}</div>
-      <div class="produto-desc">${p.desc}</div>
-      ${state.nivelKey !== 'avancado' ? `
-        <div class="preco-wrap" style="margin-bottom:14px">
-          <span class="preco-de">${p.preco_de}</span>
-          <span class="preco-por">${p.preco_por}</span>
-          <span class="preco-badge">${p.desconto}</span>
-        </div>
-      ` : ''}
-      <div class="urgencia-msg" style="margin-bottom:14px">
-        ⚠️ Esta oferta expira quando você sair desta página.
-      </div>
-      <a class="btn-cta ${p.cor}" href="${p.link}" target="_blank" rel="noopener">${p.cta}</a>
-    </div>
-  `;
-  $inner.appendChild(urgencia);
-  scrollBottom();
-
-  setInput(`<button class="btn-restart" type="button" id="btn-restart">↩ Refazer o diagnóstico</button>`);
-  document.getElementById('btn-restart').addEventListener('click', restartQuiz);
-
+  prodCard(p, true);
+  setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
+  document.getElementById('b-restart').addEventListener('click', restart);
   sendCRM('oferta_recusada', { produto: p.nome, nivel: p.nivel });
 }
 
-/* ═══════════════ CRM ═══════════════ */
-function sendCRM(fase, extra = {}) {
-  try {
-    const payload = {
-      sessionId:   state.sessionId,
-      nome:        state.nome,
-      email:       state.email,
-      experiencia: state.experiencia,
-      score:       state.score,
-      nivel:       state.nivelKey,
-      respostas:   JSON.stringify(state.respostas),
-      fase,
-      fonte:       'quiz-libras',
-      updatedAt:   new Date().toISOString(),
-      ...extra,
-    };
-    fetch(CONFIG.SHEETS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload),
-    }).catch(() => {});
-  } catch (_) {}
+function prodCard(p, comUrgencia) {
+  const isGrupo = S.nivelKey === 'avancado';
+  const div = document.createElement('div');
+  div.className = 'msg-row bot';
+  div.innerHTML = `<div class="card">
+    <div class="oferta-tag">${p.tag}</div>
+    <div class="oferta-nome">${p.nome}</div>
+    <div class="oferta-desc">${p.desc}</div>
+    ${!isGrupo ? `
+      <div class="preco-row">
+        <span class="preco-de">${p.preco_de}</span>
+        <span class="preco-por">${p.preco_por}</span>
+        <span class="preco-tag">${p.desconto}</span>
+      </div>
+    ` : ''}
+    ${comUrgencia ? `<div class="urgencia-chip">⚠️ Oferta expira quando você sair desta página.</div>` : ''}
+    <a class="btn-cta" href="${p.link}" target="_blank" rel="noopener">${p.cta}</a>
+  </div>`;
+  $inner.appendChild(div);
+  scrollEnd();
 }
 
-/* ═══════════════ RESTART ═══════════════ */
-function restartQuiz() {
-  Object.assign(state, {
-    sessionId:   `qz_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    nome: '', email: '', experiencia: '',
-    qIdx: 0, score: 0, respostas: [],
-    selectedOpt: null, nivelKey: '', busy: false,
+/* ═══════════ CRM ═══════════ */
+function sendCRM(fase, extra = {}) {
+  try {
+    fetch(CONFIG.SHEETS_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({
+        sessionId: S.id, nome: S.nome, email: S.email,
+        experiencia: S.exp, score: S.score, nivel: S.nivelKey,
+        respostas: JSON.stringify(S.respostas),
+        fase, fonte:'quiz-libras', updatedAt: new Date().toISOString(),
+        ...extra,
+      }),
+    }).catch(()=>{});
+  } catch(_){}
+}
+
+/* ═══════════ RESTART ═══════════ */
+function restart() {
+  Object.assign(S, {
+    id:`qz_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+    nome:'', email:'', exp:'', qIdx:0, score:0,
+    respostas:[], sel:null, nivelKey:'', busy:false,
   });
   $inner.innerHTML = '';
-  clearInput();
+  clearInp();
   startIntro();
 }
 
-/* ═══════════════ INIT ═══════════════ */
+/* ═══════════ INIT ═══════════ */
 startIntro();
 </script>
 </body>
