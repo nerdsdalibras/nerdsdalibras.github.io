@@ -1053,6 +1053,15 @@ const OFERTA_MAP = { basico:'curso', intermediario:'curso', avancado:'mentoria' 
 const NIVEL_MAP  = { basico:'Básico', intermediario:'Intermediário', avancado:'Avançado' };
 const CLASS_MAP  = { basico:'FRIO', intermediario:'MORNO', avancado:'QUENTE' };
 
+// Descobre a plataforma de checkout a partir do link do produto
+function plataformaFromLink(url) {
+  const u = String(url || '');
+  if (u.indexOf('kiwify')   >= 0) return 'kiwify';
+  if (u.indexOf('eduzz')    >= 0) return 'eduzz';
+  if (u.indexOf('whatsapp') >= 0) return 'grupo';
+  return '';
+}
+
 // Monta o payload com os MESMOS nomes de campo do CRM (nada se perde)
 function crmPayload(extra = {}) {
   return {
@@ -1067,6 +1076,7 @@ function crmPayload(extra = {}) {
     respostasQuiz:     JSON.stringify(S.respostas),
     nivelIdentificado: S.nivelKey ? NIVEL_MAP[S.nivelKey]  : '',
     oferta:            S.nivelKey ? OFERTA_MAP[S.nivelKey] : '',
+    plataformaOferta:  S.nivelKey ? plataformaFromLink(CONFIG.PRODUTOS[S.nivelKey].link) : '',
     resultado:         S.nivelKey ? CONFIG.PRODUTOS[S.nivelKey].nome : '',
     classificacaoLead: S.nivelKey ? CLASS_MAP[S.nivelKey] : '',
     updatedAt:         new Date().toISOString(),

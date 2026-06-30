@@ -113,7 +113,7 @@ function renderTab(tab) {
         ${l.kiwifyEvento ? `<div class="panel-field"><span class="pf-label">Último evento Kiwify</span><span class="pf-val">${l.kiwifyEvento}${l.kiwifyEventoEm ? ' · ' + new Date(l.kiwifyEventoEm).toLocaleString('pt-BR') : ''}</span></div>` : ''}
         ${l.boletoGerado ? `<div class="panel-field"><span class="pf-label">Boleto</span><span class="pf-val" style="color:var(--yellow)">🧾 Gerado — aguardando pagamento</span></div>` : ''}
         ${l.pixGerado ? `<div class="panel-field"><span class="pf-label">Pix</span><span class="pf-val" style="color:var(--yellow)">⚡ Gerado — aguardando pagamento</span></div>` : ''}
-        ${l.clicouOferta ? `<div class="panel-field"><span class="pf-label">Clicou na oferta</span><span class="pf-val" style="color:#FB923C">🛒 ${l.oferta === 'curso' ? 'Curso' : l.oferta === 'mentoria' ? 'Mentoria' : l.oferta === 'cas' ? 'Prep. CAS' : 'Sim'}${l.ofertaEm ? ' · ' + new Date(l.ofertaEm).toLocaleString('pt-BR') : ''}</span></div>` : ''}
+        ${l.clicouOferta ? `<div class="panel-field"><span class="pf-label">Clicou no checkout</span><span class="pf-val" style="color:#FB923C;font-weight:700">🛒 ${l.plataformaOferta === 'kiwify' ? 'Kiwify' : l.plataformaOferta === 'eduzz' ? 'Eduzz' : l.plataformaOferta === 'grupo' ? 'Grupo WhatsApp' : (l.oferta || 'Sim')}${l.ofertaEm ? ' · ' + new Date(l.ofertaEm).toLocaleString('pt-BR') : ''}</span></div>` : ''}
         <div class="panel-field"><span class="pf-label">VSL</span><span class="pf-val" style="color:${(l.vslIniciou||l.clicouVSL) ? '#FB923C' : 'inherit'}">${
           l.vslClicouCTA    ? '🛒 Clicou no CTA — foi ao checkout' :
           l.vslAssistiuFim  ? '✔ Assistiu até o fim' :
