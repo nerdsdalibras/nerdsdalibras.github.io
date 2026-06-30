@@ -687,6 +687,25 @@ function enviarEmailParaLeads(sessionIds, num) {
   return enviados;
 }
 
+// Decide se o lead deve receber o remarketing automático (e-mail/WhatsApp).
+// Regra: SÓ leads da KIWIFY (Curso). Ebook e Mentoria são da Eduzz e têm a
+// recuperação própria da Eduzz, então não disparamos nada para eles.
+function _ehKiwifyParaRemarketing(o) {
+  var plat = String(o.plataformaOferta || '').toLowerCase();
+  var ev   = String(o.kiwifyEvento     || '').toLowerCase();
+  var of   = String(o.oferta           || '').toLowerCase();
+  // Sinais de Eduzz / grupo / mentoria → NÃO enviar
+  if (plat === 'eduzz' || plat === 'grupo') return false;
+  if (of === 'mentoria') return false;
+  if (ev.indexOf('eduzz') === 0) return false;
+  // Sinais claros de Kiwify → enviar
+  if (plat === 'kiwify') return true;
+  if (o.carrinhoKiwify === true || String(o.carrinhoKiwify).toLowerCase() === 'true') return true;
+  if (ev && ev.indexOf('eduzz') !== 0) return true;   // evento veio da Kiwify
+  if (of === 'curso') return true;                    // curso = Kiwify (Eduzz já foi excluído acima)
+  return false;                                       // sem sinal de Kiwify → não envia
+}
+
 function enviarEmailsRemarketing() {
   var sheet   = getSheet();
   var lastRow = sheet.getLastRow();
@@ -704,6 +723,7 @@ function enviarEmailsRemarketing() {
   var iEmail = idx('email'), iStatus = idx('status'), iCheckout = idx('clicouCheckout'),
       iCheckoutEm = idx('checkoutEm'), iCreated = idx('createdAt'), iComprou = idx('comprouKiwify'),
       iOferta = idx('oferta'), iNome = idx('nome'), iNivel = idx('nivelIdentificado'),
+      iPlat = idx('plataformaOferta'), iEvento = idx('kiwifyEvento'), iCarrinho = idx('carrinhoKiwify'),
       iE = [idx('email1SentAt'), idx('email2SentAt'), idx('email3SentAt')];
 
   function _tv(v) { if (v === true) return true; var s = String(v).trim().toLowerCase(); return s === 'true' || s === 'verdadeiro' || s === 'sim' || s === '1'; }
@@ -718,6 +738,14 @@ function enviarEmailsRemarketing() {
     var status  = String(iStatus  >= 0 ? row[iStatus]  : '').toLowerCase();
     var comprou = (iComprou >= 0 && _tv(row[iComprou])) || status === 'comprou';
     if (comprou) continue;                                    // já comprou → não envia
+
+    // Só remarketing da KIWIFY (curso). Eduzz (ebook/mentoria) tem recuperação própria.
+    if (!_ehKiwifyParaRemarketing({
+      plataformaOferta: iPlat    >= 0 ? row[iPlat]    : '',
+      kiwifyEvento:     iEvento  >= 0 ? row[iEvento]  : '',
+      oferta:           iOferta  >= 0 ? row[iOferta]  : '',
+      carrinhoKiwify:   iCarrinho >= 0 ? row[iCarrinho] : '',
+    })) continue;
 
     var temCheckoutEm = iCheckoutEm >= 0 && row[iCheckoutEm];
     var entrou = (iCheckout >= 0 && _tv(row[iCheckout])) || !!temCheckoutEm;
@@ -810,6 +838,7 @@ function enviarWhatsAppRemarketing() {
 
   var iWpp = idx('whatsapp'), iStatus = idx('status'), iCheckout = idx('clicouCheckout'),
       iCheckoutEm = idx('checkoutEm'), iCreated = idx('createdAt'), iComprou = idx('comprouKiwify'),
+      iOferta = idx('oferta'), iPlat = idx('plataformaOferta'), iEvento = idx('kiwifyEvento'), iCarrinho = idx('carrinhoKiwify'),
       iNome = idx('nome'), iW = [idx('waMsg1SentAt'), idx('waMsg2SentAt'), idx('waMsg3SentAt')];
 
   var enviados = 0, entraram = 0;
@@ -822,6 +851,14 @@ function enviarWhatsAppRemarketing() {
     var status  = String(iStatus >= 0 ? row[iStatus] : '').toLowerCase();
     var comprou = (iComprou >= 0 && _tv(row[iComprou])) || status === 'comprou';
     if (comprou) continue;
+
+    // Só remarketing da KIWIFY (curso). Eduzz (ebook/mentoria) tem recuperação própria.
+    if (!_ehKiwifyParaRemarketing({
+      plataformaOferta: iPlat    >= 0 ? row[iPlat]    : '',
+      kiwifyEvento:     iEvento  >= 0 ? row[iEvento]  : '',
+      oferta:           iOferta  >= 0 ? row[iOferta]  : '',
+      carrinhoKiwify:   iCarrinho >= 0 ? row[iCarrinho] : '',
+    })) continue;
 
     var temCk  = iCheckoutEm >= 0 && row[iCheckoutEm];
     var entrou = (iCheckout >= 0 && _tv(row[iCheckout])) || !!temCk;

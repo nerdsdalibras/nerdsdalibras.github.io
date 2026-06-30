@@ -20,6 +20,22 @@ function setCheckoutFiltro(key) { checkoutFiltro = key; renderCheckout(); }
 /* ── Sequência de WhatsApp (semi-automática: agenda 0h/24h/48h, envio em 1 clique) ── */
 const WA_SEQ_DELAYS_H = [0, 24, 48];
 
+// Só fazemos remarketing (e-mail/WhatsApp) de leads da KIWIFY (Curso).
+// Ebook e Mentoria são da Eduzz e têm a recuperação própria da Eduzz.
+function ehKiwifyLead(l) {
+  const plat = String(l.plataformaOferta || '').toLowerCase();
+  const ev   = String(l.kiwifyEvento || '').toLowerCase();
+  const of   = String(l.oferta || '').toLowerCase();
+  if (plat === 'eduzz' || plat === 'grupo') return false;
+  if (of === 'mentoria') return false;
+  if (ev.indexOf('eduzz') === 0) return false;
+  if (plat === 'kiwify') return true;
+  if (l.carrinhoKiwify === true || String(l.carrinhoKiwify).toLowerCase() === 'true') return true;
+  if (ev && ev.indexOf('eduzz') !== 0) return true;
+  if (of === 'curso') return true;
+  return false;
+}
+
 // Qual mensagem (1/2/3) está na hora de enviar agora; 0 = nenhuma vencida; -1 = não iniciada
 function _waDueNum(l) {
   if (!l.waSeqStart) return -1;
@@ -35,6 +51,7 @@ function _waDueNum(l) {
 
 function _waSeqCell(l) {
   if (_checkoutStatus(l).key === 'comprou') return '<span class="ck-muted">—</span>';
+  if (!ehKiwifyLead(l)) return '<span class="ck-muted" title="Ebook e Mentoria usam a recuperação automática da Eduzz">— Eduzz</span>';
   if (!l.whatsapp) return '<span class="ck-muted">sem zap</span>';
   const sent = [l.waMsg1SentAt, l.waMsg2SentAt, l.waMsg3SentAt].filter(Boolean).length;
   if (!l.waSeqStart) {
