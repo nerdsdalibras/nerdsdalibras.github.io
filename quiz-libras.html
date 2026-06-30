@@ -915,6 +915,20 @@ function nivelKey(s) {
   return 'avancado';
 }
 
+// Analisa a resposta ABERTA (experiência) e refina a recomendação.
+// Nunca rebaixa: só SOBE o nível quando o texto mostra intenção clara
+// (profissional/fluência), pra um lead motivado não receber só o ebook.
+function refinarNivel(nv, exp) {
+  const t = ' ' + String(exp || '').toLowerCase() + ' ';
+  const profissional = /(int[ée]rprete|interpreta|tradu[çz]|profiss|trabalh|atuar|emprego|mercado|contrat|\bcas\b|banca|concurso|profess|escola|faculdade|letras libras|p[óo]s[\s-]*grad|certifica)/.test(t);
+  const fluencia      = /(flu[êe]nc|fluente|avan[çc]ad|domino|sou fluente|me comunico bem|j[áa] trabalho)/.test(t);
+  // Intenção profissional forte não pode ficar só no ebook → sobe pro curso
+  if (nv === 'basico' && profissional) return 'intermediario';
+  // Já tem fluência + objetivo profissional → mentoria
+  if (nv === 'intermediario' && fluencia && profissional) return 'avancado';
+  return nv;
+}
+
 async function showResult() {
   clearInp();
   await botSay([
@@ -922,7 +936,7 @@ async function showResult() {
     `<strong>${esc(S.nome)}</strong>, aqui está o seu diagnóstico 👇`,
   ]);
 
-  S.nivelKey = nivelKey(S.score);
+  S.nivelKey = refinarNivel(nivelKey(S.score), S.exp);
   const p = CONFIG.PRODUTOS[S.nivelKey];
 
   sendCRM({
@@ -1016,16 +1030,34 @@ async function simClick(p) {
 async function naoClick(p) {
   document.getElementById('b-sim').disabled = true;
   document.getElementById('b-nao').disabled = true;
-  addMsg('❌ Não, obrigado(a)', 'user');
+  addMsg('❌ Não, agora não', 'user');
+
+  // DOWNSELL: se a oferta recusada NÃO era o ebook, ofereço o ebook de R$19,90
+  if (S.nivelKey !== 'basico') {
+    const ebook = CONFIG.PRODUTOS.basico;
+    await botSay([
+      `Tudo bem, <strong>${esc(S.nome)}</strong>! Respeito totalmente a sua decisão. 😊`,
+      `Mas não quero que você saia daqui sem dar o primeiro passo — porque adiar é o que mais atrasa quem quer aprender Libras de verdade.`,
+      `Então deixa eu te fazer um convite bem mais leve: comece pelo <strong>${esc(ebook.nome)}</strong> por apenas <strong>R$ 19,90</strong>. É a porta de entrada perfeita, sem pesar no bolso. 👇`,
+    ]);
+    prodCardDownsell(ebook);
+    await botSay([`E quando você sentir que é hora de ir além, o <strong>${esc(p.nome)}</strong> vai estar aqui te esperando. 💙`]);
+    setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
+    document.getElementById('b-restart').addEventListener('click', restart);
+    sendCRM({ etapaQuiz:'6. Recusou a oferta principal → recebeu o ebook (downsell)', statusCloser:`🙅➡️📖 Recusou ${p.nome}; ofereci o ebook (R$ 19,90)` });
+    return;
+  }
+
+  // Já era o ebook → não há downsell abaixo, mantém a urgência
   await botSay([
     `Tudo bem, <strong>${esc(S.nome)}</strong>! Respeito totalmente. 😊`,
-    `Mas preciso te avisar: <strong>essa oferta com desconto só existe aqui, agora, nesse momento.</strong> Quando você sair, o valor volta ao preço normal — sem exceções.`,
+    `Mas preciso te avisar: <strong>essa condição só existe aqui, agora.</strong> Quando você sair, o valor volta ao normal.`,
     `Vou deixar o acesso aqui para você pensar com calma. 👇`,
   ]);
   prodCard(p, true);
   setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
   document.getElementById('b-restart').addEventListener('click', restart);
-  sendCRM({ etapaQuiz:'6. Recusou a oferta (quer preço cheio)', statusCloser:`🙅 Recusou a oferta (${p.nome})` });
+  sendCRM({ etapaQuiz:'6. Recusou o ebook', statusCloser:`🙅 Recusou o ebook (R$ 19,90)` });
 }
 
 function prodCard(p, comUrgencia) {
@@ -1048,6 +1080,37 @@ function prodCard(p, comUrgencia) {
   </div>`;
   $inner.appendChild(div);
   scrollEnd();
+}
+
+// Card do ebook usado como DOWNSELL (sempre com preço R$19,90 e link da Eduzz)
+function prodCardDownsell(p) {
+  const div = document.createElement('div');
+  div.className = 'msg-row bot';
+  div.innerHTML = `<div class="card">
+    <div class="oferta-tag">${p.tag}</div>
+    <div class="oferta-nome">${p.nome}</div>
+    <div class="oferta-desc">${p.desc}</div>
+    <div class="preco-row">
+      <span class="preco-de">${p.preco_de}</span>
+      <span class="preco-por">${p.preco_por}</span>
+      <span class="preco-tag">${p.desconto}</span>
+    </div>
+    <a class="btn-cta" href="${p.link}" target="_blank" rel="noopener" onclick="registrarCliqueCTADownsell()">${p.cta}</a>
+  </div>`;
+  $inner.appendChild(div);
+  scrollEnd();
+}
+
+// Clique no ebook do downsell → registra como oferta da Eduzz (fora do remarketing da Kiwify)
+function registrarCliqueCTADownsell() {
+  sendCRM({
+    clicouOferta:     true,
+    ofertaEm:         new Date().toISOString(),
+    oferta:           'ebook',
+    plataformaOferta: 'eduzz',
+    etapaQuiz:        '7. Clicou no ebook (downsell R$ 19,90)',
+    statusCloser:     '🛒 Clicou no ebook (downsell) — foi para a Eduzz',
+  });
 }
 
 /* ═══════════ CRM ═══════════ */
