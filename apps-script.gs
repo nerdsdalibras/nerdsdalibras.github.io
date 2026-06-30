@@ -24,6 +24,12 @@ const COL_TO_FIELD = {
   'Nível':            'nivelIdentificado',
   'Resultado':        'resultado',
   'Quis Avançar':     'quisAvancar',
+  // ── Rastreamento de etapas do quiz (quiz-libras) ──
+  'etapaQuiz':        'etapaQuiz',        // etapa mais avançada que o lead alcançou
+  'respostasQuiz':    'respostasQuiz',    // JSON com cada resposta do quiz
+  'interesseCAS':     'interesseCAS',     // quer a banca do CAS-MG (sim/nao)
+  'clicouOferta':     'clicouOferta',     // clicou no botão da oferta no fim do quiz
+  'ofertaEm':         'ofertaEm',
   // Colunas novas (serão criadas automaticamente se não existirem)
   'sessionId':        'sessionId',
   'genero':           'genero',
@@ -77,6 +83,7 @@ for (var k in COL_TO_FIELD) { FIELD_TO_COL[COL_TO_FIELD[k]] = k; }
 // Novas colunas que precisam existir para o sistema funcionar
 const NEW_COLS = [
   'Email','Objetivo','Quis Avançar',
+  'etapaQuiz','respostasQuiz','interesseCAS','clicouOferta','ofertaEm',
   'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
   'status','statusCloser','observacoes',
   'comprouKiwify','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',

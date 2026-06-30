@@ -78,13 +78,17 @@ function renderTab(tab) {
 
       <div class="panel-section">
         <div class="panel-section-title">Diagnóstico</div>
+        ${l.etapaQuiz ? `<div class="panel-field"><span class="pf-label">Etapa do quiz</span><span class="pf-val" style="font-weight:700;color:${l.concluiuQuiz ? 'var(--g)' : '#EA580C'}">${l.etapaQuiz}</span></div>` : ''}
         <div class="panel-field"><span class="pf-label">Nível</span><span class="pf-val">${l.nivelIdentificado || '—'}</span></div>
-        <div class="panel-field"><span class="pf-label">Pontuação</span><span class="pf-val">${l.pontuacao || 0} / 48 pts</span></div>
-        <div class="panel-field"><span class="pf-label">Oferta</span><span class="pf-val">${l.oferta === 'curso' ? '📚 Curso' : l.oferta === 'mentoria' ? '🎯 Mentoria' : '—'}</span></div>
+        <div class="panel-field"><span class="pf-label">Pontuação</span><span class="pf-val">${l.pontuacao || 0}${String(l.origem || '').indexOf('quiz-libras') >= 0 ? ' / 24' : ' / 48'} pts</span></div>
+        <div class="panel-field"><span class="pf-label">Oferta</span><span class="pf-val">${l.oferta === 'curso' ? '📚 Curso' : l.oferta === 'mentoria' ? '🎯 Mentoria' : l.oferta === 'cas' ? '🎯 Prep. Banca CAS' : '—'}</span></div>
         <div class="panel-field"><span class="pf-label">Classificação</span><span class="pf-val">${l.classificacaoLead || '—'}</span></div>
+        ${l.interesseCAS === 'sim' ? `<div class="panel-field"><span class="pf-label">Banca CAS-MG</span><span class="pf-val">🎯 Tem interesse</span></div>` : ''}
         ${l.respostaDificuldade ? `<div class="panel-field"><span class="pf-label">Dificuldade</span><span class="pf-val">${l.respostaDificuldade}</span></div>` : ''}
         ${l.respostaObjetivo    ? `<div class="panel-field"><span class="pf-label">Objetivo</span><span class="pf-val">${l.respostaObjetivo}</span></div>` : ''}
       </div>
+
+      ${renderRespostasQuiz(l)}
 
       <div class="panel-section">
         <div class="panel-section-title">Atividade</div>
@@ -103,6 +107,7 @@ function renderTab(tab) {
         ${l.kiwifyEvento ? `<div class="panel-field"><span class="pf-label">Último evento Kiwify</span><span class="pf-val">${l.kiwifyEvento}${l.kiwifyEventoEm ? ' · ' + new Date(l.kiwifyEventoEm).toLocaleString('pt-BR') : ''}</span></div>` : ''}
         ${l.boletoGerado ? `<div class="panel-field"><span class="pf-label">Boleto</span><span class="pf-val" style="color:var(--yellow)">🧾 Gerado — aguardando pagamento</span></div>` : ''}
         ${l.pixGerado ? `<div class="panel-field"><span class="pf-label">Pix</span><span class="pf-val" style="color:var(--yellow)">⚡ Gerado — aguardando pagamento</span></div>` : ''}
+        ${l.clicouOferta ? `<div class="panel-field"><span class="pf-label">Clicou na oferta</span><span class="pf-val" style="color:#FB923C">🛒 ${l.oferta === 'curso' ? 'Curso' : l.oferta === 'mentoria' ? 'Mentoria' : l.oferta === 'cas' ? 'Prep. CAS' : 'Sim'}${l.ofertaEm ? ' · ' + new Date(l.ofertaEm).toLocaleString('pt-BR') : ''}</span></div>` : ''}
         <div class="panel-field"><span class="pf-label">VSL</span><span class="pf-val" style="color:${(l.vslIniciou||l.clicouVSL) ? '#FB923C' : 'inherit'}">${
           l.vslClicouCTA    ? '🛒 Clicou no CTA — foi ao checkout' :
           l.vslAssistiuFim  ? '✔ Assistiu até o fim' :
@@ -204,6 +209,23 @@ function renderTab(tab) {
   }
 }
 
+/* ── Respostas detalhadas do quiz (cada etapa que o lead respondeu) ── */
+function renderRespostasQuiz(l) {
+  let rs = [];
+  try { rs = JSON.parse(l.respostasQuiz || '[]'); } catch (_) { rs = []; }
+  if (!Array.isArray(rs) || !rs.length) return '';
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  return `
+    <div class="panel-section">
+      <div class="panel-section-title">Respostas do Quiz (${rs.length})</div>
+      ${rs.map((r, i) => `
+        <div class="panel-field" style="align-items:flex-start">
+          <span class="pf-label" style="white-space:nowrap">Q${i + 1}</span>
+          <span class="pf-val" style="text-align:right">${esc(r.resposta || r.alternativa || '—')}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
 /* ── FUNNEL JOURNEY ── */
 function buildFunilSteps(l) {
   const statusKey = l.status || 'novo';
@@ -219,6 +241,7 @@ function buildFunilSteps(l) {
 
   return [
     { icon: '📋', label: 'Fez a avaliação',       note: l.createdAt ? formatDate(l.createdAt) : '—',   done: !!l.createdAt },
+    { icon: '✅', label: 'Concluiu o quiz',        note: l.concluiuQuiz ? 'Sim' : (l.etapaQuiz || 'Em andamento'), done: !!l.concluiuQuiz },
     { icon: l.oferta === 'mentoria' ? '🎯' : '📚', label: 'Oferta definida',
       note: l.oferta === 'mentoria' ? 'Mentoria' : l.oferta === 'curso' ? 'Curso' : '—',                done: !!l.oferta },
     { icon: '▶',  label: 'Abriu o VSL',            note: vslAbriuNote,                                   done: !!(l.vslIniciou || l.clicouVSL) },
@@ -247,8 +270,10 @@ function copyTemplatePanel(templateId) {
 
 function buildTimeline(l) {
   const events = [];
-  if (l.createdAt)       events.push({ time: formatTime(l.createdAt), text: 'Concluiu o diagnóstico' });
-  if (l.concluiuQuiz)   events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0} / 48 pts` });
+  if (l.createdAt)       events.push({ time: formatTime(l.createdAt), text: 'Entrou no quiz' });
+  if (l.etapaQuiz)       events.push({ time: '—', text: `📍 Etapa: ${l.etapaQuiz}` });
+  if (l.concluiuQuiz)   events.push({ time: '—', text: `Pontuação final: ${l.pontuacao || 0}${String(l.origem || '').indexOf('quiz-libras') >= 0 ? ' / 24' : ' / 48'} pts` });
+  if (l.clicouOferta)   events.push({ time: l.ofertaEm ? formatTime(l.ofertaEm) : '—', text: `🛒 Clicou na oferta${l.oferta ? ' (' + l.oferta + ')' : ''}` });
   if (l.clicouVSL && !l.vslIniciou) events.push({ time: '—', text: '▶ Clicou no link do VSL' });
   if (l.vslIniciou)     events.push({ time: '—', text: '▶ Abriu o vídeo VSL' });
   if (l.vslPct25)       events.push({ time: '—', text: '⏱ Assistiu 25% do VSL' });
