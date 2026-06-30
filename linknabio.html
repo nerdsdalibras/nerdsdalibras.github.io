@@ -136,7 +136,25 @@
       flex-shrink:0;width:110px;
       cursor:pointer;
       transition:transform .2s;
+      position:relative;overflow:hidden;isolation:isolate;
     }
+    .vitrine-card::before{
+      content:"";position:absolute;top:0;left:-150%;
+      width:75%;height:100%;z-index:1;pointer-events:none;
+      background:linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(255,255,255,.04) 35%,
+        rgba(255,255,255,.55) 50%,
+        rgba(255,255,255,.04) 65%,
+        transparent 100%
+      );
+      transform:skewX(-22deg);
+      animation:diamondShine 6s ease-in-out infinite;
+    }
+    .vitrine-card > *{position:relative;z-index:2;}
+    .vitrine-scroll > .vitrine-card:nth-child(2)::before{animation-delay:2s;}
+    .vitrine-scroll > .vitrine-card:nth-child(3)::before{animation-delay:4s;}
     .vitrine-card:hover{transform:translateY(-3px);}
     .vitrine-card img{
       width:110px;height:124px;border-radius:10px;
