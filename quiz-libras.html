@@ -658,10 +658,13 @@ function hideTyping() { typingEl?.remove(); typingEl = null; }
 async function botSay(msgs) {
   for (const txt of msgs) {
     showTyping();
-    await wait(Math.min(900 + txt.length * 13, 2000));
+    // tempo "digitando" (antecipação) — curto e proporcional ao texto
+    await wait(Math.min(650 + txt.length * 11, 1500));
     hideTyping();
     addMsg(txt, 'bot');
-    await wait(180);
+    // PAUSA DE LEITURA: dá tempo de ler a mensagem antes da próxima
+    // (proporcional ao tamanho — ~quanto maior, mais tempo)
+    await wait(Math.min(1400 + txt.length * 33, 4500));
   }
 }
 
