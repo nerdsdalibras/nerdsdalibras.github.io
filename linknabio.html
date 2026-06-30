@@ -148,15 +148,20 @@
       letter-spacing:.01em;
     }
     .vitrine-card-btn{
-      display:inline-block;
-      font-size:10px;font-weight:700;
+      display:block;width:100%;
+      font-size:10px;font-weight:700;font-family:'Inter',sans-serif;
       background:rgba(255,255,255,.14);color:#fff;
-      border-radius:20px;padding:5px 12px;
-      border:none;cursor:pointer;
-      transition:background .2s;
+      border-radius:20px;padding:5px 8px;
+      border:none;cursor:pointer;text-align:center;
       letter-spacing:.04em;
+      transition:background .2s,transform .15s;
+      animation:btnFloat 2.4s ease-in-out infinite;
     }
-    .vitrine-card-btn:hover{background:rgba(255,255,255,.25);}
+    @keyframes btnFloat{
+      0%,100%{transform:translateY(0);}
+      50%{transform:translateY(-3px);}
+    }
+    .vitrine-card-btn:hover{background:rgba(255,255,255,.28);transform:translateY(-3px);animation:none;}
 
     /* ── SEÇÃO 5: LINK SIMPLES ── */
     .link-card{
