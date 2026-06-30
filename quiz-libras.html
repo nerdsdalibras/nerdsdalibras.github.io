@@ -4,11 +4,11 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Descubra seu nível em Libras — Avaliação Gratuita | Nerds da Libras</title>
-  <meta name="description" content="Avaliação gratuita em 7 perguntas com a Profa. Lorena. Descubra seu nível em Libras e o próximo passo certo para a sua evolução."/>
+  <meta name="description" content="Avaliação gratuita com a Profa. Lorena. Descubra seu nível em Libras e o próximo passo certo para a sua evolução."/>
   <meta name="theme-color" content="#0D1117"/>
   <meta property="og:type" content="website"/>
   <meta property="og:title" content="Diagnóstico de Libras — Profa. Lorena"/>
-  <meta property="og:description" content="Responda 7 perguntas e descubra seu nível em Libras com diagnóstico personalizado."/>
+  <meta property="og:description" content="Descubra seu nível em Libras com diagnóstico personalizado e o caminho exato para evoluir."/>
   <meta property="og:image" content="https://nerdsdalibras.github.io/fotos/IMG_4952.jpg"/>
   <meta property="og:url" content="https://nerdsdalibras.github.io/quiz-libras.html"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -26,8 +26,12 @@
       --blue:        #1A73E8;
       --blue-lt:     #4D9EFF;
       --blue-dim:    rgba(26,115,232,.14);
+      --green:       #22C55E;
+      --green-dim:   rgba(34,197,94,.14);
       --gold:        #C9982A;
       --gold-lt:     #F0BC44;
+      --red:         #EF4444;
+      --red-dim:     rgba(239,68,68,.12);
       --text:        #E6EDF3;
       --muted:       #8B949E;
       --success:     #22C55E;
@@ -50,7 +54,7 @@
 
     /* ═══════════ TOPBAR ═══════════ */
     .topbar {
-      background: rgba(22,27,34,.92);
+      background: rgba(22,27,34,.95);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
@@ -63,7 +67,7 @@
     .topbar-logo {
       width: 38px; height: 38px; border-radius: 50%;
       overflow: hidden; flex-shrink: 0;
-      border: 2px solid rgba(77,158,255,.35);
+      border: 2px solid rgba(34,197,94,.45);
     }
     .topbar-logo img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
     .topbar-name { font-weight: 700; font-size: .9rem; line-height: 1.2; }
@@ -120,13 +124,12 @@
       border: 1.5px solid rgba(255,255,255,.12);
     }
     .msg-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-    /* avatar só na última bolha de uma sequência */
     .msg-avatar.ghost { visibility: hidden; }
 
     .msg-bubble {
       padding: 11px 15px;
       border-radius: 16px;
-      font-size: .89rem; line-height: 1.6;
+      font-size: .89rem; line-height: 1.65;
       max-width: min(82%, 420px);
       word-wrap: break-word;
     }
@@ -142,6 +145,7 @@
       color: #fff;
     }
     .msg-bubble strong { color: var(--gold-lt); font-weight: 700; }
+    .msg-bubble em { color: var(--blue-lt); font-style: normal; font-weight: 600; }
 
     /* ── digitando ── */
     .typing-row { display: flex; align-items: flex-end; gap: 10px; }
@@ -190,6 +194,24 @@
     .field-input:focus { border-color: rgba(26,115,232,.55); box-shadow: 0 0 0 3px rgba(26,115,232,.12); }
     .field-input::placeholder { color: var(--muted); }
     .field-input.error { border-color: rgba(248,113,113,.55); }
+
+    .field-textarea {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font: inherit; font-size: .88rem;
+      padding: 13px 15px;
+      outline: none;
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.6;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field-textarea:focus { border-color: rgba(26,115,232,.55); box-shadow: 0 0 0 3px rgba(26,115,232,.12); }
+    .field-textarea::placeholder { color: var(--muted); }
+
     .field-error {
       font-size: .76rem; color: var(--error);
       padding-left: 4px; margin-top: -4px;
@@ -207,6 +229,16 @@
     }
     .btn-send:hover:not(:disabled) { background: var(--blue-lt); transform: translateY(-1px); }
     .btn-send:disabled { opacity: .4; cursor: not-allowed; }
+
+    .btn-send-full {
+      width: 100%;
+      background: var(--blue);
+      border: none; border-radius: 12px;
+      color: #fff; font: inherit; font-weight: 700; font-size: .9rem;
+      padding: 14px 22px; cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .btn-send-full:hover { background: var(--blue-lt); transform: translateY(-1px); }
 
     /* ── progresso ── */
     .progress-wrap {
@@ -300,7 +332,7 @@
       margin-bottom: 16px;
     }
     .result-title {
-      font-size: 1.32rem; font-weight: 800; color: #fff;
+      font-size: 1.25rem; font-weight: 800; color: #fff;
       line-height: 1.35; margin-bottom: 16px;
       letter-spacing: -.01em;
     }
@@ -309,20 +341,83 @@
       border: 1px solid var(--border-soft);
       border-radius: 12px;
       padding: 16px 18px;
-      font-size: .87rem; color: #C9D1D9; line-height: 1.75;
+      font-size: .87rem; color: #C9D1D9; line-height: 1.8;
       margin-bottom: 14px;
     }
     .result-diag strong { color: var(--gold-lt); }
-    .score-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 4px 14px;
-      font-size: .72rem; font-weight: 600; color: var(--muted);
-    }
 
-    /* ── produto ── */
+    /* ── oferta sim/não ── */
+    .oferta-wrap {
+      opacity: 0; transform: translateY(12px);
+      animation: msgIn .45s cubic-bezier(.21,1.02,.55,1) forwards;
+    }
+    .oferta-card {
+      background: linear-gradient(135deg, rgba(26,115,232,.1) 0%, rgba(34,197,94,.06) 100%);
+      border: 1px solid rgba(26,115,232,.3);
+      border-radius: 16px;
+      padding: 22px 20px;
+    }
+    .oferta-label {
+      font-size: .7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--gold-lt); margin-bottom: 10px;
+    }
+    .oferta-titulo {
+      font-size: 1rem; font-weight: 800; color: #fff;
+      margin-bottom: 8px; line-height: 1.35;
+    }
+    .oferta-desc {
+      font-size: .83rem; color: var(--muted); line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    .preco-wrap {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .preco-de {
+      font-size: .85rem; color: var(--muted);
+      text-decoration: line-through;
+    }
+    .preco-por {
+      font-size: 1.5rem; font-weight: 900; color: var(--green);
+      letter-spacing: -.02em;
+    }
+    .preco-badge {
+      background: rgba(34,197,94,.15);
+      border: 1px solid rgba(34,197,94,.3);
+      color: var(--green);
+      border-radius: 999px;
+      padding: 3px 12px;
+      font-size: .7rem; font-weight: 800;
+    }
+    .btn-sim {
+      display: block; width: 100%;
+      background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+      color: #fff; text-decoration: none; text-align: center;
+      border: none; border-radius: 12px;
+      padding: 16px 20px;
+      font: inherit; font-weight: 800; font-size: .95rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(34,197,94,.35);
+      margin-bottom: 10px;
+    }
+    .btn-sim:hover {
+      opacity: .92; transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(34,197,94,.45);
+    }
+    .btn-nao {
+      display: block; width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted); border-radius: 10px;
+      padding: 12px 18px;
+      font: inherit; font-size: .82rem; font-weight: 600;
+      cursor: pointer; text-align: center;
+      transition: color .2s, border-color .2s;
+    }
+    .btn-nao:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
+
+    /* ── produto final ── */
     .produto-wrap {
       opacity: 0; transform: translateY(12px);
       animation: msgIn .45s cubic-bezier(.21,1.02,.55,1) forwards;
@@ -340,11 +435,11 @@
       color: var(--blue-lt); margin-bottom: 9px;
     }
     .produto-nome {
-      font-weight: 800; font-size: 1.08rem; color: #fff;
+      font-weight: 800; font-size: 1.05rem; color: #fff;
       margin-bottom: 7px; letter-spacing: -.01em;
     }
     .produto-desc {
-      font-size: .84rem; color: var(--muted);
+      font-size: .83rem; color: var(--muted);
       line-height: 1.6; margin-bottom: 18px;
     }
     .btn-cta {
@@ -361,6 +456,11 @@
       opacity: .92; transform: translateY(-2px);
       box-shadow: 0 8px 28px rgba(26,115,232,.45);
     }
+    .btn-cta.green {
+      background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+      box-shadow: 0 4px 20px rgba(34,197,94,.35);
+    }
+    .btn-cta.green:hover { box-shadow: 0 8px 28px rgba(34,197,94,.45); }
 
     .btn-restart {
       background: transparent;
@@ -374,12 +474,23 @@
     }
     .btn-restart:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
 
+    /* ── aviso urgência ── */
+    .urgencia-msg {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.25);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: .78rem; color: #FCA5A5; font-weight: 600;
+      line-height: 1.4;
+    }
+
     @media (max-width: 480px) {
       .chat-area { padding: 18px 12px 12px; }
       .input-area { padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
       .msg-bubble { font-size: .86rem; max-width: 88%; }
       .result-card { padding: 22px 18px; }
-      .result-title { font-size: 1.18rem; }
+      .result-title { font-size: 1.1rem; }
     }
   </style>
 </head>
@@ -392,11 +503,11 @@
       <img src="fotos/IMG_4952.jpg" alt="Foto da Profa. Lorena" onerror="this.src='fotos/IMG_4977.jpg'"/>
     </div>
     <div>
-      <div class="topbar-name">Prof. Lorena</div>
+      <div class="topbar-name">Prof. Lorena · Nerds da Libras</div>
       <div class="topbar-status"><span class="dot-online"></span> Online agora</div>
     </div>
   </div>
-  <a class="topbar-back" href="https://nerdsdalibras.github.io">← Voltar ao site</a>
+  <a class="topbar-back" href="https://nerdsdalibras.github.io">← Voltar</a>
 </header>
 
 <!-- ═══════════ CHAT ═══════════ -->
@@ -412,170 +523,109 @@
 <script>
 'use strict';
 
-/* ═══════════════ CONFIGURAÇÃO ═══════════════ */
+/* ═══════════════ CONFIG ═══════════════ */
 const CONFIG = {
   SHEETS_URL:    'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec',
-  LINK_CURSO:    'https://nerdsdalibras.github.io/vsl.html',
-  LINK_MENTORIA: 'https://chat.whatsapp.com/CMf5ju70caiH6PvBwe3VGe',
-  LINK_CAS:      'https://chat.whatsapp.com/EMWYw5cLQPv3IdmgOu1PdP',
   AVATAR:        'fotos/IMG_4952.jpg',
   AVATAR_FALLBACK: 'fotos/IMG_4977.jpg',
+
+  PRODUTOS: {
+    basico: {
+      nivel:     'Básico',
+      badge:     '🌱 Nível Básico',
+      tag:       '📖 Indicado para o seu momento',
+      nome:      'Ebook — O Caminho Para Se Tornar Intérprete de Libras',
+      desc:      'Descubra o que a Lei nº 14.704/2023 exige, entenda o caminho completo para a profissão e pare de perder tempo em cursos que não habilitam. O guia que faltava para você começar do jeito certo.',
+      preco_de:  'R$ 97,90',
+      preco_por: 'R$ 19,90',
+      desconto:  '80% OFF',
+      cta:       'Quero o Ebook por R$ 19,90 →',
+      link:      'https://chk.eduzz.com/KW8Z67RO01',
+      cor:       '',
+    },
+    intermediario: {
+      nivel:     'Intermediário',
+      badge:     '📈 Nível Intermediário',
+      tag:       '⭐ Indicado para a sua fase',
+      nome:      'Do Zero a Libras',
+      desc:      'O método completo que levou mais de 997 intérpretes à fluência. Você vai do básico ao avançado — com certificado de 350h e base profissional em tradução e interpretação.',
+      preco_de:  'R$ 697,00',
+      preco_por: 'R$ 281,87',
+      desconto:  '60% OFF',
+      cta:       'Quero começar o Do Zero a Libras →',
+      link:      'https://pay.kiwify.com.br/1sIyvVL?coupon=DESCONTO29',
+      cor:       '',
+    },
+    avancado: {
+      nivel:     'Avançado',
+      badge:     '💎 Nível Avançado',
+      tag:       '💜 Próximo nível: fluência profissional',
+      nome:      'Ciclo da Fluência — Mentoria com Profa. Lorena',
+      desc:      'Acompanhamento direto e personalizado. A Lorena analisa sua sinalização ao vivo e te leva para a fluência real. 3ª turma abre dia 20 de julho — vagas limitadas.',
+      preco_de:  'R$ 2.997,00',
+      preco_por: 'Oferta especial na abertura',
+      desconto:  'Turma 20/jul',
+      cta:       'Quero garantir minha vaga no grupo →',
+      link:      'https://chat.whatsapp.com/Fx28CG321Go01di2usSiTN',
+      cor:       'green',
+    },
+  },
 };
 
 /* ═══════════════ PERGUNTAS ═══════════════
-   Q1–Q6 pontuam o nível (mín. 6, máx. 24):
-     Básico ≤ 11 · Intermediário 12–18 · Avançado 19–24
-   Q7 não pontua: detecta intenção de fazer a banca do CAS-MG,
-   que define o produto Preparatório independente do nível.   */
+   Q1–Q4 pontuam o nível:
+     Básico ≤ 7 · Intermediário 8–13 · Avançado 14–16  */
 const QUESTIONS = [
   {
-    text: 'Qual é o seu contato com a Libras hoje?',
+    text: 'Como você descreveria seu contato com a Libras hoje?',
     opts: [
-      { l: 'A', t: 'Nenhum — ainda não sei Libras.', p: 1 },
-      { l: 'B', t: 'Vejo vídeos na internet, sei o alfabeto manual e alguns sinais soltos.', p: 2 },
-      { l: 'C', t: 'Já fiz curso de Libras e me comunico em algum nível.', p: 3 },
-      { l: 'D', t: 'Tenho formação na área (técnico, pós ou Letras Libras) e uso a Libras com frequência.', p: 4 },
+      { l: 'A', t: 'Nenhum — nunca estudei Libras de verdade.', p: 1 },
+      { l: 'B', t: 'Conheço o alfabeto e alguns sinais soltos.', p: 2 },
+      { l: 'C', t: 'Já fiz curso básico e consigo me comunicar em algum nível.', p: 3 },
+      { l: 'D', t: 'Tenho formação ou curso avançado e uso no dia a dia.', p: 4 },
     ],
   },
   {
-    text: 'Como é a sua comunicação com pessoas surdas?',
+    text: 'Se um surdo chegasse até você agora para conversar, o que aconteceria?',
     opts: [
-      { l: 'A', t: 'Não consigo me comunicar.', p: 1 },
-      { l: 'B', t: 'Uso sinais soltos e o alfabeto para me virar.', p: 2 },
-      { l: 'C', t: 'Formo frases e converso sobre alguns assuntos.', p: 3 },
-      { l: 'D', t: 'Converso bem, mas minha fluência ainda não é totalmente limpa.', p: 4 },
-    ],
-  },
-  {
-    text: 'E quando um surdo sinaliza com você, o quanto você entende?',
-    opts: [
-      { l: 'A', t: 'Quase nada.', p: 1 },
-      { l: 'B', t: 'Sinais isolados.', p: 2 },
-      { l: 'C', t: 'Partes da conversa, quando sinalizam com calma.', p: 3 },
-      { l: 'D', t: 'Entendo bem, mas ainda não entendo completamente.', p: 4 },
-    ],
-  },
-  {
-    text: 'Qual é a sua formação em Libras?',
-    opts: [
-      { l: 'A', t: 'Nenhuma, nunca fiz curso.', p: 1 },
-      { l: 'B', t: 'Curso básico de Libras.', p: 2 },
-      { l: 'C', t: 'Curso técnico de Tradução e Interpretação de Libras.', p: 3 },
-      { l: 'D', t: 'Pós-graduação na área ou Letras Libras (cursando ou concluído).', p: 4 },
-    ],
-  },
-  {
-    text: 'Você já passou por alguma avaliação ou banca de proficiência em Libras?',
-    opts: [
-      { l: 'A', t: 'Nunca fiz.', p: 1 },
-      { l: 'B', t: 'Nunca fiz, mas tenho interesse.', p: 2 },
-      { l: 'C', t: 'Sim, já passei por avaliação (CAS ou outra).', p: 4 },
+      { l: 'A', t: 'Ficaria completamente perdido(a), não saberia o que fazer.', p: 1 },
+      { l: 'B', t: 'Tentaria com sinais soltos, mímica e muito esforço.', p: 2 },
+      { l: 'C', t: 'Conseguiria ter uma conversa básica, mas com dificuldade.', p: 3 },
+      { l: 'D', t: 'Me comunicaria bem, mas sinto que posso melhorar minha fluência.', p: 4 },
     ],
   },
   {
     text: 'Qual é o seu maior objetivo com a Libras?',
     opts: [
-      { l: 'A', t: 'Aprender o básico para começar.', p: 1 },
-      { l: 'B', t: 'Conversar com surdos no dia a dia.', p: 2 },
-      { l: 'C', t: 'Me comunicar com mais segurança e fluência.', p: 3 },
-      { l: 'D', t: 'Atuar profissionalmente como intérprete de Libras.', p: 4 },
+      { l: 'A', t: 'Entender o básico e saber por onde começar.', p: 1 },
+      { l: 'B', t: 'Me comunicar com surdos no dia a dia com confiança.', p: 2 },
+      { l: 'C', t: 'Desenvolver fluência e atuar profissionalmente.', p: 3 },
+      { l: 'D', t: 'Ser intérprete de Libras ou já estou nessa área.', p: 4 },
     ],
   },
   {
-    text: 'Você pretende fazer a banca do CAS-MG para atuar como intérprete nas escolas da rede estadual de Minas Gerais?',
+    text: 'Você já teve experiência prática com pessoas surdas?',
     opts: [
-      { l: 'A', t: 'Sim! Quero essa certificação.', p: 0, cas: true },
-      { l: 'B', t: 'Talvez no futuro.', p: 0, cas: false },
-      { l: 'C', t: 'Não é meu objetivo.', p: 0, cas: false },
+      { l: 'A', t: 'Nunca tive contato real com surdos.', p: 1 },
+      { l: 'B', t: 'Já tive alguns momentos, mas foi difícil me comunicar.', p: 2 },
+      { l: 'C', t: 'Me comunico com surdos, mas ainda falta fluidez.', p: 3 },
+      { l: 'D', t: 'Tenho convivência frequente ou trabalho com a comunidade surda.', p: 4 },
     ],
   },
 ];
 
-/* ═══════════════ DIAGNÓSTICOS ═══════════════ */
-function getNivel(score) {
-  if (score <= 11) return { badge: '🌱 Nível Básico', nivel: 'Básico' };
-  if (score <= 18) return { badge: '📈 Nível Intermediário', nivel: 'Intermediário' };
-  return { badge: '💎 Nível Avançado', nivel: 'Avançado' };
-}
-
-function getResult(nome, score, casIntent) {
-  const n = getNivel(score);
-
-  // Quem quer a banca do CAS recebe o Preparatório, independente do nível
-  if (casIntent) {
-    return {
-      badge: n.badge,
-      nivel: n.nivel,
-      title: `${nome}, seu nível atual é ${n.nivel} — e você tem um objetivo claro: a banca do CAS-MG.`,
-      diag: 'Você quer a certificação do CAS para atuar como intérprete de Libras nas escolas da rede estadual de Minas Gerais. Essa banca exige preparo específico: não basta saber Libras, é preciso saber exatamente o que a avaliação cobra.<br/><br/>O próximo passo mais indicado para você é o <strong>Preparatório Banca CAS-MG</strong>.',
-      produto: {
-        tag: '🎯 Indicado para o seu objetivo',
-        nome: 'Preparatório Banca CAS-MG',
-        desc: 'Preparação direcionada para a banca do CAS — Centro de Apoio às pessoas com Surdez. Saiba o que será cobrado, treine da forma certa e chegue confiante na avaliação para conquistar sua certificação.',
-        cta: 'Quero me preparar para a banca →',
-        link: CONFIG.LINK_CAS,
-      },
-    };
-  }
-
-  if (n.nivel === 'Básico') {
-    return {
-      badge: n.badge,
-      nivel: n.nivel,
-      title: `${nome}, seu nível atual é Básico — você está no momento de construir sua base em Libras.`,
-      diag: 'Isso significa que seu foco agora deve ser aprender os sinais essenciais, entender como formar frases e começar a se comunicar de verdade com pessoas surdas.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero a Libras</strong>.',
-      produto: {
-        tag: '⭐ Indicado para você',
-        nome: 'Do Zero a Libras',
-        desc: 'Método exclusivo da Profa. Lorena. Do absoluto zero à comunicação real com surdos — você aprende como a mente surda processa a língua, não como tradução do português.',
-        cta: 'Quero começar do jeito certo →',
-        link: CONFIG.LINK_CURSO,
-      },
-    };
-  }
-
-  if (n.nivel === 'Intermediário') {
-    return {
-      badge: n.badge,
-      nivel: n.nivel,
-      title: `${nome}, seu nível atual é Intermediário — você já se comunica em Libras.`,
-      diag: 'Você já tem base: sabe o alfabeto, forma frases e conversa em algum nível. O que falta agora é organização, vocabulário e estrutura para se comunicar com mais naturalidade e segurança.<br/><br/>O próximo passo mais indicado para você é o <strong>Do Zero a Libras</strong>.',
-      produto: {
-        tag: '✅ Ideal para a sua fase',
-        nome: 'Do Zero a Libras',
-        desc: 'Organize tudo o que você já sabe e avance com método, estrutura e prática real — do nível base ao intermediário.',
-        cta: 'Quero organizar minha Libras →',
-        link: CONFIG.LINK_CURSO,
-      },
-    };
-  }
-
-  return {
-    badge: n.badge,
-    nivel: n.nivel,
-    title: `${nome}, seu nível atual é Avançado — você já tem uma trajetória sólida em Libras.`,
-    diag: 'Você se comunica bem com surdos e tem formação na área. Seu desafio agora não é aprender mais sinais — é lapidar a fluência: naturalidade, compreensão completa e clareza na sinalização.<br/><br/>O próximo passo mais indicado para você é a <strong>Mentoria Destrava Libras</strong>.',
-    produto: {
-      tag: '💜 Próximo passo para você',
-      nome: 'Mentoria Destrava Libras',
-      desc: 'Acompanhamento direto e personalizado com a Profa. Lorena. Ela analisa sua sinalização e te direciona para sinalizar com clareza, naturalidade e segurança.',
-      cta: 'Quero acelerar minha fluência →',
-      link: CONFIG.LINK_MENTORIA,
-    },
-  };
-}
-
 /* ═══════════════ ESTADO ═══════════════ */
 const state = {
-  sessionId:   `qz_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-  nome:        '',
-  email:       '',
-  qIdx:        0,
-  score:       0,
-  respostas:   [],
-  selectedOpt: null,
-  casIntent:   false,  // quer fazer a banca do CAS-MG
-  busy:        false,  // trava contra cliques duplos
+  sessionId:    `qz_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+  nome:         '',
+  email:        '',
+  experiencia:  '',
+  qIdx:         0,
+  score:        0,
+  respostas:    [],
+  selectedOpt:  null,
+  nivelKey:     '',
+  busy:         false,
 };
 
 const $chat  = document.getElementById('chat-area');
@@ -583,8 +633,8 @@ const $inner = document.getElementById('chat-inner');
 const $input = document.getElementById('input-inner');
 
 /* ═══════════════ HELPERS ═══════════════ */
-const escapeHTML = (s) => s.replace(/[&<>"']/g, (c) => ({
-  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;',
 }[c]));
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -618,18 +668,15 @@ function showTyping() {
   scrollBottom();
 }
 
-function hideTyping() {
-  document.getElementById('typing')?.remove();
-}
+function hideTyping() { document.getElementById('typing')?.remove(); }
 
-/** Exibe mensagens do bot em sequência, com indicador de digitação proporcional ao texto. */
 async function botSay(messages) {
   for (const text of messages) {
     showTyping();
-    await wait(Math.min(700 + text.length * 16, 1700));
+    await wait(Math.min(800 + text.length * 14, 1900));
     hideTyping();
     addMsg(text, 'bot');
-    await wait(180);
+    await wait(200);
   }
 }
 
@@ -637,18 +684,20 @@ function setInput(html) { $input.innerHTML = html; }
 function clearInput()   { $input.innerHTML = ''; }
 
 /* ═══════════════ FLUXO ═══════════════ */
+
+/* ── 1. INTRO ── */
 async function startIntro() {
   clearInput();
   await botSay([
-    'Oi! Eu sou a Lorena, da Nerds da Libras 💙',
-    'Preparei uma avaliação rápida para te ajudar a descobrir seu nível atual em Libras.',
-    'São só 7 perguntas. No final, eu vou te mostrar qual é o seu momento atual e qual o próximo passo mais indicado para você.',
-    'Antes de começar, como posso te chamar?',
+    'Oi! Eu sou a <strong>Lorena</strong> — intérprete de Libras há mais de 15 anos e fundadora da Nerds da Libras 💙',
+    'Já ajudei mais de <strong>12 mil pessoas</strong> a aprender Libras do jeito certo, sem decorar sinais soltos que não funcionam na hora H.',
+    'Em poucos minutos, você vai ter um <strong>diagnóstico real do seu nível</strong> — e descobrir qual é o próximo passo exato para você evoluir de vez em Libras.',
+    'Antes de começar... como posso te chamar? 😊',
   ]);
   showNameInput();
 }
 
-/* ── Nome ── */
+/* ── 2. NOME ── */
 function showNameInput() {
   setInput(`
     <div class="field-wrap">
@@ -672,24 +721,22 @@ async function submitNome() {
   if (raw.length < 2) {
     inp.classList.add('error');
     document.getElementById('err-nome').classList.add('show');
-    inp.focus();
-    return;
+    inp.focus(); return;
   }
   state.busy = true;
-  // Capitaliza o primeiro nome
   const primeiro = raw.split(' ')[0];
   state.nome = primeiro.charAt(0).toUpperCase() + primeiro.slice(1).toLowerCase();
 
   clearInput();
-  addMsg(escapeHTML(raw), 'user');
+  addMsg(esc(raw), 'user');
   await botSay([
-    `Prazer, <strong>${escapeHTML(state.nome)}</strong>! Agora me passa seu melhor e-mail para eu salvar seu diagnóstico.`,
+    `Prazer, <strong>${esc(state.nome)}</strong>! Agora me passa seu melhor e-mail — vou salvar seu diagnóstico por lá.`,
   ]);
   state.busy = false;
   showEmailInput();
 }
 
-/* ── E-mail ── */
+/* ── 3. EMAIL ── */
 function showEmailInput() {
   setInput(`
     <div class="field-wrap">
@@ -719,19 +766,53 @@ async function submitEmail() {
   if (!isValidEmail(email)) {
     inp.classList.add('error');
     document.getElementById('err-email').classList.add('show');
-    inp.focus();
-    return;
+    inp.focus(); return;
   }
   state.busy = true;
   state.email = email;
-
   clearInput();
-  addMsg(escapeHTML(email), 'user');
-
+  addMsg(esc(email), 'user');
   sendCRM('lead_capturado');
+  await botSay([
+    `Perfeito! Antes de começar as perguntas estratégicas, quero te conhecer melhor, <strong>${esc(state.nome)}</strong> 👇`,
+  ]);
+  state.busy = false;
+  showOpenQuestion();
+}
+
+/* ── 4. PERGUNTA ABERTA ── */
+function showOpenQuestion() {
+  setInput(`
+    <textarea class="field-textarea" id="inp-exp"
+      placeholder="Ex: fiz um curso básico há 2 anos, já interpretei na igreja, quero atuar como intérprete nas escolas..."
+      maxlength="600" aria-label="Sua experiência com Libras"></textarea>
+    <span class="field-error" id="err-exp">Escreve pelo menos uma linha para eu entender melhor o seu perfil 😊</span>
+    <button class="btn-send-full" id="btn-exp" type="button">Continuar →</button>
+  `);
+  const ta = document.getElementById('inp-exp');
+  ta.focus();
+  ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.ctrlKey) submitExp(); });
+  document.getElementById('btn-exp').addEventListener('click', submitExp);
+}
+
+async function submitExp() {
+  if (state.busy) return;
+  const ta = document.getElementById('inp-exp');
+  const val = ta.value.trim();
+  if (val.length < 10) {
+    ta.style.borderColor = 'rgba(248,113,113,.55)';
+    document.getElementById('err-exp').classList.add('show');
+    ta.focus(); return;
+  }
+  state.busy = true;
+  state.experiencia = val;
+  clearInput();
+  addMsg(esc(val), 'user');
 
   await botSay([
-    `Perfeito, <strong>${escapeHTML(state.nome)}</strong>! Agora vamos começar sua avaliação. Responda com sinceridade, combinado? 🎯`,
+    `Que trajetória incrível, <strong>${esc(state.nome)}</strong>! Isso me ajuda muito a entender o seu perfil. 🙌`,
+    'Agora vou te fazer <strong>4 perguntas rápidas e estratégicas</strong> para identificar com precisão o seu nível atual em Libras.',
+    'Responde com sinceridade — não tem resposta certa ou errada aqui. Cada resposta vai montar o diagnóstico ideal para você. Combinado? 🎯',
   ]);
 
   state.busy = false;
@@ -741,16 +822,14 @@ async function submitEmail() {
   askQuestion();
 }
 
-/* ── Perguntas ── */
+/* ── 5. PERGUNTAS MCQ ── */
 async function askQuestion() {
   const q = QUESTIONS[state.qIdx];
   state.selectedOpt = null;
-
   showTyping();
-  await wait(650);
+  await wait(700);
   hideTyping();
-  addMsg(escapeHTML(q.text), 'bot');
-
+  addMsg(esc(q.text), 'bot');
   renderOptions(q);
 }
 
@@ -761,7 +840,7 @@ function renderOptions(q) {
   const optsHTML = q.opts.map((op, i) => `
     <button class="opt-btn" type="button" data-idx="${i}" role="radio" aria-checked="false">
       <span class="opt-letter">${op.l}</span>
-      <span>${escapeHTML(op.t)}</span>
+      <span>${esc(op.t)}</span>
     </button>`).join('');
 
   setInput(`
@@ -795,18 +874,13 @@ function renderOptions(q) {
 async function confirmAnswer() {
   if (state.busy || state.selectedOpt === null) return;
   state.busy = true;
-
   const q   = QUESTIONS[state.qIdx];
   const opt = q.opts[state.selectedOpt];
-
   state.score += opt.p;
-  if (typeof opt.cas === 'boolean') state.casIntent = opt.cas;
   state.respostas.push({ pergunta: q.text, alternativa: opt.l, resposta: opt.t, pontos: opt.p });
-
   clearInput();
-  addMsg(escapeHTML(opt.t), 'user');
+  addMsg(esc(opt.t), 'user');
   await wait(350);
-
   state.busy = false;
 
   if (state.qIdx < QUESTIONS.length - 1) {
@@ -817,34 +891,109 @@ async function confirmAnswer() {
   }
 }
 
-/* ── Resultado ── */
+/* ── 6. RESULTADO ── */
+function getNivelKey(score) {
+  if (score <= 7)  return 'basico';
+  if (score <= 13) return 'intermediario';
+  return 'avancado';
+}
+
 async function showResult() {
   clearInput();
-
   await botSay([
-    'Pronto! Analisei suas respostas com carinho... ✨',
-    `<strong>${escapeHTML(state.nome)}</strong>, aqui está o seu diagnóstico 👇`,
+    'Pronto! Analisei tuas respostas com cuidado... ✨',
+    `<strong>${esc(state.nome)}</strong>, aqui está o seu diagnóstico 👇`,
   ]);
 
-  const r = getResult(escapeHTML(state.nome), state.score, state.casIntent);
+  state.nivelKey = getNivelKey(state.score);
+  const p = CONFIG.PRODUTOS[state.nivelKey];
+
+  const diagTextos = {
+    basico: `Você está dando os primeiros passos — e isso é muito melhor do que ficar parado(a) sem direção. A maioria das pessoas que trava em Libras não travou por falta de esforço: <strong>travou por falta do caminho certo.</strong><br/><br/>Você precisa de uma base sólida e de entender exatamente o que a profissão exige antes de investir em qualquer curso.`,
+    intermediario: `Você já tem base — já estudou, já se comunicou com surdos. Mas tem uma trava. Sabe por quê? <strong>Você aprendeu sem método, e sem método não existe fluência.</strong><br/><br/>A boa notícia: você não precisa recomeçar do zero. Você precisa de um método que organize tudo o que já sabe e te leve até a comunicação real com surdos.`,
+    avancado: `Você já tem uma trajetória sólida. Já se comunica, já tem experiência. O que separa você da <strong>fluência profissional</strong> não é mais conteúdo — é lapidação, imersão e acompanhamento especializado.<br/><br/>Você não precisa de mais teoria. Você precisa de quem olhe para a sua sinalização e diga exatamente o que falta para você chegar lá.`,
+  };
+
+  const tituloTextos = {
+    basico:        `${esc(state.nome)}, você está no Nível Básico — e esse é o ponto de partida para tudo mudar.`,
+    intermediario: `${esc(state.nome)}, você está no Nível Intermediário — você tem base, mas está travado(a).`,
+    avancado:      `${esc(state.nome)}, você está no Nível Avançado — e está a um passo da fluência profissional.`,
+  };
 
   const card = document.createElement('div');
   card.className = 'result-card';
   card.innerHTML = `
-    <div class="result-badge">${r.badge}</div>
-    <h2 class="result-title">${r.title}</h2>
-    <div class="result-diag">${r.diag}</div>
-    <span class="score-pill">📊 Pontuação: ${state.score} de 24</span>
+    <div class="result-badge">${p.badge}</div>
+    <h2 class="result-title">${tituloTextos[state.nivelKey]}</h2>
+    <div class="result-diag">${diagTextos[state.nivelKey]}</div>
   `;
   $inner.appendChild(card);
   scrollBottom();
 
-  await wait(900);
+  await wait(1000);
   await botSay([
-    'Esse diagnóstico mostra seu ponto de partida. Agora o mais importante é escolher o próximo passo certo para evoluir com mais clareza e segurança.',
+    `O próximo passo para você sair do <strong>${p.nivel}</strong> e chegar no próximo nível é usar o caminho certo — e eu sei exatamente qual é esse caminho para você.`,
   ]);
 
-  const p = r.produto;
+  await wait(600);
+  showOferta();
+}
+
+/* ── 7. OFERTA SIM/NÃO ── */
+async function showOferta() {
+  const p = CONFIG.PRODUTOS[state.nivelKey];
+
+  const isGrupo = state.nivelKey === 'avancado';
+
+  const descricaoOferta = isGrupo
+    ? `Se eu te convidar agora para entrar no grupo exclusivo da <strong>3ª Turma do Ciclo da Fluência</strong> — que abre dia 20 de julho com uma <strong>oferta especial de lançamento</strong> — você entraria agora?`
+    : `Se eu te fizer uma <strong>oferta única agora</strong> com desconto exclusivo — que não vai estar disponível depois que você sair daqui — você aproveitaria para pegar o seu caminho hoje mesmo?`;
+
+  await botSay([descricaoOferta]);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'oferta-wrap';
+  wrap.innerHTML = `
+    <div class="oferta-card">
+      <div class="oferta-label">${p.tag}</div>
+      <div class="oferta-titulo">${p.nome}</div>
+      <div class="oferta-desc">${p.desc}</div>
+      ${isGrupo ? `
+        <div class="preco-wrap">
+          <span class="preco-de">${p.preco_de}</span>
+          <span class="preco-badge">${p.desconto}</span>
+        </div>
+      ` : `
+        <div class="preco-wrap">
+          <span class="preco-de">${p.preco_de}</span>
+          <span class="preco-por">${p.preco_por}</span>
+          <span class="preco-badge">${p.desconto}</span>
+        </div>
+      `}
+      <button class="btn-sim" id="btn-sim" type="button">✅ ${isGrupo ? 'Sim, quero garantir minha vaga!' : 'Sim, quero aproveitar o desconto!'}</button>
+      <button class="btn-nao" id="btn-nao" type="button">❌ Não, prefiro pagar o preço cheio depois</button>
+    </div>
+  `;
+  $inner.appendChild(wrap);
+  scrollBottom();
+  clearInput();
+
+  document.getElementById('btn-sim').addEventListener('click', () => ofertaSim(p));
+  document.getElementById('btn-nao').addEventListener('click', () => ofertaNao(p));
+}
+
+/* ── 7a. ACEITOU ── */
+async function ofertaSim(p) {
+  document.getElementById('btn-sim').disabled = true;
+  document.getElementById('btn-nao').disabled = true;
+
+  addMsg('✅ Sim, quero aproveitar!', 'user');
+
+  await botSay([
+    `Que decisão incrível, <strong>${esc(state.nome)}</strong>! 🎉 Você fez a escolha certa na hora certa.`,
+    `Aqui está o seu acesso com o desconto já aplicado 👇`,
+  ]);
+
   const prod = document.createElement('div');
   prod.className = 'produto-wrap';
   prod.innerHTML = `
@@ -852,51 +1001,103 @@ async function showResult() {
       <div class="produto-tag">${p.tag}</div>
       <div class="produto-nome">${p.nome}</div>
       <div class="produto-desc">${p.desc}</div>
-      <a class="btn-cta" href="${p.link}" target="_blank" rel="noopener">${p.cta}</a>
+      ${state.nivelKey !== 'avancado' ? `
+        <div class="preco-wrap" style="margin-bottom:18px">
+          <span class="preco-de">${p.preco_de}</span>
+          <span class="preco-por">${p.preco_por}</span>
+          <span class="preco-badge">${p.desconto}</span>
+        </div>
+      ` : ''}
+      <a class="btn-cta ${p.cor}" href="${p.link}" target="_blank" rel="noopener">${p.cta}</a>
     </div>
   `;
   $inner.appendChild(prod);
+  scrollBottom();
+
+  await wait(800);
+  await botSay([
+    `Qualquer dúvida, me chama! Estou aqui torcendo muito pela sua evolução em Libras 💙`,
+  ]);
 
   setInput(`<button class="btn-restart" type="button" id="btn-restart">↩ Refazer o diagnóstico</button>`);
   document.getElementById('btn-restart').addEventListener('click', restartQuiz);
+
+  sendCRM('oferta_aceita', { produto: p.nome, nivel: p.nivel });
+}
+
+/* ── 7b. RECUSOU ── */
+async function ofertaNao(p) {
+  document.getElementById('btn-sim').disabled = true;
+  document.getElementById('btn-nao').disabled = true;
+
+  addMsg('❌ Não, obrigado(a)', 'user');
+
+  await botSay([
+    `Tudo bem, <strong>${esc(state.nome)}</strong>! Respeito totalmente. 😊`,
+    `Mas preciso te deixar um aviso importante: <strong>essa oferta com desconto só existe aqui, agora, nesse momento.</strong> Quando você sair, o valor volta ao preço normal — sem exceções.`,
+    `Fica a seu critério. Vou deixar o botão aqui para você pensar com calma. 👇`,
+  ]);
+
+  const urgencia = document.createElement('div');
+  urgencia.className = 'produto-wrap';
+  urgencia.innerHTML = `
+    <div class="produto-card">
+      <div class="produto-tag">${p.tag}</div>
+      <div class="produto-nome">${p.nome}</div>
+      <div class="produto-desc">${p.desc}</div>
+      ${state.nivelKey !== 'avancado' ? `
+        <div class="preco-wrap" style="margin-bottom:14px">
+          <span class="preco-de">${p.preco_de}</span>
+          <span class="preco-por">${p.preco_por}</span>
+          <span class="preco-badge">${p.desconto}</span>
+        </div>
+      ` : ''}
+      <div class="urgencia-msg" style="margin-bottom:14px">
+        ⚠️ Esta oferta expira quando você sair desta página.
+      </div>
+      <a class="btn-cta ${p.cor}" href="${p.link}" target="_blank" rel="noopener">${p.cta}</a>
+    </div>
+  `;
+  $inner.appendChild(urgencia);
   scrollBottom();
 
-  sendCRM('diagnostico_completo', {
-    diagnostico:         r.nivel,
-    interesse_banca_cas: state.casIntent ? 'sim' : 'nao',
-    produto_recomendado: p.nome,
-  });
+  setInput(`<button class="btn-restart" type="button" id="btn-restart">↩ Refazer o diagnóstico</button>`);
+  document.getElementById('btn-restart').addEventListener('click', restartQuiz);
+
+  sendCRM('oferta_recusada', { produto: p.nome, nivel: p.nivel });
 }
 
 /* ═══════════════ CRM ═══════════════ */
 function sendCRM(fase, extra = {}) {
   try {
     const payload = {
-      sessionId: state.sessionId,
-      nome:      state.nome,
-      email:     state.email,
-      score:     state.score,
-      respostas: JSON.stringify(state.respostas),
+      sessionId:   state.sessionId,
+      nome:        state.nome,
+      email:       state.email,
+      experiencia: state.experiencia,
+      score:       state.score,
+      nivel:       state.nivelKey,
+      respostas:   JSON.stringify(state.respostas),
       fase,
-      fonte:     'quiz-libras',
-      updatedAt: new Date().toISOString(),
+      fonte:       'quiz-libras',
+      updatedAt:   new Date().toISOString(),
       ...extra,
     };
     fetch(CONFIG.SHEETS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload),
     }).catch(() => {});
-  } catch (_) { /* nunca quebra a experiência por falha de rede */ }
+  } catch (_) {}
 }
 
 /* ═══════════════ RESTART ═══════════════ */
 function restartQuiz() {
   Object.assign(state, {
     sessionId:   `qz_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    nome: '', email: '', qIdx: 0, score: 0,
-    respostas: [], selectedOpt: null, casIntent: false, busy: false,
+    nome: '', email: '', experiencia: '',
+    qIdx: 0, score: 0, respostas: [],
+    selectedOpt: null, nivelKey: '', busy: false,
   });
   $inner.innerHTML = '';
   clearInput();
