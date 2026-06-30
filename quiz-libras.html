@@ -970,12 +970,26 @@ async function showResult() {
 
   await wait(1100);
   const isGrupo = S.nivelKey === 'avancado';
-  await botSay([
-    `O próximo passo para você sair do <strong>${p.nivel}</strong> e avançar de verdade é usar o caminho certo — e eu sei exatamente qual é. 🎯`,
-    isGrupo
-      ? `Se eu te convidar agora para entrar no grupo exclusivo da <strong>3ª Turma do Ciclo da Fluência</strong> — que abre dia 20 de julho com oferta especial de lançamento — você entraria agora?`
-      : `Se eu te fizer uma <strong>oferta única agora com desconto exclusivo</strong> — que não estará disponível depois que sair daqui — você aproveitaria para garantir o seu caminho hoje?`,
-  ]);
+  let preOferta;
+  if (S.nivelKey === 'basico') {
+    // Nível básico → ebook como porta de entrada, plantando o curso como próximo passo
+    preOferta = [
+      `Como você está começando agora, não faz sentido te empurrar um curso completo de cara — o caminho certo é dar o primeiro passo sem peso. 🌱`,
+      `A sua porta de entrada ideal é o <strong>${esc(p.nome)}</strong> por só <strong>R$ 19,90</strong>: ele te mostra todo o caminho e o que a profissão realmente exige.`,
+      `E o seu próximo passo natural — quando quiser aprender Libras de verdade, do zero à fluência — é o curso <strong>Do Zero a Libras</strong>. Mas uma coisa de cada vez, combinado? 😉`,
+    ];
+  } else if (isGrupo) {
+    preOferta = [
+      `O próximo passo para você sair do <strong>${p.nivel}</strong> e chegar na fluência profissional é ter acompanhamento de perto. 🎯`,
+      `Se eu te convidar agora para entrar no grupo exclusivo da <strong>3ª Turma do Ciclo da Fluência</strong> — que abre dia 20 de julho com oferta especial de lançamento — você entraria agora?`,
+    ];
+  } else {
+    preOferta = [
+      `O próximo passo para você sair do <strong>${p.nivel}</strong> e avançar de verdade é usar o caminho certo — e eu sei exatamente qual é. 🎯`,
+      `Se eu te fizer uma <strong>oferta única agora com desconto exclusivo</strong> — que não estará disponível depois que sair daqui — você aproveitaria para garantir o seu caminho hoje?`,
+    ];
+  }
+  await botSay(preOferta);
 
   showOferta(p, isGrupo);
 }
@@ -1021,6 +1035,9 @@ async function simClick(p) {
   ]);
   prodCard(p, false);
   await wait(700);
+  if (S.nivelKey === 'basico') {
+    await botSay([`E lembra: o ebook é só o seu primeiro passo. Quando terminar e quiser aprender de verdade, do zero à fluência, seu próximo passo é o curso <strong>Do Zero a Libras</strong>. 💪`]);
+  }
   await botSay([`Qualquer dúvida, me chama! Torço muito pela sua evolução em Libras 💙`]);
   setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
   document.getElementById('b-restart').addEventListener('click', restart);
