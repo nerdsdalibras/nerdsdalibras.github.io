@@ -916,70 +916,78 @@ function confirmBooking(){
 
 // Init
 renderCal();
+</script>
 
-// ── Carrossel da vitrine: bolinhas ──
+<!-- Carrossel da vitrine (script isolado para não depender do script acima) -->
+<script>
 (function(){
-  var scroll = document.getElementById('vitrineScroll');
-  var dotsWrap = document.getElementById('vitrineDots');
-  if(!scroll || !dotsWrap) return;
-  var cards = scroll.querySelectorAll('.vitrine-card');
-  var dots = dotsWrap.querySelectorAll('.vd-dot');
+  function init(){
+    var scroll = document.getElementById('vitrineScroll');
+    var dotsWrap = document.getElementById('vitrineDots');
+    if(!scroll || !dotsWrap) return;
+    var cards = scroll.querySelectorAll('.vitrine-card');
+    var dots = dotsWrap.querySelectorAll('.vd-dot');
+    if(!cards.length) return;
 
-  function activeIndex(){
-    var center = scroll.scrollLeft + scroll.clientWidth/2;
-    var best = 0, bestDist = Infinity;
-    for(var i=0;i<cards.length;i++){
-      var c = cards[i];
-      var cCenter = c.offsetLeft + c.offsetWidth/2;
-      var d = Math.abs(cCenter - center);
-      if(d < bestDist){ bestDist = d; best = i; }
+    function cardLeft(i){
+      return cards[i].getBoundingClientRect().left - scroll.getBoundingClientRect().left + scroll.scrollLeft;
     }
-    return best;
-  }
-  function syncDots(){
-    var idx = activeIndex();
+    function activeIndex(){
+      var center = scroll.scrollLeft + scroll.clientWidth/2;
+      var best = 0, bestDist = Infinity;
+      for(var i=0;i<cards.length;i++){
+        var cCenter = cardLeft(i) + cards[i].offsetWidth/2;
+        var d = Math.abs(cCenter - center);
+        if(d < bestDist){ bestDist = d; best = i; }
+      }
+      return best;
+    }
+    function syncDots(){
+      var idx = activeIndex();
+      for(var i=0;i<dots.length;i++){ dots[i].classList.toggle('active', i === idx); }
+    }
+    function goTo(i){
+      if(!cards[i]) return;
+      scroll.scrollTo({ left: cardLeft(i), behavior:'smooth' });
+    }
+
+    var ticking = false;
+    scroll.addEventListener('scroll', function(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(function(){ syncDots(); ticking = false; });
+    });
+
+    var AUTO_MS = 4000, autoTimer = null, isAuto = false, idleTimer = null;
+    function nextSlide(){
+      var next = (activeIndex() + 1) % cards.length;
+      isAuto = true;
+      goTo(next);
+      setTimeout(function(){ isAuto = false; }, 800);
+    }
+    function startAuto(){ if(!autoTimer) autoTimer = setInterval(nextSlide, AUTO_MS); }
+    function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
+    function userInteracted(){
+      if(isAuto) return;
+      stopAuto();
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(startAuto, 5000);
+    }
+    ['pointerdown','touchstart','wheel'].forEach(function(ev){
+      scroll.addEventListener(ev, userInteracted, {passive:true});
+    });
     for(var i=0;i<dots.length;i++){
-      dots[i].classList.toggle('active', i === idx);
+      (function(i){ dots[i].addEventListener('click', function(){ userInteracted(); goTo(i); }); })(i);
     }
-  }
-  var ticking = false;
-  scroll.addEventListener('scroll', function(){
-    if(ticking) return;
-    ticking = true;
-    requestAnimationFrame(function(){ syncDots(); ticking = false; });
-  });
-  function goTo(i){
-    if(!cards[i]) return;
-    scroll.scrollTo({ left: cards[i].offsetLeft - scroll.offsetLeft, behavior:'smooth' });
-  }
-  for(var i=0;i<dots.length;i++){
-    (function(i){
-      dots[i].addEventListener('click', function(){ userInteracted(); goTo(i); });
-    })(i);
-  }
 
-  // ── Avanço automático ──
-  var AUTO_MS = 4000, autoTimer = null, isAuto = false, idleTimer = null;
-  function nextSlide(){
-    var next = (activeIndex() + 1) % cards.length;
-    isAuto = true;
-    goTo(next);
-    setTimeout(function(){ isAuto = false; }, 800);
+    syncDots();
+    startAuto();
   }
-  function startAuto(){ if(!autoTimer) autoTimer = setInterval(nextSlide, AUTO_MS); }
-  function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
-  function userInteracted(){
-    if(isAuto) return;
-    stopAuto();
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(startAuto, 5000);
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
-  ['pointerdown','touchstart','wheel'].forEach(function(ev){
-    scroll.addEventListener(ev, userInteracted, {passive:true});
-  });
-
-  syncDots();
-  startAuto();
 })();
 </script>
 
