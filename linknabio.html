@@ -198,6 +198,21 @@
       50%{transform:translateY(-3px);}
     }
     .vitrine-card-btn:hover{background:rgba(255,255,255,.28);transform:translateY(-3px);animation:none;}
+    .vitrine-card-price{
+      position:absolute;top:8px;right:8px;z-index:3;
+      background:linear-gradient(135deg,#f59e0b,#d97706);
+      color:#000;font-size:12px;font-weight:900;
+      font-family:'Inter',sans-serif;letter-spacing:.01em;
+      padding:5px 9px;border-radius:14px;
+      box-shadow:0 4px 12px rgba(0,0,0,.45);
+      opacity:0;transform:translateY(-6px);
+      transition:opacity .25s ease,transform .25s ease;
+      pointer-events:none;white-space:nowrap;
+    }
+    .vitrine-card:hover .vitrine-card-price{opacity:1;transform:translateY(0);}
+    @media (hover:none){
+      .vitrine-card-price{opacity:1;transform:none;}
+    }
 
     /* ── SEÇÃO 5: LINK SIMPLES ── */
     .link-card{
@@ -559,6 +574,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
     <div class="vitrine-scroll" id="vitrineScroll">
 
       <div class="vitrine-card" onclick="window.open('https://clubedalibras.com/vsl','_blank')">
+        <span class="vitrine-card-price">R$ 397,00</span>
         <img src="fotos/image-1777402957527.jpg" alt="Curso Do Zero a Libras"/>
         <div class="vitrine-card-title">CONVERSE COM UM SURDO EM MENOS DE 30 DIAS | DO ZERO A LIBRAS</div>
         <div style="font-size:11px;color:#aaa;line-height:1.35;margin-bottom:7px;">Cansou de decorar sinais soltos e congelar na hora de conversar? Essa é a formação completa 3 em 1 que te leva do básico ao avançado — com certificado de 350h e base profissional em tradução e interpretação.</div>
@@ -566,6 +582,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
       </div>
 
       <div class="vitrine-card" onclick="window.open('https://chat.whatsapp.com/Fx28CG321Go01di2usSiTN?s=cl&p=a&ilr=4','_blank')">
+        <span class="vitrine-card-price">R$ 2.997,00</span>
         <img src="fotos/image-1777403006556.jpg" alt="MENTORIA M&#201;TODO CDF &#8212; CICLO DA FLU&#202;NCIA"/>
         <div class="vitrine-card-title">MÉTODO QUE JÁ AJUDOU 997 INTÉRPRETES A ATINGIR A FLUÊNCIA (ESPECÍFICO PARA QUEM JÁ TEM O CURSO BÁSICO DE LIBRAS)</div>
         <div style="font-size:11px;color:#aaa;line-height:1.35;margin-bottom:7px;">⚠️ Turmas encerradas. Próxima turma abre dia 20 de julho — exclusivo para quem estiver no grupo. Entre no grupo e garanta sua vaga.</div>
@@ -573,10 +590,11 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
       </div>
 
       <div class="vitrine-card" onclick="window.open('https://clubedalibras.com/ebooklibras','_blank')">
+        <span class="vitrine-card-price">R$ 19,90</span>
         <img src="fotos/mockup-ebook.jpg" alt="Ebook Intérprete de Libras"/>
         <div class="vitrine-card-title">EBOOK — O CAMINHO PARA SE TORNAR INTÉRPRETE DE LIBRAS</div>
-        <div style=”font-size:11px;color:#aaa;line-height:1.35;margin-bottom:7px;”>Saiba exatamente o que a Lei nº 14.704/2023 exige — e pare de perder tempo em cursos que não te habilitam para exercer a profissão.</div>
-        <button class=”vitrine-card-btn” style=”display:block;width:100%;background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:20px;padding:5px 8px;font-size:10px;font-weight:700;font-family:'Inter',sans-serif;text-align:center;letter-spacing:.04em;cursor:pointer;-webkit-appearance:none;appearance:none;”>QUERO SABER O CAMINHO CERTO</button>
+        <div style="font-size:11px;color:#aaa;line-height:1.35;margin-bottom:7px;">Saiba exatamente o que a Lei nº 14.704/2023 exige — e pare de perder tempo em cursos que não te habilitam para exercer a profissão.</div>
+        <button class="vitrine-card-btn" style="display:block;width:100%;background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:20px;padding:5px 8px;font-size:10px;font-weight:700;font-family:'Inter',sans-serif;text-align:center;letter-spacing:.04em;cursor:pointer;-webkit-appearance:none;appearance:none;">QUERO SABER O CAMINHO CERTO</button>
       </div>
 
     </div>
