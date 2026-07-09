@@ -177,9 +177,10 @@
     .vitrine-scroll > .vitrine-card:nth-child(3)::before{animation-delay:4s;}
     .vitrine-card:hover{transform:translateY(-3px);}
     .vitrine-card img{
-      width:100%;height:200px;border-radius:14px;
-      object-fit:cover;display:block;
+      width:100%;height:270px;border-radius:14px;
+      object-fit:cover;object-position:center 15%;display:block;
     }
+    .vitrine-scroll > .vitrine-card:nth-child(3) img{object-position:center;}
     .vitrine-card-title{
       font-size:15px;font-weight:800;text-transform:uppercase;
       color:#fff;margin:11px 0 8px;line-height:1.3;
@@ -953,15 +954,38 @@ renderCal();
     ticking = true;
     requestAnimationFrame(function(){ syncDots(); ticking = false; });
   });
+  function goTo(i){
+    if(!cards[i]) return;
+    scroll.scrollTo({ left: cards[i].offsetLeft - scroll.offsetLeft, behavior:'smooth' });
+  }
   for(var i=0;i<dots.length;i++){
     (function(i){
-      dots[i].addEventListener('click', function(){
-        if(!cards[i]) return;
-        scroll.scrollTo({ left: cards[i].offsetLeft - scroll.offsetLeft, behavior:'smooth' });
-      });
+      dots[i].addEventListener('click', function(){ userInteracted(); goTo(i); });
     })(i);
   }
+
+  // ── Avanço automático ──
+  var AUTO_MS = 4000, autoTimer = null, isAuto = false, idleTimer = null;
+  function nextSlide(){
+    var next = (activeIndex() + 1) % cards.length;
+    isAuto = true;
+    goTo(next);
+    setTimeout(function(){ isAuto = false; }, 800);
+  }
+  function startAuto(){ if(!autoTimer) autoTimer = setInterval(nextSlide, AUTO_MS); }
+  function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
+  function userInteracted(){
+    if(isAuto) return;
+    stopAuto();
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(startAuto, 5000);
+  }
+  ['pointerdown','touchstart','wheel'].forEach(function(ev){
+    scroll.addEventListener(ev, userInteracted, {passive:true});
+  });
+
   syncDots();
+  startAuto();
 })();
 </script>
 
