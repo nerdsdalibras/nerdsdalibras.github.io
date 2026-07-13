@@ -112,6 +112,12 @@ function doPost(e) {
       return respond({ ok: true, sent: nEnv });
     }
 
+    // Campanha: e-mail PERSONALIZADO (assunto + corpo escritos no CRM) para uma lista
+    if (data && data.action === 'broadcast' && data.sessionIds && data.subject) {
+      var nBc = enviarBroadcast(data.sessionIds, data.subject, data.body || '');
+      return respond({ ok: true, sent: nBc });
+    }
+
     // Webhook da Eduzz (Mentoria) — checa antes da Kiwify pois tem campos próprios
     if (isEduzzPayload(data)) {
       _logWebhook('eduzz', raw);
@@ -685,6 +691,51 @@ function enviarEmailParaLeads(sessionIds, num) {
     } catch (err) { /* segue para o próximo */ }
   }
   return enviados;
+}
+
+// Envia um e-mail PERSONALIZADO (campanha) para uma lista de sessionIds.
+// {nome} no assunto/corpo vira o primeiro nome de cada lead. Respeita a
+// cota diária do Gmail (para de enviar se estourar e registra no log).
+function enviarBroadcast(sessionIds, subject, body) {
+  if (!sessionIds || !sessionIds.length) return 0;
+  var sheet   = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 0;
+  var headers  = getHeaders(sheet);
+  var sidCol   = headers.indexOf('sessionId');
+  var emailCol = headers.indexOf('Email') >= 0 ? headers.indexOf('Email') : headers.indexOf('email');
+  var nomeCol  = headers.indexOf('Nome')  >= 0 ? headers.indexOf('Nome')  : headers.indexOf('nome');
+  if (sidCol < 0 || emailCol < 0) return 0;
+
+  var want = {};
+  for (var i = 0; i < sessionIds.length; i++) want[sessionIds[i]] = true;
+
+  var data  = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+  var quota = MailApp.getRemainingDailyQuota();
+  var sent  = 0;
+
+  for (var r = 0; r < data.length; r++) {
+    var sid = data[r][sidCol];
+    if (want[sid] !== true) continue;      // não está na lista, ou já enviado
+    want[sid] = false;                     // evita duplicar se houver linha repetida
+    var email = String(data[r][emailCol] || '').trim();
+    if (!email || email.indexOf('@') < 0) continue;
+    if (sent >= quota) { Logger.log('Broadcast: cota diária do Gmail esgotada — enviados ' + sent); break; }
+
+    var nome  = String(nomeCol >= 0 ? data[r][nomeCol] : '').split(' ')[0] || 'você';
+    var subj  = String(subject).replace(/\{nome\}/gi, nome);
+    var corpo = String(body).replace(/\{nome\}/gi, nome);
+    try {
+      MailApp.sendEmail({
+        to: email, subject: subj,
+        body: corpo, htmlBody: corpo.replace(/\n/g, '<br>'),
+        name: EMAIL_CFG.fromName,
+      });
+      sent++;
+    } catch (err) { Logger.log('Erro broadcast p/ ' + email + ': ' + err); }
+  }
+  Logger.log('Broadcast enviado: ' + sent + ' de ' + sessionIds.length + ' (cota restante era ' + quota + ')');
+  return sent;
 }
 
 // Decide se o lead deve receber o remarketing automático (e-mail/WhatsApp).

@@ -156,9 +156,15 @@ function renderFilters(leads) {
     carrinho:          leads.filter(isCarrinhoAbandonado).length,
     aguardando:        leads.filter(l => l.status === 'aguardando').length,
     nao_quis:          leads.filter(l => l.status === 'nao_quis').length,
+    g_curso:           leads.filter(l => grupoProduto(l) === 'curso').length,
+    g_mentoria:        leads.filter(l => grupoProduto(l) === 'mentoria').length,
+    g_ebook:           leads.filter(l => grupoProduto(l) === 'ebook').length,
   };
   const defs = [
     { key: 'todos',             label: 'Todos' },
+    { key: 'g_curso',           label: '📚 Curso (Zero a Libras)' },
+    { key: 'g_mentoria',        label: '💎 Mentoria' },
+    { key: 'g_ebook',           label: '📖 Ebook' },
     { key: 'prioridade_maxima', label: '⭐ Prioridade' },
     { key: 'muito_quente',      label: '🔥🔥 Muito Quente' },
     { key: 'quente',            label: '🔥 Quente' },
@@ -230,6 +236,9 @@ async function renderLeads() {
     filtered = filtered.filter(l => getLeadTags(l).includes(tagFilter));
   } else if (filtroAtivo === 'carrinho') {
     filtered = filtered.filter(isCarrinhoAbandonado);
+  } else if (filtroAtivo.indexOf('g_') === 0) {
+    const g = filtroAtivo.slice(2);
+    filtered = filtered.filter(l => grupoProduto(l) === g);
   } else if (filtroAtivo !== 'todos') {
     filtered = filtered.filter(l => l.status === filtroAtivo);
   }

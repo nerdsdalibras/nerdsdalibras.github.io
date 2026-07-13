@@ -176,6 +176,7 @@ function renderBulkBar() {
       <option value="3">📧 E-mail 3 (última chamada)</option>
     </select>
     <button class="bulk-btn" onclick="bulkSendEmail()">Enviar e-mail</button>
+    <button class="bulk-btn" onclick="abrirCampanha()" style="background:var(--gd);border-color:var(--gg)">📢 Campanha</button>
     <select class="sort-select" id="bulk-status-sel" style="font-size:.75rem">
       <option value="">📊 Mudar status...</option>
       ${statusOpts}
@@ -225,6 +226,63 @@ function bulkSendEmail() {
   clearSelection();
   renderLeads();
 }
+/* ── CAMPANHA: e-mail personalizado (oferta / promo / abertura de grupo) ──
+   Envia um e-mail escrito por você para todos os leads selecionados
+   (filtre por grupo antes: Curso / Mentoria / Ebook). Usa {nome} pra
+   personalizar com o primeiro nome de cada pessoa.                        */
+function abrirCampanha() {
+  const leads    = getSelectedLeads().filter(l => l.email);
+  const semEmail = selectedLeads.size - leads.length;
+  if (!leads.length) { showToast('Nenhum selecionado tem e-mail cadastrado'); return; }
+
+  const ov = document.createElement('div');
+  ov.id = 'campanha-modal';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML = `
+    <div style="background:var(--s1);border:1px solid var(--bdrb);border-radius:14px;max-width:560px;width:100%;padding:22px;max-height:92vh;overflow:auto;color:var(--text)">
+      <div style="font-size:1.05rem;font-weight:700;margin-bottom:4px">📢 Campanha por e-mail</div>
+      <div style="font-size:.8rem;color:var(--ts);margin-bottom:16px">
+        Enviando para <strong style="color:var(--g)">${leads.length}</strong> lead(s) com e-mail${semEmail ? ` · ${semEmail} sem e-mail serão ignorados` : ''}
+      </div>
+      <input id="camp-assunto" placeholder="Assunto do e-mail" maxlength="160"
+        style="width:100%;padding:11px;margin-bottom:10px;border-radius:9px;border:1px solid var(--bdrb);background:var(--bg);color:var(--text);font-size:.9rem"/>
+      <textarea id="camp-corpo" rows="10" placeholder="Escreva sua mensagem aqui...&#10;&#10;Ex: Oi {nome}! Abrimos as vagas da nova turma com uma condição especial..."
+        style="width:100%;padding:11px;border-radius:9px;border:1px solid var(--bdrb);background:var(--bg);color:var(--text);font-size:.9rem;resize:vertical;line-height:1.5"></textarea>
+      <div style="font-size:.73rem;color:var(--ts);margin:8px 0 16px">
+        💡 Use <strong style="color:var(--g)">{nome}</strong> no assunto ou no texto para personalizar com o primeiro nome. As quebras de linha viram parágrafos.
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="bulk-btn" onclick="fecharCampanha()">Cancelar</button>
+        <button class="bulk-btn" style="background:var(--g);color:#0b0b0d;border-color:var(--g);font-weight:700" onclick="enviarCampanha()">📨 Enviar para ${leads.length}</button>
+      </div>
+    </div>`;
+  ov.addEventListener('click', e => { if (e.target === ov) fecharCampanha(); });
+  document.body.appendChild(ov);
+  setTimeout(() => document.getElementById('camp-assunto')?.focus(), 50);
+}
+function fecharCampanha() { document.getElementById('campanha-modal')?.remove(); }
+function enviarCampanha() {
+  const subject = (document.getElementById('camp-assunto')?.value || '').trim();
+  const body    = (document.getElementById('camp-corpo')?.value || '').trim();
+  if (!subject) { showToast('Escreva o assunto do e-mail'); return; }
+  if (!body)    { showToast('Escreva a mensagem'); return; }
+  const leads = getSelectedLeads().filter(l => l.email);
+  if (!leads.length) { showToast('Nenhum e-mail'); return; }
+  if (!confirm(`Enviar esta campanha para ${leads.length} lead(s)?`)) return;
+
+  const sessionIds = leads.map(l => l.sessionId);
+  fetch(CONFIG.SHEETS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'broadcast', sessionIds, subject, body }),
+  }).catch(() => {});
+
+  showToast(`Disparando campanha para ${leads.length} lead(s)... 📨`);
+  fecharCampanha();
+  clearSelection();
+  renderLeads();
+}
+
 function applyBulkStatus() {
   const sel = document.getElementById('bulk-status-sel');
   if (!sel || !sel.value) { showToast('Escolha um status primeiro'); return; }

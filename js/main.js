@@ -62,6 +62,22 @@ function updateBadges(leads) {
   if (bc) bc.textContent = novosCk > 0 ? novosCk : '';
 }
 
+// Classifica o lead no grupo de produto (para segmentar campanhas):
+// 'mentoria' | 'curso' (Do Zero a Libras/Kiwify) | 'ebook' | 'outro'
+function grupoProduto(l) {
+  const plat  = String(l.plataformaOferta || '').toLowerCase();
+  const of    = String(l.oferta || '').toLowerCase();
+  const res   = String(l.resultado || '').toLowerCase();
+  const nivel = String(l.nivelIdentificado || '').toLowerCase();
+  if (of === 'mentoria' || plat === 'grupo' || res.indexOf('mentoria') >= 0 ||
+      res.indexOf('ciclo') >= 0 || res.indexOf('cdf') >= 0 || nivel.indexOf('avan') >= 0) return 'mentoria';
+  if (of === 'ebook' || plat === 'eduzz' || res.indexOf('ebook') >= 0 ||
+      res.indexOf('caminho para se tornar') >= 0) return 'ebook';
+  if (plat === 'kiwify' || of === 'curso' || res.indexOf('zero a libras') >= 0 ||
+      nivel.indexOf('intermedi') >= 0) return 'curso';
+  return 'outro';
+}
+
 /* ═══════════════════════════════════════════
    ACTIONS
 ═══════════════════════════════════════════ */
