@@ -137,6 +137,34 @@
       0%,100%{box-shadow:0 0 14px rgba(245,158,11,.5);}
       50%{box-shadow:0 0 28px rgba(245,158,11,.9);}
     }
+    /* Card de oferta: Diagnóstico gratuito */
+    .diag-card{
+      background:linear-gradient(160deg,#1c1407 0%,#120d04 55%,#0e0e0e 100%);
+      border:1px solid rgba(245,158,11,.38);
+      gap:9px;padding:22px 22px 20px;
+    }
+    .diag-badge{
+      display:inline-block;
+      background:linear-gradient(135deg,#f59e0b,#d97706);
+      color:#000;font-size:11px;font-weight:900;
+      letter-spacing:.1em;text-transform:uppercase;
+      padding:5px 13px;border-radius:999px;
+      box-shadow:0 2px 12px rgba(245,158,11,.55);
+      animation:badgePulse 2s ease-in-out infinite;
+    }
+    @keyframes badgePulse{
+      0%,100%{box-shadow:0 2px 10px rgba(245,158,11,.4);}
+      50%{box-shadow:0 2px 18px rgba(245,158,11,.85);}
+    }
+    .diag-title{
+      font-size:18px;font-weight:800;color:#fff;line-height:1.3;
+      letter-spacing:.005em;
+    }
+    .diag-title span{color:#f9b233;}
+    .diag-sub{
+      font-size:13px;color:#c9bda9;line-height:1.5;margin-top:2px;
+    }
+    .diag-btn{margin-top:6px;font-size:14px;}
 
     /* ── SEÇÃO 4: VITRINE ── */
     .vitrine-label{
@@ -578,8 +606,11 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
   </div>
 
   <!-- ═══ SEÇÃO 3: MENSAGEM ═══ -->
-  <div class="concierge-card concierge-msg">
-    <a href="https://nerdsdalibras.github.io/quiz-libras.html" target="_blank" class="concierge-btn" style="font-size:13px;font-weight:900;padding:14px 18px;width:100%;line-height:1.3;text-transform:uppercase;letter-spacing:.06em;box-shadow:0 0 18px rgba(245,158,11,.6);animation:btnGlow 2s ease-in-out infinite;">🎯 QUERO SABER MEU NÍVEL NA LIBRAS E O MELHOR CAMINHO PARA MIM</a>
+  <div class="concierge-card concierge-msg diag-card">
+    <span class="diag-badge">🎁 100% Gratuito</span>
+    <div class="diag-title">Descubra seu nível na Libras com um <span>Diagnóstico Gratuito</span></div>
+    <div class="diag-sub">Responda em 2 minutos e receba o caminho ideal — e o produto certo para a sua fase atual.</div>
+    <a href="https://nerdsdalibras.github.io/quiz-libras.html" target="_blank" class="concierge-btn diag-btn" style="font-weight:900;padding:14px 18px;width:100%;line-height:1.3;text-transform:uppercase;letter-spacing:.05em;box-shadow:0 0 18px rgba(245,158,11,.6);animation:btnGlow 2s ease-in-out infinite;">🎯 QUERO MEU DIAGNÓSTICO GRATUITO</a>
   </div>
 
   <!-- ═══ SEÇÃO 4: VITRINE ═══ -->
