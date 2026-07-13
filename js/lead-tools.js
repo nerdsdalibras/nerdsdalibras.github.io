@@ -308,14 +308,20 @@ async function abrirHistoricoCampanhas() {
       body.innerHTML = '<div style="color:var(--ts)">Nenhuma campanha enviada ainda.</div>';
       return;
     }
-    body.innerHTML = rows.map(c => `
+    body.innerHTML = rows.map(c => {
+      const env  = c.enviados || 0;
+      const ab   = c.aberturas || 0;
+      const taxa = env > 0 ? Math.round(ab / env * 100) : 0;
+      return `
       <div style="border-bottom:1px solid var(--bdr);padding:11px 0">
         <div style="font-weight:700">${_escCamp(c.assunto) || '(sem assunto)'}</div>
         <div style="font-size:.75rem;color:var(--ts);margin-top:4px">
           🗓 ${c.data ? new Date(c.data).toLocaleString('pt-BR') : '—'}
-          &nbsp;·&nbsp; 👥 ${c.enviados || 0} enviados${c.grupo ? ' &nbsp;·&nbsp; 🏷 ' + _escCamp(c.grupo) : ''}
+          &nbsp;·&nbsp; 👥 ${env} enviados
+          &nbsp;·&nbsp; <span style="color:var(--g)">👀 ${ab} abriram${env ? ` (${taxa}%)` : ''}</span>${c.grupo ? ' &nbsp;·&nbsp; 🏷 ' + _escCamp(c.grupo) : ''}
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } catch (_) {
     const body = document.getElementById('hist-body');
     if (body) body.innerHTML = '<div style="color:var(--red)">Não consegui carregar. Republicou o Apps Script com a versão nova?</div>';

@@ -32,6 +32,7 @@ const COL_TO_FIELD = {
   'clicouOferta':     'clicouOferta',     // clicou no botão da oferta no fim do quiz
   'plataformaOferta': 'plataformaOferta', // kiwify | eduzz | grupo
   'ofertaEm':         'ofertaEm',
+  'campanhaAbriuEm':  'campanhaAbriuEm',  // abriu o último e-mail de campanha em
   // Colunas novas (serão criadas automaticamente se não existirem)
   'sessionId':        'sessionId',
   'genero':           'genero',
@@ -85,7 +86,7 @@ for (var k in COL_TO_FIELD) { FIELD_TO_COL[COL_TO_FIELD[k]] = k; }
 // Novas colunas que precisam existir para o sistema funcionar
 const NEW_COLS = [
   'Email','Objetivo','Quis Avançar',
-  'etapaQuiz','experiencia','respostasQuiz','interesseCAS','clicouOferta','plataformaOferta','ofertaEm',
+  'etapaQuiz','experiencia','respostasQuiz','interesseCAS','clicouOferta','plataformaOferta','ofertaEm','campanhaAbriuEm',
   'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
   'status','statusCloser','observacoes',
   'comprouKiwify','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',
@@ -168,6 +169,11 @@ function doGet(e) {
   }
   if (action === 'getCampanhas') {
     return respond(getCampanhas());
+  }
+  // Pixel de abertura de e-mail: registra a abertura e devolve algo mínimo
+  if (action === 'open') {
+    _registrarAbertura(e.parameter.c, e.parameter.s);
+    return ContentService.createTextOutput('').setMimeType(ContentService.MimeType.TEXT);
   }
   return respond({ ok: true, version: '3.3' });
 }
@@ -713,6 +719,9 @@ function enviarBroadcast(sessionIds, subject, body, label) {
   // O nome do lead entra SEMPRE: se o texto não tiver {nome}, começa com "Oi {nome},"
   var bodyTpl = /\{nome\}/i.test(String(body)) ? String(body) : ('Oi {nome},\n\n' + String(body));
 
+  var campId = 'c' + Date.now();           // id único desta campanha (para rastrear aberturas)
+  var appUrl = _webAppUrl();               // URL do próprio web app (para o pixel)
+
   var want = {};
   for (var i = 0; i < sessionIds.length; i++) want[sessionIds[i]] = true;
 
@@ -731,49 +740,101 @@ function enviarBroadcast(sessionIds, subject, body, label) {
     var nome  = String(nomeCol >= 0 ? data[r][nomeCol] : '').split(' ')[0] || 'você';
     var subj  = String(subject).replace(/\{nome\}/gi, nome);
     var corpo = bodyTpl.replace(/\{nome\}/gi, nome);
+    var html  = corpo.replace(/\n/g, '<br>');
+    // Pixel invisível: quando o cliente de e-mail carrega essa imagem, registra a abertura
+    if (appUrl) {
+      html += '<img src="' + appUrl + '?action=open&c=' + encodeURIComponent(campId) +
+              '&s=' + encodeURIComponent(sid) + '" width="1" height="1" alt="" ' +
+              'style="width:1px;height:1px;border:0;overflow:hidden">';
+    }
     try {
       MailApp.sendEmail({
         to: email, subject: subj,
-        body: corpo, htmlBody: corpo.replace(/\n/g, '<br>'),
+        body: corpo, htmlBody: html,
         name: EMAIL_CFG.fromName,
       });
       sent++;
     } catch (err) { Logger.log('Erro broadcast p/ ' + email + ': ' + err); }
   }
-  _logCampanha(subject, label, sessionIds.length, sent);
+  _logCampanha(campId, subject, label, sessionIds.length, sent);
   Logger.log('Broadcast enviado: ' + sent + ' de ' + sessionIds.length + ' (cota restante era ' + quota + ')');
   return sent;
 }
 
-// Registra a campanha na aba "Campanhas" (histórico: data, assunto, grupo, enviados)
-function _logCampanha(subject, label, total, sent) {
+// URL do próprio web app (para montar o pixel de abertura)
+function _webAppUrl() {
+  try { return ScriptApp.getService().getUrl() || ''; } catch (e) { return ''; }
+}
+
+// Registra a campanha na aba "Campanhas" (histórico: data, assunto, grupo, enviados, id)
+function _logCampanha(campId, subject, label, total, sent) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sh = ss.getSheetByName('Campanhas');
     if (!sh) {
       sh = ss.insertSheet('Campanhas');
-      sh.appendRow(['Data', 'Assunto', 'Grupo', 'Destinatários', 'Enviados']);
+      sh.appendRow(['Data', 'Assunto', 'Grupo', 'Destinatários', 'Enviados', 'CampanhaId']);
     }
-    sh.appendRow([new Date(), subject, label || '', total, sent]);
+    sh.appendRow([new Date(), subject, label || '', total, sent, campId]);
   } catch (e) {}
 }
 
-// Lê o histórico de campanhas (mais recente primeiro) para o dashboard
+// Registra a abertura de um e-mail (pixel): guarda na aba "Aberturas" e marca o lead
+function _registrarAbertura(campId, sid) {
+  if (!campId || !sid) return;
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ab = ss.getSheetByName('Aberturas');
+    if (!ab) { ab = ss.insertSheet('Aberturas'); ab.appendRow(['Data', 'CampanhaId', 'sessionId']); }
+    ab.appendRow([new Date(), campId, sid]);
+  } catch (e) {}
+  try {
+    var sheet   = getSheet();
+    var headers = getHeaders(sheet);
+    var sidCol  = headers.indexOf('sessionId');
+    var abCol   = headers.indexOf('campanhaAbriuEm');
+    if (sidCol < 0 || abCol < 0) return;
+    var last = sheet.getLastRow();
+    if (last < 2) return;
+    var ids = sheet.getRange(2, sidCol + 1, last - 1, 1).getValues();
+    for (var i = 0; i < ids.length; i++) {
+      if (ids[i][0] === sid) { sheet.getRange(i + 2, abCol + 1).setValue(new Date().toISOString()); break; }
+    }
+  } catch (e) {}
+}
+
+// Lê o histórico de campanhas (mais recente primeiro) com aberturas ÚNICAS por campanha
 function getCampanhas() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName('Campanhas');
   if (!sh) return [];
   var last = sh.getLastRow();
   if (last < 2) return [];
-  var vals = sh.getRange(2, 1, last - 1, 5).getValues();
+  var vals = sh.getRange(2, 1, last - 1, 6).getValues();
+
+  // Conta aberturas únicas (por sessionId) de cada campanha
+  var opens = {};
+  var ab = ss.getSheetByName('Aberturas');
+  if (ab && ab.getLastRow() > 1) {
+    var av = ab.getRange(2, 1, ab.getLastRow() - 1, 3).getValues();
+    for (var j = 0; j < av.length; j++) {
+      var cid = av[j][1], s = av[j][2];
+      if (!cid) continue;
+      if (!opens[cid]) opens[cid] = {};
+      opens[cid][s] = true;
+    }
+  }
+
   var out = [];
   for (var i = vals.length - 1; i >= 0; i--) {
+    var id = vals[i][5];
     out.push({
-      data:     vals[i][0] ? new Date(vals[i][0]).toISOString() : '',
-      assunto:  vals[i][1],
-      grupo:    vals[i][2],
-      total:    vals[i][3],
-      enviados: vals[i][4],
+      data:      vals[i][0] ? new Date(vals[i][0]).toISOString() : '',
+      assunto:   vals[i][1],
+      grupo:     vals[i][2],
+      total:     vals[i][3],
+      enviados:  vals[i][4],
+      aberturas: (id && opens[id]) ? Object.keys(opens[id]).length : 0,
     });
   }
   return out;
