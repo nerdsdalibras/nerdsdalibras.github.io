@@ -248,10 +248,12 @@ function abrirCampanha() {
         style="width:100%;padding:11px;margin-bottom:10px;border-radius:9px;border:1px solid var(--bdrb);background:var(--bg);color:var(--text);font-size:.9rem"/>
       <textarea id="camp-corpo" rows="10" placeholder="Escreva sua mensagem aqui...&#10;&#10;Ex: Oi {nome}! Abrimos as vagas da nova turma com uma condição especial..."
         style="width:100%;padding:11px;border-radius:9px;border:1px solid var(--bdrb);background:var(--bg);color:var(--text);font-size:.9rem;resize:vertical;line-height:1.5"></textarea>
-      <div style="font-size:.73rem;color:var(--ts);margin:8px 0 16px">
-        💡 Use <strong style="color:var(--g)">{nome}</strong> no assunto ou no texto para personalizar com o primeiro nome. As quebras de linha viram parágrafos.
+      <div style="font-size:.73rem;color:var(--ts);margin:8px 0 12px">
+        💡 Use <strong style="color:var(--g)">{nome}</strong> onde quiser o primeiro nome. E fique tranquila: <strong>o nome entra sempre</strong> — se você não escrever {nome}, o sistema já começa o e-mail com "Oi [nome]," automaticamente.
       </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
+      <div id="camp-preview" style="display:none;background:var(--bg);border:1px solid var(--bdr);border-radius:9px;padding:12px;margin-bottom:12px;font-size:.85rem"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+        <button class="bulk-btn" onclick="previewCampanha()">👁 Pré-visualizar</button>
         <button class="bulk-btn" onclick="fecharCampanha()">Cancelar</button>
         <button class="bulk-btn" style="background:var(--g);color:#0b0b0d;border-color:var(--g);font-weight:700" onclick="enviarCampanha()">📨 Enviar para ${leads.length}</button>
       </div>
@@ -261,6 +263,65 @@ function abrirCampanha() {
   setTimeout(() => document.getElementById('camp-assunto')?.focus(), 50);
 }
 function fecharCampanha() { document.getElementById('campanha-modal')?.remove(); }
+
+// Mesma regra do envio: se não houver {nome}, começa com "Oi {nome},"
+function _campBodyTemplate(body) {
+  return /\{nome\}/i.test(body) ? body : ('Oi {nome},\n\n' + body);
+}
+function previewCampanha() {
+  const leads   = getSelectedLeads().filter(l => l.email);
+  const exemplo = (leads[0] && String(leads[0].nome || '').split(' ')[0]) || 'Maria';
+  const subject = (document.getElementById('camp-assunto')?.value || '').trim();
+  const body    = (document.getElementById('camp-corpo')?.value || '').trim();
+  if (!subject && !body) { showToast('Escreva algo pra pré-visualizar'); return; }
+  const subj  = subject.replace(/\{nome\}/gi, exemplo);
+  const corpo = _campBodyTemplate(body).replace(/\{nome\}/gi, exemplo).replace(/\n/g, '<br>');
+  const box = document.getElementById('camp-preview');
+  box.style.display = 'block';
+  box.innerHTML = `<div style="color:var(--ts);font-size:.72rem;margin-bottom:6px">Prévia — exemplo com o nome "<strong>${exemplo}</strong>":</div>
+    <div style="font-weight:700;margin-bottom:8px">${subj || '(sem assunto)'}</div>
+    <div style="line-height:1.55">${corpo || '(sem mensagem)'}</div>`;
+}
+
+/* ── Histórico de campanhas enviadas (lido da aba "Campanhas" da planilha) ── */
+function _escCamp(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+async function abrirHistoricoCampanhas() {
+  const ov = document.createElement('div');
+  ov.id = 'hist-modal';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML = `
+    <div style="background:var(--s1);border:1px solid var(--bdrb);border-radius:14px;max-width:560px;width:100%;padding:22px;max-height:88vh;overflow:auto;color:var(--text)">
+      <div style="font-size:1.05rem;font-weight:700;margin-bottom:14px">📢 Campanhas enviadas</div>
+      <div id="hist-body" style="font-size:.9rem">Carregando…</div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <button class="bulk-btn" onclick="fecharHistorico()">Fechar</button>
+      </div>
+    </div>`;
+  ov.addEventListener('click', e => { if (e.target === ov) fecharHistorico(); });
+  document.body.appendChild(ov);
+  try {
+    const res  = await fetch(CONFIG.SHEETS_URL + '?action=getCampanhas', { redirect: 'follow' });
+    const rows = await res.json();
+    const body = document.getElementById('hist-body');
+    if (!body) return;
+    if (!Array.isArray(rows) || !rows.length) {
+      body.innerHTML = '<div style="color:var(--ts)">Nenhuma campanha enviada ainda.</div>';
+      return;
+    }
+    body.innerHTML = rows.map(c => `
+      <div style="border-bottom:1px solid var(--bdr);padding:11px 0">
+        <div style="font-weight:700">${_escCamp(c.assunto) || '(sem assunto)'}</div>
+        <div style="font-size:.75rem;color:var(--ts);margin-top:4px">
+          🗓 ${c.data ? new Date(c.data).toLocaleString('pt-BR') : '—'}
+          &nbsp;·&nbsp; 👥 ${c.enviados || 0} enviados${c.grupo ? ' &nbsp;·&nbsp; 🏷 ' + _escCamp(c.grupo) : ''}
+        </div>
+      </div>`).join('');
+  } catch (_) {
+    const body = document.getElementById('hist-body');
+    if (body) body.innerHTML = '<div style="color:var(--red)">Não consegui carregar. Republicou o Apps Script com a versão nova?</div>';
+  }
+}
+function fecharHistorico() { document.getElementById('hist-modal')?.remove(); }
 function enviarCampanha() {
   const subject = (document.getElementById('camp-assunto')?.value || '').trim();
   const body    = (document.getElementById('camp-corpo')?.value || '').trim();
@@ -270,11 +331,13 @@ function enviarCampanha() {
   if (!leads.length) { showToast('Nenhum e-mail'); return; }
   if (!confirm(`Enviar esta campanha para ${leads.length} lead(s)?`)) return;
 
+  const label = filtroAtivo === 'g_curso' ? 'Curso' : filtroAtivo === 'g_mentoria' ? 'Mentoria'
+              : filtroAtivo === 'g_ebook' ? 'Ebook' : 'Seleção';
   const sessionIds = leads.map(l => l.sessionId);
   fetch(CONFIG.SHEETS_URL, {
     method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action: 'broadcast', sessionIds, subject, body }),
+    body: JSON.stringify({ action: 'broadcast', sessionIds, subject, body, label, total: leads.length }),
   }).catch(() => {});
 
   showToast(`Disparando campanha para ${leads.length} lead(s)... 📨`);

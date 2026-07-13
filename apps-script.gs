@@ -114,7 +114,7 @@ function doPost(e) {
 
     // Campanha: e-mail PERSONALIZADO (assunto + corpo escritos no CRM) para uma lista
     if (data && data.action === 'broadcast' && data.sessionIds && data.subject) {
-      var nBc = enviarBroadcast(data.sessionIds, data.subject, data.body || '');
+      var nBc = enviarBroadcast(data.sessionIds, data.subject, data.body || '', data.label || '');
       return respond({ ok: true, sent: nBc });
     }
 
@@ -165,6 +165,9 @@ function doGet(e) {
   const action = (e.parameter && e.parameter.action) || '';
   if (action === 'getLeads') {
     return respond(getAllLeads());
+  }
+  if (action === 'getCampanhas') {
+    return respond(getCampanhas());
   }
   return respond({ ok: true, version: '3.3' });
 }
@@ -696,7 +699,7 @@ function enviarEmailParaLeads(sessionIds, num) {
 // Envia um e-mail PERSONALIZADO (campanha) para uma lista de sessionIds.
 // {nome} no assunto/corpo vira o primeiro nome de cada lead. Respeita a
 // cota diária do Gmail (para de enviar se estourar e registra no log).
-function enviarBroadcast(sessionIds, subject, body) {
+function enviarBroadcast(sessionIds, subject, body, label) {
   if (!sessionIds || !sessionIds.length) return 0;
   var sheet   = getSheet();
   var lastRow = sheet.getLastRow();
@@ -706,6 +709,9 @@ function enviarBroadcast(sessionIds, subject, body) {
   var emailCol = headers.indexOf('Email') >= 0 ? headers.indexOf('Email') : headers.indexOf('email');
   var nomeCol  = headers.indexOf('Nome')  >= 0 ? headers.indexOf('Nome')  : headers.indexOf('nome');
   if (sidCol < 0 || emailCol < 0) return 0;
+
+  // O nome do lead entra SEMPRE: se o texto não tiver {nome}, começa com "Oi {nome},"
+  var bodyTpl = /\{nome\}/i.test(String(body)) ? String(body) : ('Oi {nome},\n\n' + String(body));
 
   var want = {};
   for (var i = 0; i < sessionIds.length; i++) want[sessionIds[i]] = true;
@@ -724,7 +730,7 @@ function enviarBroadcast(sessionIds, subject, body) {
 
     var nome  = String(nomeCol >= 0 ? data[r][nomeCol] : '').split(' ')[0] || 'você';
     var subj  = String(subject).replace(/\{nome\}/gi, nome);
-    var corpo = String(body).replace(/\{nome\}/gi, nome);
+    var corpo = bodyTpl.replace(/\{nome\}/gi, nome);
     try {
       MailApp.sendEmail({
         to: email, subject: subj,
@@ -734,8 +740,43 @@ function enviarBroadcast(sessionIds, subject, body) {
       sent++;
     } catch (err) { Logger.log('Erro broadcast p/ ' + email + ': ' + err); }
   }
+  _logCampanha(subject, label, sessionIds.length, sent);
   Logger.log('Broadcast enviado: ' + sent + ' de ' + sessionIds.length + ' (cota restante era ' + quota + ')');
   return sent;
+}
+
+// Registra a campanha na aba "Campanhas" (histórico: data, assunto, grupo, enviados)
+function _logCampanha(subject, label, total, sent) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName('Campanhas');
+    if (!sh) {
+      sh = ss.insertSheet('Campanhas');
+      sh.appendRow(['Data', 'Assunto', 'Grupo', 'Destinatários', 'Enviados']);
+    }
+    sh.appendRow([new Date(), subject, label || '', total, sent]);
+  } catch (e) {}
+}
+
+// Lê o histórico de campanhas (mais recente primeiro) para o dashboard
+function getCampanhas() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Campanhas');
+  if (!sh) return [];
+  var last = sh.getLastRow();
+  if (last < 2) return [];
+  var vals = sh.getRange(2, 1, last - 1, 5).getValues();
+  var out = [];
+  for (var i = vals.length - 1; i >= 0; i--) {
+    out.push({
+      data:     vals[i][0] ? new Date(vals[i][0]).toISOString() : '',
+      assunto:  vals[i][1],
+      grupo:    vals[i][2],
+      total:    vals[i][3],
+      enviados: vals[i][4],
+    });
+  }
+  return out;
 }
 
 // Decide se o lead deve receber o remarketing automático (e-mail/WhatsApp).
