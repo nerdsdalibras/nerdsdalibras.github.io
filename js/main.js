@@ -25,15 +25,41 @@ function getAvatarColor(seed) {
   return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
 }
 
-function updateBadges(leads) {
-  const hot = leads.filter(l => l.status === 'muito_quente' || l.status === 'prioridade_maxima').length;
-  const b = document.getElementById('badge-leads');
-  if (b) b.textContent = hot > 0 ? hot : '';
+/* ── Contadores de "novos desde a última vez que você olhou" ──
+   O badge mostra só o que chegou desde a última visita à aba, e zera
+   quando você clica nela (marcaVisto). Guardado no localStorage.        */
+function _chaveVisto(page) { return 'ndl_visto_' + page; }
+function _ultimoVisto(page) {
+  var v = localStorage.getItem(_chaveVisto(page));
+  if (v === null) {                       // primeira vez: começa do zero (marca agora)
+    v = String(Date.now());
+    localStorage.setItem(_chaveVisto(page), v);
+  }
+  return Number(v) || 0;
+}
+function marcaVisto(page) {
+  localStorage.setItem(_chaveVisto(page), String(Date.now()));
+}
+function _ts(v) { return v ? new Date(v).getTime() : 0; }
 
-  // Checkout: quantos entraram no checkout mas ainda não compraram
-  const ck = leads.filter(l => (l.clicouCheckout || l.checkoutEm) && l.status !== 'comprou' && !l.comprouKiwify).length;
-  const bc = document.getElementById('badge-checkout');
-  if (bc) bc.textContent = ck > 0 ? ck : '';
+function updateBadges(leads) {
+  leads = leads || [];
+
+  // Leads NOVOS que entraram desde a última visita
+  var vistoLeads = _ultimoVisto('leads');
+  var novos = leads.filter(function (l) { return _ts(l.createdAt) > vistoLeads; }).length;
+  var b = document.getElementById('badge-leads');
+  if (b) b.textContent = novos > 0 ? novos : '';
+
+  // Leads que FORAM AO CHECKOUT desde a última visita
+  var vistoCk = _ultimoVisto('checkout');
+  var novosCk = leads.filter(function (l) {
+    if (!(l.clicouCheckout || l.checkoutEm)) return false;
+    var t = _ts(l.checkoutEm) || _ts(l.ofertaEm) || _ts(l.updatedAt) || _ts(l.createdAt);
+    return t > vistoCk;
+  }).length;
+  var bc = document.getElementById('badge-checkout');
+  if (bc) bc.textContent = novosCk > 0 ? novosCk : '';
 }
 
 /* ═══════════════════════════════════════════

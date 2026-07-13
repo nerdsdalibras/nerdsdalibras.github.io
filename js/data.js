@@ -68,6 +68,12 @@ function setPage(page) {
   else if (page === 'analytics')  renderAnalytics();
   else if (page === 'checkout')   renderCheckout();
   else                            renderLeads();
+
+  // Zera o contador de "novos" da aba visitada (Leads / Checkout)
+  if (page === 'leads' || page === 'checkout') {
+    marcaVisto(page);
+    updateBadges(cachedLeads || []);
+  }
 }
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
