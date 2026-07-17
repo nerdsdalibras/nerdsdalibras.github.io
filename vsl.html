@@ -248,134 +248,6 @@
       color: var(--verde); font-size: 1.4rem;
     }
 
-    /* ── LOCK ANIMADO ── */
-    .lock-wrap {
-      display: flex; flex-direction: column; align-items: center; gap: 24px;
-      padding: 40px 20px;
-    }
-
-    .lock-scene { position: relative; width: 120px; height: 140px; }
-
-    /* corpo do cadeado */
-    .lock-body {
-      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 90px; height: 80px; border-radius: 16px;
-      background: linear-gradient(145deg, #1a3a1a, #0f2a0f);
-      border: 2px solid var(--verde);
-      box-shadow: 0 0 30px rgba(34,197,94,.25), inset 0 1px 0 rgba(255,255,255,.08);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .lock-keyhole {
-      width: 22px; height: 32px;
-      background: rgba(0,0,0,.7);
-      border-radius: 50% 50% 4px 4px / 40% 40% 4px 4px;
-      position: relative;
-    }
-    .lock-keyhole::after {
-      content: ''; position: absolute;
-      bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 8px; height: 14px;
-      background: rgba(0,0,0,.7);
-      border-radius: 0 0 4px 4px;
-    }
-
-    /* arco do cadeado */
-    .lock-shackle {
-      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      width: 54px; height: 58px;
-      border: 8px solid var(--verde);
-      border-bottom: none;
-      border-radius: 27px 27px 0 0;
-      box-shadow: 0 0 16px rgba(34,197,94,.4);
-      transform-origin: bottom right;
-      transition: transform .6s cubic-bezier(.34,1.56,.64,1), opacity .4s ease;
-    }
-
-    /* estado aberto */
-    .lock-scene.open .lock-shackle {
-      transform: translateX(-50%) rotate(-55deg) translateY(-18px);
-    }
-    .lock-scene.open .lock-body {
-      border-color: var(--verde-lt);
-      box-shadow: 0 0 60px rgba(34,197,94,.5), inset 0 1px 0 rgba(255,255,255,.1);
-    }
-
-    /* brilho de abertura */
-    .lock-burst {
-      position: absolute; inset: -20px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(34,197,94,.35) 0%, transparent 70%);
-      opacity: 0; pointer-events: none;
-      transform: scale(.4);
-      transition: opacity .4s ease, transform .5s ease;
-    }
-    .lock-scene.open .lock-burst {
-      opacity: 1; transform: scale(1);
-    }
-
-    /* partículas */
-    .lock-particles { position: absolute; inset: 0; pointer-events: none; }
-    .lock-particles span {
-      position: absolute; top: 50%; left: 50%;
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--verde);
-      opacity: 0;
-      transition: none;
-    }
-    .lock-scene.open .lock-particles span {
-      animation: particle .7s ease-out forwards;
-    }
-    .lock-scene.open .lock-particles span:nth-child(1)  { animation-delay: .05s; --dx:-60px; --dy:-50px; }
-    .lock-scene.open .lock-particles span:nth-child(2)  { animation-delay: .10s; --dx: 60px; --dy:-55px; }
-    .lock-scene.open .lock-particles span:nth-child(3)  { animation-delay: .07s; --dx:-80px; --dy:  0px; }
-    .lock-scene.open .lock-particles span:nth-child(4)  { animation-delay: .12s; --dx: 80px; --dy:  5px; }
-    .lock-scene.open .lock-particles span:nth-child(5)  { animation-delay: .09s; --dx:-45px; --dy: 55px; }
-    .lock-scene.open .lock-particles span:nth-child(6)  { animation-delay: .15s; --dx: 45px; --dy: 60px; }
-    .lock-scene.open .lock-particles span:nth-child(7)  { animation-delay: .06s; --dx:  0px; --dy:-70px; }
-    .lock-scene.open .lock-particles span:nth-child(8)  { animation-delay: .13s; --dx: 20px; --dy: 70px; }
-    @keyframes particle {
-      0%   { opacity: 1; transform: translate(-50%,-50%) translate(0,0) scale(1); }
-      100% { opacity: 0; transform: translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(0); }
-    }
-
-    /* contador */
-    .lock-countdown {
-      font-size: 3.5rem; font-weight: 900; color: var(--verde);
-      letter-spacing: .04em; font-variant-numeric: tabular-nums;
-      text-shadow: 0 0 30px rgba(34,197,94,.4);
-      transition: color .4s;
-    }
-    .lock-countdown.unlocked { color: var(--verde-lt); text-shadow: 0 0 40px rgba(74,222,128,.6); }
-
-    .lock-hint {
-      font-size: .78rem; color: var(--texto-dim); letter-spacing: .04em;
-      text-transform: uppercase;
-    }
-
-    /* mão de libras pós-abertura */
-    .libras-sign {
-      font-size: 5rem; line-height: 1;
-      opacity: 0; transform: scale(.4) rotate(-15deg);
-      transition: opacity .6s ease .3s, transform .7s cubic-bezier(.34,1.56,.64,1) .3s;
-      filter: drop-shadow(0 0 20px rgba(34,197,94,.6));
-      display: none;
-    }
-    .libras-sign.show {
-      display: block; opacity: 1; transform: scale(1) rotate(0deg);
-    }
-    .libras-msg {
-      font-size: 1.1rem; font-weight: 800; color: var(--verde-lt);
-      text-align: center; line-height: 1.4;
-      opacity: 0; transform: translateY(10px);
-      transition: opacity .5s ease .7s, transform .5s ease .7s;
-    }
-    .libras-msg.show { opacity: 1; transform: translateY(0); }
-
-    .cta-locked {
-      display: flex; flex-direction: column; align-items: center;
-      width: 100%; max-width: 540px; text-align: center;
-    }
-
     .cta-unlocked { display: none; width: 100%; max-width: 540px; }
     .cta-unlocked.visible {
       display: flex; flex-direction: column; align-items: center; gap: 14px;
@@ -665,31 +537,8 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
           <span>↓</span>
         </div>
 
-        <!-- bloqueado -->
-        <div class="cta-locked" id="ctaLocked">
-          <div class="lock-wrap">
-            <div class="lock-scene" id="lockScene">
-              <div class="lock-burst"></div>
-              <div class="lock-particles">
-                <span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
-              </div>
-              <div class="lock-shackle"></div>
-              <div class="lock-body">
-                <div class="lock-keyhole"></div>
-              </div>
-            </div>
-
-            <div class="libras-sign" id="librasSign">🤟</div>
-            <div class="libras-msg" id="librasMsg">Você desbloqueou o acesso!<br/>A oferta está disponível abaixo.</div>
-
-            <div class="lock-countdown" id="ctaCountdown">08:00</div>
-            <div class="lock-hint">Oferta liberada após 1 min de vídeo</div>
-          </div>
-        </div>
-
-        <!-- desbloqueado -->
-        <div class="cta-unlocked" id="ctaUnlocked">
+        <!-- CTA -->
+        <div class="cta-unlocked visible" id="ctaUnlocked">
           <a href="https://pay.kiwify.com.br/1sIyvVL" class="cta-btn" onclick="return abrirFormCheckout(event)">
             <span>Garantir essa oferta</span>
             <span class="cta-btn-arrow">
@@ -820,7 +669,6 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
   // ════════════════════════════════════════════
   var ytPlayer;
   var timerInterval;
-  var UNLOCK_AFTER_SECONDS = 60;   // oferta destrava após 1 min de vídeo assistido
 
   // Carrega a API do YouTube
   var tag = document.createElement('script');
@@ -845,24 +693,10 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
     });
   }
 
-  var lastKnownTime = 0;      // última posição confirmada
-  var maxReached    = 0;      // máximo que a pessoa chegou (sem pular)
-  var seekGuard     = false;  // evita loop ao corrigir posição
-
-  function onPlayerReady(event) {
-    // Contador começa em 01:00 (tempo até destravar a oferta)
-    updateCountdown(UNLOCK_AFTER_SECONDS);
-  }
+  function onPlayerReady(event) {}
 
   function onPlayerStateChange(event) {
-    var locked    = document.getElementById('ctaLocked');
-    var unlocked  = document.getElementById('ctaUnlocked');
-    var countdown = document.getElementById('ctaCountdown');
-    var lockScene = document.getElementById('lockScene');
-    var librasSign= document.getElementById('librasSign');
-    var librasMsg = document.getElementById('librasMsg');
-
-    // Vídeo tocando → monitora posição + atualiza contador
+    // Vídeo tocando → rastreia progresso
     if (event.data === YT.PlayerState.PLAYING) {
       // Rastreia início do vídeo (primeira vez)
       if (!_vslTracked.iniciou) {
@@ -870,83 +704,31 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
         _trackVSL('vslIniciou');
       }
 
-      seekGuard = false;
       clearInterval(timerInterval);
       timerInterval = setInterval(function () {
         var current  = ytPlayer.getCurrentTime();
         var duration = ytPlayer.getDuration();
 
-        // Anti-skip: se pulou mais de 2s à frente do máximo permitido, volta
-        if (!seekGuard && current > maxReached + 2) {
-          seekGuard = true;
-          ytPlayer.seekTo(maxReached, true);
-          setTimeout(function () { seekGuard = false; }, 800);
-          return;
-        }
-
-        // Rastreia marcos de porcentagem (apenas em reprodução orgânica)
+        // Rastreia marcos de porcentagem
         if (duration > 0) {
           var pct = (current / duration) * 100;
           if (!_vslTracked.p25 && pct >= 25) { _vslTracked.p25 = true; _trackVSL('vslPct25'); }
           if (!_vslTracked.p50 && pct >= 50) { _vslTracked.p50 = true; _trackVSL('vslPct50'); }
           if (!_vslTracked.p75 && pct >= 75) { _vslTracked.p75 = true; _trackVSL('vslPct75'); }
         }
-
-        // Atualiza o máximo alcançado organicamente
-        if (current > maxReached) maxReached = current;
-        lastKnownTime = current;
-
-        // Contador = tempo restante até destravar (1 min de vídeo assistido)
-        var remaining = Math.max(0, UNLOCK_AFTER_SECONDS - maxReached);
-        updateCountdown(remaining);
-
-        // Destrava a oferta ao atingir 1 min assistido de forma orgânica
-        if (maxReached >= UNLOCK_AFTER_SECONDS) {
-          clearInterval(timerInterval);
-          unlock(locked, unlocked, countdown, lockScene, librasSign, librasMsg);
-        }
       }, 500);
     }
 
-    // Pausado → para intervalo, guarda posição
+    // Pausado → para intervalo
     if (event.data === YT.PlayerState.PAUSED) {
       clearInterval(timerInterval);
-      if (!seekGuard) lastKnownTime = ytPlayer.getCurrentTime();
     }
 
-    // Vídeo terminou → rastreia + abre o cadeado
+    // Vídeo terminou → rastreia fim
     if (event.data === YT.PlayerState.ENDED) {
       clearInterval(timerInterval);
       if (!_vslTracked.fim) { _vslTracked.fim = true; _trackVSL('vslAssistiuFim'); }
-      unlock(locked, unlocked, countdown, lockScene, librasSign, librasMsg);
     }
-  }
-
-  function updateCountdown(seconds) {
-    var el = document.getElementById('ctaCountdown');
-    if (!el || el.classList.contains('unlocked')) return;
-    var m = Math.floor(seconds / 60);
-    var s = Math.floor(seconds % 60);
-    el.textContent = pad(m) + ':' + pad(s);
-  }
-
-  function pad(n) { return String(n).padStart(2, '0'); }
-
-  function unlock(locked, unlocked, countdown, lockScene, librasSign, librasMsg) {
-    lockScene.classList.add('open');
-    countdown.classList.add('unlocked');
-    countdown.textContent = '🔓';
-
-    setTimeout(function () {
-      librasSign.classList.add('show');
-      librasMsg.classList.add('show');
-    }, 600);
-
-    setTimeout(function () {
-      locked.style.display = 'none';
-      unlocked.classList.add('visible');
-      unlocked.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 2200);
   }
 
   // ════════════════════════════════════════════
