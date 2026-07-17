@@ -774,15 +774,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
         var current  = ytPlayer.getCurrentTime();
         var duration = ytPlayer.getDuration();
 
-        // Anti-skip: se pulou mais de 2s à frente do máximo permitido, volta
-        if (!seekGuard && current > maxReached + 2) {
-          seekGuard = true;
-          ytPlayer.seekTo(maxReached, true);
-          setTimeout(function () { seekGuard = false; }, 800);
-          return;
-        }
-
-        // Rastreia marcos de porcentagem (apenas em reprodução orgânica)
+        // Rastreia marcos de porcentagem
         if (duration > 0) {
           var pct = (current / duration) * 100;
           if (!_vslTracked.p25 && pct >= 25) { _vslTracked.p25 = true; _trackVSL('vslPct25'); }
