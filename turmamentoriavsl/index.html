@@ -593,7 +593,6 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
       <div class="profit-card">
         <div class="profit-label">⚠️ ALERTA</div>
         <div class="profit-value" style="font-size:1rem;color:#facc15;line-height:1.35;">Não assista ao vídeo,<br/>se quer continuar<br/>onde está na Libras.</div>
-        <div class="profit-sub" style="color:rgba(255,255,255,.45);margin-top:6px;">Oferta liberada após o vídeo</div>
       </div>
       <div class="mockup-grid">
         <div class="mockup-img side">
@@ -665,31 +664,8 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
           <span>↓</span>
         </div>
 
-        <!-- bloqueado -->
-        <div class="cta-locked" id="ctaLocked">
-          <div class="lock-wrap">
-            <div class="lock-scene" id="lockScene">
-              <div class="lock-burst"></div>
-              <div class="lock-particles">
-                <span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
-              </div>
-              <div class="lock-shackle"></div>
-              <div class="lock-body">
-                <div class="lock-keyhole"></div>
-              </div>
-            </div>
-
-            <div class="libras-sign" id="librasSign">🤟</div>
-            <div class="libras-msg" id="librasMsg">Você desbloqueou o acesso!<br/>A oferta está disponível abaixo.</div>
-
-            <div class="lock-countdown" id="ctaCountdown">08:00</div>
-            <div class="lock-hint">Oferta liberada após o vídeo</div>
-          </div>
-        </div>
-
-        <!-- desbloqueado -->
-        <div class="cta-unlocked" id="ctaUnlocked">
+        <!-- CTA -->
+        <div class="cta-unlocked visible" id="ctaUnlocked">
           <a href="https://pay.kiwify.com.br/1sIyvVL" class="cta-btn" onclick="_trackVSL('vslClicouCTA')">
             <span>Garantir essa oferta</span>
             <span class="cta-btn-arrow">
@@ -781,20 +757,10 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
   var maxReached    = 0;      // máximo que a pessoa chegou (sem pular)
   var seekGuard     = false;  // evita loop ao corrigir posição
 
-  function onPlayerReady(event) {
-    var duration = event.target.getDuration();
-    updateCountdown(duration);
-  }
+  function onPlayerReady(event) {}
 
   function onPlayerStateChange(event) {
-    var locked    = document.getElementById('ctaLocked');
-    var unlocked  = document.getElementById('ctaUnlocked');
-    var countdown = document.getElementById('ctaCountdown');
-    var lockScene = document.getElementById('lockScene');
-    var librasSign= document.getElementById('librasSign');
-    var librasMsg = document.getElementById('librasMsg');
-
-    // Vídeo tocando → monitora posição + atualiza contador
+    // Vídeo tocando → monitora posição + rastreia progresso
     if (event.data === YT.PlayerState.PLAYING) {
       // Rastreia início do vídeo (primeira vez)
       if (!_vslTracked.iniciou) {
@@ -827,10 +793,6 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
         // Atualiza o máximo alcançado organicamente
         if (current > maxReached) maxReached = current;
         lastKnownTime = current;
-
-        // Atualiza contador (tempo restante)
-        var remaining = Math.max(0, duration - current);
-        updateCountdown(remaining);
       }, 500);
     }
 
@@ -840,39 +802,11 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
       if (!seekGuard) lastKnownTime = ytPlayer.getCurrentTime();
     }
 
-    // Vídeo terminou → rastreia + abre o cadeado
+    // Vídeo terminou → rastreia conclusão
     if (event.data === YT.PlayerState.ENDED) {
       clearInterval(timerInterval);
       if (!_vslTracked.fim) { _vslTracked.fim = true; _trackVSL('vslAssistiuFim'); }
-      unlock(locked, unlocked, countdown, lockScene, librasSign, librasMsg);
     }
-  }
-
-  function updateCountdown(seconds) {
-    var el = document.getElementById('ctaCountdown');
-    if (!el || el.classList.contains('unlocked')) return;
-    var m = Math.floor(seconds / 60);
-    var s = Math.floor(seconds % 60);
-    el.textContent = pad(m) + ':' + pad(s);
-  }
-
-  function pad(n) { return String(n).padStart(2, '0'); }
-
-  function unlock(locked, unlocked, countdown, lockScene, librasSign, librasMsg) {
-    lockScene.classList.add('open');
-    countdown.classList.add('unlocked');
-    countdown.textContent = '🔓';
-
-    setTimeout(function () {
-      librasSign.classList.add('show');
-      librasMsg.classList.add('show');
-    }, 600);
-
-    setTimeout(function () {
-      locked.style.display = 'none';
-      unlocked.classList.add('visible');
-      unlocked.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 2200);
   }
 
   // ════════════════════════════════════════════
