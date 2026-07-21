@@ -84,6 +84,11 @@ async function renderExecutive() {
   const perBtn = (k, lbl) => `<button onclick="setExecPeriodo('${k}')" class="filter-btn ${_execPeriodo === k ? 'active' : ''}">${lbl}</button>`;
 
   el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button onclick="analisarComIA()" style="background:var(--purple);color:#0b0b0d;border:none;font-weight:700;padding:9px 16px;border-radius:9px;cursor:pointer">🧠 Analisar com IA</button>
+    </div>
+    <div id="ai-analysis" style="display:none;background:var(--s1);border:1px solid var(--bdrb);border-radius:14px;padding:16px;margin-bottom:22px;line-height:1.65;font-size:.9rem"></div>
+
     <div style="font-size:.8rem;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.05em;margin:0 0 10px">📌 Hoje</div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:26px">
       ${tile('Novos leads', novosHoje, 'var(--blue)')}
@@ -122,4 +127,82 @@ async function renderExecutive() {
     <div style="font-size:.74rem;color:var(--td);margin-top:20px;line-height:1.6;background:var(--s1);border:1px solid var(--bdr);border-radius:10px;padding:12px">
       ℹ️ <strong>Hoje</strong> e <strong>Período</strong> são exatos por data (leads e vendas reais). A <strong>Eficiência</strong> usa totais gerais: a receita vem do valor real pago, o custo vem do que você cadastrou em Produtos, e o investimento é a soma das Campanhas. Quando você quiser CAC/ROAS <em>por período</em>, a gente adiciona datas ao investimento. 💡
     </div>`;
+}
+
+/* ── Análise com IA (Claude, via Apps Script) ── */
+function _mdToHtml(t) {
+  return String(t || '')
+    .replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^### (.+)$/gm, '<div style="font-weight:800;margin:10px 0 4px">$1</div>')
+    .replace(/\n/g, '<br>');
+}
+
+// Monta um resumo compacto das métricas para a IA analisar
+async function _resumoParaIA() {
+  const leads  = cachedLeads || [];
+  const vendas = await _getVendas();
+  const camps  = (typeof getCampMkt === 'function') ? getCampMkt() : [];
+  const prods  = (typeof getProdutos === 'function') ? getProdutos() : [];
+  const custoDe = {}; prods.forEach(p => custoDe[p.grupo] = Number(p.custo) || 0);
+  const investido = camps.reduce((s, c) => s + (Number(c.investimento) || 0), 0);
+
+  let receita = 0, custo = 0; const cli = {};
+  vendas.forEach(v => { receita += Number(v.valor) || 0; custo += (custoDe[String(v.produto || '').toLowerCase()] || 0); const k = v.sessionId || v.email; if (k) cli[k] = true; });
+  const clientes = Object.keys(cli).length || vendas.length;
+  const margem = receita - custo;
+
+  const _tv = v => v === true || String(v).toLowerCase() === 'true';
+  const funil = {
+    leads: leads.length,
+    iniciouQuiz: leads.filter(l => _tv(l.iniciouQuiz)).length,
+    concluiuQuiz: leads.filter(l => _tv(l.concluiuQuiz)).length,
+    checkout: leads.filter(l => l.clicouCheckout || l.checkoutEm || l.clicouOferta).length,
+    comprou: leads.filter(_comprou).length,
+  };
+
+  const ck = s => (typeof _canalKey === 'function') ? _canalKey(s) : String(s || 'direto');
+  const invC = {}; camps.forEach(c => { const k = ck(c.canal); invC[k] = (invC[k] || 0) + (Number(c.investimento) || 0); });
+  const chan = {};
+  leads.forEach(l => {
+    const k = ck(l.utmSource || String(l.firstTouch || '').split(' ')[0]);
+    if (!chan[k]) chan[k] = { leads: 0, clientes: 0, receita: 0 };
+    chan[k].leads++;
+    if (_comprou(l)) { chan[k].clientes++; chan[k].receita += parseFloat(String(l.valorPago || '').replace(',', '.')) || 0; }
+  });
+  const canais = Object.keys(chan).slice(0, 6).map(k => {
+    const c = chan[k], inv = invC[k] || 0;
+    return { canal: k, leads: c.leads, clientes: c.clientes, receita: Math.round(c.receita), cac: (inv && c.clientes) ? Math.round(inv / c.clientes) : null, roas: inv ? +(c.receita / inv).toFixed(2) : null };
+  });
+  const campanhas = camps.slice(0, 6).map(c => {
+    const m = _metricasCampanha(c, leads);
+    return { nome: c.nome, canal: c.canal, investido: m.inv, leads: m.leads, vendas: m.vendas, receita: Math.round(m.receita), cac: Math.round(m.cac), roas: +m.roas.toFixed(2) };
+  });
+
+  return {
+    totais: {
+      leads: leads.length, clientes, receita: Math.round(receita), investido: Math.round(investido),
+      margem: Math.round(margem), lucro: Math.round(margem - investido),
+      cac: clientes ? Math.round(investido / clientes) : null,
+      ltv: clientes ? Math.round(margem / clientes) : null,
+      roas: investido ? +(receita / investido).toFixed(2) : null,
+    },
+    funil, canais, campanhas,
+  };
+}
+
+async function analisarComIA() {
+  const box = document.getElementById('ai-analysis');
+  if (!box) return;
+  box.style.display = 'block';
+  box.innerHTML = '🧠 Analisando seus números com IA…';
+  try {
+    const resumo = await _resumoParaIA();
+    const r = await fetch(CONFIG.SHEETS_URL + '?action=aiAnalyze&data=' + encodeURIComponent(JSON.stringify(resumo)), { redirect: 'follow' });
+    const j = await r.json();
+    if (j.error) box.innerHTML = `<div style="color:var(--red)">⚠️ ${_mdToHtml(j.error)}</div>`;
+    else box.innerHTML = `<div style="font-weight:800;margin-bottom:8px">🧠 Diagnóstico da IA</div>${_mdToHtml(j.text)}`;
+  } catch (e) {
+    box.innerHTML = `<div style="color:var(--red)">Não consegui chamar a IA. Republicou o Apps Script e cadastrou a chave? (${e})</div>`;
+  }
 }

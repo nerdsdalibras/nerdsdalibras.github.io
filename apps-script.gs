@@ -196,6 +196,9 @@ function doGet(e) {
   if (action === 'getConfig') {
     return respond(getConfig());
   }
+  if (action === 'aiAnalyze') {
+    return respond(aiAnalyze(e.parameter.data));
+  }
   // Pixel de abertura de e-mail: registra a abertura e devolve algo mínimo
   if (action === 'open') {
     _registrarAbertura(e.parameter.c, e.parameter.s);
@@ -381,6 +384,43 @@ function _registrarVenda(sessionId, email, phone, produto, valor, transId, rowLe
     }
   } catch (e) {}
   return valor;
+}
+
+// ── IA: ANÁLISE DO CRM (Claude) ───────────────────
+// A chave fica nas Propriedades do Script (⚙️ Config. do projeto →
+// Propriedades do script → ANTHROPIC_API_KEY). Nunca vai pro navegador.
+var AI_CFG = { model: 'claude-sonnet-5', maxTokens: 1300 };
+
+function aiAnalyze(dataStr) {
+  var key = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!key) {
+    return { error: 'Sem chave de IA. No Apps Script: ⚙️ Configurações do projeto → Propriedades do script → adicionar ANTHROPIC_API_KEY.' };
+  }
+  var resumo = dataStr || '{}';
+  var prompt =
+    'Você é um analista sênior de marketing e vendas. Abaixo estão os números do CRM da "Nerds da Libras" ' +
+    '(cursos de Libras: ebook R$19,90, curso "Do Zero a Libras", e mentoria).\n' +
+    'Analise os dados e escreva um diagnóstico CURTO, direto e prático em português do Brasil:\n' +
+    '1) 🔻 Onde está o maior gargalo do funil e o que fazer.\n' +
+    '2) 📣 Quais campanhas/canais valem escalar e quais cortar (com base em CAC, ROAS e LTV/CAC).\n' +
+    '3) ✅ 2-3 recomendações acionáveis (ex: teste de headline, ajuste de oferta/preço).\n' +
+    'Máximo ~200 palavras, em tópicos com emojis. NÃO invente números que não estão nos dados. ' +
+    'Se faltar investimento/custo cadastrado, avise que sem isso o CAC/ROAS não fecham.\n\nDADOS (JSON):\n' + resumo;
+  try {
+    var res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+      method: 'post', contentType: 'application/json',
+      headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      payload: JSON.stringify({ model: AI_CFG.model, max_tokens: AI_CFG.maxTokens, messages: [{ role: 'user', content: prompt }] }),
+      muteHttpExceptions: true,
+    });
+    var code = res.getResponseCode();
+    var body = JSON.parse(res.getContentText() || '{}');
+    if (code < 200 || code >= 300) {
+      return { error: 'IA ' + code + ': ' + ((body.error && body.error.message) || res.getContentText().slice(0, 300)) };
+    }
+    var txt = (body.content && body.content[0] && body.content[0].text) || '';
+    return { text: txt };
+  } catch (e) { return { error: 'Falha ao chamar a IA: ' + e; }; }
 }
 
 // ── CONFIG NA NUVEM (chave→valor JSON) ────────────
