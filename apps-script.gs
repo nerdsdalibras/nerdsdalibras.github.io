@@ -420,7 +420,7 @@ function aiAnalyze(dataStr) {
     }
     var txt = (body.content && body.content[0] && body.content[0].text) || '';
     return { text: txt };
-  } catch (e) { return { error: 'Falha ao chamar a IA: ' + e; }; }
+  } catch (e) { return { error: 'Falha ao chamar a IA: ' + e }; }
 }
 
 // ── CONFIG NA NUVEM (chave→valor JSON) ────────────
