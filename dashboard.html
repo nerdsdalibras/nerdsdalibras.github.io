@@ -72,6 +72,10 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
         <span class="nav-label">Checkout</span>
         <span class="nav-badge" id="badge-checkout"></span>
       </button>
+      <button class="nav-item" onclick="setPage('products')" data-page="products">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label">Produtos</span>
+      </button>
     </nav>
 
     <div class="sidebar-footer">
@@ -151,6 +155,13 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
         <div id="checkout-content"></div>
       </div>
 
+      <div id="page-products" class="page">
+        <div class="page-header">
+          <h2 class="page-title">Produtos</h2>
+        </div>
+        <div id="products-content"></div>
+      </div>
+
     </div>
   </div>
 
@@ -228,6 +239,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
 <script src="js/pipeline.js"></script>
 <script src="js/analytics.js"></script>
 <script src="js/checkout.js"></script>
+<script src="js/products.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

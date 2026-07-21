@@ -67,6 +67,7 @@ function setPage(page) {
   if (page === 'pipeline')        renderPipeline();
   else if (page === 'analytics')  renderAnalytics();
   else if (page === 'checkout')   renderCheckout();
+  else if (page === 'products')   renderProducts();
   else                            renderLeads();
 
   // Zera o contador de "novos" da aba visitada (Leads / Checkout)
