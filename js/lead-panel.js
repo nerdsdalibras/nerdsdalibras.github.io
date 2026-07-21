@@ -96,6 +96,8 @@ function renderTab(tab) {
         <div style="font-size:.82rem;line-height:1.5;color:var(--tx);background:var(--card2,rgba(0,0,0,.04));padding:8px 10px;border-radius:8px;white-space:pre-wrap">${String(l.experiencia).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))}</div>
       </div>` : ''}
 
+      ${renderComprasCliente(l)}
+
       ${renderRespostasQuiz(l)}
 
       <div class="panel-section">
@@ -216,6 +218,42 @@ function renderTab(tab) {
   else if (tab === 'email') {
     body.innerHTML = renderEmailTab(l);
   }
+}
+
+/* ── Compras do cliente + próxima melhor oferta ── */
+function renderComprasCliente(l) {
+  const vendas = (typeof _vendasCache !== 'undefined' && Array.isArray(_vendasCache)) ? _vendasCache : null;
+  let compras = [];
+  if (vendas) {
+    const tel = String(l.whatsapp || '').replace(/\D/g, '').slice(-9);
+    compras = vendas.filter(v =>
+      (v.sessionId && v.sessionId === l.sessionId) ||
+      (v.email && String(v.email).toLowerCase() === String(l.email || '').toLowerCase()) ||
+      (tel && String(v.telefone || '').replace(/\D/g, '').slice(-9) === tel)
+    );
+  }
+  const comprou = compras.length > 0 || (typeof _comprou === 'function' && _comprou(l));
+  if (!comprou) return '';
+
+  const brl = n => (Number(n) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const label = { ebook: '📖 Ebook', curso: '📚 Curso', mentoria: '💎 Mentoria' };
+  const produtosSet = {};
+  compras.forEach(c => { produtosSet[String(c.produto || '').toLowerCase()] = true; });
+  if (!compras.length) { const g = grupoProduto(l); if (g) produtosSet[g] = true; }
+
+  const total = compras.reduce((s, c) => s + (Number(c.valor) || 0), 0)
+             || (parseFloat(String(l.valorPago || '').replace(',', '.')) || 0);
+  const nbo = (typeof proximaOferta === 'function') ? proximaOferta(produtosSet) : null;
+
+  const linhas = compras.map(c => `<div class="panel-field"><span class="pf-label">${label[String(c.produto || '').toLowerCase()] || c.produto || 'Compra'}</span><span class="pf-val">${brl(c.valor)}${c.data ? ' · ' + new Date(c.data).toLocaleDateString('pt-BR') : ''}</span></div>`).join('');
+
+  return `
+    <div class="panel-section">
+      <div class="panel-section-title">Compras & Próxima Oferta</div>
+      ${linhas}
+      <div class="panel-field"><span class="pf-label">Total gasto (LTV)</span><span class="pf-val" style="color:var(--g);font-weight:700">${brl(total)}</span></div>
+      ${nbo ? `<div class="panel-field"><span class="pf-label">Próxima oferta</span><span class="pf-val" style="color:var(--blue);font-weight:700">${nbo.label}</span></div>` : ''}
+    </div>`;
 }
 
 /* ── Aquisição: de onde o lead veio (origem / UTM / first-last touch) ── */

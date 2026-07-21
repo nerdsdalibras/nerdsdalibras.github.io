@@ -65,6 +65,7 @@ function setPage(page) {
   document.getElementById('page-' + page).classList.add('active');
   document.querySelector(`[data-page="${page}"]`).classList.add('active');
   if (page === 'dashboard')       renderExecutive();
+  else if (page === 'customers')  renderCustomers();
   else if (page === 'pipeline')   renderPipeline();
   else if (page === 'analytics')  renderAnalytics();
   else if (page === 'checkout')   renderCheckout();
