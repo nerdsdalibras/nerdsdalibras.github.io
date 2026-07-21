@@ -33,6 +33,17 @@ const COL_TO_FIELD = {
   'plataformaOferta': 'plataformaOferta', // kiwify | eduzz | grupo
   'ofertaEm':         'ofertaEm',
   'campanhaAbriuEm':  'campanhaAbriuEm',  // abriu o último e-mail de campanha em
+  // ── Aquisição (origem / UTM / first-last touch) ──
+  'utmSource':        'utmSource',
+  'utmMedium':        'utmMedium',
+  'utmCampaign':      'utmCampaign',
+  'utmContent':       'utmContent',
+  'utmTerm':          'utmTerm',
+  'firstTouch':       'firstTouch',
+  'firstTouchEm':     'firstTouchEm',
+  'lastTouch':        'lastTouch',
+  'landingPage':      'landingPage',
+  'referrer':         'referrer',
   // Colunas novas (serão criadas automaticamente se não existirem)
   'sessionId':        'sessionId',
   'genero':           'genero',
@@ -87,6 +98,7 @@ for (var k in COL_TO_FIELD) { FIELD_TO_COL[COL_TO_FIELD[k]] = k; }
 const NEW_COLS = [
   'Email','Objetivo','Quis Avançar',
   'etapaQuiz','experiencia','respostasQuiz','interesseCAS','clicouOferta','plataformaOferta','ofertaEm','campanhaAbriuEm',
+  'utmSource','utmMedium','utmCampaign','utmContent','utmTerm','firstTouch','firstTouchEm','lastTouch','landingPage','referrer',
   'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
   'status','statusCloser','observacoes',
   'comprouKiwify','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',

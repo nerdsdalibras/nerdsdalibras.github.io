@@ -547,6 +547,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
 
 </div><!-- #app -->
 
+<script src="js/tracking.js"></script>
 <script>
 'use strict';
 
@@ -1166,22 +1167,39 @@ function plataformaFromLink(url) {
 
 // Monta o payload com os MESMOS nomes de campo do CRM (nada se perde)
 function crmPayload(extra = {}) {
+  // Origem/UTM capturados pelo tracking.js (primeiro e último toque)
+  let ft = {}, lt = {};
+  try { ft = JSON.parse(localStorage.getItem('ndl_first_touch') || '{}'); } catch (_) {}
+  try { lt = JSON.parse(localStorage.getItem('ndl_last_touch')  || '{}'); } catch (_) {}
+  const toque = (lt && lt.source) ? lt : ft;   // o toque que trouxe a conversão
+
   return {
-    sessionId:         S.id,
-    nome:              S.nome,
-    whatsapp:          S.whatsapp,
-    email:             S.email,
-    origem:            'quiz-libras',
-    iniciouQuiz:       true,
-    experiencia:       S.exp,
-    pontuacao:         S.score,
-    respostasQuiz:     JSON.stringify(S.respostas),
+    sessionId:     S.id,
+    nome:          S.nome,
+    whatsapp:      S.whatsapp,
+    email:         S.email,
+    origem:        'quiz-libras',
+    iniciouQuiz:   true,
+    experiencia:   S.exp,
+    pontuacao:     S.score,
+    respostasQuiz: JSON.stringify(S.respostas),
+    // ── Aquisição (de onde veio) ──
+    utmSource:     toque.source   || '',
+    utmMedium:     toque.medium   || '',
+    utmCampaign:   toque.campaign || '',
+    utmContent:    toque.content  || '',
+    utmTerm:       toque.term     || '',
+    firstTouch:    ft.source ? (ft.source + (ft.campaign ? ' · ' + ft.campaign : '')) : '',
+    firstTouchEm:  ft.date || '',
+    lastTouch:     toque.source ? (toque.source + (toque.campaign ? ' · ' + toque.campaign : '')) : '',
+    landingPage:   toque.landing  || '',
+    referrer:      toque.referrer || '',
     nivelIdentificado: S.nivelKey ? NIVEL_MAP[S.nivelKey]  : '',
     oferta:            S.nivelKey ? OFERTA_MAP[S.nivelKey] : '',
     plataformaOferta:  S.nivelKey ? plataformaFromLink(CONFIG.PRODUTOS[S.nivelKey].link) : '',
     resultado:         S.nivelKey ? CONFIG.PRODUTOS[S.nivelKey].nome : '',
     classificacaoLead: S.nivelKey ? CLASS_MAP[S.nivelKey] : '',
-    updatedAt:         new Date().toISOString(),
+    updatedAt:     new Date().toISOString(),
     ...extra,
   };
 }

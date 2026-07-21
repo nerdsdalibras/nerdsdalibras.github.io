@@ -60,6 +60,8 @@ function renderTab(tab) {
         <div class="panel-field"><span class="pf-label">Gênero</span><span class="pf-val">${l.genero === 'masculino' ? 'Masculino' : l.genero === 'feminino' ? 'Feminino' : '—'}</span></div>
       </div>
 
+      ${renderAquisicao(l)}
+
       <div class="panel-section">
         <div class="panel-section-title">Tags</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">
@@ -214,6 +216,26 @@ function renderTab(tab) {
   else if (tab === 'email') {
     body.innerHTML = renderEmailTab(l);
   }
+}
+
+/* ── Aquisição: de onde o lead veio (origem / UTM / first-last touch) ── */
+function renderAquisicao(l) {
+  const has = l.utmSource || l.utmCampaign || l.utmContent || l.firstTouch || l.lastTouch || l.landingPage || l.referrer;
+  if (!has) return '';
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const row = (label, val) => val ? `<div class="panel-field"><span class="pf-label" style="white-space:nowrap">${label}</span><span class="pf-val" style="text-align:right;word-break:break-word">${esc(val)}</span></div>` : '';
+  return `
+    <div class="panel-section">
+      <div class="panel-section-title">Aquisição (de onde veio)</div>
+      ${row('Origem', l.utmSource)}
+      ${row('Mídia', l.utmMedium)}
+      ${row('Campanha', l.utmCampaign)}
+      ${row('Conteúdo / Anúncio', l.utmContent)}
+      ${row('Termo', l.utmTerm)}
+      ${row('1º toque', l.firstTouch)}
+      ${row('Último toque', l.lastTouch)}
+      ${row('Landing page', l.landingPage)}
+    </div>`;
 }
 
 /* ── Respostas detalhadas do quiz (cada etapa que o lead respondeu) ── */
