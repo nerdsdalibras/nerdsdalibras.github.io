@@ -54,6 +54,8 @@ const COL_TO_FIELD = {
   'statusCloser':     'statusCloser',
   'observacoes':      'observacoes',
   'comprouKiwify':    'comprouKiwify',
+  'valorPago':        'valorPago',        // total pago pelo cliente (soma das compras)
+  'ultimaCompraEm':   'ultimaCompraEm',
   'clicouVSL':        'clicouVSL',
   'clicouGrupo':      'clicouGrupo',
   'clicouCheckout':   'clicouCheckout',
@@ -101,7 +103,7 @@ const NEW_COLS = [
   'utmSource','utmMedium','utmCampaign','utmContent','utmTerm','firstTouch','firstTouchEm','lastTouch','landingPage','referrer',
   'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
   'status','statusCloser','observacoes',
-  'comprouKiwify','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',
+  'comprouKiwify','valorPago','ultimaCompraEm','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',
   'kiwifyEvento','kiwifyEventoEm',
   'boletoGerado','pixGerado','carrinhoKiwify',
   'cartaoRecusado','recusadoEm','reembolso','reembolsoEm','chargeback','chargebackEm',
@@ -181,6 +183,9 @@ function doGet(e) {
   }
   if (action === 'getCampanhas') {
     return respond(getCampanhas());
+  }
+  if (action === 'getVendas') {
+    return respond(getVendas());
   }
   // Pixel de abertura de e-mail: registra a abertura e devolve algo mínimo
   if (action === 'open') {
@@ -300,6 +305,92 @@ function isKiwifyPayload(d) {
 // Trata: Compra aprovada, Compra recusada, Carrinho abandonado, Boleto gerado,
 // Pix gerado, Reembolso e Chargeback. Acha o lead pelo telefone (ou e-mail);
 // se não existir, cria um novo (caso a pessoa tenha ido direto pra Kiwify).
+// ── VALOR PAGO (receita real) ─────────────────────
+// Kiwify manda em CENTAVOS (ex: "39700" = R$ 397,00)
+function _valorKiwify(d, data) {
+  var c = (d && d.Commissions) || (data && data.Commissions) || {};
+  var cands = [
+    c.charge_amount, c.product_base_price,
+    d.charge_amount, (d.charge && d.charge.amount),
+    (d.order && d.order.charge_amount), d.order_value, d.product_value,
+    (data && data.charge_amount)
+  ];
+  for (var i = 0; i < cands.length; i++) {
+    var raw = cands[i];
+    if (raw === undefined || raw === null || raw === '') continue;
+    var n = parseInt(String(raw).replace(/\D/g, ''), 10);   // só dígitos → centavos
+    if (n > 0) return n / 100;
+  }
+  return 0;
+}
+// Eduzz manda em REAIS (ex: "397.00" ou "1.997,00")
+function _valorEduzz(d, data) {
+  var cands = [
+    d.paid_amount, d.paid_value, d.product_value, d.content_total,
+    d.total, d.value, d.trans_value, d.amount,
+    (d.sale && d.sale.amount), (data && data.value)
+  ];
+  for (var i = 0; i < cands.length; i++) {
+    var raw = cands[i];
+    if (raw === undefined || raw === null || raw === '') continue;
+    var s = String(raw).trim();
+    if (s.indexOf(',') >= 0 && s.indexOf('.') >= 0) s = s.replace(/\./g, '').replace(',', '.');
+    else s = s.replace(',', '.');
+    var v = parseFloat(s.replace(/[^0-9.]/g, ''));
+    if (v > 0) return v;
+  }
+  return 0;
+}
+
+// Livro de vendas (histórico + LTV). Deduplica pela transId (id do pedido).
+function _vendaJaRegistrada(sh, transId) {
+  if (!transId || !sh || sh.getLastRow() < 2) return false;
+  var ids = sh.getRange(2, 6, sh.getLastRow() - 1, 1).getValues();  // col 6 = TransId
+  for (var i = 0; i < ids.length; i++) if (String(ids[i][0]) === String(transId)) return true;
+  return false;
+}
+// Registra a venda no livro e ACUMULA o valorPago no lead. Retorna o valor (0 se duplicada).
+function _registrarVenda(sessionId, email, phone, produto, valor, transId, rowLead, sheetLead, headersLead) {
+  if (!valor || valor <= 0) return 0;
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName('Vendas');
+    if (!sh) { sh = ss.insertSheet('Vendas'); sh.appendRow(['Data', 'sessionId', 'Email', 'Telefone', 'Produto', 'TransId', 'Valor']); }
+    if (transId && _vendaJaRegistrada(sh, transId)) return 0;   // já contabilizada (retry)
+    sh.appendRow([new Date(), sessionId || '', email || '', phone || '', produto || '', transId || '', valor]);
+  } catch (e) {}
+  // Acumula valorPago no lead (soma das compras) + data da última compra
+  try {
+    if (rowLead > 0 && sheetLead && headersLead) {
+      var vpCol = headersLead.indexOf('valorPago');
+      if (vpCol >= 0) {
+        var atual = parseFloat(String(sheetLead.getRange(rowLead, vpCol + 1).getValue() || 0).toString().replace(',', '.')) || 0;
+        sheetLead.getRange(rowLead, vpCol + 1).setValue(atual + valor);
+      }
+      var ucCol = headersLead.indexOf('ultimaCompraEm');
+      if (ucCol >= 0) sheetLead.getRange(rowLead, ucCol + 1).setValue(new Date().toISOString());
+    }
+  } catch (e) {}
+  return valor;
+}
+
+// Lê o livro de vendas (mais recente primeiro) para o dashboard
+function getVendas() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Vendas');
+  if (!sh || sh.getLastRow() < 2) return [];
+  var vals = sh.getRange(2, 1, sh.getLastRow() - 1, 7).getValues();
+  var out = [];
+  for (var i = vals.length - 1; i >= 0; i--) {
+    out.push({
+      data:      vals[i][0] ? new Date(vals[i][0]).toISOString() : '',
+      sessionId: vals[i][1], email: vals[i][2], telefone: vals[i][3],
+      produto:   vals[i][4], transId: vals[i][5], valor: Number(vals[i][6]) || 0,
+    });
+  }
+  return out;
+}
+
 function handleKiwifyWebhook(data) {
   var sheet   = getSheet();
   var headers = ensureNewColumns(sheet);
@@ -365,6 +456,7 @@ function handleKiwifyWebhook(data) {
     }
   }
 
+  var finalRow = row;
   if (row > 0) {
     // Atualiza só as colunas presentes no patch
     for (var h = 0; h < headers.length; h++) {
@@ -386,6 +478,19 @@ function handleKiwifyWebhook(data) {
       return patch.hasOwnProperty(f) ? patch[f] : '';
     });
     sheet.appendRow(newRow);
+    finalRow = sheet.getLastRow();
+  }
+
+  // ── Compra aprovada → registra a venda real (receita/LTV) ──
+  if (patch.comprouKiwify === true) {
+    var valor   = _valorKiwify(d, data);
+    var pn      = String((d.Product && (d.Product.name || d.Product.product_name)) || (d.product && d.product.name) || d.product_name || '').toLowerCase();
+    var produto = (pn.indexOf('ebook') >= 0 || pn.indexOf('e-book') >= 0) ? 'ebook'
+                : (pn.indexOf('mentoria') >= 0 || pn.indexOf('ciclo') >= 0) ? 'mentoria' : 'curso';
+    var transId = data.order_id || d.order_id || (d.order && d.order.id) || data.id || d.id || '';
+    var sidCol  = headers.indexOf('sessionId');
+    var sid     = (finalRow > 0 && sidCol >= 0) ? sheet.getRange(finalRow, sidCol + 1).getValue() : '';
+    _registrarVenda(sid, email, phone, produto, valor, transId, finalRow, sheet, headers);
   }
 }
 
@@ -469,12 +574,19 @@ function handleEduzzWebhook(data) {
     data.event || d.event || d.trans_status || (d.sale && d.sale.status) || d.status || ''
   ).toLowerCase();
 
-  // Eduzz = sempre Mentoria
-  var patch = { kiwifyEvento: 'eduzz:' + st, kiwifyEventoEm: now, updatedAt: now, oferta: 'mentoria' };
+  // Detecta o produto e o valor (Eduzz vende ebook E mentoria)
+  var valor   = _valorEduzz(d, data);
+  var pn      = String(d.product_name || d.content_title || (d.product && d.product.name) || d.cont_name || '').toLowerCase();
+  var produto = (pn.indexOf('mentoria') >= 0 || pn.indexOf('ciclo') >= 0 || pn.indexOf('cdf') >= 0) ? 'mentoria'
+              : (pn.indexOf('ebook') >= 0 || pn.indexOf('e-book') >= 0 || pn.indexOf('caminho') >= 0) ? 'ebook'
+              : (valor > 0 && valor < 100 ? 'ebook' : 'mentoria');
+
+  var patch = { kiwifyEvento: 'eduzz:' + st, kiwifyEventoEm: now, updatedAt: now };
 
   if (/_paid|paid|aprovad|complet|venda|(^|[^0-9])3([^0-9]|$)/.test(st)) {
     patch.status = 'comprou'; patch.comprouKiwify = true; patch.cartaoRecusado = false;
-    patch.statusCloser = '✅ Compra confirmada (Eduzz/Mentoria)';
+    patch.oferta = produto;   // grava o produto correto (ebook ou mentoria)
+    patch.statusCloser = produto === 'ebook' ? '✅ Compra confirmada (Eduzz — Ebook)' : '✅ Compra confirmada (Eduzz/Mentoria)';
   } else if (/chargeback|estorno/.test(st)) {
     patch.chargeback = true; patch.chargebackEm = now; patch.status = 'chargeback';
     patch.statusCloser = '⚠️ Chargeback (Eduzz)';
@@ -503,7 +615,17 @@ function handleEduzzWebhook(data) {
     patch.statusCloser = 'ℹ️ Evento Eduzz: ' + st;
   }
 
-  _upsertByContact(patch, phone, email, nome, 'Eduzz (webhook)');
+  var finalRow = _upsertByContact(patch, phone, email, nome, 'Eduzz (webhook)');
+
+  // ── Compra aprovada → registra a venda real (receita/LTV) ──
+  if (patch.comprouKiwify === true) {
+    var transId = d.trans_cod || data.trans_cod || d.invoice_id || (d.sale && d.sale.id) || d.id || '';
+    var sheetE  = getSheet();
+    var headE   = getHeaders(sheetE);
+    var sidCol  = headE.indexOf('sessionId');
+    var sid     = (finalRow > 0 && sidCol >= 0) ? sheetE.getRange(finalRow, sidCol + 1).getValue() : '';
+    _registrarVenda(sid, email, phone, produto, valor, transId, finalRow, sheetE, headE);
+  }
 }
 
 // Acha a linha pelo telefone (ou e-mail) e aplica o patch; se não existir, cria.
@@ -527,6 +649,7 @@ function _upsertByContact(patch, phone, email, nome, origem) {
     }
   }
 
+  var finalRow = row;
   if (row > 0) {
     for (var h = 0; h < headers.length; h++) {
       var field = COL_TO_FIELD[headers[h]] || headers[h];
@@ -544,7 +667,9 @@ function _upsertByContact(patch, phone, email, nome, origem) {
       return patch.hasOwnProperty(f) ? patch[f] : '';
     });
     sheet.appendRow(newRow);
+    finalRow = sheet.getLastRow();
   }
+  return finalRow;
 }
 
 // ═══════════════════════════════════════════════════

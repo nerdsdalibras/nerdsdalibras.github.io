@@ -47,11 +47,32 @@ function _metricasProduto(grupo, leads) {
   };
 }
 
-function renderProducts() {
+// Busca o livro de vendas (receita real). Guarda em cache simples.
+let _vendasCache = null;
+async function _getVendas() {
+  if (_vendasCache) return _vendasCache;
+  try {
+    const r = await fetch(CONFIG.SHEETS_URL + '?action=getVendas', { redirect: 'follow' });
+    const v = await r.json();
+    _vendasCache = Array.isArray(v) ? v : [];
+  } catch (_) { _vendasCache = []; }
+  return _vendasCache;
+}
+
+async function renderProducts() {
   const el = document.getElementById('products-content');
   if (!el) return;
   const leads = cachedLeads || [];
   const prods = getProdutos();
+
+  // Receita REAL por produto (livro de vendas)
+  const vendas = await _getVendas();
+  const receitaReal = {}, vendasReal = {};
+  vendas.forEach(v => {
+    const g = String(v.produto || '').toLowerCase();
+    receitaReal[g] = (receitaReal[g] || 0) + (Number(v.valor) || 0);
+    vendasReal[g]  = (vendasReal[g] || 0) + 1;
+  });
 
   let totReceita = 0, totMargem = 0, totVendas = 0;
 
@@ -59,11 +80,15 @@ function renderProducts() {
     const m = _metricasProduto(p.grupo, leads);
     const preco  = Number(p.precoAtual) || 0;
     const custo  = Number(p.custo) || 0;
-    const receita = m.vendas * preco;
+    // Usa a receita/vendas reais quando existirem no livro; senão estima
+    const temReal = vendasReal[p.grupo] != null;
+    const nVendas = temReal ? vendasReal[p.grupo] : m.vendas;
+    const receita = temReal ? receitaReal[p.grupo] : (m.vendas * preco);
     const margemU = preco - custo;
-    const margem  = m.vendas * margemU;
-    const margemPct = preco > 0 ? Math.round(margemU / preco * 100) : 0;
-    totReceita += receita; totMargem += margem; totVendas += m.vendas;
+    const margem  = temReal ? (receita - nVendas * custo) : (nVendas * margemU);
+    const margemPct = receita > 0 ? Math.round(margem / receita * 100) : (preco > 0 ? Math.round(margemU / preco * 100) : 0);
+    const ticket  = nVendas > 0 ? receita / nVendas : preco;
+    totReceita += receita; totMargem += margem; totVendas += nVendas;
 
     const inp = (f, val) => `<input type="number" step="0.01" min="0" data-i="${i}" data-f="${f}" value="${val}"
       style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--text);font-size:.9rem">`;
@@ -80,11 +105,11 @@ function renderProducts() {
         </div>
 
         <div style="display:flex;gap:14px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--bdr)">
-          ${stat('Vendas', m.vendas, 'var(--g)')}
-          ${stat('Receita (estim.)', _brl(receita), 'var(--g)')}
+          ${stat('Vendas', nVendas, 'var(--g)')}
+          ${stat(temReal ? 'Receita (real)' : 'Receita (estim.)', _brl(receita), 'var(--g)')}
           ${stat('Margem', _brl(margem), margem >= 0 ? 'var(--g)' : 'var(--red)')}
           ${stat('Margem %', margemPct + '%')}
-          ${stat('Ticket médio', _brl(preco))}
+          ${stat('Ticket médio', _brl(ticket))}
           ${stat('Leads no grupo', m.leads)}
           ${stat('Foram ao checkout', m.checkouts)}
           ${stat('Conv. lead→venda', m.convLead.toFixed(1) + '%')}
@@ -95,7 +120,7 @@ function renderProducts() {
   el.innerHTML = `
     <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px">
       <div style="flex:1;min-width:160px;background:var(--gd);border:1px solid var(--gg);border-radius:14px;padding:16px">
-        <div style="font-size:.7rem;color:var(--ts);text-transform:uppercase">Receita total (estimada)</div>
+        <div style="font-size:.7rem;color:var(--ts);text-transform:uppercase">Receita total</div>
         <div style="font-size:1.8rem;font-weight:900;color:var(--g)">${_brl(totReceita)}</div>
       </div>
       <div style="flex:1;min-width:160px;background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:16px">
@@ -116,7 +141,7 @@ function renderProducts() {
     </div>
 
     <div style="font-size:.74rem;color:var(--td);margin-top:16px;line-height:1.6;background:var(--s1);border:1px solid var(--bdr);border-radius:10px;padding:12px">
-      ℹ️ <strong>Sobre a receita:</strong> por enquanto é <em>estimada</em> (nº de vendas × preço atual). O próximo passo da Fase 2 é capturar o <strong>valor real pago</strong> direto dos webhooks da Kiwify/Eduzz, aí a receita e o LTV ficam exatos. Os preços que você define aqui ficam salvos neste navegador.
+      ℹ️ <strong>Sobre a receita:</strong> quando o webhook da Kiwify/Eduzz confirma uma compra, o CRM grava o <strong>valor real pago</strong> (mostra "Receita real"). Vendas antigas, anteriores a essa captura, aparecem como <strong>estimativa</strong> (nº de vendas × preço). Os preços que você define aqui ficam salvos neste navegador.
     </div>`;
 }
 
