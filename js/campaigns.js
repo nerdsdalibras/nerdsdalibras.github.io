@@ -6,10 +6,14 @@
 ═══════════════════════════════════════════ */
 
 function getCampMkt() {
-  try { const a = JSON.parse(localStorage.getItem('ndl_camp_mkt') || 'null'); if (Array.isArray(a)) return a; } catch (_) {}
+  const a = (typeof cfgGet === 'function') ? cfgGet('camp_mkt', null) : null;
+  if (Array.isArray(a)) return a;
   return [];
 }
-function saveCampMkt(a) { try { localStorage.setItem('ndl_camp_mkt', JSON.stringify(a)); } catch (_) {} }
+function saveCampMkt(a) {
+  if (typeof cfgSet === 'function') cfgSet('camp_mkt', a);
+  else try { localStorage.setItem('ndl_camp_mkt', JSON.stringify(a)); } catch (_) {}
+}
 
 // Métricas de uma campanha a partir dos leads (casadas por utm_campaign)
 function _metricasCampanha(camp, leads) {

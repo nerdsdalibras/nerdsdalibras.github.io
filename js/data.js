@@ -9,6 +9,7 @@ function checkPassword() {
     document.getElementById('password-screen').style.display = 'none';
     document.getElementById('app').removeAttribute('hidden');
     renderDashboard(true);
+    if (typeof loadCloudConfig === 'function') loadCloudConfig();
     startAutoRefresh();
   } else {
     err.textContent = 'Senha incorreta.';

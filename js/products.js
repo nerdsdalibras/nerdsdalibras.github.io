@@ -12,19 +12,20 @@ const PRODUTOS_DEFAULT = [
 ];
 
 function getProdutos() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('ndl_produtos') || 'null');
-    if (Array.isArray(saved) && saved.length) {
-      // Mescla com o default (caso surjam campos novos)
-      return PRODUTOS_DEFAULT.map(d => {
-        const s = saved.find(x => x.id === d.id);
-        return s ? { ...d, ...s } : { ...d };
-      });
-    }
-  } catch (_) {}
+  const saved = (typeof cfgGet === 'function') ? cfgGet('produtos', null) : null;
+  if (Array.isArray(saved) && saved.length) {
+    // Mescla com o default (caso surjam campos novos)
+    return PRODUTOS_DEFAULT.map(d => {
+      const s = saved.find(x => x.id === d.id);
+      return s ? { ...d, ...s } : { ...d };
+    });
+  }
   return PRODUTOS_DEFAULT.map(p => ({ ...p }));
 }
-function saveProdutos(arr) { try { localStorage.setItem('ndl_produtos', JSON.stringify(arr)); } catch (_) {} }
+function saveProdutos(arr) {
+  if (typeof cfgSet === 'function') cfgSet('produtos', arr);
+  else try { localStorage.setItem('ndl_produtos', JSON.stringify(arr)); } catch (_) {}
+}
 
 function _brl(n) { return (Number(n) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 

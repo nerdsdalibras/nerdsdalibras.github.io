@@ -133,6 +133,12 @@ function doPost(e) {
       return respond({ ok: true, sent: nBc });
     }
 
+    // Config na nuvem (produtos, campanhas de marketing, etc.)
+    if (data && data.action === 'saveConfig' && data.key) {
+      _saveConfig(data.key, data.value);
+      return respond({ ok: true });
+    }
+
     // Webhook da Eduzz (Mentoria) — checa antes da Kiwify pois tem campos próprios
     if (isEduzzPayload(data)) {
       _logWebhook('eduzz', raw);
@@ -186,6 +192,9 @@ function doGet(e) {
   }
   if (action === 'getVendas') {
     return respond(getVendas());
+  }
+  if (action === 'getConfig') {
+    return respond(getConfig());
   }
   // Pixel de abertura de e-mail: registra a abertura e devolve algo mínimo
   if (action === 'open') {
@@ -372,6 +381,35 @@ function _registrarVenda(sessionId, email, phone, produto, valor, transId, rowLe
     }
   } catch (e) {}
   return valor;
+}
+
+// ── CONFIG NA NUVEM (chave→valor JSON) ────────────
+// Guarda config do dashboard (produtos, campanhas de marketing) na aba "Config".
+function _saveConfig(key, value) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName('Config');
+    if (!sh) { sh = ss.insertSheet('Config'); sh.appendRow(['Chave', 'Valor']); }
+    var val  = (typeof value === 'string') ? value : JSON.stringify(value);
+    var last = sh.getLastRow();
+    var keys = last > 1 ? sh.getRange(2, 1, last - 1, 1).getValues() : [];
+    for (var i = 0; i < keys.length; i++) {
+      if (String(keys[i][0]) === key) { sh.getRange(i + 2, 2).setValue(val); return; }
+    }
+    sh.appendRow([key, val]);
+  } catch (e) {}
+}
+function getConfig() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Config');
+  if (!sh || sh.getLastRow() < 2) return {};
+  var vals = sh.getRange(2, 1, sh.getLastRow() - 1, 2).getValues();
+  var out = {};
+  for (var i = 0; i < vals.length; i++) {
+    var k = vals[i][0]; if (!k) continue;
+    try { out[k] = JSON.parse(vals[i][1]); } catch (e) { out[k] = vals[i][1]; }
+  }
+  return out;
 }
 
 // Lê o livro de vendas (mais recente primeiro) para o dashboard
