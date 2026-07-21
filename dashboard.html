@@ -54,7 +54,11 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-item active" onclick="setPage('leads')" data-page="leads">
+      <button class="nav-item active" onclick="setPage('dashboard')" data-page="dashboard">
+        <span class="nav-icon">▨</span>
+        <span class="nav-label">Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="setPage('leads')" data-page="leads">
         <span class="nav-icon">◈</span>
         <span class="nav-label">Leads</span>
         <span class="nav-badge" id="badge-leads"></span>
@@ -116,7 +120,14 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
     <div class="content">
 
       <!-- LEADS -->
-      <div id="page-leads" class="page active">
+      <div id="page-dashboard" class="page active">
+        <div class="page-header">
+          <h2 class="page-title">Painel Executivo</h2>
+        </div>
+        <div id="exec-content"></div>
+      </div>
+
+      <div id="page-leads" class="page">
         <div class="ai-box" id="ai-box" style="display:none"></div>
         <div class="stats-grid" id="stats"></div>
         <div class="filters-wrap">
@@ -252,6 +263,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
 <script src="js/checkout.js"></script>
 <script src="js/products.js"></script>
 <script src="js/campaigns.js"></script>
+<script src="js/executive.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

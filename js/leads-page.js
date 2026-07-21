@@ -11,6 +11,10 @@ async function renderDashboard(force = false) {
   if (currentPage === 'leads')         renderLeads();
   else if (currentPage === 'pipeline') renderPipeline();
   else if (currentPage === 'analytics') renderAnalytics();
+  else if (currentPage === 'dashboard') renderExecutive();
+  else if (currentPage === 'checkout') renderCheckout();
+  else if (currentPage === 'products') renderProducts();
+  else if (currentPage === 'campaigns') renderCampaigns();
 }
 
 /* ═══════════════════════════════════════════

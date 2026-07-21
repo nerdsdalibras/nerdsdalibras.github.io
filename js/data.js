@@ -64,7 +64,8 @@ function setPage(page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelector(`[data-page="${page}"]`).classList.add('active');
-  if (page === 'pipeline')        renderPipeline();
+  if (page === 'dashboard')       renderExecutive();
+  else if (page === 'pipeline')   renderPipeline();
   else if (page === 'analytics')  renderAnalytics();
   else if (page === 'checkout')   renderCheckout();
   else if (page === 'products')   renderProducts();
