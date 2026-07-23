@@ -565,7 +565,7 @@ const CONFIG = {
       desc: 'O método completo que levou +997 intérpretes à fluência. Do básico ao avançado — com certificado de 350h e base profissional em tradução e interpretação.',
       preco_de: 'R$ 697,00', preco_por: 'R$ 281,87', desconto: '60% OFF',
       cta: 'Quero o Do Zero a Libras →',
-      link: 'https://pay.kiwify.com.br/1sIyvVL?coupon=DESCONTO29',
+      link: 'https://clubedalibras.com/vsl',
     },
     intermediario: {
       nivel: 'Intermediário', badge: '📈 Nível Intermediário',
@@ -574,7 +574,7 @@ const CONFIG = {
       desc: 'O método que levou +997 intérpretes à fluência. Do básico ao avançado — com certificado de 350h e base profissional em tradução e interpretação.',
       preco_de: 'R$ 697,00', preco_por: 'R$ 281,87', desconto: '60% OFF',
       cta: 'Quero o Do Zero a Libras →',
-      link: 'https://pay.kiwify.com.br/1sIyvVL?coupon=DESCONTO29',
+      link: 'https://clubedalibras.com/vsl',
     },
     avancado: {
       nivel: 'Avançado', badge: '💎 Nível Avançado',
@@ -990,11 +990,11 @@ async function showResult() {
   const isGrupo = S.nivelKey === 'avancado';
   let preOferta;
   if (S.nivelKey === 'basico') {
-    // Nível básico → ebook como porta de entrada, plantando o curso como próximo passo
     preOferta = [
-      `Como você está começando agora, não faz sentido te empurrar um curso completo de cara — o caminho certo é dar o primeiro passo sem peso. 🌱`,
-      `A sua porta de entrada ideal é o <strong>${esc(p.nome)}</strong> por só <strong>R$ 19,90</strong>: ele te mostra todo o caminho e o que a profissão realmente exige.`,
-      `E o seu próximo passo natural — quando quiser aprender Libras de verdade, do zero à fluência — é o curso <strong>Do Zero a Libras</strong>. Mas uma coisa de cada vez, combinado? 😉`,
+      `O próximo passo para você construir uma base sólida em Libras é o curso <strong>Do Zero a Libras</strong> — e eu sei exatamente como ele encaixa no seu momento. 🎯`,
+      `Mas preciso ser sincera: essa <strong>oferta com desconto só aparece UMA vez</strong> — agora, pra quem faz o quiz pela primeira vez. Depois que você sair daqui, ela não volta. ⏳`,
+      `E pra você ir com total tranquilidade: aproveita a condição, e se não gostar (coisa que eu acho bem difícil! 😄) você tem <strong>7 dias pra testar</strong>. Se não for pra você, eu <strong>te devolvo todo o seu dinheiro</strong>. 💙`,
+      `Posso te liberar essa oferta única agora?`,
     ];
   } else if (isGrupo) {
     preOferta = [
@@ -1077,7 +1077,7 @@ async function naoClick(p) {
       desc: 'Descubra o que a Lei nº 14.704/2023 exige, entenda o caminho completo e pare de perder tempo em cursos que não habilitam para exercer a profissão.',
       preco_de: 'R$ 97,90', preco_por: 'R$ 19,90', desconto: '80% OFF',
       cta: 'Quero o Ebook por R$ 19,90 →',
-      link: 'https://chk.eduzz.com/KW8Z67RO01',
+      link: 'https://clubedalibras.com/ebooklibras',
     };
     await botSay([
       `Tudo bem, <strong>${esc(S.nome)}</strong>! Respeito totalmente a sua decisão. 😊`,
@@ -1151,7 +1151,7 @@ function registrarCliqueCTADownsell() {
     clicouOferta:     true,
     ofertaEm:         new Date().toISOString(),
     oferta:           'ebook',
-    plataformaOferta: 'eduzz',
+    plataformaOferta: 'clubedalibras',
     etapaQuiz:        '7. Clicou no ebook (downsell R$ 19,90)',
     statusCloser:     '🛒 Clicou no ebook (downsell) — foi para a Eduzz',
   });
