@@ -560,12 +560,12 @@ const CONFIG = {
   PRODUTOS: {
     basico: {
       nivel: 'Básico', badge: '🌱 Nível Básico',
-      tag: '📖 Indicado para o seu momento',
-      nome: 'Ebook — O Caminho Para Se Tornar Intérprete de Libras',
-      desc: 'Descubra o que a Lei nº 14.704/2023 exige, entenda o caminho completo e pare de perder tempo em cursos que não habilitam para exercer a profissão.',
-      preco_de: 'R$ 97,90', preco_por: 'R$ 19,90', desconto: '80% OFF',
-      cta: 'Quero o Ebook por R$ 19,90 →',
-      link: 'https://chk.eduzz.com/KW8Z67RO01',
+      tag: '⭐ Caminho completo para o seu nível',
+      nome: 'Do Zero a Libras',
+      desc: 'O método completo que levou +997 intérpretes à fluência. Do básico ao avançado — com certificado de 350h e base profissional em tradução e interpretação.',
+      preco_de: 'R$ 697,00', preco_por: 'R$ 281,87', desconto: '60% OFF',
+      cta: 'Quero o Do Zero a Libras →',
+      link: 'https://pay.kiwify.com.br/1sIyvVL?coupon=DESCONTO29',
     },
     intermediario: {
       nivel: 'Intermediário', badge: '📈 Nível Intermediário',
@@ -1069,23 +1069,30 @@ async function naoClick(p) {
   document.getElementById('b-nao').disabled = true;
   addMsg('❌ Não, agora não', 'user');
 
-  // DOWNSELL: se a oferta recusada NÃO era o ebook, ofereço o ebook de R$19,90
-  if (S.nivelKey !== 'basico') {
-    const ebook = CONFIG.PRODUTOS.basico;
+  // DOWNSELL: básico e intermediário recusaram o Do Zero a Libras → ofereço o Ebook R$19,90
+  if (S.nivelKey !== 'avancado') {
+    const ebook = {
+      tag: '📖 Oferta especial para você',
+      nome: 'Ebook — O Caminho Para Se Tornar Intérprete de Libras',
+      desc: 'Descubra o que a Lei nº 14.704/2023 exige, entenda o caminho completo e pare de perder tempo em cursos que não habilitam para exercer a profissão.',
+      preco_de: 'R$ 97,90', preco_por: 'R$ 19,90', desconto: '80% OFF',
+      cta: 'Quero o Ebook por R$ 19,90 →',
+      link: 'https://chk.eduzz.com/KW8Z67RO01',
+    };
     await botSay([
       `Tudo bem, <strong>${esc(S.nome)}</strong>! Respeito totalmente a sua decisão. 😊`,
       `Mas não quero que você saia daqui sem dar o primeiro passo — porque adiar é o que mais atrasa quem quer aprender Libras de verdade.`,
-      `Então deixa eu te fazer um convite bem mais leve: comece pelo <strong>${esc(ebook.nome)}</strong> por apenas <strong>R$ 19,90</strong>. É a porta de entrada perfeita, sem pesar no bolso. 👇`,
+      `Então deixa eu te fazer um convite bem mais leve: o <strong>Ebook completo</strong> por apenas <strong>R$ 19,90</strong>. É a porta de entrada perfeita, sem pesar no bolso. 👇`,
     ]);
     prodCardDownsell(ebook);
-    await botSay([`E quando você sentir que é hora de ir além, o <strong>${esc(p.nome)}</strong> vai estar aqui te esperando. 💙`]);
+    await botSay([`E quando você sentir que é hora de ir além, o <strong>Do Zero a Libras</strong> vai estar aqui te esperando. 💙`]);
     setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
     document.getElementById('b-restart').addEventListener('click', restart);
-    sendCRM({ etapaQuiz:'6. Recusou a oferta principal → recebeu o ebook (downsell)', statusCloser:`🙅➡️📖 Recusou ${p.nome}; ofereci o ebook (R$ 19,90)` });
+    sendCRM({ etapaQuiz:'6. Recusou Do Zero a Libras → recebeu downsell Ebook', statusCloser:`🙅➡️📖 Recusou Do Zero a Libras; ofereci Ebook (R$ 19,90)` });
     return;
   }
 
-  // Já era o ebook → não há downsell abaixo, mantém a urgência
+  // Avançado recusou o Ciclo da Fluência → urgência com mesmo produto
   await botSay([
     `Tudo bem, <strong>${esc(S.nome)}</strong>! Respeito totalmente. 😊`,
     `Mas preciso te avisar: <strong>essa condição só existe aqui, agora.</strong> Quando você sair, o valor volta ao normal.`,
@@ -1094,7 +1101,7 @@ async function naoClick(p) {
   prodCard(p, true);
   setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
   document.getElementById('b-restart').addEventListener('click', restart);
-  sendCRM({ etapaQuiz:'6. Recusou o ebook', statusCloser:`🙅 Recusou o ebook (R$ 19,90)` });
+  sendCRM({ etapaQuiz:'6. Recusou Ciclo da Fluência', statusCloser:`🙅 Recusou Ciclo da Fluência` });
 }
 
 function prodCard(p, comUrgencia) {
