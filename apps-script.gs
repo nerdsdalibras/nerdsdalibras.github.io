@@ -406,21 +406,48 @@ function aiAnalyze(dataStr) {
     '3) ✅ 2-3 recomendações acionáveis (ex: teste de headline, ajuste de oferta/preço).\n' +
     'Máximo ~200 palavras, em tópicos com emojis. NÃO invente números que não estão nos dados. ' +
     'Se faltar investimento/custo cadastrado, avise que sem isso o CAC/ROAS não fecham.\n\nDADOS (JSON):\n' + resumo;
-  try {
-    var res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
-      method: 'post', contentType: 'application/json',
-      headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-      payload: JSON.stringify({ model: AI_CFG.model, max_tokens: AI_CFG.maxTokens, messages: [{ role: 'user', content: prompt }] }),
-      muteHttpExceptions: true,
-    });
-    var code = res.getResponseCode();
-    var body = JSON.parse(res.getContentText() || '{}');
-    if (code < 200 || code >= 300) {
-      return { error: 'IA ' + code + ': ' + ((body.error && body.error.message) || res.getContentText().slice(0, 300)) };
+  var lastInfo = '';
+  for (var attempt = 0; attempt < 3; attempt++) {
+    try {
+      var res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+        method: 'post', contentType: 'application/json',
+        headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+        payload: JSON.stringify({ model: AI_CFG.model, max_tokens: AI_CFG.maxTokens, messages: [{ role: 'user', content: prompt }] }),
+        muteHttpExceptions: true,
+      });
+      var code = res.getResponseCode();
+      var raw  = res.getContentText() || '{}';
+      var body = {};
+      try { body = JSON.parse(raw); } catch (e) {}
+
+      // Sobrecarga / rate limit / erro temporário → espera e tenta de novo
+      if (code === 429 || code === 500 || code === 503 || code === 529) {
+        lastInfo = 'IA ' + code + ' (temporário)';
+        Utilities.sleep(1800);
+        continue;
+      }
+      if (code < 200 || code >= 300) {
+        return { error: 'IA ' + code + ': ' + ((body.error && body.error.message) || raw.slice(0, 300)) };
+      }
+
+      // Junta TODOS os blocos de texto da resposta
+      var txt = '';
+      if (body.content && body.content.length) {
+        for (var i = 0; i < body.content.length; i++) {
+          if (body.content[i] && body.content[i].text) txt += body.content[i].text;
+        }
+      }
+      if (txt && txt.trim()) return { text: txt };
+
+      // 2xx mas sem texto → guarda o motivo e tenta de novo
+      lastInfo = 'sem texto (stop=' + (body.stop_reason || '?') + ') · ' + raw.slice(0, 220);
+      Utilities.sleep(1200);
+    } catch (e) {
+      lastInfo = 'exceção: ' + e;
+      Utilities.sleep(1200);
     }
-    var txt = (body.content && body.content[0] && body.content[0].text) || '';
-    return { text: txt };
-  } catch (e) { return { error: 'Falha ao chamar a IA: ' + e }; }
+  }
+  return { error: 'A IA não retornou texto após 3 tentativas. Detalhe: ' + lastInfo };
 }
 
 // ── CONFIG NA NUVEM (chave→valor JSON) ────────────
