@@ -200,8 +200,16 @@ async function analisarComIA() {
     const resumo = await _resumoParaIA();
     const r = await fetch(CONFIG.SHEETS_URL + '?action=aiAnalyze&data=' + encodeURIComponent(JSON.stringify(resumo)), { redirect: 'follow' });
     const j = await r.json();
-    if (j.error) box.innerHTML = `<div style="color:var(--red)">⚠️ ${_mdToHtml(j.error)}</div>`;
-    else box.innerHTML = `<div style="font-weight:800;margin-bottom:8px">🧠 Diagnóstico da IA</div>${_mdToHtml(j.text)}`;
+    if (j.error) {
+      box.innerHTML = `<div style="color:var(--red)">⚠️ ${_mdToHtml(j.error)}</div>`;
+    } else if (j.text) {
+      box.innerHTML = `<div style="font-weight:800;margin-bottom:8px">🧠 Diagnóstico da IA</div>${_mdToHtml(j.text)}`;
+    } else {
+      box.innerHTML = `<div style="color:var(--orange);line-height:1.6">⚠️ <strong>A IA não retornou análise.</strong><br>
+        Provável causa: o <strong>Apps Script ainda não foi republicado</strong> com a função <code>aiAnalyze</code>.<br>
+        Vá em <strong>Implantar → Gerenciar implantações → ✏️ → Nova versão → Implantar</strong> e tente de novo.<br>
+        <span style="color:var(--td);font-size:.75rem">Resposta recebida: ${_mdToHtml(JSON.stringify(j).slice(0, 200))}</span></div>`;
+    }
   } catch (e) {
     box.innerHTML = `<div style="color:var(--red)">Não consegui chamar a IA. Republicou o Apps Script e cadastrou a chave? (${e})</div>`;
   }
