@@ -204,6 +204,9 @@ async function analisarComIA() {
       box.innerHTML = `<div style="color:var(--red)">⚠️ ${_mdToHtml(j.error)}</div>`;
     } else if (j.text) {
       box.innerHTML = `<div style="font-weight:800;margin-bottom:8px">🧠 Diagnóstico da IA</div>${_mdToHtml(j.text)}`;
+    } else if (Object.prototype.hasOwnProperty.call(j, 'text')) {
+      // A função rodou, mas a IA voltou vazia (sobrecarga momentânea) → é só tentar de novo
+      box.innerHTML = `<div style="color:var(--orange);line-height:1.6">⚠️ A IA respondeu vazio (sobrecarga momentânea). É só clicar em <strong>"🧠 Analisar com IA"</strong> de novo em alguns segundos. 🔄</div>`;
     } else {
       box.innerHTML = `<div style="color:var(--orange);line-height:1.6">⚠️ <strong>A IA não retornou análise.</strong><br>
         Provável causa: o <strong>Apps Script ainda não foi republicado</strong> com a função <code>aiAnalyze</code>.<br>
