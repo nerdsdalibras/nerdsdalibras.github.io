@@ -1016,26 +1016,30 @@ async function showResult() {
 
 /* 7. OFERTA SIM/NÃO */
 function showOferta(p, isGrupo) {
+  const showCapa = !isGrupo;
   const ofCard = document.createElement('div');
   ofCard.className = 'msg-row bot';
-  ofCard.innerHTML = `<div class="card">
-    <div class="oferta-tag">${p.tag}</div>
-    <div class="oferta-nome">${p.nome}</div>
-    <div class="oferta-desc">${p.desc}</div>
-    ${isGrupo ? `
-      <div class="preco-row">
-        <span class="preco-de">${p.preco_de}</span>
-        <span class="preco-tag">${p.desconto}</span>
-      </div>
-    ` : `
-      <div class="preco-row">
-        <span class="preco-de">${p.preco_de}</span>
-        <span class="preco-por">${p.preco_por}</span>
-        <span class="preco-tag">${p.desconto}</span>
-      </div>
-    `}
-    <button class="btn-sim" id="b-sim">✅ ${isGrupo ? 'Sim, quero garantir minha vaga!' : 'Sim, quero aproveitar!'}</button>
-    <button class="btn-nao" id="b-nao">❌ Não, prefiro pagar o preço cheio depois</button>
+  ofCard.innerHTML = `<div class="card" style="padding:0;overflow:hidden">
+    ${showCapa ? `<img src="fotos/card-curso.jpg" alt="Do Zero a Libras" style="width:100%;display:block;border-radius:12px 12px 0 0;max-height:200px;object-fit:cover;object-position:top"/>` : ''}
+    <div style="padding:18px 16px">
+      <div class="oferta-tag">${p.tag}</div>
+      <div class="oferta-nome">${p.nome}</div>
+      <div class="oferta-desc">${p.desc}</div>
+      ${isGrupo ? `
+        <div class="preco-row">
+          <span class="preco-de">${p.preco_de}</span>
+          <span class="preco-tag">${p.desconto}</span>
+        </div>
+      ` : `
+        <div class="preco-row">
+          <span class="preco-de">${p.preco_de}</span>
+          <span class="preco-por">${p.preco_por}</span>
+          <span class="preco-tag">${p.desconto}</span>
+        </div>
+      `}
+      <button class="btn-sim" id="b-sim">✅ ${isGrupo ? 'Sim, quero garantir minha vaga!' : 'Sim, quero aproveitar!'}</button>
+      <button class="btn-nao" id="b-nao">❌ Não, prefiro pagar o preço cheio depois</button>
+    </div>
   </div>`;
   $inner.appendChild(ofCard);
   scrollEnd();
@@ -1055,9 +1059,6 @@ async function simClick(p) {
   ]);
   prodCard(p, false);
   await wait(700);
-  if (S.nivelKey === 'basico') {
-    await botSay([`E lembra: o ebook é só o seu primeiro passo. Quando terminar e quiser aprender de verdade, do zero à fluência, seu próximo passo é o curso <strong>Do Zero a Libras</strong>. 💪`]);
-  }
   await botSay([`Qualquer dúvida, me chama! Torço muito pela sua evolução em Libras 💙`]);
   setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
   document.getElementById('b-restart').addEventListener('click', restart);
@@ -1106,21 +1107,25 @@ async function naoClick(p) {
 
 function prodCard(p, comUrgencia) {
   const isGrupo = S.nivelKey === 'avancado';
+  const showCapa = !isGrupo; // mostra capa apenas para Do Zero a Libras
   const div = document.createElement('div');
   div.className = 'msg-row bot';
-  div.innerHTML = `<div class="card">
-    <div class="oferta-tag">${p.tag}</div>
-    <div class="oferta-nome">${p.nome}</div>
-    <div class="oferta-desc">${p.desc}</div>
-    ${!isGrupo ? `
-      <div class="preco-row">
-        <span class="preco-de">${p.preco_de}</span>
-        <span class="preco-por">${p.preco_por}</span>
-        <span class="preco-tag">${p.desconto}</span>
-      </div>
-    ` : ''}
-    ${comUrgencia ? `<div class="urgencia-chip">⚠️ Oferta expira quando você sair desta página.</div>` : ''}
-    <a class="btn-cta" href="${p.link}" target="_blank" rel="noopener" onclick="registrarCliqueCTA()">${p.cta}</a>
+  div.innerHTML = `<div class="card" style="padding:0;overflow:hidden">
+    ${showCapa ? `<img src="fotos/card-curso.jpg" alt="Do Zero a Libras" style="width:100%;display:block;border-radius:12px 12px 0 0;max-height:200px;object-fit:cover;object-position:top"/>` : ''}
+    <div style="padding:18px 16px">
+      <div class="oferta-tag">${p.tag}</div>
+      <div class="oferta-nome">${p.nome}</div>
+      <div class="oferta-desc">${p.desc}</div>
+      ${!isGrupo ? `
+        <div class="preco-row">
+          <span class="preco-de">${p.preco_de}</span>
+          <span class="preco-por">${p.preco_por}</span>
+          <span class="preco-tag">${p.desconto}</span>
+        </div>
+      ` : ''}
+      ${comUrgencia ? `<div class="urgencia-chip">⚠️ Oferta expira quando você sair desta página.</div>` : ''}
+      <a class="btn-cta" href="${p.link}" target="_blank" rel="noopener" onclick="registrarCliqueCTA()">${p.cta}</a>
+    </div>
   </div>`;
   $inner.appendChild(div);
   scrollEnd();
