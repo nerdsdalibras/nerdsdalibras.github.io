@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Avaliação Gratuita de Libras — Descubra Seu Nível | Clube da Libras</title>
+  <meta name="description" content="Faça a avaliação oficial e gratuita do Clube da Libras e descubra em 2 minutos se você está no nível Básico, Intermediário ou Avançado. De R$150 por R$0,00."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://clubedalibras.com/avaliacao-clube"/>
+
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Avaliação Gratuita de Libras — Descubra Seu Nível Real"/>
+  <meta property="og:description" content="Básico, Intermediário ou Avançado? Faça a avaliação oficial do Clube da Libras em 2 minutos. De R$150 por R$0,00 — 100% gratuita."/>
+  <meta property="og:image" content="https://clubedalibras.com/fotos/IMG_4952.jpg"/>
+  <meta property="og:url" content="https://clubedalibras.com/avaliacao-clube"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '2091933185003703');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+
+  <link rel="icon" href="fotos/favicon-lorena.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde:      #25D366;
+      --verde-esc:  #1aa854;
+      --roxo:       #7C3AED;
+      --roxo-light: #A855F7;
+      --ouro:       #F59E0B;
+      --vermelho:   #EF4444;
+      --bg:         #070B14;
+      --card:       #0E1420;
+      --card-2:     #131A28;
+      --borda:      rgba(255,255,255,0.08);
+      --text:       #F0F4F8;
+      --text-sub:   rgba(240,244,248,0.62);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* ── NOISE + GLOW BG ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .bg-glow {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,58,237,0.20) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 100% 75%, rgba(37,211,102,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 0% 55%, rgba(168,85,247,0.06) 0%, transparent 60%);
+    }
+
+    .page {
+      position: relative; z-index: 1;
+      max-width: 680px; margin: 0 auto;
+      padding: 0 20px 96px;
+    }
+
+    /* ── BARRA URGÊNCIA ── */
+    .urgency-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: linear-gradient(90deg, #7C3AED 0%, #A855F7 50%, #7C3AED 100%);
+      background-size: 200% 100%;
+      animation: shimmerBar 3.5s linear infinite;
+      text-align: center; padding: 11px 16px;
+      font-size: .78rem; font-weight: 700; letter-spacing: .03em;
+      color: #fff;
+    }
+    @keyframes shimmerBar { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
+    .urgency-bar .pulse-dot {
+      display: inline-block; width: 7px; height: 7px;
+      border-radius: 50%; background: #fff;
+      margin-right: 7px; vertical-align: middle;
+      animation: pulseDot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(1.5)} }
+
+    /* ── HERO ── */
+    .hero { padding: 52px 0 0; text-align: center; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(168,85,247,0.35);
+      border-radius: 999px; padding: 7px 18px;
+      font-size: .72rem; font-weight: 700;
+      color: var(--roxo-light);
+      letter-spacing: .07em; text-transform: uppercase;
+      margin-bottom: 26px;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 6.2vw, 3.15rem);
+      font-weight: 900; line-height: 1.1;
+      letter-spacing: -.03em; margin-bottom: 22px;
+    }
+    .hero-title .highlight {
+      background: linear-gradient(135deg, #25D366 0%, #A855F7 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.08rem; color: var(--text-sub);
+      line-height: 1.62; max-width: 540px; margin: 0 auto 34px;
+    }
+    .hero-sub strong { color: var(--text); font-weight: 700; }
+
+    /* ── ÂNCORA DE PREÇO ── */
+    .price-anchor {
+      display: inline-flex; align-items: center; gap: 16px;
+      background: var(--card);
+      border: 1px solid rgba(37,211,102,0.28);
+      border-radius: 18px; padding: 16px 26px;
+      margin-bottom: 34px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    }
+    .price-old {
+      position: relative;
+      font-size: 1.15rem; font-weight: 700; color: var(--text-sub);
+    }
+    .price-old::after {
+      content: ''; position: absolute; left: -4px; right: -4px; top: 52%;
+      height: 2px; background: var(--vermelho); transform: rotate(-8deg);
+    }
+    .price-old .lbl { display: block; font-size: .6rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-sub); margin-bottom: 2px; }
+    .price-arrow { color: var(--verde); font-size: 1.3rem; font-weight: 900; }
+    .price-new { text-align: left; }
+    .price-new .lbl { display: block; font-size: .6rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--verde); margin-bottom: 2px; }
+    .price-new .val {
+      font-size: 1.7rem; font-weight: 900; letter-spacing: -.02em;
+      background: linear-gradient(135deg, #25D366, #1aa854);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .price-new .val small { font-size: .95rem; font-weight: 800; }
+
+    /* ── CTA BUTTON ── */
+    .cta-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      background: linear-gradient(135deg, #25D366 0%, #1aa854 100%);
+      color: #fff; font-weight: 800; font-size: 1.06rem;
+      text-decoration: none; border: none; cursor: pointer;
+      border-radius: 16px; padding: 20px 40px;
+      box-shadow: 0 8px 32px rgba(37,211,102,0.32), inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: transform .15s ease, box-shadow .15s ease;
+      animation: ctaPulse 2.5s ease-in-out infinite;
+      letter-spacing: -.01em;
+    }
+    .cta-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 0 8px rgba(37,211,102,0.12), 0 16px 48px rgba(37,211,102,0.42), inset 0 1px 0 rgba(255,255,255,0.2);
+      animation: none;
+    }
+    .cta-btn:active { transform: scale(0.98); }
+    @keyframes ctaPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.4), 0 8px 32px rgba(37,211,102,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+      50% { box-shadow: 0 0 0 12px rgba(37,211,102,0.05), 0 8px 32px rgba(37,211,102,0.2), inset 0 1px 0 rgba(255,255,255,0.2); }
+    }
+    .cta-btn .arrow { font-size: 1.2rem; transition: transform .15s; }
+    .cta-btn:hover .arrow { transform: translateX(4px); }
+
+    .cta-note {
+      margin-top: 15px; font-size: .78rem; color: var(--text-sub);
+      display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;
+    }
+    .cta-note .check { color: var(--verde); font-weight: 800; }
+
+    /* ── PROVA SOCIAL ── */
+    .social-proof {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; margin: 38px 0 0; flex-wrap: wrap;
+    }
+    .avatars { display: flex; }
+    .avatar-item {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 2px solid var(--bg); margin-left: -11px; overflow: hidden;
+      background: linear-gradient(135deg, #7C3AED, #25D366);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 700; color: #fff;
+    }
+    .avatar-item:first-child { margin-left: 0; }
+    .avatar-item img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .social-text { font-size: .85rem; color: var(--text-sub); max-width: 280px; text-align: left; }
+    .social-text strong { color: var(--verde); font-weight: 800; }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--borda), transparent); margin: 56px 0; }
+
+    /* ── SECTION HEADERS ── */
+    .section-label {
+      text-align: center; font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--roxo-light); margin-bottom: 12px;
+    }
+    .section-title {
+      text-align: center; font-size: clamp(1.45rem, 4.4vw, 2.05rem);
+      font-weight: 800; line-height: 1.2; letter-spacing: -.02em; margin-bottom: 12px;
+    }
+    .section-intro {
+      text-align: center; font-size: .95rem; color: var(--text-sub);
+      max-width: 520px; margin: 0 auto 36px; line-height: 1.6;
+    }
+
+    /* ── NÍVEIS ── */
+    .levels { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .level-card {
+      display: flex; align-items: center; gap: 18px;
+      background: var(--card); border: 1px solid var(--borda);
+      border-radius: 20px; padding: 22px 24px;
+      transition: border-color .2s, transform .2s;
+      position: relative; overflow: hidden;
+    }
+    .level-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: var(--lvl-color, var(--roxo));
+    }
+    .level-card:hover { transform: translateY(-2px); border-color: rgba(168,85,247,0.28); }
+    .level-emoji {
+      font-size: 2rem; flex-shrink: 0; width: 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.04); border-radius: 16px;
+    }
+    .level-info { flex: 1; }
+    .level-name { font-size: 1.05rem; font-weight: 800; margin-bottom: 4px; }
+    .level-name .tag { font-size: .68rem; font-weight: 700; color: var(--lvl-color, var(--roxo)); text-transform: uppercase; letter-spacing: .06em; }
+    .level-desc { font-size: .84rem; color: var(--text-sub); line-height: 1.55; }
+
+    /* ── STATS ── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 420px) { .stats-row { grid-template-columns: 1fr; } }
+    .stat-card { background: var(--card); border: 1px solid var(--borda); border-radius: 20px; padding: 24px 16px; text-align: center; }
+    .stat-num {
+      font-size: 2rem; font-weight: 900; letter-spacing: -.03em;
+      background: linear-gradient(135deg, #25D366, #A855F7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      display: block; margin-bottom: 6px;
+    }
+    .stat-label { font-size: .75rem; color: var(--text-sub); line-height: 1.4; }
+
+    /* ── COMO FUNCIONA ── */
+    .steps { display: flex; flex-direction: column; }
+    .step { display: flex; gap: 20px; align-items: flex-start; position: relative; padding-bottom: 30px; }
+    .step:last-child { padding-bottom: 0; }
+    .step-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(37,211,102,0.2));
+      border: 1.5px solid rgba(168,85,247,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .95rem; font-weight: 800; color: var(--roxo-light);
+    }
+    .step-line { width: 2px; flex: 1; min-height: 22px; background: linear-gradient(180deg, rgba(168,85,247,0.3), transparent); margin-top: 6px; }
+    .step:last-child .step-line { display: none; }
+    .step-content { padding-top: 10px; }
+    .step-title { font-size: .98rem; font-weight: 700; margin-bottom: 6px; }
+    .step-desc { font-size: .84rem; color: var(--text-sub); line-height: 1.6; }
+
+    /* ── DEPOIMENTOS ── */
+    .testimonials { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .testimonial { background: var(--card); border: 1px solid var(--borda); border-radius: 20px; padding: 24px; }
+    .testimonial .stars { color: var(--ouro); font-size: .9rem; margin-bottom: 12px; letter-spacing: 2px; }
+    .testimonial .quote { font-size: .9rem; color: var(--text-sub); line-height: 1.65; margin-bottom: 16px; font-style: italic; }
+    .testimonial .quote strong { color: var(--text); font-style: normal; }
+    .testimonial .author { display: flex; align-items: center; gap: 12px; }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #7C3AED, #25D366);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; font-weight: 700; color: #fff; flex-shrink: 0;
+      border: 2px solid rgba(37,211,102,.3);
+    }
+    .author-name { font-size: .85rem; font-weight: 700; }
+    .author-detail { font-size: .72rem; color: var(--text-sub); margin-top: 2px; }
+
+    /* ── AUTORIDADE (PROF LORENA) ── */
+    .authority {
+      background: linear-gradient(135deg, rgba(124,58,237,0.10) 0%, rgba(37,211,102,0.06) 100%);
+      border: 1px solid rgba(168,85,247,0.22);
+      border-radius: 28px; padding: 40px 30px;
+    }
+    .authority-head { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
+    .authority-photo {
+      width: 92px; height: 92px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      border: 3px solid rgba(37,211,102,.45);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+    }
+    .authority-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .authority-name { font-size: 1.3rem; font-weight: 900; letter-spacing: -.02em; margin-bottom: 4px; }
+    .authority-role { font-size: .82rem; color: var(--verde); font-weight: 700; }
+    .authority-bio { font-size: .92rem; color: var(--text-sub); line-height: 1.72; margin-bottom: 22px; }
+    .authority-bio strong { color: var(--text); font-weight: 700; }
+    .authority-credentials { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 460px) { .authority-credentials { grid-template-columns: 1fr; } }
+    .cred {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--borda);
+      border-radius: 14px; padding: 13px 16px;
+    }
+    .cred-ico { font-size: 1.15rem; }
+    .cred-txt { font-size: .8rem; font-weight: 600; line-height: 1.3; }
+    .cred-txt span { display: block; color: var(--text-sub); font-weight: 400; font-size: .72rem; }
+
+    /* ── CTA FINAL ── */
+    .cta-final {
+      background: linear-gradient(135deg, rgba(124,58,237,0.14) 0%, rgba(37,211,102,0.09) 100%);
+      border: 1px solid rgba(168,85,247,0.28);
+      border-radius: 28px; padding: 48px 32px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-final::before {
+      content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+      width: 320px; height: 200px;
+      background: radial-gradient(ellipse, rgba(124,58,237,0.22) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-final-title { font-size: clamp(1.55rem, 5vw, 2.25rem); font-weight: 900; line-height: 1.14; letter-spacing: -.03em; margin-bottom: 16px; position: relative; }
+    .cta-final-sub { font-size: .96rem; color: var(--text-sub); line-height: 1.6; margin-bottom: 30px; position: relative; }
+    .cta-final-sub strong { color: var(--text); }
+    .cta-final .price-anchor { margin-bottom: 30px; }
+
+    /* ── FLOATING CTA (mobile) ── */
+    .floating-cta {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+      padding: 14px 20px;
+      background: linear-gradient(180deg, transparent 0%, rgba(7,11,20,0.94) 28%, rgba(7,11,20,1) 100%);
+    }
+    @media (max-width: 600px) { .floating-cta { display: block; } }
+    .floating-cta .cta-btn { width: 100%; padding: 17px 24px; }
+
+    /* ── TIMER ── */
+    .timer-wrap {
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 12px; padding: 12px 20px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 22px;
+    }
+    .timer-text { font-size: .82rem; color: var(--ouro); font-weight: 700; }
+
+    /* ── ANIMATIONS ── */
+    [data-aos] { opacity: 0; transform: translateY(24px); transition: opacity .5s ease, transform .5s ease; }
+    [data-aos].visible { opacity: 1; transform: translateY(0); }
+
+    /* ── FOOTER ── */
+    .footer { text-align: center; padding: 40px 0 20px; font-size: .72rem; color: rgba(255,255,255,.22); }
+    .footer a { color: rgba(255,255,255,.34); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<!-- BARRA DE URGÊNCIA -->
+<div class="urgency-bar">
+  <span class="pulse-dot"></span>
+  Avaliação oficial <strong>GRATUITA</strong> por tempo limitado — garanta a sua agora
+</div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <section class="hero" data-aos>
+    <div class="badge">🎯 Avaliação Oficial · Resultado em 2 min</div>
+
+    <h1 class="hero-title">
+      Descubra se você está no nível <span class="highlight">Básico, Intermediário ou Avançado</span> em Libras
+    </h1>
+
+    <p class="hero-sub">
+      Faça a <strong>avaliação oficial do Clube da Libras</strong> e receba um diagnóstico personalizado do seu nível real — em menos de 2 minutos, sem enrolação.
+    </p>
+
+    <!-- ÂNCORA DE PREÇO -->
+    <div class="price-anchor">
+      <div class="price-old">
+        <span class="lbl">Valor da avaliação</span>
+        R$ 150,00
+      </div>
+      <span class="price-arrow">→</span>
+      <div class="price-new">
+        <span class="lbl">Hoje você faz por</span>
+        <span class="val">R$ 0,00 <small>· GRÁTIS</small></span>
+      </div>
+    </div>
+
+    <div>
+      <a href="/quiz" class="cta-btn">
+        Fazer minha avaliação gratuita <span class="arrow">→</span>
+      </a>
+    </div>
+
+    <p class="cta-note">
+      <span class="check">✓</span> 100% gratuita &nbsp;·&nbsp;
+      <span class="check">✓</span> Resultado imediato &nbsp;·&nbsp;
+      <span class="check">✓</span> Sem cartão de crédito
+    </p>
+
+    <!-- PROVA SOCIAL -->
+    <div class="social-proof">
+      <div class="avatars">
+        <div class="avatar-item"><img src="fotos/IMG_4977.jpg" alt="" onerror="this.style.display='none'"></div>
+        <div class="avatar-item"><img src="fotos/IMG_4993.jpg" alt="" onerror="this.style.display='none'"></div>
+        <div class="avatar-item"><img src="fotos/IMG_4910.jpg" alt="" onerror="this.style.display='none'"></div>
+        <div class="avatar-item" style="font-size:.62rem">+</div>
+      </div>
+      <p class="social-text"><strong>550 pessoas</strong> já fizeram a avaliação e descobriram seu nível real em Libras</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- NÍVEIS -->
+  <section data-aos>
+    <p class="section-label">O que você vai descobrir</p>
+    <h2 class="section-title">Qual é o seu nível hoje?</h2>
+    <p class="section-intro">A avaliação analisa suas respostas e revela exatamente em qual dos 3 níveis você está — e o próximo passo certo para evoluir.</p>
+
+    <div class="levels">
+      <div class="level-card" style="--lvl-color:#25D366">
+        <div class="level-emoji">🌱</div>
+        <div class="level-info">
+          <p class="level-name"><span class="tag">Nível 1</span><br>Básico</p>
+          <p class="level-desc">Você está começando ou ainda trava no básico. Descubra a base que falta para destravar a comunicação.</p>
+        </div>
+      </div>
+      <div class="level-card" style="--lvl-color:#A855F7">
+        <div class="level-emoji">🚀</div>
+        <div class="level-info">
+          <p class="level-name"><span class="tag">Nível 2</span><br>Intermediário</p>
+          <p class="level-desc">Você já se comunica, mas sente que estagnou. Veja o que está te segurando e como chegar à fluência.</p>
+        </div>
+      </div>
+      <div class="level-card" style="--lvl-color:#F59E0B">
+        <div class="level-emoji">🏆</div>
+        <div class="level-info">
+          <p class="level-name"><span class="tag">Nível 3</span><br>Avançado</p>
+          <p class="level-desc">Você domina Libras e quer profissionalizar. Descubra como levar sua interpretação ao próximo nível.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- STATS -->
+  <section data-aos>
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-num">550</span>
+        <span class="stat-label">Pessoas já avaliadas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">2min</span>
+        <span class="stat-label">Para ter seu resultado</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">R$0</span>
+        <span class="stat-label">Custo — 100% gratuita</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- COMO FUNCIONA -->
+  <section data-aos>
+    <p class="section-label">Simples assim</p>
+    <h2 class="section-title">Como funciona em 3 passos</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <p class="step-title">Responda as perguntas rápidas</p>
+          <p class="step-desc">Poucas questões sobre o seu contato com Libras até hoje. Leva menos de 2 minutos.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-num">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <p class="step-title">Descubra seu nível na hora</p>
+          <p class="step-desc">Resultado imediato: Básico, Intermediário ou Avançado — com os pontos exatos para evoluir.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-num">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <p class="step-title">Receba seu plano de evolução</p>
+          <p class="step-desc">Com base no seu perfil, você descobre o caminho certo para a fluência em Libras.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- DEPOIMENTOS -->
+  <section data-aos>
+    <p class="section-label">Quem já fez</p>
+    <h2 class="section-title">O que dizem depois da avaliação</h2>
+
+    <div class="testimonials">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Fiz sem expectativa e me surpreendi. O resultado foi <strong>cirúrgico</strong> — mostrou exatamente por que eu travava na hora de me comunicar. Em 2 minutos entendi o que meses sozinha não me deram."</p>
+        <div class="author">
+          <div class="author-avatar">MC</div>
+          <div><p class="author-name">Mariana C.</p><p class="author-detail">Professora · São Paulo, SP</p></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Achei que era mais um quiz qualquer. Mas o <strong>diagnóstico foi absurdamente preciso</strong>. Apontou meu nível certo e o próximo passo — segui e em 3 semanas já sentia a diferença."</p>
+        <div class="author">
+          <div class="author-avatar">RF</div>
+          <div><p class="author-name">Ricardo F.</p><p class="author-detail">Intérprete em formação · BH, MG</p></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Tentei aprender Libras em 3 cursos diferentes e sempre travava no mesmo ponto. A avaliação mostrou <strong>exatamente qual era o buraco</strong> — e como tapar. Mudou tudo."</p>
+        <div class="author">
+          <div class="author-avatar">JS</div>
+          <div><p class="author-name">Julia S.</p><p class="author-detail">Estudante · Curitiba, PR</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- AUTORIDADE: PROF LORENA -->
+  <section data-aos>
+    <p class="section-label">Quem assina a avaliação</p>
+    <h2 class="section-title">Feita pela Prof. Lorena</h2>
+
+    <div class="authority">
+      <div class="authority-head">
+        <div class="authority-photo">
+          <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena — Fundadora do Clube da Libras"/>
+        </div>
+        <div>
+          <p class="authority-name">Prof. Lorena</p>
+          <p class="authority-role">Fundadora do Clube da Libras · Intérprete e Professora de Libras</p>
+        </div>
+      </div>
+
+      <p class="authority-bio">
+        Com <strong>15 anos de experiência</strong> em Libras, a Prof. Lorena já ajudou <strong>mais de 12 mil alunos</strong> em todo o Brasil a aprender a Língua Brasileira de Sinais de verdade — do absoluto zero à fluência. Criadora do <strong>método exclusivo i+1</strong>, ela transformou a forma como milhares de pessoas se comunicam com a comunidade surda. Esta avaliação foi desenvolvida por ela para te mostrar, com precisão, onde você está e qual o próximo passo.
+      </p>
+
+      <div class="authority-credentials">
+        <div class="cred">
+          <span class="cred-ico">⏳</span>
+          <span class="cred-txt">15 anos<span>de experiência em Libras</span></span>
+        </div>
+        <div class="cred">
+          <span class="cred-ico">🎓</span>
+          <span class="cred-txt">+12 mil alunos<span>transformados no Brasil</span></span>
+        </div>
+        <div class="cred">
+          <span class="cred-ico">🧠</span>
+          <span class="cred-txt">Método i+1<span>exclusivo no Brasil</span></span>
+        </div>
+        <div class="cred">
+          <span class="cred-ico">🇧🇷</span>
+          <span class="cred-txt">Todo o Brasil<span>presença nacional</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final" data-aos>
+    <div class="timer-wrap">
+      <span>⏱️</span>
+      <span class="timer-text">Leva só <span id="countdown">2:00</span> — comece agora</span>
+    </div>
+
+    <h2 class="cta-final-title">Pronto para descobrir<br>seu nível real em Libras?</h2>
+    <p class="cta-final-sub">
+      É gratuito, é rápido e pode ser <strong>o diagnóstico que faltava</strong> para você finalmente avançar em Libras.
+    </p>
+
+    <div class="price-anchor">
+      <div class="price-old">
+        <span class="lbl">Valor da avaliação</span>
+        R$ 150,00
+      </div>
+      <span class="price-arrow">→</span>
+      <div class="price-new">
+        <span class="lbl">Hoje você faz por</span>
+        <span class="val">R$ 0,00 <small>· GRÁTIS</small></span>
+      </div>
+    </div>
+
+    <div>
+      <a href="/quiz" class="cta-btn">
+        Quero fazer minha avaliação <span class="arrow">→</span>
+      </a>
+    </div>
+
+    <p class="cta-note" style="margin-top:20px">
+      <span class="check">✓</span> Sem cartão &nbsp;·&nbsp;
+      <span class="check">✓</span> Sem compromisso &nbsp;·&nbsp;
+      <span class="check">✓</span> Resultado imediato
+    </p>
+  </section>
+
+</div><!-- /page -->
+
+<!-- FLOATING CTA (mobile) -->
+<div class="floating-cta">
+  <a href="/quiz" class="cta-btn">
+    Fazer avaliação gratuita <span class="arrow">→</span>
+  </a>
+</div>
+
+<div class="page">
+  <div class="footer">
+    © 2026 Clube da Libras · <a href="https://nerdsdalibras.github.io/">Nerds da Libras</a>
+  </div>
+</div>
+
+<script>
+  /* AOS simples */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('[data-aos]').forEach(el => io.observe(el));
+
+  /* Countdown visual */
+  let total = 120;
+  const cd = document.getElementById('countdown');
+  setInterval(() => {
+    total = total <= 0 ? 120 : total - 1;
+    cd.textContent = Math.floor(total / 60) + ':' + String(total % 60).padStart(2, '0');
+  }, 1000);
+
+  /* Track clique no CTA */
+  document.querySelectorAll('.cta-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (window.gtag) gtag('event', 'cta_click', { event_category: 'conversion', event_label: 'avaliacao_clube' });
+      if (window.fbq) fbq('track', 'Lead');
+    });
+  });
+</script>
+</body>
+</html>
