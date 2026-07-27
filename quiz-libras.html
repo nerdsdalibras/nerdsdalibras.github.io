@@ -987,31 +987,62 @@ async function showResult() {
   scrollEnd();
 
   await wait(1100);
-  const isGrupo = S.nivelKey === 'avancado';
-  let preOferta;
-  if (S.nivelKey === 'basico') {
-    preOferta = [
-      `O próximo passo para você construir uma base sólida em Libras é o curso <strong>Do Zero a Libras</strong> — e eu sei exatamente como ele encaixa no seu momento. 🎯`,
-      `Mas preciso ser sincera: essa <strong>oferta com desconto só aparece UMA vez</strong> — agora, pra quem faz o quiz pela primeira vez. Depois que você sair daqui, ela não volta. ⏳`,
-      `E pra você ir com total tranquilidade: aproveita a condição, e se não gostar (coisa que eu acho bem difícil! 😄) você tem <strong>7 dias pra testar</strong>. Se não for pra você, eu <strong>te devolvo todo o seu dinheiro</strong>. 💙`,
-      `Posso te liberar essa oferta única agora?`,
-    ];
-  } else if (isGrupo) {
-    preOferta = [
-      `O próximo passo para você sair do <strong>${p.nivel}</strong> e chegar na fluência profissional é ter acompanhamento de perto. 🎯`,
-      `Se eu te convidar agora para entrar no grupo exclusivo da <strong>3ª Turma do Ciclo da Fluência</strong> — que abre dia 20 de julho com oferta especial de lançamento — você entraria agora?`,
-    ];
-  } else {
-    preOferta = [
-      `O próximo passo para você sair do <strong>${p.nivel}</strong> e avançar de verdade é o curso <strong>Do Zero a Libras</strong> — e eu sei exatamente como ele encaixa no seu momento. 🎯`,
-      `Mas preciso ser sincera com você: essa <strong>oferta com desconto só aparece UMA vez</strong> — agora, pra quem faz o quiz pela primeira vez. Depois que você sair daqui, ela não volta. ⏳`,
-      `E pra você ir com total tranquilidade: aproveita a condição, e se não gostar ou se arrepender (coisa que eu acho bem difícil acontecer, viu? 😄) você tem <strong>7 dias pra testar</strong>. Se não for pra você, eu <strong>te devolvo todo o seu dinheiro</strong> — e a nossa amizade continua. 💙`,
-      `Posso te liberar essa oferta única agora?`,
-    ];
-  }
-  await botSay(preOferta);
 
-  showOferta(p, isGrupo);
+  // FASE 2 — convite para envio do vídeo diagnóstico pelo WhatsApp
+  await botSay([
+    `${esc(S.nome)}, agora vamos para a <strong>2ª fase do seu diagnóstico</strong>! 🎯`,
+    `Nessa fase você vai me enviar um vídeo de <strong>até 1 minuto</strong> pelo WhatsApp — e eu mesma, a Lorena, vou assistir e te dar um diagnóstico muito mais preciso da sua sinalização. 💜`,
+    `O vídeo é bem simples. Faz assim:`,
+  ]);
+
+  // card com as instruções do vídeo
+  const instrCard = document.createElement('div');
+  instrCard.className = 'msg-row bot';
+  instrCard.innerHTML = `<div class="card">
+    <div class="card-badge">🎥 Como gravar seu vídeo</div>
+    <div class="card-body" style="margin-top:10px">
+      <ol style="padding-left:18px;margin:0;line-height:1.9">
+        <li>Se apresente: <strong>seu nome e seu sinal</strong> em Libras</li>
+        <li>Conte <strong>por que se interessou por Libras</strong></li>
+        <li>Fale se <strong>já fez algum curso</strong> ou estudou antes</li>
+        <li>Mostre se já <strong>interpretou em algum lugar</strong></li>
+      </ol>
+      <div style="margin-top:14px;font-size:0.85rem;opacity:0.7">⏱ Máximo 1 minuto · pode ser bem simples, sem edição!</div>
+    </div>
+  </div>`;
+  $inner.appendChild(instrCard);
+  scrollEnd();
+
+  await wait(900);
+  await botSay([
+    `Você tem <strong>até 48 horas</strong> para me enviar o vídeo. Depois que eu assistir, o <strong>João Neto</strong> vai entrar em contato para agendar uma videochamada — e aí eu te dou seu diagnóstico completo e personalizado. 💙`,
+    `Clica no botão abaixo para abrir nosso WhatsApp e enviar seu vídeo! 👇`,
+  ]);
+
+  // botão WhatsApp
+  const wppMsg = encodeURIComponent(`Olá Lorena! Acabei de fazer a avaliação de Libras. Meu nome é ${S.nome} e aqui está meu vídeo diagnóstico 🎥`);
+  const wppDiv = document.createElement('div');
+  wppDiv.className = 'msg-row bot';
+  wppDiv.innerHTML = `<div style="padding:4px 0">
+    <a href="https://wa.me/5562994497289?text=${wppMsg}" target="_blank" rel="noopener"
+       style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;font-weight:700;font-size:1rem;padding:16px 20px;border-radius:14px;text-decoration:none;box-shadow:0 4px 16px rgba(37,211,102,0.35)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.523 5.847L0 24l6.32-1.498A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.372l-.359-.213-3.722.882.916-3.617-.234-.372A9.818 9.818 0 1112 21.818z"/></svg>
+      Enviar meu vídeo pelo WhatsApp
+    </a>
+  </div>`;
+  $inner.appendChild(wppDiv);
+  scrollEnd();
+
+  await wait(600);
+  await botSay([`Mal posso esperar para ver sua sinalização! Até breve 💜`]);
+  setInp(`<button class="btn-restart" id="b-restart">↩ Refazer o diagnóstico</button>`);
+  document.getElementById('b-restart').addEventListener('click', restart);
+
+  sendCRM({
+    concluiuQuiz:  true,
+    etapaQuiz:    '5. Concluiu quiz — enviado para WhatsApp (fase 2)',
+    statusCloser: `📹 Aguardando vídeo — Nível ${p.nivel}`,
+  });
 }
 
 /* 7. OFERTA SIM/NÃO */
