@@ -122,10 +122,15 @@ const TICKET_DEFAULT = { curso: 397, mentoria: 1997 };
 
 function calcProjectedValue(lead) {
   const ticket = lead.oferta === 'mentoria' ? TICKET_DEFAULT.mentoria : TICKET_DEFAULT.curso;
-  return ticket * (STAGE_PROB[lead.status || 'novo'] || 0.05);
+  // Pipeline ponderado pela probabilidade da ETAPA comercial
+  const prob = (typeof getEtapa === 'function' && typeof ETAPA_PROB !== 'undefined')
+    ? (ETAPA_PROB[getEtapa(lead)] ?? 0.05)
+    : (STAGE_PROB[lead.status || 'novo'] || 0.05);
+  return ticket * prob;
 }
 function calcTotalPipeline(leads) {
-  return leads.filter(l => l.status !== 'nao_quis').reduce((s, l) => s + calcProjectedValue(l), 0);
+  const perdida = l => (typeof getEtapa === 'function') ? getEtapa(l) === 'perdida' : l.status === 'nao_quis';
+  return leads.filter(l => !perdida(l)).reduce((s, l) => s + calcProjectedValue(l), 0);
 }
 
 /* ═══════════════════════════════════════════

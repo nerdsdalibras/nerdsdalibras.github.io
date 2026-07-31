@@ -1,16 +1,82 @@
 /* ═══════════════════════════════════════════
    PIPELINE — DRAG & DROP + R$ PROJETADO
 ═══════════════════════════════════════════ */
-const PIPELINE_STAGES = [
-  { key: 'novo',              label: 'Novo Lead',       color: '#a1a1aa' },
-  { key: 'morno',             label: 'Morno',           color: '#fbbf24' },
-  { key: 'quente',            label: 'Quente',          color: '#4ade80' },
-  { key: 'muito_quente',      label: 'Muito Quente',    color: '#f87171' },
-  { key: 'prioridade_maxima', label: 'Prioridade Máx.', color: '#a78bfa' },
-  { key: 'aguardando',        label: 'Follow-up',       color: '#f97316' },
-  { key: 'comprou',           label: '✅ Comprou',      color: '#60a5fa' },
-  { key: 'nao_quis',          label: 'Perdido',         color: '#52525b' },
+// ── ETAPAS comerciais (colunas do pipeline) ──
+const ETAPAS = [
+  { key: 'novo',        label: 'Novo Lead',        color: '#a1a1aa' },
+  { key: 'contato',     label: 'Contato iniciado', color: '#60a5fa' },
+  { key: 'conversa',    label: 'Em conversa',      color: '#38bdf8' },
+  { key: 'qualificado', label: 'Qualificado',      color: '#fbbf24' },
+  { key: 'oferta',      label: 'Oferta realizada', color: '#f59e0b' },
+  { key: 'negociacao',  label: 'Negociação/Objeção', color: '#f97316' },
+  { key: 'checkout',    label: 'Checkout enviado', color: '#a78bfa' },
+  { key: 'ganha',       label: '✅ Venda ganha',   color: '#22c55e' },
+  { key: 'perdida',     label: '❌ Venda perdida', color: '#71717a' },
 ];
+const ETAPA_PROB = {
+  novo: 0.03, contato: 0.08, conversa: 0.15, qualificado: 0.25, oferta: 0.35,
+  negociacao: 0.55, checkout: 0.65, ganha: 1, perdida: 0,
+};
+// Mantém compatibilidade com quem ainda referencia PIPELINE_STAGES
+const PIPELINE_STAGES = ETAPAS;
+
+// ── TEMPERATURA (separada do estágio) ──
+const TEMPERATURAS = [
+  { key: 'frio',         label: 'Frio',         emoji: '🔵' },
+  { key: 'morno',        label: 'Morno',        emoji: '🟡' },
+  { key: 'quente',       label: 'Quente',       emoji: '🟢' },
+  { key: 'muito_quente', label: 'Muito quente', emoji: '🔥' },
+];
+function _tempInfo(key) { return TEMPERATURAS.find(t => t.key === key) || TEMPERATURAS[0]; }
+
+// Etapa do lead: usa o campo 'etapa'; se não tiver, deriva dos sinais do funil
+function getEtapa(l) {
+  if (l.etapa && ETAPA_PROB[l.etapa] !== undefined) return l.etapa;
+  var _tv = v => v === true || String(v).toLowerCase() === 'true';
+  if (l.status === 'comprou' || _tv(l.comprouKiwify)) return 'ganha';
+  if (l.status === 'nao_quis') return 'perdida';
+  if (l.clicouCheckout || l.checkoutEm || l.cartaoRecusado || l.boletoGerado || l.pixGerado || l.carrinhoKiwify) return 'checkout';
+  if (_tv(l.concluiuQuiz) || l.clicouOferta) return 'oferta';
+  if (l.contatadoEm) return 'contato';
+  return 'novo';
+}
+// Temperatura do lead: usa o campo 'temperatura'; senão deriva do status/classificação antigos
+function getTemperatura(l) {
+  if (l.temperatura) return l.temperatura;
+  var st = l.status || '';
+  var cl = String(l.classificacaoLead || '').toUpperCase();
+  if (st === 'prioridade_maxima' || st === 'muito_quente' || l.cartaoRecusado) return 'muito_quente';
+  if (st === 'quente' || cl === 'QUENTE') return 'quente';
+  if (st === 'morno' || cl === 'MORNO') return 'morno';
+  return 'frio';
+}
+
+// Muda a etapa (drag ou seletor). Sincroniza o status p/ ganha/perdida.
+function setEtapa(sessionId, etapa) {
+  var patch = { etapa: etapa };
+  if (etapa === 'ganha') patch.status = 'comprou';
+  else if (etapa === 'perdida') patch.status = 'nao_quis';
+  patchLead(sessionId, patch);
+  if (currentPage === 'pipeline')      renderPipeline();
+  else if (currentPage === 'leads')    renderLeads();
+  if (currentLead && currentLead.sessionId === sessionId) renderTab(currentTab);
+}
+// Muda a temperatura
+function setTemperatura(sessionId, temp, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  patchLead(sessionId, { temperatura: temp });
+  if (currentPage === 'pipeline')      renderPipeline();
+  else if (currentPage === 'leads')    renderLeads();
+  if (currentLead && currentLead.sessionId === sessionId) renderTab(currentTab);
+}
+// Clique no emoji do card → cicla a temperatura
+function ciclarTemperatura(sessionId, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  var l = (cachedLeads || []).find(x => x.sessionId === sessionId);
+  if (!l) return;
+  var i = TEMPERATURAS.findIndex(t => t.key === getTemperatura(l));
+  setTemperatura(sessionId, TEMPERATURAS[(i + 1) % TEMPERATURAS.length].key, e);
+}
 
 /* Filtro por produto/oferta do pipeline */
 const PIPELINE_OFERTAS = [
@@ -63,9 +129,9 @@ async function renderPipeline() {
     proj.textContent = `💰 Pipeline projetado: R$ ${Math.round(total).toLocaleString('pt-BR')}`;
   }
 
-  kanban.innerHTML = PIPELINE_STAGES.map(stage => {
-    const sl  = leads.filter(l => (l.status || 'novo') === stage.key);
-    const val = sl.filter(l => stage.key !== 'nao_quis')
+  kanban.innerHTML = ETAPAS.map(stage => {
+    const sl  = leads.filter(l => getEtapa(l) === stage.key);
+    const val = sl.filter(l => stage.key !== 'perdida')
       .reduce((s, l) => s + calcProjectedValue(l), 0);
     return `
       <div class="kanban-col">
@@ -77,7 +143,7 @@ async function renderPipeline() {
             </div>
             <span class="col-count">${sl.length}</span>
           </div>
-          ${stage.key !== 'nao_quis' && val > 0
+          ${stage.key !== 'perdida' && val > 0
             ? `<div class="col-value">R$ ${Math.round(val).toLocaleString('pt-BR')}</div>` : ''}
         </div>
         <div class="col-cards" data-stage="${stage.key}">
@@ -90,7 +156,7 @@ async function renderPipeline() {
                 return `
                   <div class="mini-card ${l.contatadoEm ? 'contatado' : ''}" data-session-id="${l.sessionId}" onclick="openLead('${l.sessionId}')">
                     <div class="mini-card-top">
-                      <div class="mini-name">${l.nome || 'Lead'}</div>
+                      <div class="mini-name"><span onclick="ciclarTemperatura('${l.sessionId}', event)" title="Temperatura: ${_tempInfo(getTemperatura(l)).label} (clique p/ mudar)" style="cursor:pointer">${_tempInfo(getTemperatura(l)).emoji}</span> ${l.nome || 'Lead'}</div>
                       ${dtTxt ? `<div class="mini-date">${dtTxt}</div>` : ''}
                     </div>
                     <div class="mini-sub">${l.whatsapp || '—'}${ofIcon ? ' · ' + ofIcon : ''}</div>
@@ -129,15 +195,7 @@ function initSortable() {
         const sessionId = evt.item.dataset.sessionId;
         const newStage  = evt.to.dataset.stage;
         if (sessionId && newStage) {
-          atualizarStatus(sessionId, newStage);
-          const proj = document.getElementById('pipeline-projection');
-          if (proj && cachedLeads) {
-            const total = calcTotalPipeline(cachedLeads.filter(leadMatchOferta));
-            proj.textContent = `💰 Pipeline projetado: R$ ${Math.round(total).toLocaleString('pt-BR')}`;
-          }
-          const colHeader = evt.to.closest('.kanban-col')?.querySelector('.col-value');
-          // Recalculate column value
-          setTimeout(() => renderPipeline(), 300);
+          setEtapa(sessionId, newStage);   // muda a etapa + re-renderiza
         }
       }
     });

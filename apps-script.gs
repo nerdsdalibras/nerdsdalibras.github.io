@@ -51,6 +51,8 @@ const COL_TO_FIELD = {
   'Grupo Indicado':   'grupoIndicado',
   'classificacaoLead':'classificacaoLead',
   'status':           'status',
+  'etapa':            'etapa',           // etapa comercial do pipeline
+  'temperatura':      'temperatura',     // frio | morno | quente | muito_quente
   'statusCloser':     'statusCloser',
   'observacoes':      'observacoes',
   'comprouKiwify':    'comprouKiwify',
@@ -102,7 +104,7 @@ const NEW_COLS = [
   'etapaQuiz','experiencia','respostasQuiz','interesseCAS','clicouOferta','plataformaOferta','ofertaEm','campanhaAbriuEm',
   'utmSource','utmMedium','utmCampaign','utmContent','utmTerm','firstTouch','firstTouchEm','lastTouch','landingPage','referrer',
   'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
-  'status','statusCloser','observacoes',
+  'status','etapa','temperatura','statusCloser','observacoes',
   'comprouKiwify','valorPago','ultimaCompraEm','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',
   'kiwifyEvento','kiwifyEventoEm',
   'boletoGerado','pixGerado','carrinhoKiwify',

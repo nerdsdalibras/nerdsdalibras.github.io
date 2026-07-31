@@ -148,12 +148,17 @@ function renderTab(tab) {
       </div>
 
       <div class="panel-section">
-        <div class="panel-section-title">Status do Pipeline</div>
-        <select class="panel-status-select" onchange="atualizarStatus('${l.sessionId}', this.value)">
-          ${Object.entries(DecisionEngine.STATUS_LABELS).map(([k,v]) =>
-            `<option value="${k}" ${(l.status || 'novo') === k ? 'selected' : ''}>${v}</option>`
-          ).join('')}
+        <div class="panel-section-title">Etapa do Pipeline</div>
+        <select class="panel-status-select" onchange="setEtapa('${l.sessionId}', this.value)">
+          ${ETAPAS.map(s => `<option value="${s.key}" ${getEtapa(l) === s.key ? 'selected' : ''}>${s.label}</option>`).join('')}
         </select>
+        <div class="panel-section-title" style="margin-top:14px">Temperatura</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${TEMPERATURAS.map(t => `<button onclick="setTemperatura('${l.sessionId}','${t.key}')"
+            style="flex:1;min-width:66px;padding:8px 4px;border-radius:8px;cursor:pointer;font-size:.76rem;color:var(--text);
+            border:1px solid ${getTemperatura(l) === t.key ? 'var(--g)' : 'var(--bdr)'};
+            background:${getTemperatura(l) === t.key ? 'var(--gd)' : 'var(--s2)'}">${t.emoji} ${t.label}</button>`).join('')}
+        </div>
       </div>
 
       <div class="panel-section">
