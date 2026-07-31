@@ -24,9 +24,17 @@ async function renderNewsletter() {
     { key: 'todos',    label: '👥 Todos' },
   ];
 
+  const mailerlite = `
+    <div style="background:var(--gd);border:1px solid var(--gg);border-radius:14px;padding:16px;margin-bottom:18px">
+      <div style="font-weight:800;margin-bottom:4px">📮 Volume grande? Use o MailerLite (grátis)</div>
+      <div style="font-size:.8rem;color:var(--ts);margin-bottom:12px">Exporte seus leads já separados por grupo (Curso/Mentoria/Ebook) e importe no MailerLite pra mandar milhares de e-mails com entrega melhor.</div>
+      <button onclick="exportMailerLite()" style="background:var(--g);color:#0b0b0d;border:none;font-weight:700;padding:10px 16px;border-radius:9px;cursor:pointer">📥 Exportar leads para o MailerLite</button>
+    </div>`;
+
   const form = `
     <div style="background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:18px;margin-bottom:18px">
-      <div style="font-weight:800;margin-bottom:12px">✍️ Escrever e-mail</div>
+      <div style="font-weight:800;margin-bottom:4px">✍️ Escrever e-mail <span style="font-size:.72rem;font-weight:400;color:var(--td)">(envio pelo Gmail — até 100/dia)</span></div>
+      <div style="height:8px"></div>
 
       <div style="font-size:.72rem;color:var(--ts);margin-bottom:6px">Enviar para o grupo:</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
@@ -55,8 +63,30 @@ async function renderNewsletter() {
       </div>
     </div>`;
 
-  el.innerHTML = form + '<div id="nl-lista" style="color:var(--td);font-size:.85rem">Carregando agendamentos…</div>';
+  el.innerHTML = mailerlite + form + '<div id="nl-lista" style="color:var(--td);font-size:.85rem">Carregando agendamentos…</div>';
   _nlCarregarLista();
+}
+
+// Exporta os leads (com e-mail) em CSV separado por grupo, pronto p/ MailerLite
+function exportMailerLite() {
+  const grpLabel = { curso: 'Curso', mentoria: 'Mentoria', ebook: 'Ebook', outro: 'Outro' };
+  const leads = (cachedLeads || []).filter(l => l.email && String(l.email).indexOf('@') > 0);
+  if (!leads.length) { showToast('Nenhum lead com e-mail cadastrado'); return; }
+  const rows = [['email', 'nome', 'grupo', 'nivel', 'whatsapp']];
+  const vistos = {};
+  leads.forEach(l => {
+    const em = String(l.email).toLowerCase().trim();
+    if (vistos[em]) return; vistos[em] = true;
+    rows.push([em, String(l.nome || '').split(' ')[0], grpLabel[grupoProduto(l)] || 'Outro', l.nivelIdentificado || '', l.whatsapp || '']);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c == null ? '' : c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'leads-nerds-mailerlite.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  showToast(`${rows.length - 1} leads exportados 📥`);
 }
 
 function _nlPick(k) { _nlSeg = k; renderNewsletter(); }
