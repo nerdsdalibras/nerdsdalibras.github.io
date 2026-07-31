@@ -141,6 +141,15 @@ function doPost(e) {
       return respond({ ok: true });
     }
 
+    // Newsletter: agenda (ou envia já) um e-mail para um SEGMENTO (curso/mentoria/ebook/todos)
+    if (data && data.action === 'scheduleCampaign' && data.assunto) {
+      return respond(scheduleCampaign(data));
+    }
+    // Excluir um agendamento pendente
+    if (data && data.action === 'deleteAgendamento' && data.id) {
+      return respond({ ok: _deleteAgendamento(data.id) });
+    }
+
     // Webhook da Eduzz (Mentoria) — checa antes da Kiwify pois tem campos próprios
     if (isEduzzPayload(data)) {
       _logWebhook('eduzz', raw);
@@ -197,6 +206,9 @@ function doGet(e) {
   }
   if (action === 'getConfig') {
     return respond(getConfig());
+  }
+  if (action === 'getAgendamentos') {
+    return respond(getAgendamentos());
   }
   if (action === 'aiAnalyze') {
     return respond(aiAnalyze(e.parameter.data));
@@ -496,6 +508,136 @@ function getVendas() {
     });
   }
   return out;
+}
+
+// ── NEWSLETTER: envio por segmento + agendamento ──
+// Classifica o grupo de produto do lead (server-side)
+function _grupoProduto(o) {
+  var plat = String(o.plataformaOferta || '').toLowerCase();
+  var of   = String(o.oferta || '').toLowerCase();
+  var res  = String(o.resultado || '').toLowerCase();
+  var niv  = String(o.nivelIdentificado || '').toLowerCase();
+  if (of === 'mentoria' || plat === 'grupo' || res.indexOf('mentoria') >= 0 || res.indexOf('ciclo') >= 0 || res.indexOf('cdf') >= 0 || niv.indexOf('avan') >= 0) return 'mentoria';
+  if (of === 'ebook' || plat === 'eduzz' || res.indexOf('ebook') >= 0 || res.indexOf('caminho para se tornar') >= 0) return 'ebook';
+  if (plat === 'kiwify' || of === 'curso' || res.indexOf('zero a libras') >= 0 || niv.indexOf('intermedi') >= 0) return 'curso';
+  return 'outro';
+}
+
+// Envia um e-mail para um SEGMENTO (curso | mentoria | ebook | todos). Retorna quantos foram.
+function _enviarSegmento(segmento, subject, body) {
+  var sheet   = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 0;
+  var headers  = getHeaders(sheet);
+  var emailCol = headers.indexOf('Email') >= 0 ? headers.indexOf('Email') : headers.indexOf('email');
+  var nomeCol  = headers.indexOf('Nome')  >= 0 ? headers.indexOf('Nome')  : headers.indexOf('nome');
+  var sidCol   = headers.indexOf('sessionId');
+  if (emailCol < 0) return 0;
+  var iPlat = headers.indexOf('plataformaOferta');
+  var iOf   = headers.indexOf('oferta');
+  var iRes  = headers.indexOf('Resultado') >= 0 ? headers.indexOf('Resultado') : headers.indexOf('resultado');
+  var iNiv  = headers.indexOf('Nível')     >= 0 ? headers.indexOf('Nível')     : headers.indexOf('nivelIdentificado');
+
+  var bodyTpl = /\{nome\}/i.test(String(body)) ? String(body) : ('Oi {nome},\n\n' + String(body));
+  var campId  = 'c' + Date.now();
+  var appUrl  = _webAppUrl();
+  var data    = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+  var quota   = MailApp.getRemainingDailyQuota();
+  var sent = 0, alvo = 0, vistos = {};
+
+  for (var r = 0; r < data.length; r++) {
+    var email = String(data[r][emailCol] || '').trim().toLowerCase();
+    if (!email || email.indexOf('@') < 0 || vistos[email]) continue;   // dedup por e-mail
+    var grp = _grupoProduto({
+      plataformaOferta: iPlat >= 0 ? data[r][iPlat] : '',
+      oferta:           iOf   >= 0 ? data[r][iOf]   : '',
+      resultado:        iRes  >= 0 ? data[r][iRes]  : '',
+      nivelIdentificado: iNiv >= 0 ? data[r][iNiv]  : '',
+    });
+    if (segmento !== 'todos' && grp !== segmento) continue;
+    vistos[email] = true; alvo++;
+    if (sent >= quota) continue;
+
+    var nome  = String(nomeCol >= 0 ? data[r][nomeCol] : '').split(' ')[0] || 'você';
+    var sid   = sidCol >= 0 ? data[r][sidCol] : '';
+    var subj  = String(subject).replace(/\{nome\}/gi, nome);
+    var corpo = bodyTpl.replace(/\{nome\}/gi, nome);
+    var html  = corpo.replace(/\n/g, '<br>');
+    if (appUrl) html += '<img src="' + appUrl + '?action=open&c=' + encodeURIComponent(campId) + '&s=' + encodeURIComponent(sid) + '" width="1" height="1" alt="" style="width:1px;height:1px;border:0">';
+    try { MailApp.sendEmail({ to: email, subject: subj, body: corpo, htmlBody: html, name: EMAIL_CFG.fromName }); sent++; }
+    catch (e) {}
+  }
+  _logCampanha(campId, subject, 'Newsletter · ' + segmento, alvo, sent);
+  Logger.log('Newsletter ' + segmento + ' — alvo: ' + alvo + ' | enviados: ' + sent);
+  return sent;
+}
+
+// Agenda (ou envia já, se a data já passou) uma campanha de segmento.
+function scheduleCampaign(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Agendamentos');
+  if (!sh) { sh = ss.insertSheet('Agendamentos'); sh.appendRow(['id', 'criadaEm', 'segmento', 'assunto', 'corpo', 'quando', 'status', 'enviados']); }
+  var id     = 'a' + Date.now();
+  var agora  = new Date();
+  var quando = data.quando ? new Date(data.quando) : agora;
+  var seg    = data.segmento || 'todos';
+
+  if (quando <= agora) {
+    var n = _enviarSegmento(seg, data.assunto || '', data.corpo || '');
+    sh.appendRow([id, agora, seg, data.assunto || '', data.corpo || '', agora, 'enviado', n]);
+    return { ok: true, status: 'enviado', enviados: n };
+  }
+  sh.appendRow([id, agora, seg, data.assunto || '', data.corpo || '', quando, 'pendente', '']);
+  return { ok: true, status: 'agendado' };
+}
+
+// Roda pelo GATILHO de tempo: envia os agendamentos vencidos.
+function processarAgendamentos() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Agendamentos');
+  if (!sh || sh.getLastRow() < 2) return 0;
+  var vals  = sh.getRange(2, 1, sh.getLastRow() - 1, 8).getValues();
+  var agora = new Date();
+  var total = 0;
+  for (var i = 0; i < vals.length; i++) {
+    if (String(vals[i][6]) !== 'pendente') continue;
+    var quando = vals[i][5] ? new Date(vals[i][5]) : agora;
+    if (quando > agora) continue;
+    var n = _enviarSegmento(String(vals[i][2] || 'todos'), String(vals[i][3] || ''), String(vals[i][4] || ''));
+    sh.getRange(i + 2, 7).setValue('enviado');
+    sh.getRange(i + 2, 8).setValue(n);
+    total += n;
+  }
+  Logger.log('Agendamentos processados — e-mails enviados: ' + total);
+  return total;
+}
+
+function getAgendamentos() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Agendamentos');
+  if (!sh || sh.getLastRow() < 2) return [];
+  var vals = sh.getRange(2, 1, sh.getLastRow() - 1, 8).getValues();
+  var out = [];
+  for (var i = vals.length - 1; i >= 0; i--) {
+    out.push({
+      id: vals[i][0], criadaEm: vals[i][1] ? new Date(vals[i][1]).toISOString() : '',
+      segmento: vals[i][2], assunto: vals[i][3],
+      quando: vals[i][5] ? new Date(vals[i][5]).toISOString() : '',
+      status: vals[i][6], enviados: vals[i][7],
+    });
+  }
+  return out;
+}
+
+function _deleteAgendamento(id) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Agendamentos');
+  if (!sh || sh.getLastRow() < 2) return false;
+  var ids = sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues();
+  for (var i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]) === String(id)) { sh.deleteRow(i + 2); return true; }
+  }
+  return false;
 }
 
 function handleKiwifyWebhook(data) {
