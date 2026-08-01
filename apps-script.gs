@@ -212,6 +212,14 @@ function doGet(e) {
   if (action === 'getAgendamentos') {
     return respond(getAgendamentos());
   }
+  // Isca digital: info pública do formulário
+  if (action === 'getIsca') {
+    return respond(getIsca(e.parameter.id));
+  }
+  // Isca digital: inscrição → cria lead + envia o material por e-mail
+  if (action === 'subscribeIsca') {
+    return respond(subscribeIsca(e.parameter.id, e.parameter.nome, e.parameter.email, e.parameter.whatsapp));
+  }
   if (action === 'aiAnalyze') {
     return respond(aiAnalyze(e.parameter.data));
   }
@@ -1270,6 +1278,45 @@ function getCampanhaLeads(campId) {
     });
   }
   return { abriram: coletar('Aberturas'), clicaram: coletar('Cliques') };
+}
+
+// ── ISCA DIGITAL (lead magnet) ────────────────────
+// As iscas ficam na config da nuvem (aba Config, chave "iscas"), gerenciadas
+// pelo dashboard. Cada isca: { id, nome, titulo, descricao, assuntoEmail,
+// corpoEmail, linkMaterial, pedeWhatsapp }.
+function _getIscaConfig(id) {
+  var cfg = getConfig();
+  var arr = cfg && cfg.iscas;
+  if (!arr || !arr.length) return null;
+  for (var i = 0; i < arr.length; i++) { if (String(arr[i].id) === String(id)) return arr[i]; }
+  return null;
+}
+function getIsca(id) {
+  var m = _getIscaConfig(id);
+  if (!m) return { error: 'Isca não encontrada' };
+  return { titulo: m.titulo || m.nome || 'Material gratuito', descricao: m.descricao || '', pedeWhatsapp: !!m.pedeWhatsapp };
+}
+// Inscrição: cria/atualiza o lead e ENVIA o material por e-mail na hora.
+function subscribeIsca(id, nome, email, whatsapp) {
+  var m = _getIscaConfig(id);
+  if (!m) return { error: 'Isca não encontrada' };
+  email = String(email || '').toLowerCase().trim();
+  if (!email || email.indexOf('@') < 0) return { error: 'E-mail inválido' };
+  var phone = String(whatsapp || '').replace(/\D/g, '');
+  var origem = 'Isca: ' + (m.nome || m.titulo || 'material');
+
+  try {
+    _upsertByContact({ nome: nome || '', email: email, whatsapp: phone, etapa: 'contato', updatedAt: new Date().toISOString() }, phone, email, nome || '', origem);
+  } catch (e) {}
+
+  var link = m.linkMaterial || '';
+  try {
+    var primeiro = String(nome || 'você').split(' ')[0];
+    var subj  = String(m.assuntoEmail || 'Seu material chegou! 🎁').replace(/\{nome\}/gi, primeiro).replace(/\{link\}/gi, link);
+    var corpo = String(m.corpoEmail || 'Oi {nome}!\n\nAqui está o seu material:\n{link}\n\nAproveite! 💜').replace(/\{nome\}/gi, primeiro).replace(/\{link\}/gi, link);
+    MailApp.sendEmail({ to: email, subject: subj, body: corpo, htmlBody: corpo.replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s<>"']+)/g, '<a href="$1">$1</a>'), name: EMAIL_CFG.fromName });
+  } catch (e) {}
+  return { ok: true, link: link };
 }
 
 // Lê o histórico de campanhas (mais recente primeiro) com aberturas ÚNICAS por campanha

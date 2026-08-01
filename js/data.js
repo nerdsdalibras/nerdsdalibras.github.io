@@ -73,6 +73,7 @@ function setPage(page) {
   else if (page === 'products')   renderProducts();
   else if (page === 'campaigns')  renderCampaigns();
   else if (page === 'newsletter') renderNewsletter();
+  else if (page === 'iscas')      renderIscas();
   else                            renderLeads();
 
   // Zera o contador de "novos" da aba visitada (Leads / Checkout)

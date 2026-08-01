@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Material Gratuito — Nerds da Libras</title>
+  <meta name="robots" content="noindex"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{ --bg:#1A0E2E; --card:#2D1B3D; --accent:#C97FD8; --accent2:#A855C0; --text:#F3E8FF; --muted:#A888C0; --border:rgba(201,127,216,.2); }
+    body{ background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+      background-image:radial-gradient(ellipse at 50% 0%, rgba(201,127,216,.12) 0%, transparent 60%); }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:20px; padding:30px 24px; max-width:440px; width:100%; box-shadow:0 12px 40px rgba(0,0,0,.5); }
+    .badge{ display:inline-block; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#1A0E2E; font-size:11px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; padding:5px 14px; border-radius:99px; margin-bottom:14px; }
+    h1{ font-size:22px; font-weight:900; line-height:1.25; margin-bottom:10px; }
+    .desc{ font-size:14.5px; color:var(--muted); line-height:1.6; margin-bottom:22px; white-space:pre-wrap; }
+    label{ font-size:12px; color:var(--muted); font-weight:600; display:block; margin:0 0 5px 2px; }
+    input{ width:100%; padding:13px 14px; margin-bottom:14px; border-radius:11px; border:1px solid var(--border); background:#1A0E2E; color:var(--text); font-size:15px; }
+    input:focus{ outline:none; border-color:var(--accent); }
+    button{ width:100%; padding:15px; border:none; border-radius:26px; font-size:15px; font-weight:800; color:#1A0E2E; cursor:pointer;
+      background:linear-gradient(135deg,var(--accent),var(--accent2)); box-shadow:0 6px 22px rgba(201,127,216,.4); transition:transform .15s; }
+    button:hover{ transform:translateY(-2px); } button:disabled{ opacity:.6; cursor:default; transform:none; }
+    .err{ color:#F87171; font-size:13px; margin-bottom:10px; display:none; }
+    .ok{ text-align:center; }
+    .ok-emoji{ font-size:48px; margin-bottom:8px; }
+    .ok-link{ display:inline-block; margin-top:16px; padding:13px 22px; border-radius:24px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#1A0E2E; font-weight:800; text-decoration:none; }
+    .foot{ text-align:center; font-size:11px; color:var(--muted); margin-top:18px; }
+  </style>
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '2091933185003703');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="badge">🎁 Material Gratuito</div>
+    <h1 id="titulo">Carregando…</h1>
+    <div class="desc" id="descricao"></div>
+    <div id="form-area">
+      <div class="err" id="err"></div>
+      <label>Seu nome</label>
+      <input id="nome" type="text" placeholder="Como podemos te chamar?" autocomplete="given-name"/>
+      <div id="wpp-wrap" style="display:none">
+        <label>Seu WhatsApp</label>
+        <input id="whatsapp" type="tel" placeholder="(00) 00000-0000" inputmode="tel"/>
+      </div>
+      <label>Seu melhor e-mail</label>
+      <input id="email" type="email" placeholder="voce@email.com" autocomplete="email" inputmode="email"/>
+      <button id="btn" onclick="enviar()">Quero receber grátis 💜</button>
+    </div>
+    <div class="foot">Nerds da Libras · Profa. Lorena</div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    var params = new URLSearchParams(location.search);
+    var iscaId = params.get('id') || '';
+    var iscaData = { titulo: 'Material gratuito', descricao: '', pedeWhatsapp: false };
+
+    (function init(){
+      if (!iscaId) { document.getElementById('titulo').textContent = 'Link inválido'; document.getElementById('form-area').style.display='none'; return; }
+      fetch(CONFIG.SHEETS_URL + '?action=getIsca&id=' + encodeURIComponent(iscaId), { redirect:'follow' })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d && !d.error) {
+            iscaData = d;
+            document.getElementById('titulo').textContent = d.titulo || 'Material gratuito';
+            document.getElementById('descricao').textContent = d.descricao || '';
+            if (d.pedeWhatsapp) document.getElementById('wpp-wrap').style.display = 'block';
+          } else {
+            document.getElementById('titulo').textContent = 'Material não encontrado';
+            document.getElementById('form-area').style.display = 'none';
+          }
+        })
+        .catch(function(){ document.getElementById('titulo').textContent = 'Material gratuito'; });
+    })();
+
+    function enviar(){
+      var nome = (document.getElementById('nome').value||'').trim();
+      var email = (document.getElementById('email').value||'').trim();
+      var wpp = (document.getElementById('whatsapp') ? document.getElementById('whatsapp').value : '').trim();
+      var err = document.getElementById('err');
+      if (nome.length < 2) { err.textContent='Escreve seu nome 😊'; err.style.display='block'; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) { err.textContent='E-mail inválido, confere aí 😊'; err.style.display='block'; return; }
+      err.style.display='none';
+      var btn = document.getElementById('btn'); btn.disabled = true; btn.textContent = 'Enviando…';
+
+      var url = CONFIG.SHEETS_URL + '?action=subscribeIsca&id=' + encodeURIComponent(iscaId)
+        + '&nome=' + encodeURIComponent(nome) + '&email=' + encodeURIComponent(email) + '&whatsapp=' + encodeURIComponent(wpp);
+      fetch(url, { redirect:'follow' })
+        .then(function(r){ return r.json(); })
+        .then(function(d){ sucesso(d && d.link ? d.link : ''); })
+        .catch(function(){ sucesso(''); });
+    }
+
+    function sucesso(link){
+      var card = document.getElementById('card');
+      card.innerHTML = '<div class="ok">'
+        + '<div class="ok-emoji">✅</div>'
+        + '<h1>Prontinho! 💜</h1>'
+        + '<div class="desc" style="margin-top:10px">Enviei o material pro seu <strong>e-mail</strong> — dá uma olhada (e confere o spam, por via das dúvidas).</div>'
+        + (link ? '<a class="ok-link" href="' + link.replace(/"/g,'&quot;') + '" target="_blank" rel="noopener">👉 Acessar agora</a>' : '')
+        + '<div class="foot" style="margin-top:22px">Nerds da Libras · Profa. Lorena</div>'
+        + '</div>';
+    }
+  </script>
+</body>
+</html>
