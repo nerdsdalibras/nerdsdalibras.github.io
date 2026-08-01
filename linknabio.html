@@ -162,7 +162,6 @@
     .banner-card:hover{
       transform:translateY(-3px);
       box-shadow:0 14px 34px rgba(0,0,0,.6);
-      border-color:rgba(249,178,51,.4);
     }
     /* brilho diagonal */
     .banner-card::before{
@@ -203,20 +202,33 @@
       display:flex;align-items:center;justify-content:center;gap:6px;
       width:100%;margin-top:14px;
       font-size:13px;font-weight:900;
-      background:linear-gradient(135deg,var(--gold-2),#d97706);color:#111;
       border-radius:24px;padding:12px 14px;text-align:center;
       letter-spacing:.04em;text-transform:uppercase;
-      box-shadow:0 4px 16px rgba(245,158,11,.3);
       transition:box-shadow .2s,transform .15s;
     }
-    .banner-card:hover .banner-btn{box-shadow:0 6px 26px rgba(245,158,11,.55);}
-    /* variante botão "verde" (grupo) */
-    .banner-btn.green{
-      background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;
-      box-shadow:0 4px 16px rgba(37,211,102,.3);
-    }
-    .banner-card:hover .banner-btn.green{box-shadow:0 6px 26px rgba(37,211,102,.55);}
     .banner-btn svg{width:14px;height:14px;flex-shrink:0;}
+
+    /* ── IDENTIDADE POR CARD ── */
+    /* Dourado — Curso */
+    .id-gold .banner-tag{color:#f9b233;border-color:rgba(249,178,51,.45);}
+    .id-gold .banner-img::after{background:linear-gradient(to bottom,transparent 45%,rgba(217,119,6,.28) 100%);}
+    .id-gold .banner-btn{background:linear-gradient(135deg,#f9b233,#d97706);color:#111;box-shadow:0 4px 16px rgba(245,158,11,.3);}
+    .id-gold:hover{border-color:rgba(249,178,51,.55);box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 22px rgba(245,158,11,.22);}
+    .id-gold:hover .banner-btn{box-shadow:0 6px 26px rgba(245,158,11,.55);}
+
+    /* Violeta — E-book */
+    .id-violet .banner-tag{color:#c4b5fd;border-color:rgba(139,92,246,.5);}
+    .id-violet .banner-img::after{background:linear-gradient(to bottom,transparent 45%,rgba(109,40,217,.35) 100%);}
+    .id-violet .banner-btn{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;box-shadow:0 4px 16px rgba(139,92,246,.32);}
+    .id-violet:hover{border-color:rgba(139,92,246,.6);box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 22px rgba(139,92,246,.25);}
+    .id-violet:hover .banner-btn{box-shadow:0 6px 26px rgba(139,92,246,.55);}
+
+    /* Azul — Serviços/Intérprete */
+    .id-blue .banner-tag{color:#93c5fd;border-color:rgba(59,130,246,.5);}
+    .id-blue .banner-img::after{background:linear-gradient(to bottom,transparent 45%,rgba(29,78,216,.4) 100%);}
+    .id-blue .banner-btn{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 4px 16px rgba(59,130,246,.32);}
+    .id-blue:hover{border-color:rgba(59,130,246,.6);box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 22px rgba(59,130,246,.25);}
+    .id-blue:hover .banner-btn{box-shadow:0 6px 26px rgba(59,130,246,.55);}
 
     /* ── WHATSAPP (COMUNIDADE) ── */
     .whatsapp-card{
@@ -310,9 +322,9 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
   <!-- ═══ VITRINE (BANNERS) ═══ -->
   <div class="section-label">Como posso te ajudar hoje</div>
 
-  <a class="banner-card" href="https://clubedalibras.com/vsl" target="_blank">
+  <a class="banner-card id-gold" href="https://clubedalibras.com/vsl" target="_blank">
     <div class="banner-img">
-      <span class="banner-tag">Curso completo</span>
+      <span class="banner-tag">Formação 350h</span>
       <img src="fotos/card-curso.jpg" alt="Curso Do Zero a Libras"/>
     </div>
     <div class="banner-body">
@@ -322,27 +334,27 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
     </div>
   </a>
 
-  <a class="banner-card" href="/precisodeinterprete/" target="_blank">
+  <a class="banner-card id-violet" href="https://clubedalibras.com/ebooklibras" target="_blank">
     <div class="banner-img">
-      <span class="banner-tag">Serviços</span>
-      <img src="fotos/card-interprete.jpg" alt="Preciso de Intérprete de Libras — Prefeituras, Empresas e Eventos"/>
-    </div>
-    <div class="banner-body">
-      <div class="banner-title">Preciso de Intérprete de Libras</div>
-      <div class="banner-desc">Prefeituras, empresas e eventos: contrate intérpretes profissionais e garanta acessibilidade e inclusão de verdade.</div>
-      <span class="banner-btn">Solicitar intérprete →</span>
-    </div>
-  </a>
-
-  <a class="banner-card" href="https://clubedalibras.com/ebooklibras" target="_blank">
-    <div class="banner-img">
-      <span class="banner-tag">E-book</span>
+      <span class="banner-tag">Acesso imediato</span>
       <img src="fotos/mockup-ebook.jpg" alt="Ebook Intérprete de Libras"/>
     </div>
     <div class="banner-body">
       <div class="banner-title">O caminho para se tornar intérprete de Libras</div>
       <div class="banner-desc">Saiba exatamente o que a Lei nº 14.704/2023 exige — e pare de perder tempo em cursos que não te habilitam para a profissão.</div>
       <span class="banner-btn">Quero saber o caminho certo →</span>
+    </div>
+  </a>
+
+  <a class="banner-card id-blue" href="/precisodeinterprete/" target="_blank">
+    <div class="banner-img">
+      <span class="banner-tag">Orçamento</span>
+      <img src="fotos/card-interprete.jpg" alt="Preciso de Intérprete de Libras — Prefeituras, Empresas e Eventos"/>
+    </div>
+    <div class="banner-body">
+      <div class="banner-title">Preciso de Intérprete de Libras</div>
+      <div class="banner-desc">Prefeituras, empresas e eventos: contrate intérpretes profissionais e garanta acessibilidade e inclusão de verdade.</div>
+      <span class="banner-btn">Solicitar intérprete →</span>
     </div>
   </a>
 
