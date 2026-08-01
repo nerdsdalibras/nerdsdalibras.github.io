@@ -220,6 +220,10 @@ function doGet(e) {
   if (action === 'subscribeIsca') {
     return respond(subscribeIsca(e.parameter.id, e.parameter.nome, e.parameter.email, e.parameter.whatsapp));
   }
+  // Formulário de página → cria lead no GRUPO certo (curso/mentoria/ebook)
+  if (action === 'captureLead') {
+    return respond(captureLead(e.parameter.grupo, e.parameter.nome, e.parameter.email, e.parameter.whatsapp, e.parameter.origem));
+  }
   if (action === 'aiAnalyze') {
     return respond(aiAnalyze(e.parameter.data));
   }
@@ -1278,6 +1282,31 @@ function getCampanhaLeads(campId) {
     });
   }
   return { abriram: coletar('Aberturas'), clicaram: coletar('Cliques') };
+}
+
+// ── CAPTURA DE LEAD POR PÁGINA (grupo Curso/Mentoria/Ebook) ──
+function captureLead(grupo, nome, email, whatsapp, origem) {
+  grupo = String(grupo || '').toLowerCase();
+  email = String(email || '').toLowerCase().trim();
+  var phone = String(whatsapp || '').replace(/\D/g, '');
+  if ((!email || email.indexOf('@') < 0) && phone.length < 10) {
+    return { error: 'Informe um e-mail ou WhatsApp válido' };
+  }
+  // Define oferta + plataforma pra classificar no grupo certo
+  var map = {
+    curso:    { oferta: 'curso',    plataformaOferta: 'kiwify' },
+    mentoria: { oferta: 'mentoria', plataformaOferta: 'grupo'  },
+    ebook:    { oferta: 'ebook',    plataformaOferta: 'eduzz'  },
+  };
+  var g = map[grupo] || {};
+  var patch = {
+    nome: nome || '', email: email, whatsapp: phone,
+    oferta: g.oferta || '', plataformaOferta: g.plataformaOferta || '',
+    etapa: 'novo', updatedAt: new Date().toISOString(),
+  };
+  try { _upsertByContact(patch, phone, email, nome || '', origem || ('Formulário ' + (grupo || 'site'))); }
+  catch (e) { return { error: String(e) }; }
+  return { ok: true, grupo: grupo };
 }
 
 // ── ISCA DIGITAL (lead magnet) ────────────────────
