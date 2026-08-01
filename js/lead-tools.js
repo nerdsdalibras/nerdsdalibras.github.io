@@ -316,15 +316,19 @@ async function abrirHistoricoCampanhas() {
     body.innerHTML = rows.map(c => {
       const env  = c.enviados || 0;
       const ab   = c.aberturas || 0;
+      const cl   = c.cliques || 0;
       const taxa = env > 0 ? Math.round(ab / env * 100) : 0;
+      const verBtn = c.id ? `<button onclick="verCampanhaLeads('${c.id}', ${JSON.stringify(_escCamp(c.assunto || ''))})" style="background:var(--s3);border:1px solid var(--bdr);color:var(--text);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:.7rem;margin-top:5px">👁 Ver quem abriu / clicou</button>` : '';
       return `
       <div style="border-bottom:1px solid var(--bdr);padding:11px 0">
         <div style="font-weight:700">${_escCamp(c.assunto) || '(sem assunto)'}</div>
         <div style="font-size:.75rem;color:var(--ts);margin-top:4px">
           🗓 ${c.data ? new Date(c.data).toLocaleString('pt-BR') : '—'}
           &nbsp;·&nbsp; 👥 ${env} enviados
-          &nbsp;·&nbsp; <span style="color:var(--g)">👀 ${ab} abriram${env ? ` (${taxa}%)` : ''}</span>${c.grupo ? ' &nbsp;·&nbsp; 🏷 ' + _escCamp(c.grupo) : ''}
+          &nbsp;·&nbsp; <span style="color:var(--g)">👀 ${ab} abriram${env ? ` (${taxa}%)` : ''}</span>
+          &nbsp;·&nbsp; <span style="color:var(--blue)">🖱 ${cl} clicaram</span>${c.grupo ? ' &nbsp;·&nbsp; 🏷 ' + _escCamp(c.grupo) : ''}
         </div>
+        ${verBtn}
       </div>`;
     }).join('');
   } catch (_) {
@@ -333,6 +337,29 @@ async function abrirHistoricoCampanhas() {
   }
 }
 function fecharHistorico() { document.getElementById('hist-modal')?.remove(); }
+
+// Mostra quem ABRIU e quem CLICOU numa campanha
+async function verCampanhaLeads(campId, assunto) {
+  const ov = document.createElement('div');
+  ov.id = 'camp-leads-modal';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML = `<div style="background:var(--s1);border:1px solid var(--bdrb);border-radius:14px;max-width:520px;width:100%;padding:22px;max-height:88vh;overflow:auto;color:var(--text)">
+    <div style="font-size:1rem;font-weight:700;margin-bottom:4px">${_escCamp(assunto || 'Campanha')}</div>
+    <div id="cl-body" style="font-size:.85rem;margin-top:10px">Carregando…</div>
+    <div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="bulk-btn" onclick="document.getElementById('camp-leads-modal').remove()">Fechar</button></div>
+  </div>`;
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  document.body.appendChild(ov);
+  try {
+    const r = await fetch(CONFIG.SHEETS_URL + '?action=getCampanhaLeads&c=' + encodeURIComponent(campId), { redirect: 'follow' });
+    const d = await r.json();
+    const lista = (arr, titulo, cor) => `<div style="font-weight:700;color:${cor};margin:12px 0 6px">${titulo} (${(arr || []).length})</div>` +
+      ((arr && arr.length) ? arr.map(x => `<div style="padding:5px 0;border-bottom:1px solid var(--bdr)">${_escCamp(x.nome || '?')} <span style="color:var(--td);font-size:.78rem">· ${_escCamp(x.email || '')}</span></div>`).join('') : '<div style="color:var(--td);padding:4px 0">Ninguém ainda.</div>');
+    document.getElementById('cl-body').innerHTML = lista(d.clicaram, '🖱 Clicaram no link', 'var(--blue)') + lista(d.abriram, '👀 Abriram o e-mail', 'var(--g)');
+  } catch (_) {
+    const b = document.getElementById('cl-body'); if (b) b.innerHTML = '<span style="color:var(--red)">Não consegui carregar (republicou o Apps Script?).</span>';
+  }
+}
 function enviarCampanha() {
   const subject = (document.getElementById('camp-assunto')?.value || '').trim();
   const body    = (document.getElementById('camp-corpo')?.value || '').trim();

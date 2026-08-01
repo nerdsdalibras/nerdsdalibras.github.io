@@ -47,7 +47,7 @@ async function renderNewsletter() {
         style="width:100%;padding:11px;margin-bottom:10px;border-radius:9px;border:1px solid var(--bdr);background:var(--bg);color:var(--text);font-size:.9rem">
       <textarea id="nl-corpo" rows="9" placeholder="Escreva o e-mail aqui...&#10;&#10;Dica: use {nome} pra chamar cada pessoa pelo primeiro nome."
         style="width:100%;padding:11px;border-radius:9px;border:1px solid var(--bdr);background:var(--bg);color:var(--text);font-size:.9rem;resize:vertical;line-height:1.5"></textarea>
-      <div style="font-size:.72rem;color:var(--ts);margin:8px 0 14px">💡 O nome entra sempre — se não usar <strong style="color:var(--g)">{nome}</strong>, começa com "Oi [nome],".</div>
+      <div style="font-size:.72rem;color:var(--ts);margin:8px 0 14px">💡 O nome entra sempre — se não usar <strong style="color:var(--g)">{nome}</strong>, começa com "Oi [nome],". 🔗 Qualquer <strong>link</strong> que você colar (https://...) vira clicável e o CRM registra <strong>quem clicou</strong>.</div>
 
       <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
         <label style="display:flex;gap:6px;align-items:center;cursor:pointer;font-size:.85rem"><input type="radio" name="nl-quando" ${!_nlAgendar ? 'checked' : ''} onclick="_nlToggle(false)"> 📤 Enviar agora</label>

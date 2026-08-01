@@ -33,6 +33,7 @@ const COL_TO_FIELD = {
   'plataformaOferta': 'plataformaOferta', // kiwify | eduzz | grupo
   'ofertaEm':         'ofertaEm',
   'campanhaAbriuEm':  'campanhaAbriuEm',  // abriu o último e-mail de campanha em
+  'campanhaClicouEm': 'campanhaClicouEm', // clicou em um link de campanha em
   // ── Aquisição (origem / UTM / first-last touch) ──
   'utmSource':        'utmSource',
   'utmMedium':        'utmMedium',
@@ -102,6 +103,7 @@ for (var k in COL_TO_FIELD) { FIELD_TO_COL[COL_TO_FIELD[k]] = k; }
 const NEW_COLS = [
   'Email','Objetivo','Quis Avançar',
   'etapaQuiz','experiencia','respostasQuiz','interesseCAS','clicouOferta','plataformaOferta','ofertaEm','campanhaAbriuEm',
+  'campanhaClicouEm',
   'utmSource','utmMedium','utmCampaign','utmContent','utmTerm','firstTouch','firstTouchEm','lastTouch','landingPage','referrer',
   'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
   'status','etapa','temperatura','statusCloser','observacoes',
@@ -217,6 +219,18 @@ function doGet(e) {
   if (action === 'open') {
     _registrarAbertura(e.parameter.c, e.parameter.s);
     return ContentService.createTextOutput('').setMimeType(ContentService.MimeType.TEXT);
+  }
+  // Clique em link do e-mail: registra o clique e redireciona pro destino
+  if (action === 'click') {
+    _registrarClique(e.parameter.c, e.parameter.s, e.parameter.u);
+    var dest = e.parameter.u || 'https://nerdsdalibras.github.io';
+    return HtmlService.createHtmlOutput('<meta http-equiv="refresh" content="0;url=' + dest.replace(/"/g, '&quot;') + '">'
+      + '<script>location.replace(' + JSON.stringify(dest) + ')</script>'
+      + '<p>Redirecionando… <a href="' + dest.replace(/"/g, '&quot;') + '">clique aqui</a></p>');
+  }
+  // Quem abriu / clicou uma campanha específica
+  if (action === 'getCampanhaLeads') {
+    return respond(getCampanhaLeads(e.parameter.c));
   }
   return respond({ ok: true, version: '3.3' });
 }
@@ -562,7 +576,7 @@ function _enviarSegmento(segmento, subject, body) {
     var sid   = sidCol >= 0 ? data[r][sidCol] : '';
     var subj  = String(subject).replace(/\{nome\}/gi, nome);
     var corpo = bodyTpl.replace(/\{nome\}/gi, nome);
-    var html  = corpo.replace(/\n/g, '<br>');
+    var html  = _wrapLinks(corpo.replace(/\n/g, '<br>'), campId, sid, appUrl);   // links clicáveis + rastreados
     if (appUrl) html += '<img src="' + appUrl + '?action=open&c=' + encodeURIComponent(campId) + '&s=' + encodeURIComponent(sid) + '" width="1" height="1" alt="" style="width:1px;height:1px;border:0">';
     try { MailApp.sendEmail({ to: email, subject: subj, body: corpo, htmlBody: html, name: EMAIL_CFG.fromName }); sent++; }
     catch (e) {}
@@ -1126,7 +1140,7 @@ function enviarBroadcast(sessionIds, subject, body, label) {
     var nome  = String(nomeCol >= 0 ? data[r][nomeCol] : '').split(' ')[0] || 'você';
     var subj  = String(subject).replace(/\{nome\}/gi, nome);
     var corpo = bodyTpl.replace(/\{nome\}/gi, nome);
-    var html  = corpo.replace(/\n/g, '<br>');
+    var html  = _wrapLinks(corpo.replace(/\n/g, '<br>'), campId, sid, appUrl);   // links clicáveis + rastreados
     // Pixel invisível: quando o cliente de e-mail carrega essa imagem, registra a abertura
     if (appUrl) {
       html += '<img src="' + appUrl + '?action=open&c=' + encodeURIComponent(campId) +
@@ -1189,6 +1203,75 @@ function _registrarAbertura(campId, sid) {
   } catch (e) {}
 }
 
+// Registra o clique num link (aba "Cliques") e marca o lead
+function _registrarClique(campId, sid, url) {
+  if (!campId || !sid) return;
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ck = ss.getSheetByName('Cliques');
+    if (!ck) { ck = ss.insertSheet('Cliques'); ck.appendRow(['Data', 'CampanhaId', 'sessionId', 'url']); }
+    ck.appendRow([new Date(), campId, sid, url || '']);
+  } catch (e) {}
+  try {
+    var sheet   = getSheet();
+    var headers = getHeaders(sheet);
+    var sidCol  = headers.indexOf('sessionId');
+    var cCol    = headers.indexOf('campanhaClicouEm');
+    if (sidCol < 0 || cCol < 0) return;
+    var last = sheet.getLastRow();
+    if (last < 2) return;
+    var ids = sheet.getRange(2, sidCol + 1, last - 1, 1).getValues();
+    for (var i = 0; i < ids.length; i++) {
+      if (ids[i][0] === sid) { sheet.getRange(i + 2, cCol + 1).setValue(new Date().toISOString()); break; }
+    }
+  } catch (e) {}
+}
+
+// Transforma URLs do texto em links CLICÁVEIS e RASTREADOS (redireciona pelo web app)
+function _wrapLinks(html, campId, sid, appUrl) {
+  if (!appUrl) return html;
+  return String(html).replace(/(https?:\/\/[^\s<>"']+)/g, function (url) {
+    var clean = url.replace(/[.,);]+$/, '');
+    var track = appUrl + '?action=click&c=' + encodeURIComponent(campId) +
+                '&s=' + encodeURIComponent(sid) + '&u=' + encodeURIComponent(clean);
+    return '<a href="' + track + '" target="_blank" style="color:#7c3aed">' + clean + '</a>';
+  });
+}
+
+// Quem ABRIU e quem CLICOU numa campanha (com nome/e-mail do lead)
+function getCampanhaLeads(campId) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!campId) return { abriram: [], clicaram: [] };
+  var sheet = getSheet();
+  var headers = getHeaders(sheet);
+  var sidCol = headers.indexOf('sessionId');
+  var nomeCol = headers.indexOf('Nome') >= 0 ? headers.indexOf('Nome') : headers.indexOf('nome');
+  var emailCol = headers.indexOf('Email') >= 0 ? headers.indexOf('Email') : headers.indexOf('email');
+  var mapa = {};
+  if (sheet.getLastRow() > 1) {
+    var vals = sheet.getRange(2, 1, sheet.getLastRow() - 1, headers.length).getValues();
+    for (var i = 0; i < vals.length; i++) {
+      var sid = vals[i][sidCol];
+      if (sid) mapa[sid] = { nome: nomeCol >= 0 ? vals[i][nomeCol] : '', email: emailCol >= 0 ? vals[i][emailCol] : '' };
+    }
+  }
+  function coletar(nomeAba) {
+    var sh = ss.getSheetByName(nomeAba);
+    if (!sh || sh.getLastRow() < 2) return [];
+    var v = sh.getRange(2, 1, sh.getLastRow() - 1, 3).getValues();
+    var set = {};
+    for (var j = 0; j < v.length; j++) {
+      if (String(v[j][1]) !== String(campId)) continue;
+      var s = v[j][2];
+      if (s && !set[s]) set[s] = true;
+    }
+    return Object.keys(set).map(function (s) {
+      return { nome: (mapa[s] && mapa[s].nome) || '?', email: (mapa[s] && mapa[s].email) || s };
+    });
+  }
+  return { abriram: coletar('Aberturas'), clicaram: coletar('Cliques') };
+}
+
 // Lê o histórico de campanhas (mais recente primeiro) com aberturas ÚNICAS por campanha
 function getCampanhas() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -1198,29 +1281,35 @@ function getCampanhas() {
   if (last < 2) return [];
   var vals = sh.getRange(2, 1, last - 1, 6).getValues();
 
-  // Conta aberturas únicas (por sessionId) de cada campanha
-  var opens = {};
-  var ab = ss.getSheetByName('Aberturas');
-  if (ab && ab.getLastRow() > 1) {
-    var av = ab.getRange(2, 1, ab.getLastRow() - 1, 3).getValues();
-    for (var j = 0; j < av.length; j++) {
-      var cid = av[j][1], s = av[j][2];
-      if (!cid) continue;
-      if (!opens[cid]) opens[cid] = {};
-      opens[cid][s] = true;
+  // Conta aberturas e cliques únicos (por sessionId) de cada campanha
+  function contarUnicos(nomeAba) {
+    var m = {}, sh = ss.getSheetByName(nomeAba);
+    if (sh && sh.getLastRow() > 1) {
+      var v = sh.getRange(2, 1, sh.getLastRow() - 1, 3).getValues();
+      for (var j = 0; j < v.length; j++) {
+        var cid = v[j][1], s = v[j][2];
+        if (!cid || !s) continue;
+        if (!m[cid]) m[cid] = {};
+        m[cid][s] = true;
+      }
     }
+    return m;
   }
+  var opens  = contarUnicos('Aberturas');
+  var clicks = contarUnicos('Cliques');
 
   var out = [];
   for (var i = vals.length - 1; i >= 0; i--) {
     var id = vals[i][5];
     out.push({
+      id:        id,
       data:      vals[i][0] ? new Date(vals[i][0]).toISOString() : '',
       assunto:   vals[i][1],
       grupo:     vals[i][2],
       total:     vals[i][3],
       enviados:  vals[i][4],
-      aberturas: (id && opens[id]) ? Object.keys(opens[id]).length : 0,
+      aberturas: (id && opens[id])  ? Object.keys(opens[id]).length  : 0,
+      cliques:   (id && clicks[id]) ? Object.keys(clicks[id]).length : 0,
     });
   }
   return out;
