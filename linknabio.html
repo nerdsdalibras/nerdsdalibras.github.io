@@ -104,13 +104,6 @@
     .social-icon svg{width:22px;height:22px;fill:var(--ink);}
 
     /* ── CARD DIAGNÓSTICO (HERO) ── */
-    .diag-card{
-      position:relative;overflow:hidden;isolation:isolate;
-      background:linear-gradient(160deg,#1c1407 0%,#120d04 55%,#0d1120 100%);
-      border:1px solid rgba(245,158,11,.4);border-radius:20px;
-      padding:22px;text-align:center;
-      display:flex;flex-direction:column;align-items:center;gap:11px;
-    }
     .diag-badge{
       display:inline-block;
       background:linear-gradient(135deg,var(--gold-2),#d97706);
@@ -141,6 +134,28 @@
     @keyframes btnGlow{
       0%,100%{box-shadow:0 0 14px rgba(245,158,11,.5);}
       50%{box-shadow:0 0 28px rgba(245,158,11,.9);}
+    }
+
+    /* ── HERO DIAGNÓSTICO (com foto da dupla) ── */
+    .hero-quiz{
+      position:relative;overflow:hidden;isolation:isolate;
+      background:linear-gradient(160deg,#1c1407 0%,#120d04 55%,#0d1120 100%);
+      border:1px solid rgba(245,158,11,.4);border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 26px rgba(245,158,11,.12);
+    }
+    .hero-quiz-photo{position:relative;}
+    .hero-quiz-photo img{width:100%;height:auto;display:block;}
+    .hero-quiz-photo::after{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(to bottom,transparent 52%,rgba(21,15,4,.55) 80%,#160f05 100%);
+    }
+    .hero-quiz-photo .diag-badge{position:absolute;top:12px;left:12px;z-index:2;}
+    .hero-quiz-body{
+      padding:12px 20px 20px;text-align:center;
+      display:flex;flex-direction:column;align-items:center;gap:11px;
+    }
+    .hero-quiz-sub{
+      font-size:13.5px;color:#c9bda9;line-height:1.5;max-width:340px;
     }
 
     /* ── LABEL DE SEÇÃO ── */
@@ -314,10 +329,16 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
   </div>
 
   <!-- ═══ HERO: DIAGNÓSTICO ═══ -->
-  <div class="diag-card">
-    <span class="diag-badge">🎁 100% Gratuito</span>
-    <div class="diag-title">Descubra seu nível na Libras <span>em 2 minutos</span></div>
-    <a href="https://nerdsdalibras.github.io/quiz-libras.html" target="_blank" class="cta-gold">🎯 Fazer diagnóstico grátis</a>
+  <div class="hero-quiz">
+    <div class="hero-quiz-photo">
+      <span class="diag-badge">🎁 100% Gratuito</span>
+      <img src="fotos/quiz-dupla.jpg" alt="Prof. Lorena e João Neto — Nerds da Libras"/>
+    </div>
+    <div class="hero-quiz-body">
+      <div class="diag-title">Descubra seu nível na Libras <span>em 2 minutos</span></div>
+      <div class="hero-quiz-sub">Um quiz rápido feito pela Prof. Lorena: descubra em que ponto você está e o caminho ideal para evoluir na Libras.</div>
+      <a href="https://nerdsdalibras.github.io/quiz-libras.html" target="_blank" class="cta-gold">🎯 Fazer diagnóstico grátis</a>
+    </div>
   </div>
 
   <!-- ═══ VITRINE (BANNERS) ═══ -->
