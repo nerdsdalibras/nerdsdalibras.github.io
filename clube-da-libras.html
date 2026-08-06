@@ -286,6 +286,22 @@
     .wa-float-text b{font-weight:800;font-size:14px}
     .wa-float-text small{font-weight:600;font-size:11px;opacity:.92}
     @media(max-width:480px){.wa-float-text b{font-size:13px}.wa-float-text small{font-size:10px}}
+
+    /* ── MODAL DE CAPTURA (antes do checkout) ── */
+    .lead-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.78);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+    .lead-overlay.open{opacity:1;pointer-events:auto}
+    .lead-modal{position:relative;width:100%;max-width:420px;background:linear-gradient(160deg,#1a1509,#12100a 60%,#0c0c0f);border:1px solid rgba(240,180,69,.4);border-radius:20px;padding:30px 24px 24px;box-shadow:0 30px 80px rgba(0,0,0,.6);transform:translateY(14px);transition:transform .25s}
+    .lead-overlay.open .lead-modal{transform:none}
+    .lead-close{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1}
+    .lead-badge{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#1a1204;font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:12px}
+    .lead-modal h3{font-size:22px;font-weight:900;margin-bottom:6px;line-height:1.2}
+    .lead-sub{font-size:14px;color:var(--muted);margin-bottom:18px;line-height:1.5}
+    #leadForm{display:flex;flex-direction:column;gap:11px}
+    #leadForm input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:13px 15px;color:#fff;font-size:15px;font-family:inherit;outline:none}
+    #leadForm input:focus{border-color:var(--gold)}
+    #leadForm input::placeholder{color:#8a8578}
+    .lead-err{color:#ff9b8f;font-size:13px;font-weight:600;display:none}
+    .lead-trust{text-align:center;font-size:12px;color:var(--muted);margin-top:14px}
   </style>
   <!-- Meta Pixel Code -->
   <script>
@@ -580,7 +596,70 @@
   <span class="wa-float-text"><b>Fale diretamente comigo</b><small>Prof. Lorena · WhatsApp</small></span>
 </a>
 
+<!-- ═══════════ MODAL DE CAPTURA (antes do checkout) ═══════════ -->
+<div class="lead-overlay" id="leadOverlay" aria-hidden="true">
+  <div class="lead-modal" role="dialog" aria-modal="true" aria-labelledby="leadTitle">
+    <button class="lead-close" id="leadClose" type="button" aria-label="Fechar">×</button>
+    <span class="lead-badge">🔒 Falta só 1 passo</span>
+    <h3 id="leadTitle">Confirme seus dados para continuar</h3>
+    <p class="lead-sub">Preencha abaixo para liberar seu acesso e seguir para o pagamento seguro.</p>
+    <form id="leadForm" novalidate>
+      <input id="leadNome" type="text" placeholder="Seu nome completo" autocomplete="name" required/>
+      <input id="leadCel" type="tel" placeholder="Seu celular (WhatsApp)" autocomplete="tel" required/>
+      <input id="leadEmail" type="email" placeholder="Seu melhor e-mail" autocomplete="email" required/>
+      <div class="lead-err" id="leadErr"></div>
+      <button type="submit" class="btn btn-gold" id="leadSubmit" style="width:100%;margin-top:4px">Continuar para o pagamento →</button>
+    </form>
+    <div class="lead-trust">🔒 Seus dados estão seguros e não serão compartilhados.</div>
+  </div>
+</div>
+
 <script>
+  // ── CAPTURA DE LEAD antes do checkout + Pixel (evento Lead) ──
+  (function(){
+    var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec';
+    var CHECKOUT_FALLBACK = 'https://pay.kiwify.com.br/1sIyvVL';
+    var overlay = document.getElementById('leadOverlay');
+    var pending = CHECKOUT_FALLBACK;
+    function openModal(url){
+      pending = url || CHECKOUT_FALLBACK;
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function(){ var n=document.getElementById('leadNome'); if(n) n.focus(); }, 200);
+    }
+    function closeModal(){ overlay.classList.remove('open'); document.body.style.overflow=''; }
+    // intercepta TODOS os CTAs que vão para o checkout
+    document.querySelectorAll('a[href*="pay.kiwify.com.br"]').forEach(function(a){
+      a.addEventListener('click', function(e){ e.preventDefault(); openModal(a.getAttribute('href')); });
+    });
+    document.getElementById('leadClose').addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) closeModal(); });
+    document.getElementById('leadForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var nome  = (document.getElementById('leadNome').value||'').trim();
+      var cel   = (document.getElementById('leadCel').value||'').trim();
+      var email = (document.getElementById('leadEmail').value||'').trim();
+      var err   = document.getElementById('leadErr');
+      if(nome.length < 2){ err.textContent='Escreve seu nome 😊'; err.style.display='block'; return; }
+      if(cel.replace(/\D/g,'').length < 10){ err.textContent='Confere seu celular com DDD 😊'; err.style.display='block'; return; }
+      if(!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)){ err.textContent='E-mail inválido, confere aí 😊'; err.style.display='block'; return; }
+      err.style.display='none';
+      var btn = document.getElementById('leadSubmit'); btn.disabled=true; btn.textContent='Enviando…';
+      // Meta Pixel: evento de Lead
+      try{ if(window.fbq){ fbq('track','Lead',{content_name:'Clube da Libras'}); fbq('track','InitiateCheckout'); } }catch(_){}
+      // envia o lead para o CRM (origem = clubedalibras)
+      var url = SHEETS_URL + '?action=captureLead&grupo=curso'
+        + '&nome='     + encodeURIComponent(nome)
+        + '&email='    + encodeURIComponent(email)
+        + '&whatsapp=' + encodeURIComponent(cel)
+        + '&origem='   + encodeURIComponent('clubedalibras');
+      var went=false;
+      function go(){ if(went) return; went=true; window.location.href = pending; }
+      try{ fetch(url, {redirect:'follow'}).then(go).catch(go); }catch(_){ go(); }
+      setTimeout(go, 2500); // garante o redirecionamento mesmo se a rede travar
+    });
+  })();
+
   // FAQ accordion
   document.querySelectorAll('.faq-q').forEach(function(q){
     q.addEventListener('click', function(){ this.closest('.faq-item').classList.toggle('open'); });
