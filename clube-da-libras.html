@@ -232,7 +232,12 @@
 
     /* ── PRICING ── */
     .price-card{max-width:520px;margin:0 auto;background:linear-gradient(160deg,#1a1509,#100c05 60%,#0c0c0f);border:1.5px solid rgba(240,180,69,.5);border-radius:22px;padding:36px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(240,180,69,.1);}
-    .price-badge{display:inline-block;background:var(--red);color:#fff;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:999px;margin-bottom:18px}
+    .price-badge{display:inline-block;background:var(--red);color:#fff;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:7px 18px;border-radius:999px;margin-bottom:18px;text-shadow:0 0 8px rgba(255,255,255,.55);animation:offerGlow 1.5s ease-in-out infinite;}
+    @keyframes offerGlow{
+      0%,100%{box-shadow:0 0 8px rgba(199,58,47,.6),0 0 16px rgba(199,58,47,.35);transform:scale(1);}
+      50%{box-shadow:0 0 20px rgba(255,90,60,1),0 0 42px rgba(255,120,80,.75);transform:scale(1.06);}
+    }
+    @media(prefers-reduced-motion:reduce){.price-badge{animation:none}}
     .price-old{font-size:15px;color:var(--muted);text-decoration:line-through}
     .price-main{font-size:16px;color:var(--muted);margin-top:6px}
     .price-main .big{display:block;font-size:52px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.02em}
@@ -504,7 +509,7 @@
   <div class="sec-tag center">A oferta</div>
   <h2 class="sec-title center">Entre para o <span class="gold">Clube da Libras</span> hoje</h2>
   <div class="price-card" style="margin-top:30px">
-    <span class="price-badge">Oferta por tempo limitado</span>
+    <span class="price-badge">🔥 Oferta de Agosto</span>
     <div class="price-old">De R$ 1.997</div>
     <div class="price-main">12x de
       <span class="big">R$ 72,09</span>
