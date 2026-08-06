@@ -374,8 +374,9 @@
   <h2 class="sec-title">O que é o <span class="gold">Clube da Libras?</span></h2>
   <p class="sec-lead" style="margin-bottom:34px">O Clube é a formação completa em Língua Brasileira de Sinais, que reúne todos os cursos necessários para te levar do total básico ao avançado — no seu ritmo, com apoio de verdade.</p>
   <div class="split">
-    <div class="video-box">
-      <iframe src="https://www.youtube.com/embed/SJN3zPRN8Qc?start=5" title="Clube da Libras — Prof. Lorena" style="width:100%;height:100%;border:0;display:block" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+    <div class="video-box" data-yt="SJN3zPRN8Qc" data-start="5">
+      <img src="fotos/IMG_4952.jpg" alt="O que é o Clube da Libras" style="object-position:center 28%"/>
+      <div class="video-play"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
     </div>
     <ul class="checklist">
       <li><span><strong>Conecte-se com milhares de alunos</strong> que têm o mesmo objetivo que você.</span></li>
@@ -391,8 +392,9 @@
   <h2 class="sec-title center">Veja uma <span class="gold">aula gratuita</span> e entenda o método</h2>
   <p class="sec-lead center" style="margin-bottom:30px">Assista a uma amostra do curso e sinta na prática como o método i+1 funciona.</p>
   <div style="max-width:720px;margin:0 auto">
-    <div class="video-box">
-      <iframe src="https://www.youtube.com/embed/Yxt2RgH5WaM" title="Aula gratuita de Libras — método i+1" style="width:100%;height:100%;border:0;display:block" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+    <div class="video-box" data-yt="Yxt2RgH5WaM">
+      <img src="fotos/lorena interpretando.jpeg" alt="Aula gratuita de Libras — método i+1"/>
+      <div class="video-play"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
     </div>
   </div>
   <div class="tst-grid">
@@ -560,6 +562,16 @@
   // fecha menu mobile ao clicar
   document.querySelectorAll('#navlinks a').forEach(function(a){
     a.addEventListener('click', function(){ document.getElementById('navlinks').classList.remove('open'); });
+  });
+  // vídeos: clica na miniatura e carrega o player do YouTube
+  document.querySelectorAll('.video-box[data-yt]').forEach(function(box){
+    box.style.cursor = 'pointer';
+    box.addEventListener('click', function(){
+      var id = box.getAttribute('data-yt');
+      var start = box.getAttribute('data-start');
+      var src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0' + (start ? '&start=' + start : '');
+      box.innerHTML = '<iframe src="' + src + '" title="Vídeo" style="width:100%;height:100%;border:0;display:block" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    });
   });
 </script>
 <script src="js/tracking.js"></script>
