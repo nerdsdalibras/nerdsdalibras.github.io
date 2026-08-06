@@ -160,6 +160,18 @@
     .video-box:hover .video-play span{transform:scale(1.08)}
     .video-play svg{width:26px;height:26px;fill:#1a1204;margin-left:4px}
     .video-cap{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;background:linear-gradient(transparent,rgba(0,0,0,.85));font-weight:800;font-size:15px;}
+    /* ── Cara de player (só nos vídeos clicáveis) ── */
+    .video-box[data-yt]{cursor:pointer}
+    .video-box[data-yt]::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.28) 0%,rgba(0,0,0,.05) 35%,rgba(0,0,0,.6) 100%)}
+    .video-box[data-yt] .video-play{z-index:2}
+    .video-box[data-yt] .video-play span{width:88px;height:88px;position:relative}
+    .video-box[data-yt] .video-play span::after{content:"";position:absolute;inset:0;border-radius:50%;animation:videoPulse 2.2s ease-out infinite}
+    @keyframes videoPulse{0%{box-shadow:0 0 0 0 rgba(240,180,69,.55)}70%{box-shadow:0 0 0 24px rgba(240,180,69,0)}100%{box-shadow:0 0 0 0 rgba(240,180,69,0)}}
+    .video-box[data-yt] .video-play svg{width:30px;height:30px}
+    .video-hint{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-weight:800;font-size:14px;letter-spacing:.01em;pointer-events:none}
+    .video-hint .dot{width:9px;height:9px;border-radius:50%;background:#ff4b3e;box-shadow:0 0 8px #ff4b3e;animation:hintBlink 1.3s ease-in-out infinite}
+    @keyframes hintBlink{0%,100%{opacity:1}50%{opacity:.3}}
+    @media(prefers-reduced-motion:reduce){.video-box[data-yt] .video-play span::after,.video-hint .dot{animation:none}}
     .checklist{list-style:none;display:flex;flex-direction:column;gap:16px;}
     .checklist li{display:flex;gap:12px;font-size:15.5px;color:#d9d4cb;line-height:1.5;}
     .checklist li::before{content:"✓";flex-shrink:0;width:24px;height:24px;border-radius:50%;background:rgba(240,180,69,.15);color:var(--gold);font-weight:900;display:flex;align-items:center;justify-content:center;font-size:13px;}
@@ -421,6 +433,7 @@
     <div class="video-box" data-yt="Yxt2RgH5WaM">
       <img src="fotos/IMG_4977.jpg" alt="Aula gratuita de Libras — método i+1" style="object-position:center 36%"/>
       <div class="video-play"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+      <div class="video-hint"><span class="dot"></span>Clique para assistir a aula gratuita</div>
     </div>
   </div>
   <div class="tst-grid">
