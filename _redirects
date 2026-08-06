@@ -1,11 +1,13 @@
 # Netlify Redirects — Nerds da Libras
 # Formato: /link-curto   destino   302
 
-# ── RAIZ clubedalibras.com → Link na Bio ──
+# ── RAIZ clubedalibras.com → Landing do Clube da Libras ──
 # /index.html cai na raiz (esconde a home "Prof. Lorena" no clubedalibras.com)
 /index.html           /                                                          301!
-# Mostra linknabio.html na raiz mantendo a URL limpa (rewrite 200 forçado)
-/                     /linknabio.html                                            200!
+# Mostra a landing de vendas na raiz mantendo a URL limpa (rewrite 200 forçado)
+/                     /clube-da-libras.html                                      200!
+# Link na Bio continua acessível neste caminho
+/bio                  /linknabio.html                                            200
 
 # ── VSL ──
 /vsl                  /vsl.html                                                  200
@@ -14,6 +16,8 @@
 # ── FUNIL DE VENDAS ──
 /quiz                 /quiz-libras.html                                          302
 /avaliacao-clube      /avaliacao-clube.html                                      200
+/clube                /clube-da-libras.html                                      200
+/clubedalibras        /clube-da-libras.html                                      200
 
 # ── GRUPOS WHATSAPP ──
 /grupo-curso          https://chat.whatsapp.com/GLQeFyVsR2kFvzcBgggDsV           302
