@@ -222,7 +222,7 @@ function doGet(e) {
   }
   // Formulário de página → cria lead no GRUPO certo (curso/mentoria/ebook)
   if (action === 'captureLead') {
-    return respond(captureLead(e.parameter.grupo, e.parameter.nome, e.parameter.email, e.parameter.whatsapp, e.parameter.origem));
+    return respond(captureLead(e.parameter.grupo, e.parameter.nome, e.parameter.email, e.parameter.whatsapp, e.parameter.origem, e.parameter.checkout));
   }
   if (action === 'aiAnalyze') {
     return respond(aiAnalyze(e.parameter.data));
@@ -1285,7 +1285,7 @@ function getCampanhaLeads(campId) {
 }
 
 // ── CAPTURA DE LEAD POR PÁGINA (grupo Curso/Mentoria/Ebook) ──
-function captureLead(grupo, nome, email, whatsapp, origem) {
+function captureLead(grupo, nome, email, whatsapp, origem, checkout) {
   grupo = String(grupo || '').toLowerCase();
   email = String(email || '').toLowerCase().trim();
   var phone = String(whatsapp || '').replace(/\D/g, '');
@@ -1299,11 +1299,21 @@ function captureLead(grupo, nome, email, whatsapp, origem) {
     ebook:    { oferta: 'ebook',    plataformaOferta: 'eduzz'  },
   };
   var g = map[grupo] || {};
+  var now = new Date().toISOString();
   var patch = {
     nome: nome || '', email: email, whatsapp: phone,
     oferta: g.oferta || '', plataformaOferta: g.plataformaOferta || '',
-    etapa: 'novo', updatedAt: new Date().toISOString(),
+    etapa: 'novo', updatedAt: now,
   };
+  // Se o formulário leva pro checkout, marca clicouCheckout → entra no
+  // remarketing dos 3 e-mails emocionais (se não fechar a compra).
+  var foiCheckout = (checkout === '1' || checkout === 1 || checkout === true);
+  if (foiCheckout) {
+    patch.clicouCheckout = true;
+    patch.checkoutEm = now;
+    patch.etapa = 'checkout';
+    patch.statusCloser = 'Preencheu o formulário e foi ao checkout';
+  }
   try { _upsertByContact(patch, phone, email, nome || '', origem || ('Formulário ' + (grupo || 'site'))); }
   catch (e) { return { error: String(e) }; }
   return { ok: true, grupo: grupo };
