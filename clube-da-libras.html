@@ -661,14 +661,29 @@
       var btn = document.getElementById('leadSubmit'); btn.disabled=true; btn.textContent='Enviando…';
       // Meta Pixel: evento de Lead
       try{ if(window.fbq){ fbq('track','Lead',{content_name:'Clube da Libras'}); fbq('track','InitiateCheckout'); } }catch(_){}
-      // envia o lead para o CRM (origem = clubedalibras)
+      // envia o lead para o CRM (origem = clubedalibras) + marca checkout p/ remarketing
       var url = SHEETS_URL + '?action=captureLead&grupo=curso'
         + '&nome='     + encodeURIComponent(nome)
         + '&email='    + encodeURIComponent(email)
         + '&whatsapp=' + encodeURIComponent(cel)
-        + '&origem='   + encodeURIComponent('clubedalibras');
+        + '&origem='   + encodeURIComponent('clubedalibras')
+        + '&checkout=1';
+      // Monta o checkout JÁ COM os dados preenchidos (só falta a forma de pagamento)
+      var prefill = pending;
+      try{
+        var u = new URL(pending);
+        u.searchParams.set('name', nome);
+        u.searchParams.set('email', email);
+        u.searchParams.set('phone', cel.replace(/\D/g,''));
+        prefill = u.toString();
+      }catch(_){
+        var sep = pending.indexOf('?')>=0 ? '&' : '?';
+        prefill = pending + sep + 'name=' + encodeURIComponent(nome)
+          + '&email=' + encodeURIComponent(email)
+          + '&phone=' + encodeURIComponent(cel.replace(/\D/g,''));
+      }
       var went=false;
-      function go(){ if(went) return; went=true; window.location.href = pending; }
+      function go(){ if(went) return; went=true; window.location.href = prefill; }
       try{ fetch(url, {redirect:'follow'}).then(go).catch(go); }catch(_){ go(); }
       setTimeout(go, 2500); // garante o redirecionamento mesmo se a rede travar
     });
@@ -694,7 +709,5 @@
   });
 </script>
 <script src="js/tracking.js"></script>
-<script>window.NDL_FORM={grupo:'curso',origem:'Clube da Libras',redirect:'https://pay.kiwify.com.br/1sIyvVL',botao:'Quero fazer parte 💜'};</script>
-<script src="js/lead-form.js"></script>
 </body>
 </html>
