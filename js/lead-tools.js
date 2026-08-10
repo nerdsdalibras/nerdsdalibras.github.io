@@ -355,7 +355,10 @@ async function verCampanhaLeads(campId, assunto) {
     const d = await r.json();
     const lista = (arr, titulo, cor) => `<div style="font-weight:700;color:${cor};margin:12px 0 6px">${titulo} (${(arr || []).length})</div>` +
       ((arr && arr.length) ? arr.map(x => `<div style="padding:5px 0;border-bottom:1px solid var(--bdr)">${_escCamp(x.nome || '?')} <span style="color:var(--td);font-size:.78rem">· ${_escCamp(x.email || '')}</span></div>`).join('') : '<div style="color:var(--td);padding:4px 0">Ninguém ainda.</div>');
-    document.getElementById('cl-body').innerHTML = lista(d.clicaram, '🖱 Clicaram no link', 'var(--blue)') + lista(d.abriram, '👀 Abriram o e-mail', 'var(--g)');
+    const porLink = (d.porLink && d.porLink.length)
+      ? `<div style="font-weight:700;color:var(--blue);margin:4px 0 6px">🔗 Cliques por link</div>` + d.porLink.map(l => `<div style="padding:6px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:.8rem;word-break:break-all">${_escCamp(l.url)}</div><div style="font-size:.74rem;color:var(--g)">🖱 ${l.cliques} cliques · 👤 ${l.pessoas} pessoas</div></div>`).join('')
+      : '';
+    document.getElementById('cl-body').innerHTML = porLink + lista(d.clicaram, '🖱 Clicaram (pessoas)', 'var(--blue)') + lista(d.abriram, '👀 Abriram o e-mail', 'var(--g)');
   } catch (_) {
     const b = document.getElementById('cl-body'); if (b) b.innerHTML = '<span style="color:var(--red)">Não consegui carregar (republicou o Apps Script?).</span>';
   }

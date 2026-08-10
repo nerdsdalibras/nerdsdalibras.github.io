@@ -1281,7 +1281,24 @@ function getCampanhaLeads(campId) {
       return { nome: (mapa[s] && mapa[s].nome) || '?', email: (mapa[s] && mapa[s].email) || s };
     });
   }
-  return { abriram: coletar('Aberturas'), clicaram: coletar('Cliques') };
+  // Cliques por LINK (ex: quantos clicaram no link da aula)
+  var porLink = [];
+  var ck = ss.getSheetByName('Cliques');
+  if (ck && ck.getLastRow() > 1) {
+    var cv = ck.getRange(2, 1, ck.getLastRow() - 1, 4).getValues();  // Data, CampanhaId, sessionId, url
+    var byUrl = {};
+    for (var k = 0; k < cv.length; k++) {
+      if (String(cv[k][1]) !== String(campId)) continue;
+      var u = String(cv[k][3] || '(sem link)'), s2 = cv[k][2];
+      if (!byUrl[u]) byUrl[u] = { total: 0, pessoas: {} };
+      byUrl[u].total++;
+      if (s2) byUrl[u].pessoas[s2] = true;
+    }
+    porLink = Object.keys(byUrl).map(function (u) {
+      return { url: u, cliques: byUrl[u].total, pessoas: Object.keys(byUrl[u].pessoas).length };
+    }).sort(function (a, b) { return b.cliques - a.cliques; });
+  }
+  return { abriram: coletar('Aberturas'), clicaram: coletar('Cliques'), porLink: porLink };
 }
 
 // ── CAPTURA DE LEAD POR PÁGINA (grupo Curso/Mentoria/Ebook) ──
