@@ -154,25 +154,54 @@ function agendarEmail() {
 async function _nlCarregarLista() {
   const el = document.getElementById('nl-lista');
   if (!el) return;
-  try {
-    const r = await fetch(CONFIG.SHEETS_URL + '?action=getAgendamentos', { redirect: 'follow' });
-    const rows = await r.json();
-    if (!Array.isArray(rows) || !rows.length) { el.innerHTML = '<div style="color:var(--td);padding:8px">Nenhum e-mail agendado ou enviado ainda.</div>'; return; }
-    const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-    el.innerHTML = `<div style="font-weight:800;margin:6px 0 10px">🗓️ Agendados & enviados</div>` + rows.map(a => {
-      const pend = a.status === 'pendente';
-      const cor = pend ? 'var(--yellow)' : 'var(--g)';
-      return `<div style="background:var(--s1);border:1px solid var(--bdr);border-radius:10px;padding:11px;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+  el.innerHTML = 'Carregando métricas…';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let agend = [], camps = [];
+  try { agend = await (await fetch(CONFIG.SHEETS_URL + '?action=getAgendamentos', { redirect: 'follow' })).json(); } catch (_) {}
+  try { camps = await (await fetch(CONFIG.SHEETS_URL + '?action=getCampanhas', { redirect: 'follow' })).json(); } catch (_) {}
+  agend = Array.isArray(agend) ? agend : [];
+  camps = Array.isArray(camps) ? camps : [];
+
+  const pend = agend.filter(a => a.status === 'pendente');
+  let html = '';
+
+  // ── Agendados (pendentes) ──
+  if (pend.length) {
+    html += `<div style="font-weight:800;margin:6px 0 10px">⏳ Agendados</div>` + pend.map(a => `
+      <div style="background:var(--s1);border:1px solid var(--bdr);border-radius:10px;padding:11px;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
         <div style="min-width:0">
           <div style="font-weight:700">${esc(a.assunto) || '(sem assunto)'}</div>
-          <div style="font-size:.74rem;color:var(--ts)">🏷 ${esc(a.segmento)} · 🗓️ ${a.quando ? new Date(a.quando).toLocaleString('pt-BR') : '—'} · <span style="color:${cor};font-weight:700">${pend ? '⏳ Pendente' : '✅ Enviado' + (a.enviados ? ' (' + a.enviados + ')' : '')}</span></div>
+          <div style="font-size:.74rem;color:var(--ts)">🏷 ${esc(a.segmento)} · 🗓️ ${a.quando ? new Date(a.quando).toLocaleString('pt-BR') : '—'} · <span style="color:var(--yellow);font-weight:700">⏳ Pendente</span></div>
         </div>
-        ${pend ? `<button onclick="excluirAgendamento('${a.id}')" style="background:none;border:1px solid var(--bdr);color:var(--red);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:.75rem">✕ Cancelar</button>` : ''}
+        <button onclick="excluirAgendamento('${a.id}')" style="background:none;border:1px solid var(--bdr);color:var(--red);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:.75rem">✕ Cancelar</button>
+      </div>`).join('');
+  }
+
+  // ── Enviados (com métricas: recebidos · abriram · clicaram) ──
+  html += `<div style="font-weight:800;margin:16px 0 10px">📊 Enviados — desempenho de cada e-mail</div>`;
+  if (!camps.length) {
+    html += '<div style="color:var(--td);padding:8px">Nenhum e-mail enviado ainda.</div>';
+  } else {
+    const chip = (emoji, val, sub, cor) => `<div style="flex:1;min-width:96px;text-align:center;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:7px 4px">
+      <div style="font-size:1.05rem;font-weight:800;color:${cor || 'var(--text)'}">${emoji} ${val}</div>
+      <div style="font-size:.64rem;color:var(--td);text-transform:uppercase">${sub}</div></div>`;
+    html += camps.map(c => {
+      const env = c.enviados || 0, ab = c.aberturas || 0, cl = c.cliques || 0;
+      const tAb = env ? Math.round(ab / env * 100) : 0;
+      const tCl = env ? Math.round(cl / env * 100) : 0;
+      return `<div style="background:var(--s1);border:1px solid var(--bdr);border-radius:12px;padding:13px;margin-bottom:10px">
+        <div style="font-weight:700">${esc(c.assunto) || '(sem assunto)'}</div>
+        <div style="font-size:.72rem;color:var(--ts);margin:2px 0 10px">🗓️ ${c.data ? new Date(c.data).toLocaleString('pt-BR') : '—'}${c.grupo ? ' · 🏷 ' + esc(c.grupo) : ''}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${chip('📬', env, 'receberam')}
+          ${chip('👀', ab + (env ? ' · ' + tAb + '%' : ''), 'abriram', 'var(--g)')}
+          ${chip('🖱', cl + (env ? ' · ' + tCl + '%' : ''), 'clicaram', 'var(--blue)')}
+        </div>
+        ${c.id ? `<button onclick="verCampanhaLeads('${c.id}', ${JSON.stringify(esc(c.assunto || ''))})" style="margin-top:9px;background:var(--s3);border:1px solid var(--bdr);color:var(--text);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:.73rem">👁 Ver quem abriu / clicou</button>` : ''}
       </div>`;
     }).join('');
-  } catch (_) {
-    el.innerHTML = '<div style="color:var(--red)">Não consegui carregar. Republicou o Apps Script?</div>';
   }
+  el.innerHTML = html;
 }
 
 function excluirAgendamento(id) {
