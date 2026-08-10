@@ -572,7 +572,7 @@ function _enviarSegmento(segmento, subject, body) {
   var campId  = 'c' + Date.now();
   var appUrl  = _webAppUrl();
   var data    = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
-  var quota   = MailApp.getRemainingDailyQuota();
+  var quota   = _cotaEmail();
   var sent = 0, alvo = 0, vistos = {};
 
   for (var r = 0; r < data.length; r++) {
@@ -594,7 +594,7 @@ function _enviarSegmento(segmento, subject, body) {
     var corpo = bodyTpl.replace(/\{nome\}/gi, nome);
     var html  = _wrapLinks(corpo.replace(/\n/g, '<br>'), campId, sid, appUrl);   // links clicáveis + rastreados
     if (appUrl) html += '<img src="' + appUrl + '?action=open&c=' + encodeURIComponent(campId) + '&s=' + encodeURIComponent(sid) + '" width="1" height="1" alt="" style="width:1px;height:1px;border:0">';
-    try { MailApp.sendEmail({ to: email, subject: subj, body: corpo, htmlBody: html, name: EMAIL_CFG.fromName }); sent++; }
+    try { _enviarEmail(email, subj, corpo, html); sent++; }
     catch (e) {}
   }
   _logCampanha(campId, subject, 'Newsletter · ' + segmento, alvo, sent);
@@ -966,6 +966,76 @@ var EMAIL_CFG = {
 };
 var EMAIL_DELAYS_H = [2, 24, 48];  // horas após o checkout para e-mail 1, 2 e 3
 
+// ── ENVIO PELA MICROSOFT 365 (Graph API) ──────────
+// Guarde nas Propriedades do Script: MS_TENANT_ID, MS_CLIENT_ID, MS_CLIENT_SECRET.
+// Se configurado, TODOS os e-mails saem por MS_CFG.sender com o nome fromName.
+var MS_CFG = {
+  sender:   'joaoneto@nerdsdalibras.com.br',
+  fromName: 'Lorena · Nerds da Libras',
+};
+function _msConfigurado() {
+  return !!PropertiesService.getScriptProperties().getProperty('MS_CLIENT_ID');
+}
+function _getMsToken() {
+  var props  = PropertiesService.getScriptProperties();
+  var tenant = props.getProperty('MS_TENANT_ID');
+  var cid    = props.getProperty('MS_CLIENT_ID');
+  var secret = props.getProperty('MS_CLIENT_SECRET');
+  if (!tenant || !cid || !secret) return '';
+  var cache  = CacheService.getScriptCache();
+  var cached = cache.get('ms_token');
+  if (cached) return cached;
+  try {
+    var res = UrlFetchApp.fetch('https://login.microsoftonline.com/' + tenant + '/oauth2/v2.0/token', {
+      method: 'post',
+      payload: { client_id: cid, client_secret: secret, scope: 'https://graph.microsoft.com/.default', grant_type: 'client_credentials' },
+      muteHttpExceptions: true,
+    });
+    var body = JSON.parse(res.getContentText() || '{}');
+    if (body.access_token) {
+      cache.put('ms_token', body.access_token, Math.max(60, (body.expires_in || 3600) - 120));
+      return body.access_token;
+    }
+    Logger.log('MS token erro: ' + res.getContentText().slice(0, 300));
+  } catch (e) { Logger.log('MS token exceção: ' + e); }
+  return '';
+}
+function _sendMailGraph(to, subject, htmlBody) {
+  var token = _getMsToken();
+  if (!token) return false;
+  var msg = {
+    message: {
+      subject: subject,
+      body: { contentType: 'HTML', content: htmlBody },
+      from: { emailAddress: { address: MS_CFG.sender, name: MS_CFG.fromName } },
+      toRecipients: [{ emailAddress: { address: to } }],
+    },
+    saveToSentItems: true,
+  };
+  try {
+    var res = UrlFetchApp.fetch('https://graph.microsoft.com/v1.0/users/' + encodeURIComponent(MS_CFG.sender) + '/sendMail', {
+      method: 'post', contentType: 'application/json',
+      headers: { Authorization: 'Bearer ' + token },
+      payload: JSON.stringify(msg), muteHttpExceptions: true,
+    });
+    var code = res.getResponseCode();
+    if (code >= 200 && code < 300) return true;
+    Logger.log('MS sendMail ' + code + ': ' + res.getContentText().slice(0, 300));
+  } catch (e) { Logger.log('MS sendMail exceção: ' + e); }
+  return false;
+}
+// Envio unificado: usa a Microsoft 365 se configurada; senão, o Gmail.
+function _enviarEmail(to, subject, corpo, html) {
+  html = html || String(corpo || '').replace(/\n/g, '<br>');
+  if (_msConfigurado() && _sendMailGraph(to, subject, html)) return true;
+  MailApp.sendEmail({ to: to, subject: subject, body: corpo, htmlBody: html, name: EMAIL_CFG.fromName });
+  return true;
+}
+// Cota diária disponível (MS ~alta; Gmail ~100)
+function _cotaEmail() {
+  return _msConfigurado() ? 1000 : MailApp.getRemainingDailyQuota();
+}
+
 // Próximo sábado no formato DD/MM (hoje, se já for sábado)
 function _proximoSabado() {
   var d = new Date();
@@ -1110,7 +1180,7 @@ function enviarEmailParaLeads(sessionIds, num) {
     };
     try {
       var tpl = _emailRemarketing(lead, num);
-      MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName });
+      _enviarEmail(email, tpl.subject, tpl.body, tpl.htmlBody);
       if (iSent >= 0) sheet.getRange(r + 2, iSent + 1).setValue(new Date().toISOString());
       enviados++;
     } catch (err) { /* segue para o próximo */ }
@@ -1142,7 +1212,7 @@ function enviarBroadcast(sessionIds, subject, body, label) {
   for (var i = 0; i < sessionIds.length; i++) want[sessionIds[i]] = true;
 
   var data  = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
-  var quota = MailApp.getRemainingDailyQuota();
+  var quota = _cotaEmail();
   var sent  = 0;
 
   for (var r = 0; r < data.length; r++) {
@@ -1164,11 +1234,7 @@ function enviarBroadcast(sessionIds, subject, body, label) {
               'style="width:1px;height:1px;border:0;overflow:hidden">';
     }
     try {
-      MailApp.sendEmail({
-        to: email, subject: subj,
-        body: corpo, htmlBody: html,
-        name: EMAIL_CFG.fromName,
-      });
+      _enviarEmail(email, subj, corpo, html);
       sent++;
     } catch (err) { Logger.log('Erro broadcast p/ ' + email + ': ' + err); }
   }
@@ -1392,7 +1458,7 @@ function subscribeIsca(id, nome, email, whatsapp) {
     var corpo = String(m.corpoEmail || 'Oi {nome}!\n\nAqui está o seu material:\n{link}\n\nAproveite! 💜').replace(/\{nome\}/gi, primeiro).replace(/\{link\}/gi, link);
     var html  = _wrapLinks(corpo.replace(/\n/g, '<br>'), campId, sid, appUrl);   // link rastreado (clique/baixou)
     if (appUrl) html += '<img src="' + appUrl + '?action=open&c=' + encodeURIComponent(campId) + '&s=' + encodeURIComponent(sid) + '" width="1" height="1" alt="" style="width:1px;height:1px;border:0">';
-    MailApp.sendEmail({ to: email, subject: subj, body: corpo, htmlBody: html, name: EMAIL_CFG.fromName });
+    _enviarEmail(email, subj, corpo, html);
   } catch (e) {}
   return { ok: true, link: link };
 }
@@ -1542,7 +1608,7 @@ function enviarEmailsRemarketing() {
       if (now < ancora + EMAIL_DELAYS_H[n] * 3600000) break;  // ainda não é hora deste e-mail
       try {
         var tpl = _emailRemarketing(lead, n + 1);
-        MailApp.sendEmail({ to: email, subject: tpl.subject, body: tpl.body, htmlBody: tpl.htmlBody, name: EMAIL_CFG.fromName });
+        _enviarEmail(email, tpl.subject, tpl.body, tpl.htmlBody);
         sheet.getRange(r + 2, iE[n] + 1).setValue(new Date().toISOString());
         enviados++;
       } catch (err) { Logger.log('Erro ao enviar para ' + email + ': ' + err); }
