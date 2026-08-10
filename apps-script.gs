@@ -248,7 +248,13 @@ function doGet(e) {
   if (action === 'getCampanhaLeads') {
     return respond(getCampanhaLeads(e.parameter.c));
   }
-  return respond({ ok: true, version: '3.3' });
+  // Descadastro (opt-out) — link do rodapé de todos os e-mails
+  if (action === 'unsub' || action === 'unsubscribe') {
+    registrarDescadastro(e.parameter.e);
+    return HtmlService.createHtmlOutput(_paginaDescadastro(e.parameter.e))
+      .setTitle('Descadastro · Nerds da Libras');
+  }
+  return respond({ ok: true, version: '3.4' });
 }
 
 function respond(data) {
@@ -1025,15 +1031,83 @@ function _sendMailGraph(to, subject, htmlBody) {
   return false;
 }
 // Envio unificado: usa a Microsoft 365 se configurada; senão, o Gmail.
-function _enviarEmail(to, subject, corpo, html) {
+// `transacional` = e-mail que a pessoa pediu na hora (ex.: material da isca);
+// esses são entregues mesmo para quem descadastrou do marketing.
+function _enviarEmail(to, subject, corpo, html, transacional) {
+  if (!transacional && _estaDescadastrado(to)) return false;   // respeita quem pediu p/ sair
   html = html || String(corpo || '').replace(/\n/g, '<br>');
-  if (_msConfigurado() && _sendMailGraph(to, subject, html)) return true;
-  MailApp.sendEmail({ to: to, subject: subject, body: corpo, htmlBody: html, name: EMAIL_CFG.fromName });
+  var rod = _rodapeDescadastro(to);
+  var htmlFinal  = html + rod.html;
+  var corpoFinal = String(corpo || '') + rod.texto;
+  if (_msConfigurado() && _sendMailGraph(to, subject, htmlFinal)) return true;
+  MailApp.sendEmail({ to: to, subject: subject, body: corpoFinal, htmlBody: htmlFinal, name: EMAIL_CFG.fromName });
   return true;
 }
 // Cota diária disponível (MS ~alta; Gmail ~100)
 function _cotaEmail() {
   return _msConfigurado() ? 1000 : MailApp.getRemainingDailyQuota();
+}
+
+// ── DESCADASTRO / OPT-OUT (LGPD + entregabilidade) ────────────
+// Aba "Descadastros" guarda os e-mails que pediram p/ sair. Um link no rodapé
+// de todo e-mail registra o pedido; e-mails de marketing param de ir p/ eles.
+function _descadastrados() {
+  var cache  = CacheService.getScriptCache();
+  var cached = cache.get('unsub_set');
+  if (cached) { try { return JSON.parse(cached); } catch (e) {} }
+  var list = [];
+  try {
+    var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Descadastros');
+    if (sh && sh.getLastRow() > 1) {
+      var vals = sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues();
+      for (var i = 0; i < vals.length; i++) {
+        var em = String(vals[i][0] || '').trim().toLowerCase();
+        if (em) list.push(em);
+      }
+    }
+  } catch (e) {}
+  cache.put('unsub_set', JSON.stringify(list), 300);   // cache 5 min (envios em massa)
+  return list;
+}
+function _estaDescadastrado(email) {
+  if (!email) return false;
+  return _descadastrados().indexOf(String(email).trim().toLowerCase()) >= 0;
+}
+function registrarDescadastro(email) {
+  email = String(email || '').trim().toLowerCase();
+  if (!email) return false;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Descadastros') || ss.insertSheet('Descadastros');
+  if (sh.getLastRow() === 0) sh.appendRow(['Email', 'Data']);
+  if (!_estaDescadastrado(email)) {
+    sh.appendRow([email, new Date().toISOString()]);
+    CacheService.getScriptCache().remove('unsub_set');
+  }
+  return true;
+}
+// Rodapé com link de descadastro (adicionado a todo e-mail enviado)
+function _rodapeDescadastro(to) {
+  var url  = _webAppUrl();
+  var link = url ? (url + '?action=unsub&e=' + encodeURIComponent(to)) : '';
+  var htmlFoot = '<div style="margin-top:30px;padding-top:14px;border-top:1px solid #e8e8e8;font-size:12px;color:#9a9a9a;line-height:1.6;font-family:Arial,Helvetica,sans-serif">'
+    + 'Você recebeu este e-mail porque se cadastrou nos conteúdos da <strong>Nerds da Libras</strong>.'
+    + (link ? '<br>Não quer mais receber? <a href="' + link + '" style="color:#9a9a9a;text-decoration:underline">Descadastrar / cancelar inscrição</a>.' : '')
+    + '</div>';
+  var textoFoot = link
+    ? ('\n\n—\nVocê recebeu este e-mail porque se cadastrou nos conteúdos da Nerds da Libras.\nPara não receber mais, acesse: ' + link)
+    : '';
+  return { html: htmlFoot, texto: textoFoot };
+}
+// Página amigável exibida quando a pessoa clica em "descadastrar"
+function _paginaDescadastro(email) {
+  var e = String(email || '').replace(/[<>&"']/g, '');
+  return '<div style="font-family:Arial,Helvetica,sans-serif;max-width:460px;margin:60px auto;text-align:center;color:#333;padding:0 20px">'
+    + '<div style="font-size:52px">💜</div>'
+    + '<h2 style="margin:14px 0 8px">Pronto, você foi descadastrado</h2>'
+    + '<p style="color:#666;line-height:1.6;font-size:15px">Não vamos mais te enviar e-mails'
+    + (e ? (' em <strong>' + e + '</strong>') : '')
+    + '.<br>Sentiremos sua falta! Se mudar de ideia, é só se inscrever de novo. 🤟</p>'
+    + '<p style="color:#aaa;font-size:13px;margin-top:24px">Nerds da Libras</p></div>';
 }
 
 // Próximo sábado no formato DD/MM (hoje, se já for sábado)
@@ -1458,7 +1532,7 @@ function subscribeIsca(id, nome, email, whatsapp) {
     var corpo = String(m.corpoEmail || 'Oi {nome}!\n\nAqui está o seu material:\n{link}\n\nAproveite! 💜').replace(/\{nome\}/gi, primeiro).replace(/\{link\}/gi, link);
     var html  = _wrapLinks(corpo.replace(/\n/g, '<br>'), campId, sid, appUrl);   // link rastreado (clique/baixou)
     if (appUrl) html += '<img src="' + appUrl + '?action=open&c=' + encodeURIComponent(campId) + '&s=' + encodeURIComponent(sid) + '" width="1" height="1" alt="" style="width:1px;height:1px;border:0">';
-    _enviarEmail(email, subj, corpo, html);
+    _enviarEmail(email, subj, corpo, html, true);   // transacional: material pedido na hora
   } catch (e) {}
   return { ok: true, link: link };
 }
