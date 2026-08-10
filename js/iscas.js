@@ -7,12 +7,19 @@
 function getIscas() { return (typeof cfgGet === 'function' ? (cfgGet('iscas', []) || []) : []); }
 function saveIscas(arr) { if (typeof cfgSet === 'function') cfgSet('iscas', arr); }
 
-function renderIscas() {
+async function renderIscas() {
   const el = document.getElementById('iscas-content');
   if (!el) return;
   const iscas = getIscas();
   const base = location.origin + '/isca.html?id=';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // Métricas de cada isca (inscritos, aberturas, cliques)
+  const stats = {};
+  await Promise.all(iscas.map(async m => {
+    try { stats[m.id] = await (await fetch(CONFIG.SHEETS_URL + '?action=getIscaStats&id=' + encodeURIComponent(m.id), { redirect: 'follow' })).json(); }
+    catch (_) { stats[m.id] = {}; }
+  }));
 
   const form = `
     <div style="background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:18px;margin-bottom:18px">
@@ -35,8 +42,14 @@ function renderIscas() {
       <button onclick="salvarIsca()" style="background:var(--g);color:#0b0b0d;border:none;font-weight:700;padding:10px 18px;border-radius:9px;cursor:pointer">➕ Criar isca</button>
     </div>`;
 
+  const chip = (emoji, val, sub, cor) => `<div style="flex:1;min-width:90px;text-align:center;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:7px 4px">
+    <div style="font-size:1.05rem;font-weight:800;color:${cor || 'var(--text)'}">${emoji} ${val}</div>
+    <div style="font-size:.62rem;color:var(--td);text-transform:uppercase">${sub}</div></div>`;
+
   const lista = iscas.length ? iscas.map(m => {
     const url = base + encodeURIComponent(m.id);
+    const s = stats[m.id] || {};
+    const insc = s.inscritos || 0, ab = s.abriram || 0, cl = s.clicaram || 0;
     return `<div style="background:var(--s1);border:1px solid var(--bdr);border-radius:12px;padding:14px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;gap:10px;align-items:start">
         <div style="min-width:0">
@@ -45,6 +58,12 @@ function renderIscas() {
         </div>
         <button onclick="excluirIsca('${m.id}')" style="background:none;border:1px solid var(--bdr);color:var(--red);border-radius:7px;padding:4px 9px;cursor:pointer;font-size:.72rem">✕</button>
       </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        ${chip('👥', insc, 'inscreveram', 'var(--blue)')}
+        ${chip('👀', ab, 'abriram', 'var(--g)')}
+        ${chip('🖱', cl, 'clicaram/baixaram', 'var(--purple)')}
+      </div>
+      <button onclick="verCampanhaLeads('isca_${m.id}', ${JSON.stringify(esc(m.nome || m.titulo || ''))})" style="margin-top:9px;background:var(--s3);border:1px solid var(--bdr);color:var(--text);border-radius:7px;padding:6px 11px;cursor:pointer;font-size:.75rem">👁 Ver quem abriu / clicou</button>
       <div style="margin-top:10px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:8px;font-size:.75rem;word-break:break-all;color:var(--blue)">${esc(url)}</div>
       <button onclick="copiarLinkIsca('${esc(url)}')" style="margin-top:8px;background:var(--s3);border:1px solid var(--bdr);color:var(--text);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.78rem">📋 Copiar link do formulário</button>
     </div>`;

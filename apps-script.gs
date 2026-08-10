@@ -216,6 +216,10 @@ function doGet(e) {
   if (action === 'getIsca') {
     return respond(getIsca(e.parameter.id));
   }
+  // Isca digital: métricas (inscritos, aberturas, cliques)
+  if (action === 'getIscaStats') {
+    return respond(getIscaStats(e.parameter.id));
+  }
   // Isca digital: inscrição → cria lead + envia o material por e-mail
   if (action === 'subscribeIsca') {
     return respond(subscribeIsca(e.parameter.id, e.parameter.nome, e.parameter.email, e.parameter.whatsapp));
@@ -1361,18 +1365,57 @@ function subscribeIsca(id, nome, email, whatsapp) {
   var phone = String(whatsapp || '').replace(/\D/g, '');
   var origem = 'Isca: ' + (m.nome || m.titulo || 'material');
 
+  var finalRow = 0;
   try {
-    _upsertByContact({ nome: nome || '', email: email, whatsapp: phone, etapa: 'contato', updatedAt: new Date().toISOString() }, phone, email, nome || '', origem);
+    finalRow = _upsertByContact({ nome: nome || '', email: email, whatsapp: phone, etapa: 'contato', updatedAt: new Date().toISOString() }, phone, email, nome || '', origem);
+  } catch (e) {}
+  // sessionId do lead (p/ amarrar abertura/clique)
+  var sid = '';
+  try {
+    var sh0 = getSheet(); var hd0 = getHeaders(sh0); var c0 = hd0.indexOf('sessionId');
+    if (finalRow > 0 && c0 >= 0) sid = sh0.getRange(finalRow, c0 + 1).getValue();
+  } catch (e) {}
+  // registra a inscrição (p/ contar quantos se inscreveram)
+  try {
+    var ssI = SpreadsheetApp.getActiveSpreadsheet();
+    var iq = ssI.getSheetByName('Inscricoes');
+    if (!iq) { iq = ssI.insertSheet('Inscricoes'); iq.appendRow(['Data', 'iscaId', 'sessionId', 'nome', 'email']); }
+    iq.appendRow([new Date(), id, sid, nome || '', email]);
   } catch (e) {}
 
   var link = m.linkMaterial || '';
   try {
+    var campId = 'isca_' + id;                 // campId estável por isca (agrega aberturas/cliques)
+    var appUrl = _webAppUrl();
     var primeiro = String(nome || 'você').split(' ')[0];
     var subj  = String(m.assuntoEmail || 'Seu material chegou! 🎁').replace(/\{nome\}/gi, primeiro).replace(/\{link\}/gi, link);
     var corpo = String(m.corpoEmail || 'Oi {nome}!\n\nAqui está o seu material:\n{link}\n\nAproveite! 💜').replace(/\{nome\}/gi, primeiro).replace(/\{link\}/gi, link);
-    MailApp.sendEmail({ to: email, subject: subj, body: corpo, htmlBody: corpo.replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s<>"']+)/g, '<a href="$1">$1</a>'), name: EMAIL_CFG.fromName });
+    var html  = _wrapLinks(corpo.replace(/\n/g, '<br>'), campId, sid, appUrl);   // link rastreado (clique/baixou)
+    if (appUrl) html += '<img src="' + appUrl + '?action=open&c=' + encodeURIComponent(campId) + '&s=' + encodeURIComponent(sid) + '" width="1" height="1" alt="" style="width:1px;height:1px;border:0">';
+    MailApp.sendEmail({ to: email, subject: subj, body: corpo, htmlBody: html, name: EMAIL_CFG.fromName });
   } catch (e) {}
   return { ok: true, link: link };
+}
+
+// Métricas de uma isca: inscritos, aberturas, cliques e cliques por link
+function getIscaStats(id) {
+  var base = getCampanhaLeads('isca_' + id);   // { abriram, clicaram, porLink }
+  var inscritos = 0;
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName('Inscricoes');
+    if (sh && sh.getLastRow() > 1) {
+      var v = sh.getRange(2, 1, sh.getLastRow() - 1, 3).getValues();
+      var set = {};
+      for (var i = 0; i < v.length; i++) {
+        if (String(v[i][1]) !== String(id)) continue;
+        var s = v[i][2];
+        if (s) set[s] = true; else inscritos++;   // sem sessionId conta avulso
+      }
+      inscritos += Object.keys(set).length;
+    }
+  } catch (e) {}
+  return { inscritos: inscritos, abriram: (base.abriram || []).length, clicaram: (base.clicaram || []).length, porLink: base.porLink || [] };
 }
 
 // Lê o histórico de campanhas (mais recente primeiro) com aberturas ÚNICAS por campanha
