@@ -14,18 +14,18 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --verde:      #f9b233;   /* dourado (nome mantido p/ nao alterar o HTML) */
-      --verde-dk:   #d97706;
-      --verde-lt:   #fbbf5a;
-      --amarelo:    #f59e0b;
-      --bg:         #555555;
-      --bg2:        #4a4a4a;
-      --card:       #111111;
-      --borda:      rgba(245,158,11,.32);
-      --borda-lt:   rgba(255,255,255,.07);
-      --texto:      #ffffff;
-      --texto-sec:  rgba(255,255,255,.72);
-      --texto-dim:  rgba(255,255,255,.42);
+      --verde:      #f0b445;   /* dourado clube-da-libras (nome mantido) */
+      --verde-dk:   #d99423;
+      --verde-lt:   #f5c76a;
+      --amarelo:    #f0b445;
+      --bg:         #0c0c0f;
+      --bg2:        #141419;
+      --card:       #141419;
+      --borda:      rgba(240,180,69,.30);
+      --borda-lt:   rgba(255,255,255,.09);
+      --texto:      #f5f3ee;
+      --texto-sec:  #a29c92;
+      --texto-dim:  rgba(255,255,255,.40);
     }
 
     html { scroll-behavior: smooth; }
@@ -43,7 +43,7 @@
       content: '';
       position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
       width: 900px; height: 600px; z-index: 0; pointer-events: none;
-      background: radial-gradient(ellipse at center, rgba(245,158,11,.10) 0%, transparent 70%);
+      background: radial-gradient(ellipse at center, rgba(240,180,69,.10) 0%, transparent 70%);
     }
 
     /* ── PAGE ── */
@@ -57,10 +57,10 @@
       display: inline-flex; align-items: center; gap: 8px;
       padding: 8px 20px; border-radius: 999px;
       border: none;
-      background: linear-gradient(135deg,#f59e0b,#d97706);
+      background: linear-gradient(135deg,#f0b445,#d99423);
       font-size: .72rem; font-weight: 900; letter-spacing: .1em;
       color: #111; text-transform: uppercase;
-      box-shadow: 0 2px 14px rgba(245,158,11,.5);
+      box-shadow: 0 2px 14px rgba(240,180,69,.5);
     }
     .badge-dot {
       width: 7px; height: 7px; border-radius: 50%;
@@ -104,7 +104,7 @@
       display: inline-flex; align-items: center; gap: 7px;
       padding: 9px 18px; border-radius: 999px;
       border: 1px solid var(--borda);
-      background: rgba(245,158,11,.06);
+      background: rgba(240,180,69,.06);
       font-size: .78rem; font-weight: 600; color: var(--texto-sec);
     }
     .fpill-icon { font-size: .9rem; }
@@ -139,7 +139,7 @@
       background: rgba(17,17,17,.94); backdrop-filter: blur(10px);
       border: 1px solid var(--borda); border-radius: 14px;
       padding: 14px 20px; text-align: center; min-width: 220px;
-      box-shadow: 0 4px 32px rgba(245,158,11,.18);
+      box-shadow: 0 4px 32px rgba(240,180,69,.18);
     }
     .profit-label { font-size: .62rem; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
     .profit-value { font-size: 1.6rem; font-weight: 900; color: var(--verde); letter-spacing: -.01em; }
@@ -155,7 +155,7 @@
     .video-section { width: 100%; margin-bottom: 8px; }
     .player-wrap {
       width: 100%; border-radius: 18px; overflow: hidden;
-      box-shadow: 0 0 0 1px var(--borda), 0 8px 60px rgba(245,158,11,.12);
+      box-shadow: 0 0 0 1px var(--borda), 0 8px 60px rgba(240,180,69,.12);
       background: #000;
     }
     .player-ratio { position: relative; padding-bottom: 56.25%; height: 0; }
@@ -173,13 +173,13 @@
       width: 80px; height: 80px; border-radius: 50%;
       background: var(--verde);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 0 0 rgba(245,158,11,.4);
+      box-shadow: 0 0 0 0 rgba(240,180,69,.4);
       animation: pulsePlay 2s ease-in-out infinite;
     }
     @keyframes pulsePlay {
-      0%  { box-shadow: 0 0 0 0 rgba(245,158,11,.5); }
-      70% { box-shadow: 0 0 0 22px rgba(245,158,11,0); }
-      100%{ box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+      0%  { box-shadow: 0 0 0 0 rgba(240,180,69,.5); }
+      70% { box-shadow: 0 0 0 22px rgba(240,180,69,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(240,180,69,0); }
     }
     .play-circle svg { width: 30px; height: 30px; fill: #fff; margin-left: 5px; }
     .placeholder-text { font-size: .74rem; color: rgba(255,255,255,.4); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
@@ -253,7 +253,7 @@
       width: 90px; height: 80px; border-radius: 16px;
       background: linear-gradient(145deg, #1a3a1a, #0f2a0f);
       border: 2px solid var(--verde);
-      box-shadow: 0 0 30px rgba(245,158,11,.25), inset 0 1px 0 rgba(255,255,255,.08);
+      box-shadow: 0 0 30px rgba(240,180,69,.25), inset 0 1px 0 rgba(255,255,255,.08);
       display: flex; align-items: center; justify-content: center;
     }
     .lock-keyhole {
@@ -277,7 +277,7 @@
       border: 8px solid var(--verde);
       border-bottom: none;
       border-radius: 27px 27px 0 0;
-      box-shadow: 0 0 16px rgba(245,158,11,.4);
+      box-shadow: 0 0 16px rgba(240,180,69,.4);
       transform-origin: bottom right;
       transition: transform .6s cubic-bezier(.34,1.56,.64,1), opacity .4s ease;
     }
@@ -288,14 +288,14 @@
     }
     .lock-scene.open .lock-body {
       border-color: var(--verde-lt);
-      box-shadow: 0 0 60px rgba(245,158,11,.5), inset 0 1px 0 rgba(255,255,255,.1);
+      box-shadow: 0 0 60px rgba(240,180,69,.5), inset 0 1px 0 rgba(255,255,255,.1);
     }
 
     /* brilho de abertura */
     .lock-burst {
       position: absolute; inset: -20px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(245,158,11,.35) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(240,180,69,.35) 0%, transparent 70%);
       opacity: 0; pointer-events: none;
       transform: scale(.4);
       transition: opacity .4s ease, transform .5s ease;
@@ -333,7 +333,7 @@
     .lock-countdown {
       font-size: 3.5rem; font-weight: 900; color: var(--verde);
       letter-spacing: .04em; font-variant-numeric: tabular-nums;
-      text-shadow: 0 0 30px rgba(245,158,11,.4);
+      text-shadow: 0 0 30px rgba(240,180,69,.4);
       transition: color .4s;
     }
     .lock-countdown.unlocked { color: var(--verde-lt); text-shadow: 0 0 40px rgba(74,222,128,.6); }
@@ -348,7 +348,7 @@
       font-size: 5rem; line-height: 1;
       opacity: 0; transform: scale(.4) rotate(-15deg);
       transition: opacity .6s ease .3s, transform .7s cubic-bezier(.34,1.56,.64,1) .3s;
-      filter: drop-shadow(0 0 20px rgba(245,158,11,.6));
+      filter: drop-shadow(0 0 20px rgba(240,180,69,.6));
       display: none;
     }
     .libras-sign.show {
@@ -378,15 +378,15 @@
       width: 100%;
       display: flex; align-items: center; justify-content: space-between;
       padding: 20px 18px 20px 32px; border-radius: 999px;
-      background: linear-gradient(135deg,#f59e0b,#d97706); color: #111;
+      background: linear-gradient(135deg,#f0b445,#d99423); color: #111;
       font-weight: 900; font-size: 1.05rem;
       text-decoration: none; border: none; cursor: pointer;
-      box-shadow: 0 4px 32px rgba(245,158,11,.45);
+      box-shadow: 0 4px 32px rgba(240,180,69,.45);
       transition: filter .2s, transform .15s, box-shadow .2s;
       position: relative; overflow: hidden;
       text-transform: uppercase; letter-spacing: .04em;
     }
-    .cta-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 40px rgba(245,158,11,.65); transform: translateY(-2px); }
+    .cta-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 40px rgba(240,180,69,.65); transform: translateY(-2px); }
     .cta-btn:active { transform: scale(.98); }
     .cta-btn-arrow {
       width: 44px; height: 44px; border-radius: 50%;
@@ -421,7 +421,7 @@
     .benefit-col { display: flex; flex-direction: column; gap: 12px; }
     .benefit-icon-wrap {
       width: 52px; height: 52px; border-radius: 14px;
-      background: rgba(245,158,11,.12);
+      background: rgba(240,180,69,.12);
       border: 1px solid var(--borda);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
@@ -459,7 +459,7 @@
     .garantia {
       width: 100%; margin-top: 40px; padding: 26px;
       border-radius: 18px; border: 1px solid var(--borda);
-      background: rgba(245,158,11,.06);
+      background: rgba(240,180,69,.06);
       display: flex; align-items: flex-start; gap: 18px;
     }
     .garantia-icon { font-size: 2.4rem; flex-shrink: 0; line-height: 1; }
@@ -522,9 +522,9 @@
       width: 92px; height: 92px; border-radius: 50%; flex-shrink: 0;
       border: 3px solid var(--verde); overflow: hidden;
       display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(145deg,#f59e0b,#d97706);
+      background: linear-gradient(145deg,#f0b445,#d99423);
       font-size: 1.9rem; font-weight: 900; color: #fff;
-      box-shadow: 0 0 24px rgba(245,158,11,.3);
+      box-shadow: 0 0 24px rgba(240,180,69,.3);
     }
     .depo-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
     .depo-stars { color: #F59E0B; letter-spacing: 3px; font-size: .95rem; }
@@ -535,12 +535,12 @@
     .depo-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 18px; }
     .depo-arrow {
       width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
-      background: rgba(245,158,11,.1); border: 1px solid var(--borda);
+      background: rgba(240,180,69,.1); border: 1px solid var(--borda);
       display: flex; align-items: center; justify-content: center;
       color: var(--verde); font-size: 1.3rem; line-height: 1;
       transition: background .2s, transform .15s; user-select: none;
     }
-    .depo-arrow:hover { background: rgba(245,158,11,.2); }
+    .depo-arrow:hover { background: rgba(240,180,69,.2); }
     .depo-arrow:active { transform: scale(.92); }
     .depo-dots { display: flex; gap: 8px; }
     .depo-dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.2); cursor: pointer; transition: background .3s, width .3s; }
@@ -567,11 +567,11 @@
     /* ── BÔNUS ── */
     .bonus-card {
       width: 100%; margin-top: 44px; padding: 36px 28px;
-      background: linear-gradient(160deg, rgba(245,158,11,.09), rgba(245,158,11,.02));
+      background: linear-gradient(160deg, rgba(240,180,69,.09), rgba(240,180,69,.02));
       border: 1px solid var(--borda); border-radius: 24px;
     }
     .bonus-head { text-align: center; margin-bottom: 24px; }
-    .bonus-badge { display: inline-flex; align-items: center; gap: 7px; padding: 7px 16px; border-radius: 999px; background: rgba(245,158,11,.14); border: 1px solid var(--borda); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--verde-lt); margin-bottom: 14px; }
+    .bonus-badge { display: inline-flex; align-items: center; gap: 7px; padding: 7px 16px; border-radius: 999px; background: rgba(240,180,69,.14); border: 1px solid var(--borda); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--verde-lt); margin-bottom: 14px; }
     .bonus-title { font-size: 1.7rem; font-weight: 900; color: var(--texto); line-height: 1.2; }
     .bonus-title .verde { color: var(--verde); }
     .bonus-sub { font-size: .9rem; color: var(--texto-sec); margin: 10px auto 0; max-width: 580px; line-height: 1.6; }
@@ -680,25 +680,6 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
       </div>
     </div>
 
-    <!-- MOCKUP / FOTOS ── -->
-    <div class="mockup-section">
-      <div class="profit-card">
-        <div class="profit-label">⚠️ ALERTA</div>
-        <div class="profit-value" style="font-size:1rem;color:#facc15;line-height:1.35;">Não assista ao vídeo,<br/>se quer continuar<br/>onde está na Libras.</div>
-      </div>
-      <div class="mockup-grid">
-        <div class="mockup-img side">
-          <img src="/fotos/palestra3.png.png" alt="Prof. Lorena palestrando" />
-        </div>
-        <div class="mockup-img main">
-          <img src="/fotos/palestra2.png.png" alt="Prof. Lorena palestrando" />
-        </div>
-        <div class="mockup-img side tall">
-          <img src="/fotos/palestra1.png.png" alt="Prof. Lorena palestrando" />
-        </div>
-      </div>
-    </div>
-
     <!-- VÍDEO -->
     <div class="video-section">
       <div class="player-wrap">
@@ -730,16 +711,35 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
       </div>
     </div>
 
+    <!-- GALERIA (abaixo do vídeo) -->
+    <div class="mockup-section">
+      <div class="profit-card">
+        <div class="profit-label">📸 Ao vivo pelo Brasil</div>
+        <div class="profit-value" style="font-size:1rem;color:#f0b445;line-height:1.35;">A Prof. Lorena e seus<br/>alunos, na prática.</div>
+      </div>
+      <div class="mockup-grid">
+        <div class="mockup-img side">
+          <img src="/fotos/palestra3.png.png" alt="Prof. Lorena palestrando" />
+        </div>
+        <div class="mockup-img main">
+          <img src="/fotos/palestra2.png.png" alt="Prof. Lorena palestrando" />
+        </div>
+        <div class="mockup-img side tall">
+          <img src="/fotos/palestra1.png.png" alt="Prof. Lorena palestrando" />
+        </div>
+      </div>
+    </div>
+
     <!-- APÓS VÍDEO -->
     <div class="after-video">
 
       <div class="social-proof">
         <div class="av-stack">
-          <div class="av" style="background:#f59e0b;margin-left:0">A</div>
-          <div class="av" style="background:#d97706">C</div>
+          <div class="av" style="background:#f0b445;margin-left:0">A</div>
+          <div class="av" style="background:#d99423">C</div>
           <div class="av" style="background:#b45309">J</div>
           <div class="av" style="background:#92400e">M</div>
-          <div class="av" style="background:#f59e0b">R</div>
+          <div class="av" style="background:#f0b445">R</div>
         </div>
         <span class="av-text">+500 alunos já transformaram suas vidas</span>
       </div>
