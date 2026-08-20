@@ -60,6 +60,15 @@ function updateBadges(leads) {
   }).length;
   var bc = document.getElementById('badge-checkout');
   if (bc) bc.textContent = novosCk > 0 ? novosCk : '';
+
+  // Leads de AFILIADOS que entraram desde a última visita
+  var vistoAf = _ultimoVisto('afiliados');
+  var novosAf = leads.filter(function (l) {
+    return (l.afiliado || (typeof _afiliadoSlug === 'function' && _afiliadoSlug(l))) &&
+           _ts(l.createdAt) > vistoAf;
+  }).length;
+  var ba = document.getElementById('badge-afiliados');
+  if (ba) ba.textContent = novosAf > 0 ? novosAf : '';
 }
 
 // Classifica o lead no grupo de produto (para segmentar campanhas):

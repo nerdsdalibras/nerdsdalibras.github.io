@@ -633,6 +633,9 @@
   (function(){
     var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyBnO0BBl1FCAU6lVeOVRu_4u_5DN0cOWp3ErskE_dLRZ-54x_51yK82icCn8tfx71F/exec';
     var CHECKOUT_FALLBACK = 'https://pay.kiwify.com.br/1sIyvVL?afid=Zf0BfYEd';
+    // ── AFILIADO desta página (identifica de quem veio o lead no CRM) ──
+    var AFILIADO_SLUG = 'cris';   // identificador único do afiliado
+    var AFILIADO_NOME = 'Cris';   // nome exibido no painel
     var overlay = document.getElementById('leadOverlay');
     var pending = CHECKOUT_FALLBACK;
     function openModal(url){
@@ -663,10 +666,12 @@
       try{ if(window.fbq){ fbq('track','Lead',{content_name:'Clube da Libras'}); fbq('track','InitiateCheckout'); } }catch(_){}
       // envia o lead para o CRM (origem = clubedalibras) + marca checkout p/ remarketing
       var url = SHEETS_URL + '?action=captureLead&grupo=curso'
-        + '&nome='     + encodeURIComponent(nome)
-        + '&email='    + encodeURIComponent(email)
-        + '&whatsapp=' + encodeURIComponent(cel)
-        + '&origem='   + encodeURIComponent('clubedalibras')
+        + '&nome='         + encodeURIComponent(nome)
+        + '&email='        + encodeURIComponent(email)
+        + '&whatsapp='     + encodeURIComponent(cel)
+        + '&origem='       + encodeURIComponent('Afiliado · ' + AFILIADO_NOME)
+        + '&afiliado='     + encodeURIComponent(AFILIADO_SLUG)
+        + '&afiliadoNome=' + encodeURIComponent(AFILIADO_NOME)
         + '&checkout=1';
       // Monta o checkout JÁ COM os dados preenchidos (só falta a forma de pagamento)
       var prefill = pending;

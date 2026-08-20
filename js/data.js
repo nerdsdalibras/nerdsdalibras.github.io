@@ -70,14 +70,15 @@ function setPage(page) {
   else if (page === 'pipeline')   renderPipeline();
   else if (page === 'analytics')  renderAnalytics();
   else if (page === 'checkout')   renderCheckout();
+  else if (page === 'afiliados')  renderAfiliados();
   else if (page === 'products')   renderProducts();
   else if (page === 'campaigns')  renderCampaigns();
   else if (page === 'newsletter') renderNewsletter();
   else if (page === 'iscas')      renderIscas();
   else                            renderLeads();
 
-  // Zera o contador de "novos" da aba visitada (Leads / Checkout)
-  if (page === 'leads' || page === 'checkout') {
+  // Zera o contador de "novos" da aba visitada (Leads / Checkout / Afiliados)
+  if (page === 'leads' || page === 'checkout' || page === 'afiliados') {
     marcaVisto(page);
     updateBadges(cachedLeads || []);
   }
