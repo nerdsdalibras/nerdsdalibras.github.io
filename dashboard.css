@@ -850,6 +850,73 @@ body {
 .ck-empty { text-align:center; padding:40px; color:var(--td); font-size:.85rem; }
 @media (max-width:720px) { .ck-stats { grid-template-columns:repeat(2,1fr); } }
 
+/* ═══════════ AFILIADOS ═══════════ */
+.af-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; margin-top:20px; }
+.af-card {
+  text-align:left; background:var(--s1); border:1px solid var(--bdr); border-radius:16px;
+  padding:18px; cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:14px;
+  transition:border-color .15s, transform .15s, box-shadow .15s;
+}
+.af-card:hover { border-color:var(--bdrb); transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,.25); }
+.af-card-head { display:flex; align-items:center; gap:12px; }
+.af-avatar {
+  width:44px; height:44px; border-radius:12px; border:1px solid; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.15rem;
+}
+.af-avatar-lg { width:56px; height:56px; border-radius:14px; font-size:1.5rem; }
+.af-card-id { min-width:0; flex:1; }
+.af-card-name { font-weight:800; font-size:1rem; color:var(--text); }
+.af-card-link { font-size:.72rem; color:var(--ts); font-family:ui-monospace,monospace; }
+.af-card-rev { text-align:right; flex-shrink:0; }
+.af-card-rev-val { font-weight:800; color:var(--g); font-size:.95rem; }
+.af-card-rev-lbl { font-size:.64rem; color:var(--td); text-transform:uppercase; letter-spacing:.05em; }
+.af-bar { position:relative; height:8px; border-radius:99px; background:var(--s3); overflow:hidden; }
+.af-bar-fill { position:absolute; top:0; left:0; height:100%; border-radius:99px; }
+.af-bar-checkout { background:rgba(251,146,60,.55); }
+.af-bar-comprou  { background:var(--g); }
+.af-card-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.af-metric { text-align:center; }
+.af-metric b { display:block; font-size:1.1rem; font-weight:800; color:var(--text); line-height:1; }
+.af-metric span { font-size:.62rem; color:var(--td); text-transform:uppercase; letter-spacing:.04em; }
+.af-metric.af-m-green b { color:var(--g); }
+.af-card-cta { font-size:.8rem; font-weight:700; color:var(--g); }
+
+.af-detail-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:20px; }
+.af-back {
+  background:var(--s2); border:1px solid var(--bdr); color:var(--ts); border-radius:10px;
+  padding:8px 14px; font:inherit; font-size:.78rem; font-weight:700; cursor:pointer;
+}
+.af-back:hover { background:var(--s3); color:var(--text); }
+.af-detail-id { flex:1; min-width:160px; }
+.af-detail-name { font-weight:800; font-size:1.25rem; color:var(--text); }
+.af-detail-link { font-size:.75rem; color:var(--blue); text-decoration:none; }
+.af-detail-link:hover { text-decoration:underline; }
+.af-detail-rev { text-align:right; }
+.af-detail-rev-val { font-weight:800; color:var(--g); font-size:1.3rem; }
+.af-detail-rev-lbl { font-size:.66rem; color:var(--td); text-transform:uppercase; letter-spacing:.05em; }
+
+.af-funnel { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+.af-funnel-step { background:var(--s1); border:1px solid var(--bdr); border-radius:14px; padding:14px; }
+.af-funnel-top { display:flex; align-items:center; justify-content:space-between; }
+.af-funnel-icon { font-size:1.1rem; }
+.af-funnel-num { font-size:1.5rem; font-weight:800; line-height:1; }
+.af-funnel-lbl { font-size:.72rem; color:var(--ts); margin:6px 0 10px; }
+.af-funnel-bar { height:6px; border-radius:99px; background:var(--s3); overflow:hidden; }
+.af-funnel-bar-fill { height:100%; border-radius:99px; }
+.af-funnel-pct { font-size:.68rem; color:var(--td); text-align:right; margin-top:5px; font-weight:700; }
+.af-val { font-size:.7rem; color:var(--g); font-weight:700; margin-top:3px; }
+
+.af-empty { text-align:center; padding:56px 24px; color:var(--ts); }
+.af-empty-icon { font-size:2.6rem; margin-bottom:12px; }
+.af-empty h3 { color:var(--text); font-size:1.05rem; margin-bottom:8px; }
+.af-empty p { font-size:.84rem; line-height:1.7; max-width:440px; margin:0 auto; }
+.af-empty code { background:var(--s3); padding:2px 6px; border-radius:5px; font-size:.78rem; color:var(--text); }
+
+@media (max-width:720px) {
+  .af-funnel { grid-template-columns:repeat(2,1fr); }
+  .af-grid { grid-template-columns:1fr; }
+}
+
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }

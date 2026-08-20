@@ -14,6 +14,8 @@ const COL_TO_FIELD = {
   'Email':            'email',
   'Instagram':        'instagram',
   'Origem':           'origem',
+  'afiliado':         'afiliado',         // slug do afiliado que trouxe o lead (ex.: cris)
+  'afiliadoNome':     'afiliadoNome',     // nome do afiliado exibido no painel
   'Conheceu Lorena':  'conheceuLorena',
   'Iniciou Quiz':     'iniciouQuiz',
   'Concluiu Quiz':    'concluiuQuiz',
@@ -105,6 +107,7 @@ const NEW_COLS = [
   'etapaQuiz','experiencia','respostasQuiz','interesseCAS','clicouOferta','plataformaOferta','ofertaEm','campanhaAbriuEm',
   'campanhaClicouEm',
   'utmSource','utmMedium','utmCampaign','utmContent','utmTerm','firstTouch','firstTouchEm','lastTouch','landingPage','referrer',
+  'afiliado','afiliadoNome',
   'sessionId','genero','oferta','Grupo Indicado','classificacaoLead',
   'status','etapa','temperatura','statusCloser','observacoes',
   'comprouKiwify','valorPago','ultimaCompraEm','clicouVSL','clicouGrupo','clicouCheckout','checkoutEm',
@@ -226,7 +229,7 @@ function doGet(e) {
   }
   // Formulário de página → cria lead no GRUPO certo (curso/mentoria/ebook)
   if (action === 'captureLead') {
-    return respond(captureLead(e.parameter.grupo, e.parameter.nome, e.parameter.email, e.parameter.whatsapp, e.parameter.origem, e.parameter.checkout));
+    return respond(captureLead(e.parameter.grupo, e.parameter.nome, e.parameter.email, e.parameter.whatsapp, e.parameter.origem, e.parameter.checkout, e.parameter.afiliado, e.parameter.afiliadoNome));
   }
   if (action === 'aiAnalyze') {
     return respond(aiAnalyze(e.parameter.data));
@@ -1372,13 +1375,16 @@ function getCampanhaLeads(campId) {
 }
 
 // ── CAPTURA DE LEAD POR PÁGINA (grupo Curso/Mentoria/Ebook) ──
-function captureLead(grupo, nome, email, whatsapp, origem, checkout) {
+function captureLead(grupo, nome, email, whatsapp, origem, checkout, afiliado, afiliadoNome) {
   grupo = String(grupo || '').toLowerCase();
   email = String(email || '').toLowerCase().trim();
   var phone = String(whatsapp || '').replace(/\D/g, '');
   if ((!email || email.indexOf('@') < 0) && phone.length < 10) {
     return { error: 'Informe um e-mail ou WhatsApp válido' };
   }
+  // Afiliado que trouxe o lead (páginas /afiliados.*). Normaliza o slug.
+  var afSlug = String(afiliado || '').toLowerCase().replace(/[^a-z0-9]+/g, '').trim();
+  var afNome = String(afiliadoNome || '').trim();
   // Define oferta + plataforma pra classificar no grupo certo
   var map = {
     curso:    { oferta: 'curso',    plataformaOferta: 'kiwify' },
@@ -1392,6 +1398,8 @@ function captureLead(grupo, nome, email, whatsapp, origem, checkout) {
     oferta: g.oferta || '', plataformaOferta: g.plataformaOferta || '',
     etapa: 'novo', updatedAt: now,
   };
+  // Só grava afiliado se veio um; nunca sobrescreve com vazio no upsert.
+  if (afSlug) { patch.afiliado = afSlug; patch.afiliadoNome = afNome || afSlug; }
   // Se o formulário leva pro checkout, marca clicouCheckout → entra no
   // remarketing dos 3 e-mails emocionais (se não fechar a compra).
   var foiCheckout = (checkout === '1' || checkout === 1 || checkout === true);
