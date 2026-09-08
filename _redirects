@@ -7,7 +7,8 @@
 # Mostra a landing de vendas na raiz mantendo a URL limpa (rewrite 200 forçado)
 /                     /clube-da-libras.html                                      200!
 # Link na Bio continua acessível neste caminho
-/bio                  /linknabio.html                                            200
+/bio                  /escoladalibraslinknabio.html                              200
+/linknabio.html       /escoladalibraslinknabio.html                              301
 
 # ── VSL ──
 /vsl                  /vsl.html                                                  200
