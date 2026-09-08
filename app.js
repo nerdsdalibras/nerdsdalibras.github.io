@@ -827,7 +827,7 @@ function _mostrarCardMentoria() {
 }
 
 function _mostrarCardVSL() {
-  const vslUrl = 'https://www.clubedalibras.com/vsl?s=' + encodeURIComponent(lead.sessionId);
+  const vslUrl = 'https://www.escoladalibras.com/vsl?s=' + encodeURIComponent(lead.sessionId);
   const el = document.createElement('div');
   el.className = 'vsl-wrap show';
   el.innerHTML = `

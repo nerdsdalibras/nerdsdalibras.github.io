@@ -1,8 +1,8 @@
 # Netlify Redirects — Nerds da Libras
 # Formato: /link-curto   destino   302
 
-# ── RAIZ clubedalibras.com → Landing do Clube da Libras ──
-# /index.html cai na raiz (esconde a home "Prof. Lorena" no clubedalibras.com)
+# ── RAIZ escoladalibras.com → Landing do Clube da Libras ──
+# /index.html cai na raiz (esconde a home "Prof. Lorena" no escoladalibras.com)
 /index.html           /                                                          301!
 # Mostra a landing de vendas na raiz mantendo a URL limpa (rewrite 200 forçado)
 /                     /clube-da-libras.html                                      200!
@@ -18,6 +18,8 @@
 /avaliacao-clube      /avaliacao-clube.html                                      200
 /clube                /clube-da-libras.html                                      200
 /clubedalibras        /clube-da-libras.html                                      200
+/escola               /clube-da-libras.html                                      200
+/escoladalibras       /clube-da-libras.html                                      200
 
 # ── AFILIADOS ──
 /afiliados.cris       /afiliados.cris.html                                       200
