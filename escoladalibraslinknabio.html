@@ -12,267 +12,83 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     :root{
-      --px:16px;          /* padding horizontal do body */
-      --pt:32px;          /* padding topo do body      */
-      --bg:#0a0e1a;       /* azul-marinho quase preto  */
-      --bg-2:#0f1526;     /* card base                 */
-      --gold:#f9b233;
-      --gold-2:#f59e0b;
-      --ink:#e8ecf5;
-      --muted:#9aa4bd;
+      --px:16px; --pt:32px;
+      --bg:#0a0e1a; --bg-2:#0f1526;
+      --gold:#f9b233; --gold-2:#f59e0b;
+      --ink:#e8ecf5; --muted:#9aa4bd;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    a{text-decoration:none;}
+    a{text-decoration:none;color:inherit}
     html{scroll-behavior:smooth}
     body{
-      background:
-        radial-gradient(1200px 480px at 50% -120px, #16203a 0%, transparent 60%),
-        var(--bg);
-      font-family:'Inter',sans-serif;
-      color:var(--ink);
-      min-height:100vh;
-      padding:var(--pt) var(--px) 56px;
+      background:radial-gradient(1200px 480px at 50% -120px,#16203a 0%,transparent 60%),var(--bg);
+      font-family:'Inter',sans-serif;color:var(--ink);min-height:100vh;
+      padding:var(--pt) var(--px) 48px;
     }
-
-    /* ── MARQUEE SUPERIOR ── */
-    .marquee{
-      overflow:hidden;white-space:nowrap;
-      background:rgba(10,14,26,.85);
-      border-bottom:1px solid rgba(249,178,51,.28);
-      padding:9px 0;
-      margin:calc(-1*var(--pt)) calc(-1*var(--px)) 26px;
-    }
+    /* MARQUEE */
+    .marquee{overflow:hidden;white-space:nowrap;background:rgba(10,14,26,.85);
+      border-bottom:1px solid rgba(249,178,51,.28);padding:9px 0;
+      margin:calc(-1*var(--pt)) calc(-1*var(--px)) 26px;}
     .marquee-track{display:inline-block;animation:marquee 26s linear infinite;}
-    .marquee-track b{
-      color:var(--gold);font-size:11px;font-weight:800;
-      letter-spacing:.2em;text-transform:uppercase;padding:0 4px;
-    }
+    .marquee-track b{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;padding:0 4px;}
     .marquee-track i{color:rgba(249,178,51,.5);font-style:normal;padding:0 8px;}
-    @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-
-    .wrapper{
-      max-width:460px;margin:0 auto;
-      display:flex;flex-direction:column;gap:16px;
-    }
-
-    /* ── HEADER ── */
-    .profile-header{text-align:center;margin-bottom:6px;}
-    .profile-handle{
-      font-size:13px;font-weight:600;color:var(--muted);
-      letter-spacing:.02em;margin-bottom:12px;
-    }
-    .profile-photo-wrap{
-      width:104px;height:104px;border-radius:50%;
-      padding:3px;margin:0 auto 14px;
-      background:linear-gradient(135deg,var(--gold),var(--gold-2));
-      box-shadow:0 6px 26px rgba(0,0,0,.5);
-    }
-    .profile-photo-wrap img{
-      width:100%;height:100%;border-radius:50%;
-      object-fit:cover;object-position:top center;
-      border:3px solid var(--bg);display:block;
-    }
-    .profile-label{
-      font-size:11px;font-weight:800;letter-spacing:.16em;
-      text-transform:uppercase;color:var(--gold);margin-bottom:6px;
-    }
-    .profile-name{
-      font-size:25px;font-weight:900;color:#fff;
-      margin-bottom:8px;letter-spacing:-.4px;
-    }
-    .profile-tagline{
-      font-size:15px;color:var(--muted);line-height:1.6;
-      max-width:320px;margin:0 auto;
-    }
-
-    /* ── ÍCONES SOCIAIS ── */
-    .social-icons{
-      display:flex;justify-content:center;gap:14px;
-      flex-wrap:wrap;margin-top:4px;
-    }
-    .social-icon{
-      width:52px;height:52px;border-radius:50%;
-      background:rgba(255,255,255,0.07);
-      border:1px solid rgba(255,255,255,0.10);
-      display:flex;align-items:center;justify-content:center;
-      transition:background .2s,transform .15s,border-color .2s;flex-shrink:0;
-    }
-    .social-icon:hover{
-      background:rgba(249,178,51,.16);border-color:rgba(249,178,51,.5);
-      transform:translateY(-2px);
-    }
-    .social-icon svg{width:22px;height:22px;fill:var(--ink);}
-
-    /* ── CARD DIAGNÓSTICO (HERO) ── */
-    .diag-badge{
-      display:inline-block;
-      background:linear-gradient(135deg,var(--gold-2),#d97706);
-      color:#000;font-size:11px;font-weight:900;
-      letter-spacing:.1em;text-transform:uppercase;
-      padding:5px 13px;border-radius:999px;
-      box-shadow:0 2px 12px rgba(245,158,11,.55);
-      animation:badgePulse 2s ease-in-out infinite;
-    }
-    @keyframes badgePulse{
-      0%,100%{box-shadow:0 2px 10px rgba(245,158,11,.4);}
-      50%{box-shadow:0 2px 18px rgba(245,158,11,.85);}
-    }
-    .diag-title{font-size:18px;font-weight:800;color:#fff;line-height:1.32;}
-    .diag-title span{color:var(--gold);}
-    .cta-gold{
-      display:block;width:100%;
-      font-size:14px;font-weight:900;font-family:'Inter',sans-serif;
-      background:linear-gradient(135deg,var(--gold-2),#d97706);
-      color:#000;border:none;border-radius:26px;
-      padding:14px 18px;cursor:pointer;text-align:center;
-      letter-spacing:.05em;text-transform:uppercase;line-height:1.3;
-      box-shadow:0 0 18px rgba(245,158,11,.55);
-      animation:btnGlow 2s ease-in-out infinite;
-      transition:transform .15s,box-shadow .15s;
-    }
-    .cta-gold:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(245,158,11,.8);animation:none;}
-    @keyframes btnGlow{
-      0%,100%{box-shadow:0 0 14px rgba(245,158,11,.5);}
-      50%{box-shadow:0 0 28px rgba(245,158,11,.9);}
-    }
-
-    /* ── HERO DIAGNÓSTICO (com foto da dupla) ── */
-    .hero-quiz{
-      position:relative;overflow:hidden;isolation:isolate;
-      background:linear-gradient(160deg,#1c1407 0%,#120d04 55%,#0d1120 100%);
-      border:1px solid rgba(245,158,11,.4);border-radius:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 26px rgba(245,158,11,.12);
-    }
-    .hero-quiz-photo{position:relative;}
-    .hero-quiz-photo img{width:100%;height:auto;display:block;}
-    .hero-quiz-photo::after{
-      content:"";position:absolute;inset:0;pointer-events:none;
-      background:linear-gradient(to bottom,transparent 52%,rgba(21,15,4,.55) 80%,#160f05 100%);
-    }
-    .hero-quiz-photo .diag-badge{position:absolute;top:12px;left:12px;z-index:2;}
-    .hero-quiz-body{
-      padding:12px 20px 20px;text-align:center;
-      display:flex;flex-direction:column;align-items:center;gap:11px;
-    }
-    .hero-quiz-sub{
-      font-size:13.5px;color:#c9bda9;line-height:1.5;max-width:340px;
-    }
-
-    /* ── LABEL DE SEÇÃO ── */
-    .section-label{
-      font-size:12px;font-weight:800;text-transform:uppercase;
-      color:#fff;letter-spacing:.12em;margin:8px 0 2px;
-      display:flex;align-items:center;gap:8px;
-    }
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .wrapper{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:11px;}
+    /* HEADER */
+    .profile-header{text-align:center;margin-bottom:8px;}
+    .profile-handle{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px;}
+    .profile-photo-wrap{width:100px;height:100px;border-radius:50%;padding:3px;margin:0 auto 13px;
+      background:linear-gradient(135deg,var(--gold),var(--gold-2));box-shadow:0 6px 26px rgba(0,0,0,.5);}
+    .profile-photo-wrap img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:top center;border:3px solid var(--bg);display:block;}
+    .profile-label{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+    .profile-name{font-size:24px;font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-.4px;}
+    .profile-tagline{font-size:14px;color:var(--muted);line-height:1.5;max-width:300px;margin:0 auto;}
+    /* SOCIAL */
+    .social-icons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:2px 0 6px;}
+    .social-icon{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;
+      transition:background .2s,transform .15s,border-color .2s;flex-shrink:0;}
+    .social-icon:hover{background:rgba(249,178,51,.16);border-color:rgba(249,178,51,.5);transform:translateY(-2px);}
+    .social-icon svg{width:20px;height:20px;fill:var(--ink);}
+    /* SECTION LABEL */
+    .section-label{font-size:12px;font-weight:800;text-transform:uppercase;color:#fff;
+      letter-spacing:.12em;margin:6px 0 2px;display:flex;align-items:center;gap:8px;}
     .section-label::before{content:"";width:16px;height:2px;background:var(--gold);border-radius:2px;}
-
-    /* ── BANNER CARDS ── */
-    .banner-card{
-      display:block;position:relative;overflow:hidden;isolation:isolate;
+    /* MINI CARDS */
+    .mini-card{display:flex;align-items:center;gap:11px;
       background:linear-gradient(165deg,var(--bg-2) 0%,#0a0e1a 100%);
-      border:1px solid rgba(255,255,255,.08);border-radius:18px;
-      box-shadow:0 8px 26px rgba(0,0,0,.45);
-      transition:transform .2s,box-shadow .2s,border-color .2s;
-    }
-    .banner-card:hover{
-      transform:translateY(-3px);
-      box-shadow:0 14px 34px rgba(0,0,0,.6);
-    }
-    /* brilho diagonal */
-    .banner-card::before{
-      content:"";position:absolute;top:0;left:-150%;
-      width:75%;height:100%;z-index:2;pointer-events:none;
-      background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,.03) 35%,rgba(255,255,255,.42) 50%,rgba(255,255,255,.03) 65%,transparent 100%);
-      transform:skewX(-22deg);
-      animation:diamondShine 6.5s ease-in-out infinite;
-    }
-    .banner-card:nth-of-type(2)::before{animation-delay:2.2s;}
-    .banner-card:nth-of-type(3)::before{animation-delay:4.4s;}
-    @keyframes diamondShine{0%{left:-150%;}55%,100%{left:160%;}}
-    .banner-img{position:relative;}
-    .banner-img img{
-      width:100%;height:172px;object-fit:cover;object-position:center;
-      display:block;
-    }
-    .banner-img::after{
-      content:"";position:absolute;inset:0;
-      background:linear-gradient(to bottom,transparent 45%,rgba(10,14,26,.55) 100%);
-    }
-    .banner-tag{
-      position:absolute;top:12px;left:12px;z-index:1;
-      font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
-      background:rgba(10,14,26,.72);color:var(--gold);
-      border:1px solid rgba(249,178,51,.4);
-      padding:4px 10px;border-radius:20px;backdrop-filter:blur(4px);
-    }
-    .banner-body{padding:15px 16px 17px;position:relative;z-index:1;}
-    .banner-title{
-      font-size:15.5px;font-weight:800;color:#fff;line-height:1.32;
-      text-transform:uppercase;letter-spacing:.01em;
-    }
-    .banner-desc{
-      font-size:13px;color:var(--muted);line-height:1.5;margin-top:8px;
-    }
-    .banner-btn{
-      display:flex;align-items:center;justify-content:center;gap:6px;
-      width:100%;margin-top:14px;
-      font-size:13px;font-weight:900;
-      border-radius:24px;padding:12px 14px;text-align:center;
-      letter-spacing:.04em;text-transform:uppercase;
-      transition:box-shadow .2s,transform .15s;
-    }
-    .banner-btn svg{width:14px;height:14px;flex-shrink:0;}
-
-    /* ── IDENTIDADE POR CARD ── */
-    /* Dourado — Curso */
-    .id-gold .banner-tag{color:#f9b233;border-color:rgba(249,178,51,.45);}
-    .id-gold .banner-img::after{background:linear-gradient(to bottom,transparent 45%,rgba(217,119,6,.28) 100%);}
-    .id-gold .banner-btn{background:linear-gradient(135deg,#f9b233,#d97706);color:#111;box-shadow:0 4px 16px rgba(245,158,11,.3);}
-    .id-gold:hover{border-color:rgba(249,178,51,.55);box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 22px rgba(245,158,11,.22);}
-    .id-gold:hover .banner-btn{box-shadow:0 6px 26px rgba(245,158,11,.55);}
-
-    /* Violeta — E-book */
-    .id-violet .banner-tag{color:#c4b5fd;border-color:rgba(139,92,246,.5);}
-    .id-violet .banner-img::after{background:linear-gradient(to bottom,transparent 45%,rgba(109,40,217,.35) 100%);}
-    .id-violet .banner-btn{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;box-shadow:0 4px 16px rgba(139,92,246,.32);}
-    .id-violet:hover{border-color:rgba(139,92,246,.6);box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 22px rgba(139,92,246,.25);}
-    .id-violet:hover .banner-btn{box-shadow:0 6px 26px rgba(139,92,246,.55);}
-
-    /* Azul — Serviços/Intérprete */
-    .id-blue .banner-img img{height:auto;}   /* mostra a foto de corpo, sem cortar na faixa */
-    .id-blue .banner-tag{color:#93c5fd;border-color:rgba(59,130,246,.5);}
-    .id-blue .banner-img::after{background:linear-gradient(to bottom,transparent 45%,rgba(29,78,216,.4) 100%);}
-    .id-blue .banner-btn{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 4px 16px rgba(59,130,246,.32);}
-    .id-blue:hover{border-color:rgba(59,130,246,.6);box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 22px rgba(59,130,246,.25);}
-    .id-blue:hover .banner-btn{box-shadow:0 6px 26px rgba(59,130,246,.55);}
-
-    /* ── WHATSAPP (COMUNIDADE) ── */
-    .whatsapp-card{
-      display:flex;align-items:center;gap:12px;
-      background:linear-gradient(135deg,#0e2a1c,#0a1f16);
-      border:1px solid rgba(37,211,102,.3);
-      border-radius:16px;padding:15px 16px;
-      transition:transform .2s,box-shadow .2s,border-color .2s;
-    }
-    .whatsapp-card:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.5);border-color:rgba(37,211,102,.6);}
-    .whatsapp-card-icon{
-      width:46px;height:46px;border-radius:12px;background:#25D366;
-      display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    }
-    .whatsapp-card-icon svg{width:24px;height:24px;fill:#fff;}
-    .whatsapp-card-texts{flex:1;}
-    .whatsapp-card-title{font-size:15px;font-weight:800;color:#fff;}
-    .whatsapp-card-sub{font-size:12px;color:#7fe0a7;margin-top:3px;font-weight:500;}
-    .whatsapp-card-arrow{font-size:20px;color:#7fe0a7;}
-
-    /* ── RODAPÉ ── */
+      border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:11px 12px;
+      box-shadow:0 4px 16px rgba(0,0,0,.4);
+      transition:transform .15s,box-shadow .2s,border-color .2s;}
+    .mini-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.55);}
+    .mini-main{display:flex;align-items:center;gap:11px;flex:1;min-width:0;}
+    .mini-ico{width:58px;height:58px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+      font-size:30px;flex-shrink:0;background:rgba(255,255,255,.06);}
+    .mini-ico.logo{background:#fff;padding:5px;box-shadow:0 2px 8px rgba(0,0,0,.35);}
+    .mini-ico.logo img{width:100%;height:100%;object-fit:contain;display:block;}
+    .mini-ico.photo{padding:0;overflow:hidden;background:#0f1526;}
+    .mini-ico.photo img{width:100%;height:100%;object-fit:cover;object-position:center 32%;display:block;}
+    .mini-body{flex:1;min-width:0;}
+    .mini-title{display:block;font-size:13px;font-weight:800;color:#fff;line-height:1.22;}
+    .mini-sub{display:block;font-size:11px;color:var(--muted);line-height:1.32;margin-top:3px;}
+    .mini-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+    .mini-saiba{font-size:10.5px;font-weight:800;white-space:nowrap;color:var(--gold);
+      text-transform:uppercase;letter-spacing:.03em;}
+    .mini-wa{width:38px;height:38px;border-radius:50%;background:#25D366;display:flex;
+      align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(37,211,102,.4);
+      transition:transform .15s,box-shadow .2s;}
+    .mini-wa:hover{transform:scale(1.08);box-shadow:0 5px 16px rgba(37,211,102,.6);}
+    .mini-wa svg{width:20px;height:20px;fill:#fff;}
+    /* ACCENTS */
+    .c-gold .mini-saiba{color:#f9b233;} .c-gold:hover{border-color:rgba(249,178,51,.5);}
+    .c-violet .mini-saiba{color:#c4b5fd;} .c-violet:hover{border-color:rgba(139,92,246,.55);}
+    .c-blue .mini-saiba{color:#93c5fd;} .c-blue:hover{border-color:rgba(59,130,246,.55);}
+    .c-green .mini-saiba{color:#7fe0a7;} .c-green:hover{border-color:rgba(37,211,102,.55);}
+    /* FOOTER */
     .footer{text-align:center;margin-top:14px;}
     .footer img{width:36px;height:36px;border-radius:8px;opacity:.85;margin-bottom:8px;object-fit:cover;}
     .footer p{font-size:11px;color:#5c6785;letter-spacing:.02em;}
-
-    @media(max-width:480px){
-      :root{--px:12px;--pt:20px;}
-    }
+    @media(max-width:480px){:root{--px:12px;--pt:20px;}}
   </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -307,9 +123,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
   <!-- ═══ HEADER ═══ -->
   <div class="profile-header">
     <div class="profile-handle">@nerdsdalibras</div>
-    <div class="profile-photo-wrap">
-      <img src="fotos/IMG_4952.jpg" alt="Prof. Lorena"/>
-    </div>
+    <div class="profile-photo-wrap"><img src="fotos/IMG_4952.jpg" alt="Prof. Lorena"/></div>
     <div class="profile-label">Links importantes</div>
     <div class="profile-name">Prof. Lorena</div>
     <div class="profile-tagline">Intérprete &amp; Professora de Libras</div>
@@ -317,81 +131,66 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
 
   <!-- ═══ ÍCONES SOCIAIS ═══ -->
   <div class="social-icons">
-    <a href="https://www.instagram.com/nerdsdalibras" target="_blank" class="social-icon" aria-label="Instagram">
-      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-    </a>
-    <a href="https://www.tiktok.com/@nerds.da.libras" target="_blank" class="social-icon" aria-label="TikTok">
-      <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg>
-    </a>
-    <a href="https://www.youtube.com/@nerdsdalibras" target="_blank" class="social-icon" aria-label="YouTube">
-      <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
-    </a>
+    <a href="https://www.instagram.com/nerdsdalibras" target="_blank" class="social-icon" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+    <a href="https://www.tiktok.com/@nerds.da.libras" target="_blank" class="social-icon" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg></a>
+    <a href="https://www.youtube.com/@nerdsdalibras" target="_blank" class="social-icon" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg></a>
   </div>
 
-  <!-- ═══ HERO: DIAGNÓSTICO ═══ -->
-  <div class="hero-quiz">
-    <div class="hero-quiz-photo">
-      <span class="diag-badge">🎁 100% Gratuito</span>
-      <img src="fotos/quiz-dupla.jpg" alt="Prof. Lorena e João Neto — Nerds da Libras"/>
-    </div>
-    <div class="hero-quiz-body">
-      <div class="diag-title">Descubra seu nível na Libras <span>em 2 minutos</span></div>
-      <div class="hero-quiz-sub">Um quiz rápido feito pela Prof. Lorena: descubra em que ponto você está e o caminho ideal para evoluir na Libras.</div>
-      <a href="https://nerdsdalibras.github.io/quiz-libras.html" target="_blank" class="cta-gold">🎯 Fazer diagnóstico grátis</a>
-    </div>
-  </div>
-
-  <!-- ═══ VITRINE (BANNERS) ═══ -->
+  <!-- ═══ VITRINE (CARDS) ═══ -->
   <div class="section-label">Como posso te ajudar hoje</div>
 
-  <a class="banner-card id-gold" href="https://escoladalibras.com/vsl" target="_blank">
-    <div class="banner-img">
-      <span class="banner-tag">Formação 350h</span>
-      <img src="fotos/card-curso.jpg" alt="Curso Do Zero a Libras"/>
+  <div class="mini-card c-gold">
+    <a class="mini-main" href="https://escoladalibras.com/vsl" target="_blank">
+      <span class="mini-ico logo"><img src="fotos/logo-escola-libras-icone.png" alt="Escola da Libras"/></span>
+      <span class="mini-body">
+        <span class="mini-title">Escola da Libras</span>
+        <span class="mini-sub">Básico, intermediário e avançado</span>
+      </span>
+    </a>
+    <div class="mini-actions">
+      <a class="mini-saiba" href="https://escoladalibras.com/vsl" target="_blank">Saiba mais →</a>
+      <a class="mini-wa" href="https://wa.me/5534999702345" target="_blank" aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg></a>
     </div>
-    <div class="banner-body">
-      <div class="banner-title">Converse com um surdo em menos de 30 dias</div>
-      <div class="banner-desc">Formação completa 3 em 1, do básico ao avançado — com certificado de 350h e base profissional em tradução e interpretação.</div>
-      <span class="banner-btn">Quero sinalizar sem travar →</span>
+  </div>
+  <div class="mini-card c-violet">
+    <a class="mini-main" href="https://escoladalibras.com/ebooklibras" target="_blank">
+      <span class="mini-ico photo"><img src="fotos/icone-atuar.jpg" alt="Quero atuar como intérprete"/></span>
+      <span class="mini-body">
+        <span class="mini-title">Quero atuar como intérprete de Libras</span>
+        <span class="mini-sub">Sou intérprete e preciso de ajuda ou quero evoluir na profissão</span>
+      </span>
+    </a>
+    <div class="mini-actions">
+      <a class="mini-saiba" href="https://escoladalibras.com/ebooklibras" target="_blank">Saiba mais →</a>
+      <a class="mini-wa" href="https://wa.me/5534999702345" target="_blank" aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg></a>
     </div>
-  </a>
-
-  <a class="banner-card id-violet" href="https://escoladalibras.com/ebooklibras" target="_blank">
-    <div class="banner-img">
-      <span class="banner-tag">Acesso imediato</span>
-      <img src="fotos/mockup-ebook.jpg" alt="Ebook Intérprete de Libras"/>
+  </div>
+  <div class="mini-card c-blue">
+    <a class="mini-main" href="/precisodeinterprete/" target="_blank">
+      <span class="mini-ico photo"><img src="fotos/icone-preciso.jpg" alt="Preciso de intérprete"/></span>
+      <span class="mini-body">
+        <span class="mini-title">Preciso de intérprete de Libras</span>
+        <span class="mini-sub">Para evento, empresa ou prefeitura</span>
+      </span>
+    </a>
+    <div class="mini-actions">
+      <a class="mini-saiba" href="/precisodeinterprete/" target="_blank">Saiba mais →</a>
+      <a class="mini-wa" href="https://wa.me/5534991855624" target="_blank" aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg></a>
     </div>
-    <div class="banner-body">
-      <div class="banner-title">O caminho para se tornar intérprete de Libras</div>
-      <div class="banner-desc">Saiba exatamente o que a Lei nº 14.704/2023 exige — e pare de perder tempo em cursos que não te habilitam para a profissão.</div>
-      <span class="banner-btn">Quero saber o caminho certo →</span>
+  </div>
+  <div class="mini-card c-green">
+    <a class="mini-main" href="https://wa.me/5534991855624" target="_blank">
+      <span class="mini-ico photo"><img src="fotos/icone-afiliado.jpg" alt="Quero ser afiliado"/></span>
+      <span class="mini-body">
+        <span class="mini-title">Quero ser afiliado da Escola da Libras</span>
+        <span class="mini-sub">Venda o maior curso de Libras do Brasil e ganhe comissão</span>
+      </span>
+    </a>
+    <div class="mini-actions">
+      <a class="mini-saiba" href="https://wa.me/5534991855624" target="_blank">Saiba mais →</a>
+      <a class="mini-wa" href="https://wa.me/5534991855624" target="_blank" aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg></a>
     </div>
-  </a>
-
-  <a class="banner-card id-blue" href="/precisodeinterprete/" target="_blank">
-    <div class="banner-img">
-      <span class="banner-tag">Orçamento</span>
-      <img src="fotos/card-interprete.jpg" alt="Preciso de Intérprete de Libras — Prefeituras, Empresas e Eventos"/>
-    </div>
-    <div class="banner-body">
-      <div class="banner-title">Preciso de Intérprete de Libras</div>
-      <div class="banner-desc">Prefeituras, empresas e eventos: contrate intérpretes profissionais e garanta acessibilidade e inclusão de verdade.</div>
-      <span class="banner-btn">Solicitar intérprete →</span>
-    </div>
-  </a>
-
-  <!-- ═══ COMUNIDADE ═══ -->
-  <div class="section-label">Comunidade gratuita</div>
-  <a href="https://chat.whatsapp.com/LoPTCaxnrN922JMQaSQVWx" target="_blank" class="whatsapp-card">
-    <div class="whatsapp-card-icon">
-      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.859L.057 23.486a.5.5 0 0 0 .611.627l5.763-1.51A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.528-5.222-1.443l-.374-.224-3.879 1.016.991-3.744-.246-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-    </div>
-    <div class="whatsapp-card-texts">
-      <div class="whatsapp-card-title">Clã da Libras</div>
-      <div class="whatsapp-card-sub">Networking · interações · aulas gratuitas</div>
-    </div>
-    <div class="whatsapp-card-arrow">→</div>
-  </a>
+  </div>
 
   <!-- ═══ RODAPÉ ═══ -->
   <div class="footer">
