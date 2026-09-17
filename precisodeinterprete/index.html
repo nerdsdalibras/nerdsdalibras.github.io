@@ -52,7 +52,7 @@
     "priceRange": "$$",
     "serviceType": "Intérprete de Libras",
     "telephone": "+5534991855624",
-    "sameAs": ["https://www.instagram.com/lorena.nerdsdalibras"],
+    "sameAs": ["https://www.instagram.com/nerdsdalibras"],
     "knowsLanguage": ["pt-BR", "Libras"],
     "availableLanguage": ["Português", "Libras"],
     "hasOfferCatalog": {
@@ -158,16 +158,25 @@
 
     /* ── BOTÕES ── */
     .btn-wpp{
+      position:relative;overflow:hidden;
       display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      background:linear-gradient(135deg,var(--gold-2) 0%,var(--gold-deep) 100%);
-      color:#231800;font-weight:800;font-size:17px;
+      background:linear-gradient(135deg,#25D366 0%,#1ebe5d 45%,#128C7E 100%);
+      color:#fff;font-weight:800;font-size:17px;
       padding:16px 28px;border-radius:999px;
-      box-shadow:var(--glow);
+      box-shadow:0 10px 26px rgba(37,211,102,.45);
       transition:transform .15s,box-shadow .2s,filter .2s;
       border:none;cursor:pointer;text-align:center;line-height:1.25;
     }
-    .btn-wpp:hover{filter:brightness(1.06);transform:translateY(-2px);box-shadow:0 16px 36px rgba(233,180,76,.42)}
-    .btn-wpp svg{width:22px;height:22px;fill:#231800;flex-shrink:0}
+    .btn-wpp:hover{filter:brightness(1.05);transform:translateY(-2px);box-shadow:0 16px 36px rgba(37,211,102,.55)}
+    .btn-wpp svg{width:22px;height:22px;fill:#fff;flex-shrink:0;position:relative;z-index:1}
+    /* ── EFEITO DIAMANTE (brilho que percorre o botão) ── */
+    .btn-wpp::after,.float-wpp::after{
+      content:"";position:absolute;top:0;left:-85%;width:55%;height:100%;
+      background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.18) 38%,rgba(255,255,255,.80) 50%,rgba(255,255,255,.18) 62%,transparent 100%);
+      transform:skewX(-22deg);pointer-events:none;
+      animation:diamante 3.6s ease-in-out infinite;
+    }
+    @keyframes diamante{0%{left:-85%}55%{left:140%}100%{left:140%}}
     /* Botão Instagram (secundário) */
     .btn-ig{
       display:inline-flex;align-items:center;justify-content:center;gap:10px;
@@ -291,15 +300,16 @@
 
     /* ── BOTÃO FLUTUANTE ── */
     .float-wpp{
-      position:fixed;right:18px;bottom:18px;z-index:60;
+      position:fixed;right:18px;bottom:18px;z-index:60;overflow:hidden;
       display:inline-flex;align-items:center;gap:10px;
-      background:linear-gradient(135deg,var(--gold-2) 0%,var(--gold-deep) 100%);color:#231800;font-weight:800;font-size:15px;
+      background:linear-gradient(135deg,#25D366 0%,#1ebe5d 45%,#128C7E 100%);color:#fff;font-weight:800;font-size:15px;
       padding:14px 20px;border-radius:999px;
-      box-shadow:0 12px 30px rgba(233,180,76,.5);
+      box-shadow:0 12px 30px rgba(37,211,102,.5);
       animation:pulse 2.4s infinite;
     }
-    .float-wpp svg{width:24px;height:24px;fill:#231800}
-    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(233,180,76,.5)}70%{box-shadow:0 0 0 16px rgba(233,180,76,0)}100%{box-shadow:0 0 0 0 rgba(233,180,76,0)}}
+    .float-wpp svg{width:24px;height:24px;fill:#fff;position:relative;z-index:1}
+    .float-wpp span{position:relative;z-index:1}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
 
     /* ── RESPONSIVO ── */
     @media(max-width:880px){
@@ -339,7 +349,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
     <div class="container">
       <a class="brand" href="/"><img class="brand-logo" src="/fotos/logo-nerds-icone-dourado.png" alt="Nerds da Libras" width="261" height="257" /> Nerds da <span>Libras</span></a>
       <div class="topbar-actions">
-        <a class="ig-icon" href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
+        <a class="ig-icon" href="https://www.instagram.com/nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
           <svg viewBox="0 0 24 24"><defs><linearGradient id="igtop" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#igtop)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#igtop)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#igtop)"/></svg>
         </a>
         <a class="btn-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1!%20Preciso%20de%20um%20int%C3%A9rprete%20de%20Libras." target="_blank" rel="noopener">Falar agora</a>
@@ -359,7 +369,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
             <svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg>
             Quero um intérprete agora
           </a>
-          <a class="btn-ig" href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
+          <a class="btn-ig" href="https://www.instagram.com/nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
             <svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#ig)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#ig)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#ig)"/></svg>
             Ver nosso trabalho
           </a>
@@ -506,12 +516,12 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
     <div class="container">
       <a class="brand" href="/"><img class="brand-logo" src="/fotos/logo-nerds-icone-dourado.png" alt="Nerds da Libras" width="261" height="257" /> Nerds da <span>Libras</span></a>
       <div class="topbar-actions">
-        <a class="ig-icon" href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
+        <a class="ig-icon" href="https://www.instagram.com/nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
           <svg viewBox="0 0 24 24"><defs><linearGradient id="igfoot" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#igfoot)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#igfoot)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#igfoot)"/></svg>
         </a>
         <a class="btn-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1!%20Preciso%20de%20um%20int%C3%A9rprete%20de%20Libras." target="_blank" rel="noopener" style="box-shadow:none">Falar no WhatsApp</a>
       </div>
-      <p class="mini">© Nerds da Libras — Serviço de intérprete e tradutor de Libras (Língua Brasileira de Sinais), remoto e presencial, em todo o Brasil. Acessibilidade e inclusão para pessoas surdas. · Instagram: <a href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener">@lorena.nerdsdalibras</a></p>
+      <p class="mini">© Nerds da Libras — Serviço de intérprete e tradutor de Libras (Língua Brasileira de Sinais), remoto e presencial, em todo o Brasil. Acessibilidade e inclusão para pessoas surdas. · Instagram: <a href="https://www.instagram.com/nerdsdalibras" target="_blank" rel="noopener">@nerdsdalibras</a></p>
     </div>
   </footer>
 
