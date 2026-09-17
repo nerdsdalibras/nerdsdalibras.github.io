@@ -4,6 +4,10 @@ Guia para criar uma página de afiliado nova e ver os leads dela no CRM.
 Cada afiliado tem a **mesma página** do Clube da Libras, com o **link de checkout dele**
 (pra ganhar comissão) e uma **etiqueta** que faz os leads caírem separados no painel.
 
+> 🌐 **Domínio oficial dos links de afiliado:** `escoladalibras.com`
+> Ex.: o link da Cris para divulgar é **`escoladalibras.com/afiliados.cris`**.
+> (As páginas também respondem em `clubedalibras.com` e `nerdsdalibras.com` — é o mesmo site.)
+
 ---
 
 ## 📁 Como funciona (visão rápida)
@@ -57,14 +61,14 @@ Abra o arquivo **`_redirects`** e, na seção `── AFILIADOS ──`, adicion
 
 ### Passo 4 — Publicar
 Suba os dois arquivos alterados (`afiliados.bia.html` e `_redirects`).
-Pronto: a página fica no ar em **`nerdsdalibras.com/afiliados.bia`** e os leads da Bia
+Pronto: a página fica no ar em **`escoladalibras.com/afiliados.bia`** e os leads da Bia
 já começam a aparecer na aba **Afiliados** do CRM. 🎉
 
 ---
 
 ## 🧪 Conferir se deu certo
 
-1. Abra `nerdsdalibras.com/afiliados.bia` e verifique se carrega igual ao Clube.
+1. Abra `escoladalibras.com/afiliados.bia` e verifique se carrega igual ao Clube.
 2. Clique em um botão de compra e confirme que a URL da Kiwify termina com `?afid=<afid da Bia>`.
 3. Preencha o formulário com um dado de teste → abra o CRM (`/dashboard`) → aba **Afiliados**
    → a Bia deve aparecer no ranking, e o lead de teste dentro dela.

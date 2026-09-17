@@ -95,7 +95,7 @@ async function renderAfiliados() {
         <div class="af-empty-icon">🤝</div>
         <h3>Nenhum lead de afiliado ainda</h3>
         <p>Assim que alguém preencher o formulário numa página de afiliado
-        (ex.: <code>nerdsdalibras.com/afiliados.cris</code>), o lead aparece aqui
+        (ex.: <code>escoladalibras.com/afiliados.cris</code>), o lead aparece aqui
         já vinculado ao afiliado.</p>
       </div>`;
     return;
@@ -172,7 +172,7 @@ function _renderAfiliadoDetalhe(a, leads) {
       <div class="af-avatar af-avatar-lg" style="background:${cor}22;color:${cor};border-color:${cor}55">${inicial}</div>
       <div class="af-detail-id">
         <div class="af-detail-name">${a.nome}</div>
-        <a class="af-detail-link" href="https://nerdsdalibras.com/afiliados.${a.slug}" target="_blank" rel="noopener">nerdsdalibras.com/afiliados.${a.slug} ↗</a>
+        <a class="af-detail-link" href="https://escoladalibras.com/afiliados.${a.slug}" target="_blank" rel="noopener">escoladalibras.com/afiliados.${a.slug} ↗</a>
       </div>
       <div class="af-detail-rev">
         <div class="af-detail-rev-val">${_afMoney(a.receita)}</div>
