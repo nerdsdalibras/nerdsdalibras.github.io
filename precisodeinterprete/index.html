@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0c0b" />
 
   <!-- ═══════════════ SEO PRINCIPAL ═══════════════ -->
   <title>Intérprete de Libras Remoto e Presencial | Nerds da Libras</title>
@@ -128,21 +129,26 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --verde:#0f9d6c;
-      --verde-esc:#0b7d56;
-      --escuro:#0c1d18;
-      --escuro2:#10261f;
-      --cinza:#5b6b66;
-      --claro:#f4f8f6;
-      --branco:#ffffff;
+      --gold:#E9B44C;
+      --gold-2:#F4CD6C;
+      --gold-deep:#C6871F;
+      --bg:#0d0c0b;
+      --bg-soft:#131110;
+      --surface:#1a1712;
+      --surface-2:#211c14;
+      --line:#2c271d;
+      --cream:#F3EEE3;
+      --cream-dim:#d6ccb9;
+      --muted:#9d968a;
       --radius:18px;
-      --shadow:0 14px 40px rgba(11,125,86,.18);
+      --shadow:0 18px 46px rgba(0,0,0,.55);
+      --glow:0 12px 30px rgba(233,180,76,.30);
     }
     html{scroll-behavior:smooth}
     body{
       font-family:'Inter',sans-serif;
-      color:var(--escuro);
-      background:var(--branco);
+      color:var(--cream);
+      background:var(--bg);
       line-height:1.6;
       -webkit-font-smoothing:antialiased;
     }
@@ -153,138 +159,147 @@
     /* ── BOTÕES ── */
     .btn-wpp{
       display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      background:var(--verde);color:#fff;font-weight:800;font-size:17px;
+      background:linear-gradient(135deg,var(--gold-2) 0%,var(--gold-deep) 100%);
+      color:#231800;font-weight:800;font-size:17px;
       padding:16px 28px;border-radius:999px;
-      box-shadow:0 10px 26px rgba(15,157,108,.45);
-      transition:transform .15s,box-shadow .2s,background .2s;
+      box-shadow:var(--glow);
+      transition:transform .15s,box-shadow .2s,filter .2s;
       border:none;cursor:pointer;text-align:center;line-height:1.25;
     }
-    .btn-wpp:hover{background:var(--verde-esc);transform:translateY(-2px);box-shadow:0 14px 32px rgba(15,157,108,.55)}
-    .btn-wpp svg{width:22px;height:22px;fill:#fff;flex-shrink:0}
+    .btn-wpp:hover{filter:brightness(1.06);transform:translateY(-2px);box-shadow:0 16px 36px rgba(233,180,76,.42)}
+    .btn-wpp svg{width:22px;height:22px;fill:#231800;flex-shrink:0}
     /* Botão Instagram (secundário) */
     .btn-ig{
       display:inline-flex;align-items:center;justify-content:center;gap:10px;
       font-weight:800;font-size:17px;padding:16px 26px;border-radius:999px;
-      color:#c1308b;background:#fff;border:2px solid #eccfe2;
+      color:var(--cream);background:var(--surface);border:1.5px solid var(--line);
       transition:transform .15s,box-shadow .2s,border-color .2s;
       line-height:1.25;
     }
-    .btn-ig:hover{transform:translateY(-2px);border-color:#e0a8cf;box-shadow:0 12px 28px rgba(193,48,139,.18)}
+    .btn-ig:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 12px 28px rgba(233,180,76,.16)}
     .btn-ig svg{width:22px;height:22px;flex-shrink:0}
     /* Ícone Instagram (topo e rodapé) */
     .topbar-actions{display:flex;align-items:center;gap:12px}
-    .ig-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:1.5px solid #eccfe2;transition:transform .15s,border-color .2s;flex-shrink:0}
-    .ig-icon:hover{transform:scale(1.08);border-color:#e0a8cf}
+    .ig-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);transition:transform .15s,border-color .2s;flex-shrink:0}
+    .ig-icon:hover{transform:scale(1.08);border-color:var(--gold)}
     .ig-icon svg{width:22px;height:22px}
 
     /* ── HEADER ── */
     .topbar{
       position:sticky;top:0;z-index:50;
-      background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
-      border-bottom:1px solid #e6efeb;
+      background:rgba(13,12,11,.85);backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
     }
     .topbar .container{display:flex;align-items:center;justify-content:space-between;height:64px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;color:var(--escuro)}
-    .brand .dot{width:34px;height:34px;border-radius:9px;background:var(--verde);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;color:var(--cream)}
+    .brand span{color:var(--gold)}
     .brand-logo{width:auto;height:36px;display:block}
     .topbar .btn-wpp{padding:10px 18px;font-size:14px;box-shadow:none}
 
     /* ── HERO ── */
     .hero{
       position:relative;
-      background:radial-gradient(1100px 520px at 80% -10%,rgba(15,157,108,.16),transparent 60%),
-                 linear-gradient(180deg,#f4f8f6 0%,#ffffff 100%);
+      background:radial-gradient(1100px 540px at 80% -12%,rgba(233,180,76,.15),transparent 60%),
+                 radial-gradient(700px 420px at 0% 110%,rgba(233,180,76,.06),transparent 60%),
+                 var(--bg);
       padding:64px 0 56px;overflow:hidden;
     }
     .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
     .eyebrow{
       display:inline-flex;align-items:center;gap:8px;
-      background:#e3f4ec;color:var(--verde-esc);font-weight:800;font-size:13px;
+      background:rgba(233,180,76,.10);color:var(--gold);font-weight:800;font-size:13px;
       padding:7px 14px;border-radius:999px;margin-bottom:18px;letter-spacing:.01em;
+      border:1px dashed rgba(233,180,76,.5);
     }
-    .hero h1{font-size:clamp(30px,5vw,50px);font-weight:900;line-height:1.08;letter-spacing:-.02em}
-    .hero h1 span{color:var(--verde)}
-    .hero p.lead{font-size:18px;color:var(--cinza);margin:18px 0 28px;max-width:560px}
+    .eyebrow b{color:var(--gold-2)}
+    .hero h1{font-size:clamp(30px,5vw,50px);font-weight:900;line-height:1.08;letter-spacing:-.02em;color:var(--cream)}
+    .hero h1 span{color:var(--gold)}
+    .hero p.lead{font-size:18px;color:var(--muted);margin:18px 0 28px;max-width:560px}
+    .hero p.lead b{color:var(--cream-dim)}
     .hero-ctas{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
-    .trust{display:flex;flex-wrap:wrap;gap:18px;margin-top:26px;color:var(--cinza);font-size:14px;font-weight:600}
+    .trust{display:flex;flex-wrap:wrap;gap:18px;margin-top:26px;color:var(--muted);font-size:14px;font-weight:600}
     .trust div{display:flex;align-items:center;gap:7px}
-    .trust svg{width:18px;height:18px;fill:var(--verde)}
+    .trust svg{width:18px;height:18px;fill:var(--gold)}
     .hero-img{
       position:relative;border-radius:24px;overflow:hidden;
-      box-shadow:var(--shadow);background:#ece7e1;aspect-ratio:4/5;
+      box-shadow:var(--shadow);background:#17140f;aspect-ratio:4/5;
+      border:1px solid var(--line);
     }
     .hero-img img{width:100%;height:100%;object-fit:cover;object-position:center 28%}
     .hero-badge{
       position:absolute;left:16px;bottom:16px;
-      background:rgba(12,29,24,.86);color:#fff;backdrop-filter:blur(6px);
+      background:rgba(13,12,11,.86);color:var(--cream);backdrop-filter:blur(6px);
       padding:12px 16px;border-radius:14px;font-size:13px;font-weight:700;line-height:1.3;
+      border:1px solid var(--line);
     }
-    .hero-badge b{color:#5fe0ab}
+    .hero-badge b{color:var(--gold-2)}
 
     /* ── MODALIDADES ── */
     .section{padding:64px 0}
     .section-head{text-align:center;max-width:680px;margin:0 auto 44px}
-    .section-head h2{font-size:clamp(24px,3.6vw,34px);font-weight:900;letter-spacing:-.02em}
-    .section-head p{color:var(--cinza);font-size:17px;margin-top:12px}
+    .section-head h2{font-size:clamp(24px,3.6vw,34px);font-weight:900;letter-spacing:-.02em;color:var(--cream)}
+    .section-head p{color:var(--muted);font-size:17px;margin-top:12px}
     .cards2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
     .modal-card{
-      border:1px solid #e6efeb;border-radius:var(--radius);padding:32px;
-      background:#fff;transition:transform .2s,box-shadow .2s;
+      border:1px solid var(--line);border-radius:var(--radius);padding:32px;
+      background:var(--surface);transition:transform .2s,box-shadow .2s,border-color .2s;
     }
-    .modal-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
-    .modal-ico{width:56px;height:56px;border-radius:14px;background:#e3f4ec;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:18px}
-    .modal-card h3{font-size:21px;font-weight:800;margin-bottom:10px}
-    .modal-card p{color:var(--cinza);font-size:15.5px}
+    .modal-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:rgba(233,180,76,.35)}
+    .modal-ico{width:56px;height:56px;border-radius:14px;background:rgba(233,180,76,.12);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:18px}
+    .modal-card h3{font-size:21px;font-weight:800;margin-bottom:10px;color:var(--cream)}
+    .modal-card p{color:var(--muted);font-size:15.5px}
     .modal-card ul{list-style:none;margin:16px 0 0}
-    .modal-card li{display:flex;gap:9px;align-items:flex-start;color:#23423a;font-size:15px;padding:5px 0;font-weight:600}
-    .modal-card li::before{content:"✓";color:var(--verde);font-weight:900;flex-shrink:0}
+    .modal-card li{display:flex;gap:9px;align-items:flex-start;color:var(--cream-dim);font-size:15px;padding:5px 0;font-weight:600}
+    .modal-card li::before{content:"✓";color:var(--gold);font-weight:900;flex-shrink:0}
 
     /* ── COMO FUNCIONA ── */
     .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
     .step{text-align:center;padding:24px}
-    .step .num{width:48px;height:48px;border-radius:50%;background:var(--verde);color:#fff;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-    .step h4{font-size:18px;font-weight:800;margin-bottom:8px}
-    .step p{color:var(--cinza);font-size:15px}
+    .step .num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold-2),var(--gold-deep));color:#231800;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:var(--glow)}
+    .step h4{font-size:18px;font-weight:800;margin-bottom:8px;color:var(--cream)}
+    .step p{color:var(--muted);font-size:15px}
 
     /* ── USOS / SETORES ── */
-    .bg-soft{background:var(--claro)}
+    .bg-soft{background:var(--bg-soft)}
     .chips{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:840px;margin:0 auto}
-    .chip{background:#fff;border:1px solid #dfeae5;border-radius:999px;padding:12px 20px;font-weight:700;font-size:15px;color:#23423a;display:flex;align-items:center;gap:9px}
+    .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:12px 20px;font-weight:700;font-size:15px;color:var(--cream-dim);display:flex;align-items:center;gap:9px;transition:border-color .2s}
+    .chip:hover{border-color:rgba(233,180,76,.4)}
     .chip span{font-size:18px}
 
     /* ── FAIXA CTA ── */
-    .cta-band{background:linear-gradient(120deg,var(--escuro) 0%,var(--escuro2) 100%);color:#fff;text-align:center;border-radius:26px;padding:52px 28px;margin:0 20px}
+    .cta-band{background:linear-gradient(120deg,#1c1810 0%,#241e13 100%);color:var(--cream);text-align:center;border-radius:26px;padding:52px 28px;margin:0 20px;border:1px solid rgba(233,180,76,.28);box-shadow:var(--shadow)}
     .cta-band h2{font-size:clamp(24px,3.6vw,34px);font-weight:900;letter-spacing:-.02em}
-    .cta-band p{color:#bcd4cb;font-size:17px;margin:14px auto 28px;max-width:560px}
+    .cta-band p{color:var(--cream-dim);font-size:17px;margin:14px auto 28px;max-width:560px}
 
     /* ── FAQ ── */
     .faq{max-width:760px;margin:0 auto}
-    details{border:1px solid #e6efeb;border-radius:14px;padding:18px 22px;margin-bottom:14px;background:#fff;transition:box-shadow .2s}
-    details[open]{box-shadow:var(--shadow)}
-    summary{font-weight:800;font-size:17px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+    details{border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:14px;background:var(--surface);transition:box-shadow .2s,border-color .2s}
+    details[open]{box-shadow:var(--shadow);border-color:rgba(233,180,76,.3)}
+    summary{font-weight:800;font-size:17px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--cream)}
     summary::-webkit-details-marker{display:none}
-    summary::after{content:"+";color:var(--verde);font-size:26px;font-weight:700;line-height:1}
+    summary::after{content:"+";color:var(--gold);font-size:26px;font-weight:700;line-height:1}
     details[open] summary::after{content:"–"}
-    details p{color:var(--cinza);font-size:15.5px;margin-top:14px}
+    details p{color:var(--muted);font-size:15.5px;margin-top:14px}
 
     /* ── FOOTER ── */
-    footer{background:var(--escuro);color:#9fb6ad;padding:48px 0 36px;font-size:14px}
+    footer{background:#0a0908;color:var(--muted);padding:48px 0 36px;font-size:14px;border-top:1px solid var(--line)}
     footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:center}
-    footer .brand{color:#fff}
-    footer a{color:#cfe3da}
-    footer .mini{font-size:12.5px;margin-top:16px;width:100%;color:#7f978e;line-height:1.6}
+    footer .brand{color:var(--cream)}
+    footer a{color:var(--gold)}
+    footer .mini{font-size:12.5px;margin-top:16px;width:100%;color:#7d766a;line-height:1.6}
+    footer .mini a{color:var(--gold)}
 
     /* ── BOTÃO FLUTUANTE ── */
     .float-wpp{
       position:fixed;right:18px;bottom:18px;z-index:60;
       display:inline-flex;align-items:center;gap:10px;
-      background:#25D366;color:#fff;font-weight:800;font-size:15px;
+      background:linear-gradient(135deg,var(--gold-2) 0%,var(--gold-deep) 100%);color:#231800;font-weight:800;font-size:15px;
       padding:14px 20px;border-radius:999px;
-      box-shadow:0 12px 30px rgba(37,211,102,.5);
+      box-shadow:0 12px 30px rgba(233,180,76,.5);
       animation:pulse 2.4s infinite;
     }
-    .float-wpp svg{width:24px;height:24px;fill:#fff}
-    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+    .float-wpp svg{width:24px;height:24px;fill:#231800}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(233,180,76,.5)}70%{box-shadow:0 0 0 16px rgba(233,180,76,0)}100%{box-shadow:0 0 0 0 rgba(233,180,76,0)}}
 
     /* ── RESPONSIVO ── */
     @media(max-width:880px){
@@ -322,7 +337,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
   <!-- ═══════════ TOPBAR ═══════════ -->
   <header class="topbar">
     <div class="container">
-      <a class="brand" href="/"><img class="brand-logo" src="/fotos/logo-nerds-icone-preto.png" alt="Nerds da Libras" width="261" height="257" /> Nerds da Libras</a>
+      <a class="brand" href="/"><img class="brand-logo" src="/fotos/logo-nerds-icone-dourado.png" alt="Nerds da Libras" width="261" height="257" /> Nerds da <span>Libras</span></a>
       <div class="topbar-actions">
         <a class="ig-icon" href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
           <svg viewBox="0 0 24 24"><defs><linearGradient id="igtop" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#igtop)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#igtop)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#igtop)"/></svg>
@@ -489,7 +504,7 @@ src="https://www.facebook.com/tr?id=2091933185003703&ev=PageView&noscript=1"
   <!-- ═══════════ FOOTER ═══════════ -->
   <footer>
     <div class="container">
-      <a class="brand" href="/"><img class="brand-logo" src="/fotos/logo-nerds-icone-branco.png" alt="Nerds da Libras" width="261" height="257" /> Nerds da Libras</a>
+      <a class="brand" href="/"><img class="brand-logo" src="/fotos/logo-nerds-icone-dourado.png" alt="Nerds da Libras" width="261" height="257" /> Nerds da <span>Libras</span></a>
       <div class="topbar-actions">
         <a class="ig-icon" href="https://www.instagram.com/lorena.nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram da Nerds da Libras">
           <svg viewBox="0 0 24 24"><defs><linearGradient id="igfoot" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#igfoot)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#igfoot)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#igfoot)"/></svg>
