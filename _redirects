@@ -34,9 +34,11 @@
 /tiktok               https://www.tiktok.com/@nerds.da.libras                   302
 
 # ── INTÉRPRETE DE LIBRAS (SEO) ──
-/interprete-de-libras            /interprete-de-libras.html                      200
-/interprete                      /interprete-de-libras.html                      200
-/preciso-de-interprete-de-libras /interprete-de-libras.html                      200
+# 301 permanente direto para a landing oficial (consolida a autoridade de SEO)
+/interprete-de-libras            /precisodeinterprete/                            301!
+/interprete-de-libras.html       /precisodeinterprete/                            301!
+/interprete                      /precisodeinterprete/                            301!
+/preciso-de-interprete-de-libras /precisodeinterprete/                            301!
 
 # ── DASHBOARD ──
 /dashboard            /dashboard.html                                            200
