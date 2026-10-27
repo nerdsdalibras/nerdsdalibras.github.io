@@ -1,0 +1,20 @@
+{% load sgi %}
+<div class="rolagem">
+<table>
+  <caption class="sr">Agendamentos</caption>
+  <thead><tr><th scope="col">Código</th><th scope="col">Evento</th><th scope="col">Início</th><th scope="col">Duração</th><th scope="col">Modalidade</th><th scope="col">Local/plataforma</th><th scope="col">Situação</th></tr></thead>
+  <tbody>
+  {% for ag in agendamentos %}
+  <tr>
+    <td><a href="{% url 'operacao:agendamento' ag.pk %}">{{ ag.codigo }}</a></td>
+    <td>{{ ag.titulo }}{% if ag.fora_do_prazo %} <span class="etiqueta alerta" title="Pedido fora do prazo de antecedência">fora do prazo</span>{% endif %}</td>
+    <td>{{ ag.inicio_previsto|date:"d/m/Y H:i" }}</td>
+    <td>{{ ag.duracao_prevista_min|minutos_hm }}</td>
+    <td>{{ ag.get_modalidade_display }}</td>
+    <td>{{ ag.local }}</td>
+    <td><span class="status s-{{ ag.status|lower }}">{{ ag.get_status_display }}</span></td>
+  </tr>
+  {% empty %}<tr><td colspan="7">Nenhum agendamento.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Trocar senha{% endblock %}
+{% block conteudo %}
+<section class="cartao estreito">
+  <h1>Definir nova senha</h1>
+  <p>Mínimo de 12 caracteres; evite senhas comuns ou parecidas com seus dados.</p>
+  <form method="post">{% csrf_token %}
+    {% include "operacao/_form.html" %}
+    <button type="submit">Salvar</button>
+  </form>
+</section>
+{% endblock %}

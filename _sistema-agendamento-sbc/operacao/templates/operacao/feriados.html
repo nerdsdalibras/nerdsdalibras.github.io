@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Calendário{% endblock %}
+{% block conteudo %}
+<h1>Calendário de dias não úteis</h1>
+<p>Usado no cálculo de antecedência (fuso America/Sao_Paulo). Sábados e domingos são não úteis. Alterações não modificam a antecedência já registrada em pedidos anteriores. Somente o Fiscal/Gestor da Prefeitura altera o calendário.</p>
+<div class="rolagem"><table><thead><tr><th>Data</th><th>Descrição</th><th>Situação</th>{% if vinculo.perfil == Perfil.FISCAL %}<th>Ação</th>{% endif %}</tr></thead><tbody>
+{% for f in feriados %}<tr{% if not f.ativo %} class="inativo"{% endif %}><td>{{ f.data|date:"d/m/Y (D)" }}</td><td>{{ f.descricao }}</td><td>{{ f.ativo|yesno:"Ativo,Desativado" }}</td>
+{% if vinculo.perfil == Perfil.FISCAL %}<td>{% if f.ativo %}<form method="post" action="{% url 'operacao:feriado_desativar' f.pk %}" class="em-linha">{% csrf_token %}<label class="sr" for="j{{ f.pk }}">Justificativa</label><input id="j{{ f.pk }}" name="justificativa" required placeholder="Justificativa"><button>Desativar</button></form>{% endif %}</td>{% endif %}</tr>{% endfor %}
+</tbody></table></div>
+{% if vinculo.perfil == Perfil.FISCAL %}<section class="cartao"><h2>Incluir data</h2><form method="post">{% csrf_token %}{% include "operacao/_form.html" %}<button>Incluir</button></form></section>{% endif %}
+{% endblock %}

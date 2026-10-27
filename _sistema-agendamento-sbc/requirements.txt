@@ -1,0 +1,6 @@
+# Dependências diretas (versões fixadas). Todas são software livre, sem custo de licença.
+Django==5.2.18
+psycopg[binary]==3.2.*
+reportlab==4.*
+gunicorn==23.*
+whitenoise==6.*

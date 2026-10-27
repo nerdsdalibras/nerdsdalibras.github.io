@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<section class="cartao"><h1>Selecionar contrato</h1>
+<form method="post">{% csrf_token %}
+<fieldset><legend>Contratos em que você possui vínculo</legend>
+{% for v in vinculos %}<p><input type="radio" name="vinculo" id="v{{ v.pk }}" value="{{ v.pk }}" required> <label for="v{{ v.pk }}">{{ v.contrato }} — {{ v.get_perfil_display }}</label></p>{% endfor %}
+</fieldset><button>Entrar no contrato</button></form></section>
+{% endblock %}

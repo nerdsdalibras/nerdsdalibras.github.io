@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo %}Nova solicitação{% endblock %}
+{% block conteudo %}
+<section class="cartao"><h1>Nova solicitação de tradução/interpretação</h1>
+<p>Antecedência mínima: <strong>remoto 1 dia útil</strong>; <strong>presencial 3 dias úteis</strong>. Pedidos fora do prazo são registrados e sinalizados.</p>
+<form method="post">{% csrf_token %}
+{% include "operacao/_form.html" %}
+<button type="submit">Registrar solicitação</button>
+</form></section>
+{% endblock %}

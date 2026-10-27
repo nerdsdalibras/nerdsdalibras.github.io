@@ -1,0 +1,71 @@
+/* SGI — estilos locais (sem fontes/CDNs de terceiros). Contraste AA. */
+:root {
+  --fundo: #f6f7f9; --texto: #1b1f24; --sutil: #4a5562; --cartao: #ffffff; --borda: #cfd6de;
+  --primaria: #0b4f8a; --primaria-texto: #ffffff; --foco: #ffbf47;
+  --ok: #1e6b34; --aviso-fundo: #fff4d6; --aviso: #6b4b00; --erro: #a3161d; --erro-fundo: #fde7e8;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fundo: #14171b; --texto: #eef1f4; --sutil: #b3bcc6; --cartao: #1e2329; --borda: #3a434d;
+    --primaria: #5aa8ec; --primaria-texto: #0b1622; --aviso-fundo: #3a2f10; --aviso: #ffd979; --erro: #ff9da2; --erro-fundo: #3d1c1e; --ok: #7fd598; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: var(--fundo); color: var(--texto); }
+a { color: var(--primaria); }
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+.pular { position: absolute; left: -9999px; } .pular:focus { left: 16px; top: 8px; background: var(--cartao); padding: 8px; z-index: 10; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.topo { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 16px; background: var(--primaria); color: var(--primaria-texto); }
+.topo .usuario { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.topo form { margin: 0; }
+button.link { background: none; border: 1px solid currentColor; color: inherit; padding: 4px 10px; }
+.menu ul { list-style: none; margin: 0; padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 4px 16px; background: var(--cartao); border-bottom: 1px solid var(--borda); }
+.menu a { display: inline-block; padding: 6px 2px; font-weight: 600; text-decoration: none; }
+.menu a:hover { text-decoration: underline; }
+.contrato { margin: 0; padding: 6px 16px; color: var(--sutil); font-size: .9rem; }
+main { padding: 16px; max-width: 1200px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin: .4em 0 .6em; } h2 { font-size: 1.25rem; }
+.cartao { background: var(--cartao); border: 1px solid var(--borda); border-radius: 8px; padding: 16px; margin: 16px 0; }
+.estreito { max-width: 460px; margin: 32px auto; }
+.campo { margin: 0 0 12px; display: flex; flex-direction: column; gap: 4px; }
+.campo label { font-weight: 600; }
+input, select, textarea { font: inherit; padding: 8px; border: 1px solid var(--borda); border-radius: 6px; background: var(--cartao); color: var(--texto); max-width: 100%; }
+input[type=checkbox], input[type=radio] { width: 20px; height: 20px; }
+.campo:has(input[type=checkbox]) { flex-direction: row; align-items: center; }
+button, .botao { font: inherit; font-weight: 600; cursor: pointer; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--primaria); background: var(--cartao); color: var(--primaria); text-decoration: none; display: inline-block; min-height: 40px; }
+button.primario, .botao { background: var(--primaria); color: var(--primaria-texto); }
+button.perigo { border-color: var(--erro); color: var(--erro); }
+.erro input, .erro select, .erro textarea { border-color: var(--erro); }
+.erro-texto { color: var(--erro); margin: 0; }
+small { color: var(--sutil); }
+.msg { padding: 10px 12px; border-radius: 6px; border-left: 5px solid var(--primaria); background: var(--cartao); }
+.msg-success { border-color: var(--ok); } .msg-error { border-color: var(--erro); background: var(--erro-fundo); }
+.msg-warning { border-color: var(--aviso); background: var(--aviso-fundo); }
+.rolagem { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; background: var(--cartao); font-size: .95rem; }
+th, td { text-align: left; vertical-align: top; padding: 8px; border-bottom: 1px solid var(--borda); }
+thead th { background: var(--fundo); }
+caption { text-align: left; font-weight: 600; padding: 6px 0; }
+tr.inativo td { color: var(--sutil); text-decoration: line-through; }
+.status { display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--borda); font-weight: 600; font-size: .9rem; }
+.s-cancelado { color: var(--erro); } .s-homologado { color: var(--ok); } .s-confirmado { color: var(--primaria); }
+.etiqueta { display: inline-block; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--borda); font-size: .8rem; }
+.etiqueta.alerta { border-color: var(--aviso); color: var(--aviso); background: var(--aviso-fundo); }
+.selo { background: var(--erro); color: #fff; border-radius: 999px; padding: 0 7px; font-size: .8rem; }
+.indicadores { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.indicadores li { background: var(--cartao); border: 1px solid var(--borda); border-radius: 8px; padding: 12px; }
+.indicadores strong { font-size: 1.6rem; display: block; }
+.grade { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 6px 12px; margin: 0; }
+.grade dt { font-weight: 600; } .grade dd { margin: 0; }
+.filtros { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px 12px; align-items: end; margin-bottom: 12px; }
+.em-linha { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+.em-linha .campo { margin: 0; }
+details { margin: 8px 0; } summary { cursor: pointer; font-weight: 600; }
+.historico li { margin-bottom: 8px; }
+.avisos { list-style: none; padding: 0; } .avisos li { background: var(--cartao); border: 1px solid var(--borda); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
+.avisos li.nao-lido { border-left: 5px solid var(--primaria); }
+pre { white-space: pre-wrap; font: inherit; }
+.sla-atencao td { background: var(--aviso-fundo); } .sla-vencido td { background: var(--erro-fundo); }
+.compacta { margin: 0; padding-left: 18px; }
+.bloco { border-top: 1px solid var(--borda); padding-top: 8px; }
+.rodape { padding: 16px; color: var(--sutil); font-size: .85rem; text-align: center; }
+@media (max-width: 640px) { .grade { grid-template-columns: 1fr; } h1 { font-size: 1.35rem; } }

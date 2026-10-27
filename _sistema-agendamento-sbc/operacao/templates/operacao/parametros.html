@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load sgi %}
+{% block titulo %}Parâmetros de medição{% endblock %}
+{% block conteudo %}
+<h1>Parâmetros de medição</h1>
+<p>Cada mudança gera <strong>nova versão</strong> que só entra em vigor após aprovação do Fiscal/Gestor da Prefeitura. Medições já realizadas guardam a versão usada e não são alteradas.</p>
+<div class="rolagem"><table><thead><tr><th>Versão</th><th>Preço/hora</th><th>Faixas de excedente</th><th>Vigente desde</th><th>Situação</th><th>Proposta</th><th>Decisão</th></tr></thead><tbody>
+{% for p in parametros %}<tr>
+<td>v{{ p.versao }}</td><td>{{ p.preco_unitario_hora|brl }}</td>
+<td><ul class="compacta">{% for f in p.faixas_excedente %}<li>{{ f.de }}–{{ f.ate }} min: +{{ f.acrescimo_min }} min</li>{% endfor %}<li>Fora das faixas: pendência de regra</li></ul></td>
+<td>{{ p.vigente_desde|date:"d/m/Y" }}</td><td>{{ p.get_situacao_display }}</td>
+<td>{{ p.proposto_por.nome_completo|default:"Carga inicial" }} em {{ p.proposto_em|date:"d/m/Y H:i" }}: {{ p.justificativa }}</td>
+<td>{% if p.decidido_em %}{{ p.decidido_por.nome_completo }} em {{ p.decidido_em|date:"d/m/Y H:i" }}: {{ p.parecer }}
+{% elif vinculo.perfil == Perfil.FISCAL %}<form method="post" action="{% url 'operacao:parametro_decidir' p.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_decisao %}<button>Decidir</button></form>{% else %}Aguardando Prefeitura{% endif %}</td>
+</tr>{% endfor %}</tbody></table></div>
+{% if vinculo.perfil == Perfil.FISCAL or vinculo.perfil == Perfil.OPERADOR %}
+<section class="cartao"><h2>Propor nova versão</h2>
+<p>Preço com até 4 casas decimais. Total arredondado para centavos (ROUND_HALF_UP). O valor inicial R$ 156,60 é o da proposta, sujeito ao resultado da licitação.</p>
+<form method="post">{% csrf_token %}{% include "operacao/_form.html" %}<button>Propor</button></form></section>
+{% endif %}
+{% endblock %}

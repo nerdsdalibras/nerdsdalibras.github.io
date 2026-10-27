@@ -1,6 +1,10 @@
 # Netlify Redirects — Nerds da Libras
 # Formato: /link-curto   destino   302
 
+# ── SISTEMA DE AGENDAMENTO (código-fonte; nunca servir publicamente) ──
+/_sistema-agendamento-sbc       /404.html   404!
+/_sistema-agendamento-sbc/*     /404.html   404!
+
 # ── RAIZ escoladalibras.com → Landing do Clube da Libras ──
 # /index.html cai na raiz (esconde a home "Prof. Lorena" no escoladalibras.com)
 /index.html           /                                                          301!

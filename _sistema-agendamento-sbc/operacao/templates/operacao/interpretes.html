@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Intérpretes{% endblock %}
+{% block conteudo %}
+<h1>Intérpretes do contrato</h1>
+<p>Dados restritos à execução contratual. Contatos visíveis apenas para usuários autenticados com vínculo neste contrato.</p>
+{% if vinculo.perfil == Perfil.OPERADOR %}<p><a class="botao" href="{% url 'operacao:interprete_novo' %}">Cadastrar intérprete</a></p>{% endif %}
+<div class="rolagem"><table><thead><tr><th scope="col">Nome completo</th><th scope="col">Telefone</th><th scope="col">E-mail</th><th scope="col">Situação</th>{% if vinculo.perfil == Perfil.OPERADOR %}<th scope="col">Ação</th>{% endif %}</tr></thead><tbody>
+{% for i in interpretes %}<tr><td>{{ i.nome_completo }}</td><td>{{ i.telefone }}</td><td>{{ i.email }}</td><td>{{ i.ativo|yesno:"Ativo,Inativo" }}</td>{% if vinculo.perfil == Perfil.OPERADOR %}<td><a href="{% url 'operacao:interprete_editar' i.pk %}">Editar</a></td>{% endif %}</tr>
+{% empty %}<tr><td colspan="5">Nenhum intérprete cadastrado.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

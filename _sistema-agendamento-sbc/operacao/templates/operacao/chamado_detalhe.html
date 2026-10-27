@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}{{ c.codigo }}{% endblock %}
+{% block conteudo %}
+<h1>{{ c.codigo }} — {{ c.titulo }}</h1>
+<dl class="grade">
+<dt>Tipo</dt><dd>{{ c.get_tipo_display }}</dd>
+<dt>Situação</dt><dd>{{ c.get_status_display }}</dd>
+<dt>Abertura</dt><dd>{{ c.aberto_em|date:"d/m/Y H:i:s" }} por {{ c.aberto_por.nome_completo }}</dd>
+<dt>Primeira resposta</dt><dd>{% if c.primeira_resposta_em %}{{ c.primeira_resposta_em|date:"d/m/Y H:i:s" }} por {{ c.primeira_resposta_por.nome_completo }} ({{ c.sla.minutos }} min{% if not c.sla.no_prazo %} — fora do prazo de 30 min{% endif %}){% else %}<strong>Sem resposta há {{ c.sla.minutos }} min</strong>{% endif %}</dd>
+<dt>Responsável</dt><dd>{{ c.responsavel.nome_completo|default:"—" }}</dd>
+<dt>Conclusão</dt><dd>{% if c.concluido_em %}{{ c.concluido_em|date:"d/m/Y H:i:s" }} por {{ c.concluido_por.nome_completo }}{% else %}—{% endif %}</dd>
+{% if c.agendamento %}<dt>Agendamento</dt><dd><a href="{% url 'operacao:agendamento' c.agendamento.pk %}">{{ c.agendamento.codigo }}</a></dd>{% endif %}
+<dt>Descrição</dt><dd>{{ c.descricao|linebreaksbr }}</dd>
+</dl>
+<h2>Interações</h2>
+<ol class="historico">{% for i in interacoes %}<li><strong>{{ i.em|date:"d/m/Y H:i:s" }}</strong> — {{ i.autor.nome_completo }}: {{ i.texto|linebreaksbr }}</li>{% empty %}<li>Nenhuma interação.</li>{% endfor %}</ol>
+{% if c.status != "CONCLUIDO" %}
+<section class="cartao"><h2>Responder</h2><form method="post">{% csrf_token %}<input type="hidden" name="acao" value="responder">{% include "operacao/_form.html" with form=f_texto %}<button>Enviar</button></form></section>
+{% if vinculo.perfil == Perfil.OPERADOR %}<section class="cartao"><h2>Atribuir responsável</h2><form method="post">{% csrf_token %}<input type="hidden" name="acao" value="atribuir">{% include "operacao/_form.html" with form=f_atribuir %}<button>Atribuir</button></form></section>{% endif %}
+{% if vinculo.perfil == Perfil.OPERADOR or vinculo.perfil == Perfil.FISCAL %}<section class="cartao"><h2>Concluir</h2><form method="post">{% csrf_token %}<input type="hidden" name="acao" value="concluir">{% include "operacao/_form.html" with form=f_texto %}<button>Concluir chamado</button></form></section>{% endif %}
+{% endif %}
+{% endblock %}

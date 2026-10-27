@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}Painel{% endblock %}
+{% block conteudo %}
+<h1>Painel</h1>
+{% if not integracao_email and vinculo.perfil != Perfil.SOLICITANTE %}
+<p class="msg msg-warning"><strong>Integração de e-mail pendente:</strong> alertas estão sendo registrados e exibidos na caixa interna de avisos, mas <strong>não</strong> estão sendo enviados por e-mail até que o envio seja configurado e autorizado.</p>
+{% endif %}
+<ul class="indicadores">
+  <li><a href="{% url 'operacao:agendamentos' %}?status=SOLICITADO"><strong>{{ aguardando_confirmacao }}</strong> aguardando confirmação</a></li>
+  <li><a href="{% url 'operacao:agendamentos' %}?status=REALIZADO"><strong>{{ aguardando_homologacao }}</strong> aguardando homologação</a></li>
+  <li><a href="{% url 'operacao:agendamentos' %}?pendencias=on"><strong>{{ pendencias_medicao }}</strong> com pendência de medição</a></li>
+  <li><a href="{% url 'operacao:chamados' %}"><strong>{{ chamados_abertos }}</strong> chamados em aberto</a></li>
+  {% if vinculo.perfil != Perfil.SOLICITANTE %}
+  <li><a href="{% url 'operacao:parametros' %}"><strong>{{ parametros_pendentes }}</strong> parâmetros aguardando Prefeitura</a></li>
+  <li><strong>{{ indenizacoes_pendentes }}</strong> pedidos de indenização em análise</li>
+  <li><a href="{% url 'operacao:relatorios' %}"><strong>{{ relatorios_pendentes }}</strong> relatórios aguardando atesto</a></li>
+  <li><a href="{% url 'operacao:avisos' %}"><strong>{{ notificacoes_problema }}</strong> notificações não enviadas por e-mail</a></li>
+  {% endif %}
+</ul>
+<h2>Próximos atendimentos</h2>
+{% include "operacao/_tabela_agendamentos.html" with agendamentos=proximos %}
+{% endblock %}

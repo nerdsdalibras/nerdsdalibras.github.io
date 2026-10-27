@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Auditoria{% endblock %}
+{% block conteudo %}
+<h1>Trilha de auditoria</h1>
+<p>Registros append-only: o banco impede alteração e exclusão e encadeia cada evento por hash SHA-256.</p>
+<form method="get" class="em-linha"><label for="ent">Entidade</label><select id="ent" name="entidade"><option value="">Todas</option>{% for e in entidades %}<option{% if e == ent %} selected{% endif %}>{{ e }}</option>{% endfor %}</select><button>Filtrar</button>
+<a href="?verificar=1">Verificar integridade da cadeia</a> · <a href="?{{ request.GET.urlencode }}&formato=csv">Exportar CSV</a></form>
+{% if integridade %}{% if integridade.ok %}<p class="msg msg-success">Cadeia de hash íntegra.</p>{% else %}<p class="msg msg-error">Divergência na cadeia nos eventos: {{ integridade.problemas|join:", " }}</p>{% endif %}{% endif %}
+<div class="rolagem"><table><thead><tr><th>Nº</th><th>Data/hora</th><th>Usuário</th><th>Entidade</th><th>Ação</th><th>Justificativa</th><th>Hash</th></tr></thead><tbody>
+{% for e in eventos %}<tr><td>{{ e.id }}</td><td>{{ e.ocorrido_em|date:"d/m/Y H:i:s" }}</td><td>{{ e.usuario_descricao }} {{ e.perfil }}</td><td>{{ e.entidade }} {{ e.entidade_id|truncatechars:12 }}</td><td>{{ e.acao }}</td><td>{{ e.justificativa|truncatechars:120 }}</td><td><code>{{ e.hash|truncatechars:14 }}</code></td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

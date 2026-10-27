@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load sgi %}
+{% block titulo %}Relatório {{ c.competencia }}{% endblock %}
+{% block conteudo %}
+<h1>Relatório mensal {{ c.competencia }} — v{{ r.versao }}</h1>
+<p><span class="status">{{ r.get_status_display }}</span> Submetido em {{ r.submetido_em|date:"d/m/Y H:i" }} por {{ r.submetido_por.nome_completo }}. Prazo: {{ r.prazo_limite|date:"d/m/Y" }} {% if r.submetido_no_prazo %}(no prazo){% else %}<strong>(fora do prazo)</strong>{% endif %}. Layout v{{ r.layout_versao }}.</p>
+<p>Hash SHA-256: <code>{{ r.hash_conteudo }}</code> · <a href="?formato=csv">CSV</a> · <a href="?formato=pdf">PDF</a></p>
+{% if r.decidido_em %}<p>Decisão da Prefeitura: {{ r.decidido_por.nome_completo }} em {{ r.decidido_em|date:"d/m/Y H:i" }} — {{ r.parecer }}</p>{% endif %}
+<h2>Serviços prestados</h2>
+<div class="rolagem"><table><thead><tr><th>Código</th><th>Evento</th><th>Modalidade</th><th>Previsto</th><th>Realizado</th><th>Intérpretes</th><th>Situação</th><th>Horas</th><th>Valor</th></tr></thead><tbody>
+{% for i in c.atendimentos %}<tr><td>{{ i.codigo }}</td><td>{{ i.evento }}</td><td>{{ i.modalidade }}</td><td>{{ i.inicio_previsto }} ({{ i.duracao_prevista_min }} min)</td><td>{{ i.inicio_realizado }}{% if i.fim_realizado %} – {{ i.fim_realizado }}{% endif %}</td><td>{{ i.interpretes|join:", " }}</td><td>{{ i.status }}{% if i.cancelamento %}: {{ i.cancelamento.classificacao }}{% endif %}</td><td>{{ i.horas_faturaveis|horas }}</td><td>{{ i.valor|brl }}</td></tr>{% endfor %}
+</tbody></table></div>
+<p><strong>Horas prestadas:</strong> {{ c.totais.horas_prestadas|horas }} — {{ c.totais.valor_horas_prestadas|brl }}</p>
+<h2>Indenizações aprovadas (separadas das horas)</h2>
+<ul>{% for i in c.indenizacoes_aprovadas %}<li>{{ i.codigo }}: {{ i.horas_referencia|horas }} — {{ i.valor|brl }}. {{ i.memoria }}</li>{% empty %}<li>Nenhuma.</li>{% endfor %}</ul>
+<h2>Pendências de medição (fora dos totais)</h2>
+<ul>{% for p in c.pendencias_medicao %}<li>{{ p.codigo }}: {% for m in p.motivos %}{{ m }} {% endfor %}</li>{% empty %}<li>Nenhuma.</li>{% endfor %}</ul>
+<h2>Ocorrências</h2>
+<ul>{% for o in c.ocorrencias %}<li>{{ o.codigo }} — {{ o.tipo }}: {{ o.titulo }} (aberto {{ o.aberto_em }}; 1ª resposta {{ o.primeira_resposta_em|default:"—" }}; {{ o.status }})</li>{% empty %}<li>Nenhuma.</li>{% endfor %}</ul>
+<p><strong>Valor geral:</strong> {{ c.totais.valor_geral|brl }}</p>
+{% if r.status == "SUBMETIDO" and vinculo.perfil == Perfil.FISCAL %}
+<section class="cartao"><h2>Conferência e atesto</h2><p>"Aprovar" = atestar; "Rejeitar" = devolver para ajustes (nova versão será submetida; esta permanece registrada).</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="acao" value="decidir">{% include "operacao/_form.html" with form=f_decisao %}<button>Registrar</button></form></section>
+{% endif %}
+<h2>Nota fiscal</h2>
+{% for n in notas %}<p>NF {{ n.numero }} de {{ n.data_emissao|date:"d/m/Y" }} — {{ n.valor|brl }} (registrada por {{ n.registrado_por.nome_completo }} em {{ n.registrado_em|date:"d/m/Y H:i" }}) {{ n.observacao }}</p>
+{% empty %}
+{% if r.status == "ATESTADO" %}{% if vinculo.perfil == Perfil.OPERADOR %}<form method="post">{% csrf_token %}<input type="hidden" name="acao" value="nf">{% include "operacao/_form.html" with form=f_nf %}<button>Registrar emissão da NF</button></form>{% else %}<p>Aguardando registro pela contratada.</p>{% endif %}
+{% else %}<p>Registro de NF bloqueado até o atesto da Prefeitura.</p>{% endif %}
+{% endfor %}
+{% endblock %}

@@ -23,6 +23,8 @@ file="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_response.fi
 [ -n "$file" ] || exit 0
 case "$file" in *.html) ;; *) exit 0 ;; esac
 [ -f "$file" ] || exit 0
+# Nunca injeta rastreadores no sistema de agendamento (dados contratuais/pessoais).
+case "$file" in *"/_sistema-agendamento-sbc/"*) exit 0 ;; esac
 [ -f "$SNIPPET_FILE" ] || exit 0
 
 # Já tem o pixel? Nada a fazer.

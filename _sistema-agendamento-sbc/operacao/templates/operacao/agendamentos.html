@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Agendamentos{% endblock %}
+{% block conteudo %}
+<h1>Agendamentos</h1>
+<form method="get" class="filtros" aria-label="Filtros">
+  {% include "operacao/_form.html" with form=filtro %}
+  <button type="submit">Filtrar</button>
+  <a href="?{{ request.GET.urlencode }}&formato=csv">Exportar CSV</a>
+</form>
+{% include "operacao/_tabela_agendamentos.html" %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load sgi %}
+{% block titulo %}Relatórios mensais{% endblock %}
+{% block conteudo %}
+<h1>Relatórios mensais</h1>
+<p>A contratada apresenta o relatório até o <strong>2º dia útil do mês seguinte</strong>. O conteúdo submetido é congelado (hash SHA-256). O registro da nota fiscal só é liberado após o atesto da Prefeitura.</p>
+<form method="get" class="em-linha">{% include "operacao/_form.html" %}<button>Ver prévia</button></form>
+{% if previa %}
+<section class="cartao"><h2>Prévia — {{ previa.competencia }}</h2>
+<p>Prazo de entrega: {{ previa.prazo|date:"d/m/Y" }}. Atendimentos: {{ previa.totais.qtd_atendimentos }}. Horas prestadas: {{ previa.totais.horas_prestadas|horas }} — {{ previa.totais.valor_horas_prestadas|brl }}. Indenizações aprovadas: {{ previa.totais.valor_indenizacoes|brl }}. Pendências de medição: {{ previa.totais.qtd_pendencias }}.</p>
+{% if previa.pendencias_medicao %}<ul>{% for p in previa.pendencias_medicao %}<li>{{ p.codigo }}: {% for m in p.motivos %}{{ m }} {% endfor %}</li>{% endfor %}</ul>{% endif %}
+{% if vinculo.perfil == Perfil.OPERADOR %}<form method="post" action="{% url 'operacao:relatorio_submeter' %}">{% csrf_token %}<input type="hidden" name="competencia" value="{{ form.cleaned_data.competencia|date:'Y-m' }}"><button class="primario">Submeter à conferência da Prefeitura</button></form>{% endif %}
+</section>
+{% endif %}
+<h2>Submetidos</h2>
+<div class="rolagem"><table><thead><tr><th>Competência</th><th>Versão</th><th>Situação</th><th>Submetido</th><th>Prazo</th><th>Total geral</th></tr></thead><tbody>
+{% for r in relatorios %}<tr><td><a href="{% url 'operacao:relatorio' r.pk %}">{{ r.competencia|date:"m/Y" }}</a></td><td>v{{ r.versao }}</td><td>{{ r.get_status_display }}</td><td>{{ r.submetido_em|date:"d/m/Y H:i" }}</td><td>{{ r.prazo_limite|date:"d/m/Y" }} {% if not r.submetido_no_prazo %}<span class="etiqueta alerta">fora do prazo</span>{% endif %}</td><td>{{ r.conteudo.totais.valor_geral|brl }}</td></tr>
+{% empty %}<tr><td colspan="6">Nenhum relatório submetido.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Usuários{% endblock %}
+{% block conteudo %}
+<h1>Usuários e perfis do contrato</h1>
+<p>Toda criação/alteração é auditada. A criação de perfis da Prefeitura gera aviso automático aos fiscais/gestores.</p>
+{% if senha_temporaria %}<p class="msg msg-warning" role="alert"><strong>Senha temporária (exibida uma única vez):</strong> <code>{{ senha_temporaria }}</code><br>Entregue por canal seguro; o usuário deverá trocá-la no primeiro acesso.</p>{% endif %}
+<div class="rolagem"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th>Alterar</th></tr></thead><tbody>
+{% for v in vinculos %}<tr><td>{{ v.usuario.nome_completo }}</td><td>{{ v.usuario.email }}</td><td>{{ v.get_perfil_display }}</td><td>{{ v.ativo|yesno:"Ativo,Inativo" }}</td>
+<td>{% if v.usuario != user %}<details><summary>Alterar</summary><form method="post" action="{% url 'operacao:vinculo_alterar' v.pk %}">{% csrf_token %}
+<label for="p{{ v.pk }}">Perfil</label><select id="p{{ v.pk }}" name="perfil">{% for val, rot in f_vinculo.fields.perfil.choices %}<option value="{{ val }}"{% if val == v.perfil %} selected{% endif %}>{{ rot }}</option>{% endfor %}</select>
+<input type="checkbox" id="a{{ v.pk }}" name="ativo"{% if v.ativo %} checked{% endif %}> <label for="a{{ v.pk }}">Ativo</label>
+<label for="j{{ v.pk }}">Justificativa</label><input id="j{{ v.pk }}" name="justificativa" required><button>Salvar</button></form></details>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+<section class="cartao"><h2>Novo acesso</h2><form method="post">{% csrf_token %}{% include "operacao/_form.html" %}<button>Criar</button></form></section>
+{% endblock %}

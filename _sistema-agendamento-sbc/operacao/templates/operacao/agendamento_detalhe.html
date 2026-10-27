@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load sgi %}
+{% block titulo %}{{ ag.codigo }}{% endblock %}
+{% block conteudo %}
+<h1>{{ ag.codigo }} — {{ ag.titulo }}</h1>
+<p><span class="status s-{{ ag.status|lower }}">{{ ag.get_status_display }}</span>
+{% if ag.fora_do_prazo %}<span class="etiqueta alerta">Pedido fora do prazo de antecedência ({{ ag.antecedencia_dias_uteis }} de {{ ag.antecedencia_minima_dias_uteis }} dia(s) útil(eis))</span>{% endif %}</p>
+
+<section class="cartao" aria-labelledby="dados">
+<h2 id="dados">Dados do atendimento</h2>
+<dl class="grade">
+  <dt>Unidade solicitante</dt><dd>{{ ag.unidade_solicitante }}</dd>
+  <dt>Modalidade</dt><dd>{{ ag.get_modalidade_display }}</dd>
+  <dt>Local/plataforma</dt><dd>{{ ag.local }}</dd>
+  <dt>Início previsto</dt><dd>{{ ag.inicio_previsto|date:"d/m/Y H:i" }}</dd>
+  <dt>Duração estimada</dt><dd>{{ ag.duracao_prevista_min|minutos_hm }} (fim previsto {{ ag.fim_previsto|date:"H:i" }})</dd>
+  <dt>Profissionais necessários</dt><dd>{{ ag.qtd_profissionais }}</dd>
+  <dt>Solicitação criada em</dt><dd>{{ ag.criado_em|date:"d/m/Y H:i:s" }} ({{ ag.get_parte_criadora_display }})</dd>
+  <dt>Confirmação</dt><dd>{% if ag.confirmado_em %}{{ ag.confirmado_em|date:"d/m/Y H:i" }}{% else %}Não confirmado{% endif %}</dd>
+  <dt>Realizado</dt><dd>{% if ag.inicio_realizado %}{{ ag.inicio_realizado|date:"d/m/Y H:i" }} – {{ ag.fim_realizado|date:"H:i" }} ({{ ag.duracao_realizada_min|minutos_hm }}){% else %}—{% endif %}</dd>
+  {% if ag.cancelado_em %}
+  <dt>Cancelamento</dt><dd>{{ ag.cancelado_em|date:"d/m/Y H:i" }} pela {{ ag.get_cancelamento_parte_display }} — {{ ag.cancelamento_justificativa }}<br>
+  Antecedência: {{ ag.cancelamento_minutos_antecedencia|minutos_hm }}; {{ ag.cancelamento_dias_uteis }} dia(s) útil(eis).<br>
+  <strong>{{ ag.get_cancelamento_classificacao_display }}</strong></dd>
+  {% endif %}
+  {% if ag.observacoes %}<dt>Observações</dt><dd>{{ ag.observacoes|linebreaksbr }}</dd>{% endif %}
+</dl>
+</section>
+
+<section class="cartao" aria-labelledby="escala">
+<h2 id="escala">Intérpretes escalados</h2>
+<div class="rolagem"><table>
+<thead><tr><th scope="col">Nome completo</th>{% if pode_contatos %}<th scope="col">Telefone</th><th scope="col">E-mail</th>{% endif %}<th scope="col">Escalado em</th><th scope="col">Situação</th>{% if vinculo.perfil == Perfil.OPERADOR and ativos %}<th scope="col">Ação</th>{% endif %}</tr></thead>
+<tbody>
+{% for e in escalas %}
+<tr{% if not e.ativa %} class="inativo"{% endif %}>
+  <td>{{ e.interprete.nome_completo }}</td>
+  {% if pode_contatos %}<td>{{ e.interprete.telefone }}</td><td>{{ e.interprete.email }}</td>{% endif %}
+  <td>{{ e.escalado_em|date:"d/m/Y H:i" }}</td>
+  <td>{% if e.ativa %}Ativa{% else %}Cancelada em {{ e.cancelada_em|date:"d/m/Y H:i" }}: {{ e.motivo_cancelamento }}{% endif %}</td>
+  {% if vinculo.perfil == Perfil.OPERADOR and ativos %}<td>{% if e.ativa %}
+    <details><summary>Cancelar/substituir</summary>
+    <form method="post" action="{% url 'operacao:escala_cancelar' ag.pk e.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_cancelar_escala %}<button>Cancelar escala</button></form>
+    </details>{% endif %}</td>{% endif %}
+</tr>
+{% empty %}<tr><td colspan="6">Nenhum intérprete escalado.</td></tr>{% endfor %}
+</tbody></table></div>
+{% if vinculo.perfil == Perfil.OPERADOR and ativos %}
+<form method="post" action="{% url 'operacao:agendamento_escalar' ag.pk %}" class="em-linha">{% csrf_token %}{% include "operacao/_form.html" with form=f_escalar %}<button>Escalar</button></form>
+{% if ag.status == "SOLICITADO" %}<form method="post" action="{% url 'operacao:agendamento_confirmar' ag.pk %}">{% csrf_token %}<button class="primario">Confirmar atendimento</button></form>{% endif %}
+{% endif %}
+</section>
+
+{% if ativos and vinculo.perfil != Perfil.ADMIN_TECNICO %}
+<section class="cartao" aria-labelledby="alteracoes">
+<h2 id="alteracoes">Alterar horário ou cancelar</h2>
+<details><summary>Alterar horário</summary>
+<form method="post" action="{% url 'operacao:agendamento_alterar' ag.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_alterar %}<button>Salvar alteração</button></form>
+</details>
+<details><summary>Cancelar agendamento</summary>
+<p>O registro não é apagado. Antecedência e classificação do cancelamento são calculadas e registradas.</p>
+<form method="post" action="{% url 'operacao:agendamento_cancelar' ag.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_justificativa %}<button class="perigo">Cancelar agendamento</button></form>
+</details>
+</section>
+{% endif %}
+
+{% if vinculo.perfil == Perfil.OPERADOR and ag.status == "CONFIRMADO" or vinculo.perfil == Perfil.OPERADOR and ag.status == "REALIZADO" %}
+<section class="cartao" aria-labelledby="realizacao">
+<h2 id="realizacao">{% if ag.status == "REALIZADO" %}Corrigir{% else %}Registrar{% endif %} horários realizados</h2>
+<form method="post" action="{% url 'operacao:agendamento_realizacao' ag.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_realizacao %}<button>Registrar</button></form>
+</section>
+{% endif %}
+
+<section class="cartao" aria-labelledby="medicao">
+<h2 id="medicao">Medição (hora de evento)</h2>
+{% if medicao_vigente %}
+<p><strong>Vigente (v{{ medicao_vigente.versao }}):</strong> {{ medicao_vigente.minutos_faturaveis|minutos_hm }} = {{ medicao_vigente.horas_faturaveis|horas }} × {{ medicao_vigente.preco_unitario|brl }} = <strong>{{ medicao_vigente.valor_total|brl }}</strong> (parâmetro v{{ medicao_vigente.parametro.versao }})</p>
+{% elif not ultima_medicao %}
+<p>Aguardando o registro dos horários realizados. A medição é calculada automaticamente a partir deles.</p>
+{% else %}
+<p class="msg msg-warning"><strong>Sem medição válida.</strong> {% for p in pendencias_texto %}{{ p }} {% endfor %}{% if ultima_medicao.situacao == "PROPOSTA" %} Medição fundamentada aguardando decisão da Prefeitura.{% endif %}</p>
+{% endif %}
+{% if ultima_medicao.alerta_revezamento %}<p class="msg msg-error">Atendimento acima de uma hora com menos de dois intérpretes ativos (revezamento exigido).</p>{% endif %}
+{% if medicoes %}
+<div class="rolagem"><table><caption>Versões de medição (nenhuma é sobrescrita)</caption>
+<thead><tr><th>Versão</th><th>Situação</th><th>Previsto</th><th>Realizado</th><th>Excedente</th><th>Faturável</th><th>Valor</th><th>Regra/fundamentação</th><th>Decisão</th></tr></thead>
+<tbody>{% for m in medicoes %}
+<tr><td>v{{ m.versao }}</td><td>{{ m.get_situacao_display }}</td><td>{{ m.minutos_previstos }} min</td><td>{{ m.minutos_realizados }} min</td><td>{{ m.excedente_min }} min</td>
+<td>{{ m.minutos_faturaveis|default:"—" }}{% if m.minutos_faturaveis %} min{% endif %}</td><td>{{ m.valor_total|brl }}</td>
+<td>{{ m.regra_aplicada }}{% if m.fundamentacao %}<br><em>Fundamentação:</em> {{ m.fundamentacao }}{% endif %}</td>
+<td>{% if m.decidida_em %}{{ m.decidida_por.nome_completo }} em {{ m.decidida_em|date:"d/m/Y H:i" }}: {{ m.parecer }}{% elif m.situacao == "PROPOSTA" and vinculo.perfil == Perfil.FISCAL %}
+<form method="post" action="{% url 'operacao:medicao_decidir' ag.pk m.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_decisao %}<button>Decidir</button></form>{% endif %}</td></tr>
+{% endfor %}</tbody></table></div>
+{% endif %}
+{% if vinculo.perfil == Perfil.OPERADOR and ag.status == "REALIZADO" and ultima_medicao and ultima_medicao.situacao == "PENDENTE_REGRA" or vinculo.perfil == Perfil.OPERADOR and ag.status == "REALIZADO" and ultima_medicao.situacao == "REJEITADA" %}
+<details open><summary>Propor medição fundamentada</summary>
+<p>Caso não definido expressamente no edital. A proposta só vale após aprovação da Prefeitura; o histórico é preservado.</p>
+<form method="post" action="{% url 'operacao:medicao_propor' ag.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_fundamentada %}<button>Enviar para aprovação</button></form>
+</details>
+{% endif %}
+</section>
+
+{% if ag.status == "REALIZADO" or ag.status == "HOMOLOGADO" %}
+<section class="cartao" aria-labelledby="homologacao">
+<h2 id="homologacao">Conferência e homologação pelas partes</h2>
+<p>Prefeitura: {% if homologacoes_validas.PREFEITURA %}homologado por {{ homologacoes_validas.PREFEITURA.usuario.nome_completo }} em {{ homologacoes_validas.PREFEITURA.em|date:"d/m/Y H:i" }}{% else %}pendente{% endif %}<br>
+Contratada: {% if homologacoes_validas.CONTRATADA %}conferido por {{ homologacoes_validas.CONTRATADA.usuario.nome_completo }} em {{ homologacoes_validas.CONTRATADA.em|date:"d/m/Y H:i" }}{% else %}pendente{% endif %}</p>
+{% if ag.status == "REALIZADO" and medicao_vigente %}{% if vinculo.perfil == Perfil.FISCAL or vinculo.perfil == Perfil.OPERADOR %}
+<form method="post" action="{% url 'operacao:agendamento_homologar' ag.pk %}">{% csrf_token %}
+<div class="campo"><label for="obs">Observação (opcional)</label><textarea id="obs" name="observacao" rows="2"></textarea></div>
+<button class="primario">Homologar este estado ({{ vinculo.parte|lower }})</button></form>
+{% endif %}{% endif %}
+{% if homologacoes %}<details><summary>Evidências de homologação ({{ homologacoes|length }})</summary><ul>
+{% for h in homologacoes %}<li>{{ h.get_parte_display }} — {{ h.usuario.nome_completo }} em {{ h.em|date:"d/m/Y H:i:s" }} — hash <code>{{ h.hash_estado|truncatechars:20 }}</code>{% if h.observacao %}: {{ h.observacao }}{% endif %}</li>{% endfor %}
+</ul></details>{% endif %}
+{% if ag.status == "HOMOLOGADO" %}<p class="msg msg-success">Homologado pelas duas partes em {{ ag.homologado_em|date:"d/m/Y H:i" }}. Registro travado contra alteração e exclusão.</p>{% endif %}
+</section>
+{% endif %}
+
+{% if ag.status == "CANCELADO" and vinculo.perfil != Perfil.SOLICITANTE %}
+<section class="cartao" aria-labelledby="indenizacao">
+<h2 id="indenizacao">Indenização por cancelamento tardio</h2>
+<p>Não é gerada automaticamente. Depende de confirmação prévia, comprovação de reserva/mobilização, ausência de fato imputável à contratada e aprovação da Prefeitura. Fica separada das horas prestadas.</p>
+{% for p in indenizacoes %}
+<div class="bloco"><p><strong>{{ p.get_situacao_display }}</strong> — solicitado em {{ p.solicitado_em|date:"d/m/Y H:i" }}. Referência: {{ p.horas_referencia|horas }} → {{ p.valor_referencia|brl }}</p>
+<p>{{ p.memoria_calculo }}</p><p><em>Comprovação:</em> {{ p.comprovacao }}{% if p.anexo %} — <a href="{% url 'operacao:indenizacao_anexo' p.pk %}">anexo ({{ p.anexo_nome_original }})</a>{% endif %}</p>
+{% if p.decidido_em %}<p>Decisão: {{ p.decidido_por.nome_completo }} em {{ p.decidido_em|date:"d/m/Y H:i" }} — {{ p.parecer }}</p>
+{% elif vinculo.perfil == Perfil.FISCAL %}
+<form method="post" action="{% url 'operacao:indenizacao_decidir' ag.pk p.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_decisao_indenizacao %}<button>Registrar decisão</button></form>{% endif %}
+</div>
+{% endfor %}
+{% if vinculo.perfil == Perfil.OPERADOR %}
+{% if elegibilidade_indenizacao %}<p>Pedido não cabível: {% for i in elegibilidade_indenizacao %}{{ i }} {% endfor %}</p>
+{% else %}<form method="post" enctype="multipart/form-data" action="{% url 'operacao:indenizacao_solicitar' ag.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_indenizacao %}<button>Solicitar análise</button></form>{% endif %}
+{% endif %}
+</section>
+{% endif %}
+
+<section class="cartao" aria-labelledby="historico">
+<h2 id="historico">Histórico auditável</h2>
+<p><a href="{% url 'operacao:agendamento_historico' ag.pk 'csv' %}">Exportar CSV</a> · <a href="{% url 'operacao:agendamento_historico' ag.pk 'pdf' %}">Exportar PDF</a> · <a href="{% url 'operacao:chamado_novo' %}?agendamento={{ ag.codigo }}">Abrir chamado</a></p>
+<ol class="historico">
+{% for e in historico %}
+<li><strong>{{ e.ocorrido_em|date:"d/m/Y H:i:s" }}</strong> — {{ e.acao }} ({{ e.entidade }}) por {{ e.usuario_descricao }}{% if e.perfil %} [{{ e.perfil }}]{% endif %}
+{% if e.justificativa %}<br><em>Justificativa:</em> {{ e.justificativa }}{% endif %}
+{% if e.dados_anteriores %}<details><summary>Valores anteriores e posteriores</summary><div class="rolagem"><table><thead><tr><th>Campo</th><th>Antes</th><th>Depois</th></tr></thead><tbody>
+{% for k, v in e.dados_anteriores.items %}<tr><td>{{ k }}</td><td>{{ v }}</td><td>{% for k2, v2 in e.dados_posteriores.items %}{% if k2 == k %}{{ v2 }}{% endif %}{% endfor %}</td></tr>{% endfor %}
+</tbody></table></div></details>{% endif %}
+</li>
+{% endfor %}
+</ol>
+</section>
+{% endblock %}

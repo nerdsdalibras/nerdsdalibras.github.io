@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Retenção de dados{% endblock %}
+{% block conteudo %}
+<h1>Política de retenção</h1>
+<p>O sistema <strong>não elimina</strong> registros automaticamente. O prazo legal de arquivamento não é definido pelo sistema: deve ser informado e aprovado pela Prefeitura, com fundamento. Qualquer eliminação futura exigirá procedimento próprio documentado.</p>
+<div class="rolagem"><table><thead><tr><th>Versão</th><th>Prazo</th><th>Fundamento</th><th>Situação</th><th>Decisão</th></tr></thead><tbody>
+{% for p in politicas %}<tr><td>v{{ p.versao }}</td><td>{{ p.prazo_descricao }}</td><td>{{ p.fundamento }}</td><td>{{ p.get_situacao_display }}</td>
+<td>{% if p.decidido_em %}{{ p.decidido_por.nome_completo }}: {{ p.parecer }}{% elif vinculo.perfil == Perfil.FISCAL %}<form method="post" action="{% url 'operacao:retencao_decidir' p.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_decisao %}<button>Decidir</button></form>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="5">Nenhuma política definida. Situação atual: <strong>prazo não definido — retenção integral, sem eliminação</strong>.</td></tr>{% endfor %}
+</tbody></table></div>
+<section class="cartao"><h2>Propor política</h2><form method="post">{% csrf_token %}{% include "operacao/_form.html" %}<button>Propor</button></form></section>
+{% endblock %}

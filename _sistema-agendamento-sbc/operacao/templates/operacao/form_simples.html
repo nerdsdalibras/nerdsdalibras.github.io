@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block conteudo %}
+<section class="cartao"><h1>{{ titulo }}</h1>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+{% include "operacao/_form.html" %}
+<button type="submit">Salvar</button> <a href="{% url voltar %}">Voltar</a>
+</form></section>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+{% block meta %}{% endblock %}
+<title>{% block titulo %}SGI{% endblock %} · Agendamento de Intérpretes de Libras</title>
+<link rel="stylesheet" href="{% static 'operacao/sgi.css' %}">
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<header class="topo">
+  <div class="marca"><strong>SGI</strong> <span>Agendamento de Intérpretes de Libras</span></div>
+  {% if user.is_authenticated %}
+  <div class="usuario">
+    {% if vinculo %}<span>{{ user.nome_completo }} · <em>{{ vinculo.get_perfil_display }}</em></span>{% endif %}
+    <form method="post" action="{% url 'contas:logout' %}">{% csrf_token %}<button class="link">Sair</button></form>
+  </div>
+  {% endif %}
+</header>
+{% if vinculo %}
+<nav class="menu" aria-label="Menu principal">
+  <ul>
+    <li><a href="{% url 'operacao:painel' %}">Painel</a></li>
+    <li><a href="{% url 'operacao:agendamentos' %}">Agendamentos</a></li>
+    {% if vinculo.perfil != Perfil.ADMIN_TECNICO %}<li><a href="{% url 'operacao:agendamento_novo' %}">Nova solicitação</a></li>{% endif %}
+    <li><a href="{% url 'operacao:chamados' %}">Chamados</a></li>
+    <li><a href="{% url 'operacao:avisos' %}">Avisos{% if avisos_nao_lidos %} <span class="selo" aria-label="{{ avisos_nao_lidos }} não lidos">{{ avisos_nao_lidos }}</span>{% endif %}</a></li>
+    {% if vinculo.perfil == Perfil.FISCAL or vinculo.perfil == Perfil.OPERADOR %}<li><a href="{% url 'operacao:interpretes' %}">Intérpretes</a></li>{% endif %}
+    {% if vinculo.perfil != Perfil.SOLICITANTE %}
+    <li><a href="{% url 'operacao:relatorios' %}">Relatórios</a></li>
+    <li><a href="{% url 'operacao:parametros' %}">Parâmetros</a></li>
+    <li><a href="{% url 'operacao:retencao' %}">Retenção</a></li>
+    {% endif %}
+    <li><a href="{% url 'operacao:feriados' %}">Calendário</a></li>
+    {% if vinculo.perfil == Perfil.FISCAL or vinculo.perfil == Perfil.ADMIN_TECNICO %}<li><a href="{% url 'operacao:auditoria' %}">Auditoria</a></li>{% endif %}
+    {% if vinculo.perfil == Perfil.ADMIN_TECNICO %}<li><a href="{% url 'operacao:usuarios' %}">Usuários</a></li>{% endif %}
+  </ul>
+</nav>
+<p class="contrato">{{ vinculo.contrato }}</p>
+{% endif %}
+<main id="conteudo" tabindex="-1">
+  {% if messages %}
+  <div class="mensagens" role="status" aria-live="polite">
+    {% for m in messages %}<p class="msg msg-{{ m.tags }}">{{ m }}</p>{% endfor %}
+  </div>
+  {% endif %}
+  {% block conteudo %}{% endblock %}
+</main>
+<footer class="rodape">
+  <p>Horários no fuso de Brasília (America/Sao_Paulo). Uso restrito à execução contratual. Dados de contato de intérpretes são de acesso autenticado.</p>
+</footer>
+</body>
+</html>
