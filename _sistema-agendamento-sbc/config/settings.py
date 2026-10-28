@@ -149,21 +149,34 @@ if env_bool("ATRAS_DE_PROXY", False):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # ---- E-mail (alertas) ----
-# Envio real só acontece se EMAIL_ENVIO_HABILITADO=true E houver EMAIL_HOST.
-# Sem isso, as notificações ficam registradas como "INTEGRACAO_PENDENTE".
+# Conta remetente padrão: nerdsdalibras@gmail.com (Gmail, STARTTLS na porta 587).
+# A senha (senha de app do Google) vem SOMENTE de EMAIL_HOST_PASSWORD.
+# Envio real só acontece com EMAIL_ENVIO_HABILITADO=true e configuração completa;
+# caso contrário as notificações ficam como "INTEGRACAO_PENDENTE" (ver diagnóstico no painel).
 EMAIL_ENVIO_HABILITADO = env_bool("EMAIL_ENVIO_HABILITADO", False)
 EMAIL_BACKEND = env("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-EMAIL_HOST = env("EMAIL_HOST", "")
+EMAIL_HOST = env("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(env("EMAIL_PORT", "587"))
-EMAIL_HOST_USER = env("EMAIL_HOST_USER", "")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", "nerdsdalibras@gmail.com")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", False)
 EMAIL_TIMEOUT = int(env("EMAIL_TIMEOUT", "20"))
-DEFAULT_FROM_EMAIL = env("EMAIL_REMETENTE", "nao-responda@exemplo.invalid")
+DEFAULT_FROM_EMAIL = env("EMAIL_REMETENTE", "Nerds da Libras - SGI <nerdsdalibras@gmail.com>")
+EMAIL_RESPONDER_PARA = env_lista("EMAIL_RESPONDER_PARA")
 # Lista opcional de domínios permitidos (proteção em homologação). Vazia = sem filtro.
 EMAIL_DOMINIOS_PERMITIDOS = env_lista("EMAIL_DOMINIOS_PERMITIDOS")
 NOTIFICACAO_MAX_TENTATIVAS = int(env("NOTIFICACAO_MAX_TENTATIVAS", "6"))
+
+# ---- Google Drive (cópia externa dos backups CIFRADOS) ----
+# Conta: nerdsdalibras@gmail.com. Credenciais OAuth só por variáveis de ambiente.
+GDRIVE_CONTA = env("GDRIVE_CONTA", "nerdsdalibras@gmail.com")
+GDRIVE_CLIENT_ID = env("GDRIVE_CLIENT_ID", "")
+GDRIVE_CLIENT_SECRET = env("GDRIVE_CLIENT_SECRET", "")
+GDRIVE_REFRESH_TOKEN = env("GDRIVE_REFRESH_TOKEN", "")
+GDRIVE_PASTA = env("GDRIVE_PASTA", "SGI-SBC-backups")
+GDRIVE_TOKEN_URL = env("GDRIVE_TOKEN_URL", "https://oauth2.googleapis.com/token")
+GDRIVE_API_URL = env("GDRIVE_API_URL", "https://www.googleapis.com")
 
 # Endereço público do sistema (usado nos links dos e-mails).
 URL_BASE = env("URL_BASE", "http://localhost:8000")

@@ -58,6 +58,27 @@ com HTTPS (ex.: Nginx/Caddy com certificado válido), relógio sincronizado (NTP
 - O administrador técnico **não** cria agendamentos, não aprova parâmetros, não
   homologa e não altera o calendário.
 
+## 2.1 E-mail de alertas (conta nerdsdalibras@gmail.com)
+
+1. Na conta Google `nerdsdalibras@gmail.com`, ative a **verificação em duas
+   etapas** e crie uma **senha de app** (Conta Google → Segurança → Senhas de app).
+   Não use a senha normal da conta.
+2. No servidor, defina `EMAIL_HOST_PASSWORD` com a senha de app (gerenciador de
+   segredos ou arquivo `.env` com permissão 600). Os demais valores já vêm com o
+   padrão do Gmail (`smtp.gmail.com:587`, STARTTLS, remetente igual à conta).
+3. Rode `python manage.py testar_email` para ver o diagnóstico (mostra o que falta,
+   sem exibir a senha) e `python manage.py testar_email --para <seu e-mail> --executor "Seu nome"`
+   para enviar **uma** mensagem de teste (fica registrada na auditoria).
+4. Só então, com autorização para envio real, defina `EMAIL_ENVIO_HABILITADO=true`.
+   As notificações que ficaram "integração pendente" serão enviadas pelo
+   `processar_notificacoes`.
+
+Observações: contas Gmail gratuitas têm limite diário de envio (da ordem de
+centenas de destinatários por dia, conforme política do Google), suficiente para
+o volume esperado. O Gmail exige que o remetente seja a própria conta; o sistema
+recusa configuração diferente. Para que respostas dos fiscais vão a outro
+endereço, use `EMAIL_RESPONDER_PARA`.
+
 ## 3. Backup
 
 `scripts/backup.sh <destino>` gera:
@@ -70,6 +91,38 @@ somente os `.gpg` permanecem. Se a cifragem falhar, o script termina com erro e
 não deixa arquivos em claro. Para restaurar, decifre antes:
 `gpg -d -o sgi-<data>.dump sgi-<data>.dump.gpg` (idem para os anexos) e confira
 as somas com `sha256sum -c sgi-<data>.sha256` (as somas são dos arquivos `.gpg`).
+
+### 3.1 Cópia externa no Google Drive (conta nerdsdalibras@gmail.com)
+
+O Drive da conta `nerdsdalibras@gmail.com` é usado como **armazenamento externo
+ao servidor**. Regras aplicadas pelo sistema: só envia arquivos **cifrados**
+(`.gpg`) e o arquivo de somas; confere que a conta autenticada é a esperada;
+compara o MD5 calculado pelo Google com o local; usa o escopo mínimo
+`drive.file` (o sistema só enxerga o que ele mesmo criou); registra cada cópia
+na auditoria.
+
+Configuração (uma vez):
+1. No Google Cloud Console (logado como `nerdsdalibras@gmail.com`), crie um
+   projeto, ative a **Google Drive API**, configure a tela de consentimento
+   (tipo "Externo", publique o app em produção para o token não expirar em 7 dias)
+   e crie um **ID do cliente OAuth do tipo "App para computador"**.
+2. Num computador com navegador, defina `GDRIVE_CLIENT_ID` e
+   `GDRIVE_CLIENT_SECRET` e rode `python manage.py drive_autorizar`; entre como
+   `nerdsdalibras@gmail.com` e autorize. O comando confere a conta e exibe o
+   refresh token.
+3. Guarde no servidor, como segredo: `GDRIVE_CLIENT_ID`, `GDRIVE_CLIENT_SECRET`,
+   `GDRIVE_REFRESH_TOKEN`. Confira com `python manage.py drive_backup diagnostico`.
+
+Uso: `BACKUP_DRIVE=sim BACKUP_GPG_DESTINATARIO=<chave> PYTHON=.venv/bin/python scripts/backup.sh /var/backups/sgi`
+(executar na pasta do sistema). Sem cifragem o envio é recusado. Se o Drive
+falhar, o script termina com erro (código 2) e mantém o backup local.
+
+Recuperação a partir do Drive: `python manage.py drive_backup listar`, depois
+`python manage.py drive_backup baixar <id> <destino>` para cada arquivo,
+`sha256sum -c`, `gpg -d` e `scripts/restaurar.sh`.
+
+**A chave privada GPG nunca deve ser guardada no mesmo Drive** (nem no
+servidor): mantenha-a offline, com cópia em local seguro sob controle da gestão.
 
 Política recomendada (a ser acordada com a Prefeitura): diário com retenção de
 30 dias + mensal com retenção durante a vigência; cópia em armazenamento

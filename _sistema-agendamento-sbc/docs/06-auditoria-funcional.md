@@ -77,3 +77,17 @@ set -a; . ./.env.dev; set +a
 Os itens 16 (SMTP real), 19 e 20 foram executados manualmente com Gunicorn,
 Playwright, um servidor SMTP local (`aiosmtpd`) e os scripts de `scripts/`,
 conforme descrito na tabela. Os roteiros estão em `testes-e2e/` (ver `testes-e2e/LEIAME.md`).
+
+## Adendo — 28/10/2026: integrações com a conta nerdsdalibras@gmail.com
+
+Decisão da contratada: e-mails saem de `nerdsdalibras@gmail.com` e o Google Drive
+dessa conta é a cópia externa dos backups.
+
+| Item | Teste executado | Resultado | Evidência | Pendência |
+|---|---|---|---|---|
+| E-mail via Gmail da Nerds | `test_integracoes` (8 testes de diagnóstico/envio) + `testar_email` executado | **Configuração implementada; envio real NÃO TESTADO** | Padrão `smtp.gmail.com:587`, STARTTLS, remetente `Nerds da Libras - SGI <nerdsdalibras@gmail.com>`; sem senha → "integração pendente" com motivo e **nenhuma** tentativa de conexão; remetente diferente da conta → recusado; mensagem de teste aceita por servidor SMTP local com o remetente correto e registrada na auditoria | Senha de app (verificação em 2 etapas) e autorização de envio real. Este ambiente não alcança `smtp.gmail.com` |
+| Backup no Google Drive | `DriveContraServidorFalso` (6 testes) + `backup.sh` executado com `BACKUP_DRIVE=sim` contra servidor local que imita a API do Google | **Implementado; NÃO TESTADO contra o Google** | Sem GPG → recusado (código 1); cifrado → 3 arquivos enviados, MD5 local = recebido, nenhum arquivo em claro; download idêntico e dump decifrado válido (29 tabelas, 57 triggers); conta autenticada diferente → nada enviado, backup local mantido (código 2); Drive fora do ar → erro claro, backup local mantido; cópia registrada na auditoria | Criar cliente OAuth, rodar `drive_autorizar` com a conta e guardar o refresh token como segredo; anuência da Prefeitura (P17) |
+
+Observação: a instalação do `rclone` foi bloqueada pela política do ambiente; por
+isso a integração foi feita na própria aplicação, sem dependências novas.
+Suíte após o adendo: **111 testes, 0 falhas**.

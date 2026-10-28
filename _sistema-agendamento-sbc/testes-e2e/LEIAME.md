@@ -19,6 +19,14 @@ node testes-e2e/permissoes.js http://127.0.0.1:8770 <id_parametro_proposto> <url
 derruba_app 8770; derruba_smtp
 ```
 
+Cópia no Google Drive (contra imitação LOCAL da API, sem contatar o Google):
+```bash
+python3 -I testes-e2e/google_falso.py 8790 nerdsdalibras@gmail.com /tmp/resumo-drive.json &
+GDRIVE_CLIENT_ID=cid GDRIVE_CLIENT_SECRET=csec GDRIVE_REFRESH_TOKEN=refresh-valido \
+GDRIVE_TOKEN_URL=http://127.0.0.1:8790/token GDRIVE_API_URL=http://127.0.0.1:8790 \
+BACKUP_DRIVE=sim BACKUP_GPG_DESTINATARIO=backup@exemplo.invalid PYTHON=.venv/bin/python scripts/backup.sh /tmp/bk
+```
+
 Backup/restauração e reinício: ver os comandos descritos na tabela do relatório
 (`scripts/backup.sh`, `scripts/restaurar.sh`, `pg_ctlcluster 16 main restart`).
 Para o teste de GPG, use um `GNUPGHOME` com caminho curto (limite de socket do gpg-agent)

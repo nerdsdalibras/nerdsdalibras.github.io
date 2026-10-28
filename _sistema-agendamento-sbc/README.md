@@ -70,7 +70,7 @@ set -a; . ./.env.dev; set +a
 ```
 
 Os testes rodam em PostgreSQL real (o usuário do banco precisa de `CREATEDB`)
-porque verificam os triggers. Resultado na última execução: **97 testes, todos
+porque verificam os triggers. Resultado na última execução: **111 testes, todos
 passando**.
 
 ## Comandos de gestão
@@ -79,6 +79,9 @@ passando**.
 |---|---|
 | `criar_contrato` | Cria o contrato SBC, feriados nacionais/estadual 2026–2027 e o parâmetro v1 (R$ 156,6000) **em situação PROPOSTO** |
 | `criar_usuario --contrato ... --email ... --nome ... --perfil ... --operador-infra "Nome"` | Primeiro acesso (ex.: administrador técnico e primeiro fiscal). Auditado. |
+| `testar_email [--para X --executor "Nome"]` | Diagnóstico do e-mail (Gmail `nerdsdalibras@gmail.com`) e envio de UMA mensagem de teste, auditada |
+| `drive_autorizar` | Autorização OAuth (uma vez) do Google Drive de `nerdsdalibras@gmail.com` |
+| `drive_backup diagnostico\|enviar\|listar\|baixar` | Cópia externa de backups cifrados no Drive |
 | `processar_notificacoes` | Envia pendentes e reenvia falhas — agendar a cada 1–5 min |
 | `verificar_auditoria` | Recalcula a cadeia de hash da trilha de auditoria |
 | `carregar_demonstracao` | Dados fictícios; recusado fora de `DEBUG` salvo `PERMITIR_DEMONSTRACAO=sim` |

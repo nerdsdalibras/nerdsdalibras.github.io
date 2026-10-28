@@ -13,7 +13,8 @@
 | WhiteNoise | 6 | MIT | Arquivos estáticos |
 | Pillow (dependência do ReportLab) | — | MIT-CMU | Imagens em PDF |
 
-Não há bibliotecas JavaScript, fontes, CDNs, analytics ou rastreadores de terceiros.
+A integração com o Google Drive usa **apenas a biblioteca padrão do Python**
+(sem SDK do Google). Não há bibliotecas JavaScript, fontes, CDNs, analytics ou rastreadores de terceiros.
 
 Atualizações de segurança: acompanhar avisos do Django (LTS com suporte até
 abril de 2028, conforme calendário publicado pelo projeto) e do PostgreSQL 16.
@@ -27,14 +28,15 @@ cotações**. Devem ser cotados com fornecedores antes da contratação.
 |---|---|---|
 | Servidor/VM (2 vCPU, 4 GB RAM) em nuvem no Brasil | Obrigatório | ~R$ 100 a 400/mês |
 | PostgreSQL gerenciado (opcional; alternativa: no próprio servidor) | Recomendado | ~R$ 150 a 600/mês |
-| Armazenamento externo de backups (com bloqueio de exclusão) | Obrigatório | ~R$ 10 a 80/mês para o volume esperado |
-| Envio de e-mail transacional (SMTP autenticado com SPF/DKIM/DMARC no domínio da contratada) | Obrigatório para alertas por e-mail | Gratuito a ~R$ 100/mês no volume esperado |
+| Armazenamento externo de backups | Obrigatório | **Definido: Google Drive de `nerdsdalibras@gmail.com`** — sem custo dentro da cota gratuita do Google (15 GB compartilhados com Gmail/Fotos, conforme política atual do Google); plano pago Google One se exceder |
+| Envio de e-mail | Obrigatório para alertas por e-mail | **Definido: Gmail `nerdsdalibras@gmail.com`** — sem custo, sujeito ao limite diário de envio do Gmail gratuito. Alternativa futura: Google Workspace ou serviço transacional |
 | Domínio e certificado TLS | Obrigatório | Domínio ~R$ 40/ano; certificado gratuito (ex.: Let's Encrypt) |
 | Monitoramento de disponibilidade e alertas | Recomendado | Gratuito a ~R$ 100/mês |
 | Horas técnicas: atualizações, backups testados, suporte | Obrigatório | Depende da equipe; estimar algumas horas/mês |
 
 ## Itens que dependem de terceiros/Prefeitura
 
-- Credenciais SMTP e autorização para envio real (pendente de integração).
+- Senha de app do Gmail `nerdsdalibras@gmail.com` e autorização para envio real (pendente).
+- Cliente OAuth e autorização do Google Drive na conta `nerdsdalibras@gmail.com` (pendente).
 - Lista de fiscais/gestores e e-mails institucionais.
 - Eventual integração com sistemas da Prefeitura (não solicitada; não implementada).

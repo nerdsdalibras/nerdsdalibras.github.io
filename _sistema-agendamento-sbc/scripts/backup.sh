@@ -2,6 +2,8 @@
 # Backup do SGI: banco (pg_dump formato custom) + anexos, com soma SHA-256.
 # Uso: scripts/backup.sh [diretorio_destino]    (variáveis DB_* do ambiente)
 # Opcional: BACKUP_GPG_DESTINATARIO=chave → cifra os arquivos com GnuPG.
+# Opcional: BACKUP_DRIVE=sim → envia a cópia CIFRADA ao Google Drive (variáveis GDRIVE_*).
+# Execute a partir da pasta do sistema (usa manage.py); PYTHON aponta para o Python do venv.
 set -euo pipefail
 DESTINO="${1:-./backups}"
 CARIMBO="$(date -u +%Y%m%dT%H%M%SZ)"
@@ -31,6 +33,14 @@ if [ -n "${BACKUP_GPG_DESTINATARIO:-}" ]; then
 fi
 ( cd "$DESTINO" && sha256sum "${ARQS[@]##*/}" > "sgi-$CARIMBO.sha256" )
 [ -s "$DESTINO/sgi-$CARIMBO.sha256" ] || { echo "ERRO: arquivo de somas vazio." >&2; exit 1; }
+if [ "${BACKUP_DRIVE:-nao}" = "sim" ]; then
+  # Cópia externa no Google Drive (conta GDRIVE_CONTA). Só com backup cifrado.
+  if [ -z "${BACKUP_GPG_DESTINATARIO:-}" ]; then
+    echo "ERRO: BACKUP_DRIVE=sim exige BACKUP_GPG_DESTINATARIO (backups só vão ao Drive cifrados). Backup local mantido." >&2; exit 1
+  fi
+  "${PYTHON:-python}" manage.py drive_backup enviar "${ARQS[@]}" "$DESTINO/sgi-$CARIMBO.sha256" \
+    || { echo "ERRO: cópia externa no Drive falhou. Backup local mantido em $DESTINO." >&2; exit 2; }
+fi
 echo "Backup concluído: ${ARQS[*]}"
 echo "Copie para armazenamento EXTERNO ao servidor (outra conta/região) e registre o último hash da auditoria:"
 echo "  python manage.py verificar_auditoria"

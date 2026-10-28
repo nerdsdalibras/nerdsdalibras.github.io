@@ -36,6 +36,17 @@ desnecessários. Links de reunião remota devem ser informados com cautela.
   ignorar esta pasta.
 - `noindex` em todas as páginas.
 
+## E-mail e backups em conta Google da contratada
+
+- Alertas saem de `nerdsdalibras@gmail.com` com o mínimo necessário: código,
+  evento, horário, local e nomes dos intérpretes — **sem telefones/e-mails** de
+  intérpretes (há teste automatizado). O conteúdo dos e-mails é processado pelo Google.
+- Backups só vão ao Google Drive **cifrados com GPG** antes do envio; o sistema
+  recusa arquivo não cifrado. O Google não tem a chave. A chave privada deve
+  ficar fora do Drive e do servidor.
+- O acesso do sistema ao Drive é limitado ao escopo `drive.file` (apenas arquivos criados por ele).
+- Ver pendências P17 e P18 (anuência da Prefeitura; preferência por conta institucional).
+
 ## Pendências organizacionais (fora do código)
 
 - Definir papéis (controlador/operador) e encarregados no contrato.

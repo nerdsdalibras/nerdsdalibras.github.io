@@ -3,7 +3,8 @@
 {% block conteudo %}
 <h1>Painel</h1>
 {% if not integracao_email and vinculo.perfil != Perfil.SOLICITANTE %}
-<p class="msg msg-warning"><strong>Integração de e-mail pendente:</strong> alertas estão sendo registrados e exibidos na caixa interna de avisos, mas <strong>não</strong> estão sendo enviados por e-mail até que o envio seja configurado e autorizado.</p>
+<div class="msg msg-warning"><p><strong>Integração de e-mail pendente:</strong> alertas estão sendo registrados e exibidos na caixa interna de avisos, mas <strong>não</strong> estão sendo enviados por e-mail. Falta:</p>
+<ul>{% for p in pendencias_email %}<li>{{ p }}</li>{% endfor %}</ul></div>
 {% endif %}
 <ul class="indicadores">
   <li><a href="{% url 'operacao:agendamentos' %}?status=SOLICITADO"><strong>{{ aguardando_confirmacao }}</strong> aguardando confirmação</a></li>

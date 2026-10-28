@@ -21,6 +21,8 @@ pode ser alterado e deve ser confirmado por escrito pela Prefeitura.
 | P13 | Mudanças de layout/código | Contratada não altera layout sujeito à autorização | Parâmetros e calendário dependem de aprovação no sistema; o **layout é código** e o relatório grava `layout_versao` | Processo formal: mudança de código só implantada após aceite da Prefeitura (ex.: ata/ordem de serviço) |
 | P14 | Destinatários dos alertas | Fiscais e gestores da Prefeitura | Todos os usuários com perfil Fiscal/Gestor ativos no contrato | Lista nominal e e-mails institucionais |
 | P15 | Quem pode homologar pela contratada | Homologação pelas duas partes | Perfil Operador da contratada | Se exige preposto específico |
+| P17 | Uso de conta Google pessoal (gratuita) da contratada | — | E-mails saem de `nerdsdalibras@gmail.com`; backups vão **cifrados** ao Drive dessa conta (o Google não consegue lê-los). Os e-mails de alerta, porém, trafegam em claro pelo Gmail (sem contatos de intérpretes) | Prefeitura deve estar ciente/de acordo com o uso de Gmail/Drive pessoal no tratamento; recomendável migrar para Google Workspace (conta institucional com termo de tratamento de dados) ou e-mail transacional com contrato |
+| P18 | Filtros antispam da Prefeitura | — | Mensagens de remetente `@gmail.com` a domínios públicos podem ir para spam | Pedir à TI da Prefeitura que libere o remetente, ou usar domínio próprio com SPF/DKIM |
 | P16 | Pedidos para eventos já iniciados/passados | Não tratado | Bloqueado: o início deve ser futuro | Se registros retroativos devem ser aceitos (ex.: urgências) |
 
 Toda decisão futura sobre esses pontos deve ser registrada (ata, ofício ou

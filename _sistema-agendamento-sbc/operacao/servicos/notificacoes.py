@@ -30,12 +30,29 @@ log = logging.getLogger(__name__)
 FINAIS = {StatusNotificacao.ENVIADA, StatusNotificacao.FALHA_DEFINITIVA, StatusNotificacao.SEM_DESTINATARIO}
 
 
-def integracao_configurada():
+def diagnostico_email():
+    """Lista o que impede o envio real (vazia = configurado). Não expõe segredos."""
+    from email.utils import parseaddr
+
+    problemas = []
     if not settings.EMAIL_ENVIO_HABILITADO:
-        return False
+        problemas.append("Envio desabilitado (EMAIL_ENVIO_HABILITADO=false): aguardando autorização para envio real.")
     if settings.EMAIL_BACKEND.endswith("smtp.EmailBackend"):
-        return bool(settings.EMAIL_HOST)
-    return True
+        if not settings.EMAIL_HOST:
+            problemas.append("Servidor SMTP não informado (EMAIL_HOST).")
+        if settings.EMAIL_HOST_USER and not settings.EMAIL_HOST_PASSWORD:
+            problemas.append(f"Senha da conta {settings.EMAIL_HOST_USER} não configurada (EMAIL_HOST_PASSWORD; no Gmail, use uma senha de app).")
+        if settings.EMAIL_HOST.lower() == "smtp.gmail.com":
+            remetente = parseaddr(settings.DEFAULT_FROM_EMAIL)[1].lower()
+            if remetente != settings.EMAIL_HOST_USER.lower():
+                problemas.append(f"No Gmail o remetente ({remetente or 'vazio'}) deve ser a própria conta autenticada ({settings.EMAIL_HOST_USER}).")
+            if not (settings.EMAIL_USE_TLS or settings.EMAIL_USE_SSL):
+                problemas.append("Gmail exige conexão cifrada (EMAIL_USE_TLS=true na porta 587).")
+    return problemas
+
+
+def integracao_configurada():
+    return not diagnostico_email()
 
 
 def destinatarios_prefeitura(contrato):
@@ -96,8 +113,7 @@ def enviar(notificacao_id, forcar=False):
             _resultado(
                 notif,
                 StatusNotificacao.INTEGRACAO_PENDENTE,
-                "Envio de e-mail não habilitado/configurado (EMAIL_ENVIO_HABILITADO/EMAIL_HOST). "
-                "Aviso disponível na caixa interna do sistema.",
+                "E-mail não enviado: " + " ".join(diagnostico_email()) + " Aviso disponível na caixa interna do sistema.",
             )
             return notif
         para, bloqueados = _filtrar_dominios(notif.destinatarios)
@@ -112,6 +128,7 @@ def enviar(notificacao_id, forcar=False):
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=para,
                 headers={"Message-ID": _message_id(notif), "X-SGI-Chave": notif.chave_idempotencia},
+                reply_to=settings.EMAIL_RESPONDER_PARA or None,
                 connection=get_connection(fail_silently=False),
             )
             msg.send(fail_silently=False)
@@ -151,3 +168,30 @@ def processar_pendentes(limite=100):
         filtro |= Q(status=StatusNotificacao.INTEGRACAO_PENDENTE)
     ids = list(Notificacao.objects.filter(filtro).order_by("criada_em").values_list("pk", flat=True)[:limite])
     return [enviar(i) for i in ids]
+
+
+def enviar_teste(para, executor):
+    """Envia UMA mensagem de teste a um endereço informado explicitamente. Auditado."""
+    from . import auditoria
+    from .auditoria import AtorSistema
+
+    problemas = diagnostico_email()
+    if problemas:
+        return False, " ".join(problemas)
+    try:
+        EmailMessage(
+            subject="[SGI] Teste de envio de e-mail",
+            body=(
+                "Mensagem de TESTE do Sistema de Agendamento de Intérpretes (SGI).\n"
+                f"Solicitada por: {executor} em {timezone.localtime():%d/%m/%Y %H:%M}.\n"
+                "Não contém dados de atendimentos."
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[para],
+            connection=get_connection(fail_silently=False),
+        ).send(fail_silently=False)
+        ok, detalhe = True, f"Mensagem de teste aceita pelo servidor {settings.EMAIL_HOST}."
+    except Exception as exc:  # noqa: BLE001
+        ok, detalhe = False, repr(exc)
+    auditoria.registrar(AtorSistema(None, f"Linha de comando — {executor}"), "Email", para, "TESTE_ENVIO", detalhe)
+    return ok, detalhe

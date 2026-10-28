@@ -131,6 +131,7 @@ def painel(request):
         "relatorios_pendentes": RelatorioMensal.objects.filter(contrato=request.contrato, status="SUBMETIDO").count(),
         "notificacoes_problema": Notificacao.objects.filter(contrato=request.contrato).exclude(status=StatusNotificacao.ENVIADA).count(),
         "integracao_email": notificacoes.integracao_configurada(),
+        "pendencias_email": notificacoes.diagnostico_email(),
     }
     return render(request, "operacao/painel.html", ctx)
 
@@ -587,7 +588,8 @@ def avisos(request):
     envios = None
     if request.vinculo.perfil in GESTAO:
         envios = Notificacao.objects.filter(contrato=request.contrato).prefetch_related("tentativas_envio")[:200]
-    return render(request, "operacao/avisos.html", {"avisos": lista, "envios": envios, "integracao": notificacoes.integracao_configurada()})
+    return render(request, "operacao/avisos.html", {"avisos": lista, "envios": envios, "integracao": notificacoes.integracao_configurada(),
+                                                   "pendencias_email": notificacoes.diagnostico_email()})
 
 
 @require_POST

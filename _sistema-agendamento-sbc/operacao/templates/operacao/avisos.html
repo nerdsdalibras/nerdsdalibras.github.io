@@ -3,6 +3,7 @@
 {% block conteudo %}
 <h1>Avisos</h1>
 <p>Notificação eletrônica integrada ao sistema. E-mail: {% if integracao %}<strong>configurado</strong>{% else %}<strong>integração pendente</strong> (mensagens não estão sendo enviadas por e-mail){% endif %}.</p>
+{% if not integracao and envios is not None %}<ul>{% for p in pendencias_email %}<li>{{ p }}</li>{% endfor %}</ul>{% endif %}
 <form method="post">{% csrf_token %}<button>Marcar todos como lidos</button></form>
 <ul class="avisos">
 {% for a in avisos %}<li class="{% if not a.lido_em %}nao-lido{% endif %}"><strong>{{ a.notificacao.criada_em|date:"d/m/Y H:i" }} — {{ a.notificacao.assunto }}</strong>{% if not a.lido_em %} <span class="etiqueta">novo</span>{% endif %}

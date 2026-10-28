@@ -41,6 +41,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Cancelar não apaga | Sim | A `test_cancelar_nao_apaga_e_exige_justificativa`; I `test_delete_de_agendamento_bloqueado_no_banco_e_na_aplicacao` | — | — |
 | Travas contra exclusão/adulteração de homologados | Sim (triggers PostgreSQL) | I `test_homologado_pelas_duas_partes_fica_travado`, `test_cancelado_e_imutavel` | — | — |
 | Histórico protegido contra alteração | Sim (append-only + cadeia SHA-256) | I `test_auditoria_append_only`, `test_cadeia_de_hash_integra_e_detecta_adulteracao` | — | — |
+| Cópia externa dos backups (Google Drive `nerdsdalibras@gmail.com`) | Sim (só cifrados; confere conta e MD5; escopo `drive.file`) | `test_integracoes.DriveContraServidorFalso` (6 testes contra servidor local que imita a API do Google) + `backup.sh` executado ponta a ponta | **Sim — falta cliente OAuth e autorização da conta; não testado contra o Google** | Anuência da Prefeitura para uso de conta pessoal (P17) |
 | Separação de papéis no banco (app sem poder de desligar triggers) | Sim (`sql/`) | Verificado manualmente: `ALTER TABLE ... DISABLE TRIGGER`, `UPDATE` na auditoria e `DELETE` negados ao papel `sgi_app` | — | — |
 | Exportação do histórico (CSV/PDF) | Sim | V `test_exportacoes_relatorio_e_historico`; verificado no navegador | — | — |
 | Retenção durante vigência e arquivamento legal | Sim: nada é eliminado; política versionada aprovada pela Prefeitura | R `test_retencao_sem_prazo_inventado_e_aprovacao_da_prefeitura`; I `test_politica_retencao_decidida_imutavel` | — | **Sim** — prazo legal a ser informado pela Prefeitura |
@@ -59,7 +60,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 
 | Requisito | Impl. | Testado (evidência) | Pend. integração | Pend. esclarecimento |
 |---|---|---|---|---|
-| Alerta imediato: confirmação, alteração de horário, cancelamento de escala (e de agendamento) | Sim (envio após commit + caixa interna) | A `test_confirmacao_exige_escala_completa_e_alerta`, `test_alteracao_de_horario_registra_antes_e_depois_e_alerta`, `test_cancelamento_de_escala_alerta_e_reabre_confirmacao`; N `test_envio_imediato_aos_fiscais_e_sem_duplicidade` (backend de teste em memória) | **Sim — SMTP real não configurado; nenhum e-mail real foi enviado** | Lista oficial de fiscais/gestores destinatários |
+| Alerta imediato: confirmação, alteração de horário, cancelamento de escala (e de agendamento) | Sim (envio após commit + caixa interna) | A `test_confirmacao_exige_escala_completa_e_alerta`, `test_alteracao_de_horario_registra_antes_e_depois_e_alerta`, `test_cancelamento_de_escala_alerta_e_reabre_confirmacao`; N `test_envio_imediato_aos_fiscais_e_sem_duplicidade` (backend de teste em memória) | **Sim — conta definida (`nerdsdalibras@gmail.com`, Gmail SMTP); faltam a senha de app e a autorização de envio real. Nenhum e-mail real foi enviado.** Protocolo SMTP testado contra servidor local | Lista oficial de fiscais/gestores destinatários |
 | Sem credencial → "integração pendente", sem simular sucesso | Sim | N `test_sem_configuracao_fica_pendente_de_integracao_sem_simular_sucesso` | — | — |
 | Registro de envio, falha, reenvio; sem duplicidade | Sim | N `test_falha_registra_e_reenvia`, `test_falha_definitiva`, `test_envio_imediato_aos_fiscais_e_sem_duplicidade` | Agendador (cron/systemd) do comando `processar_notificacoes` no servidor | — |
 
@@ -125,7 +126,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Migrações e estrutura do banco | `operacao/migrations/0001–0003`, `contas/migrations/0001` |
 | Aplicação funcional com instruções | `README.md`; executada localmente com Gunicorn e verificada no navegador |
 | Configuração segura por variáveis de ambiente | `config/settings.py`, `.env.example` (sem segredos) |
-| Testes das regras críticas | 97 testes passando (inclui a auditoria funcional, `docs/06-auditoria-funcional.md`) |
+| Testes das regras críticas | 111 testes passando (inclui a auditoria funcional, `docs/06-auditoria-funcional.md`) |
 | Manual de administração, backup e recuperação | `docs/03-manual-administracao.md`; backup e restauração executados com sucesso em ambiente local |
 | Matriz | Este documento |
 | Dependências e custos | `docs/04-dependencias-e-custos.md` |
