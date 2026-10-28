@@ -214,3 +214,30 @@ class AuditoriaDoAnexo(AnexoNoBanco):
         import hashlib
 
         self.assertEqual(ev.dados_posteriores["anexo_conteudo"], {"bytes": len(conteudo), "sha256": hashlib.sha256(conteudo).hexdigest()})
+
+
+class AguardarBanco(TestCase):
+    def test_espera_ate_o_banco_responder(self):
+        from django.db import OperationalError, connection
+
+        real = connection.ensure_connection
+        falhas = iter([OperationalError("connection refused"), OperationalError("connection refused")])
+
+        def instavel():
+            erro = next(falhas, None)
+            if erro:
+                raise erro
+            return real()
+
+        out = io.StringIO()
+        with mock.patch.object(connection, "ensure_connection", side_effect=instavel), mock.patch.object(connection, "close"):
+            call_command("aguardar_banco", "--intervalo", "0", stdout=out)
+        self.assertIn("Aguardando o banco (tentativa 1)", out.getvalue())
+        self.assertIn("Banco disponível (tentativa 3)", out.getvalue())
+
+    def test_desiste_apos_o_tempo_limite_com_mensagem_clara(self):
+        from django.db import OperationalError, connection
+
+        with mock.patch.object(connection, "ensure_connection", side_effect=OperationalError("connection refused")), \
+                mock.patch.object(connection, "close"), self.assertRaisesRegex(CommandError, "indisponível após 0 s"):
+            call_command("aguardar_banco", "--timeout", "0", "--intervalo", "0", stdout=io.StringIO())
