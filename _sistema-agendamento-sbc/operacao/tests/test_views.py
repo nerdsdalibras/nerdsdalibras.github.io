@@ -16,6 +16,9 @@ SENHA = "senha-de-teste-123"
 class Views(Cenario):
     def entrar(self, perfil):
         self.client.force_login(self.atores[perfil].usuario)
+        sessao = self.client.session
+        sessao.set_expiry(10 * 365 * 24 * 3600)  # relógio simulado não pode expirar a sessão
+        sessao.save()
 
     def test_exige_login(self):
         r = self.client.get(reverse("operacao:agendamentos"))
@@ -80,7 +83,11 @@ class Views(Cenario):
                 "local": "Sala 1", "inicio_previsto": "2026-11-16T09:00", "duracao_prevista_min": "120",
                 "qtd_profissionais": "2", "observacoes": "",
             })
-        self.assertEqual(r.status_code, 302, getattr(r, "context", None) and r.context.get("form") and r.context["form"].errors)
+        self.assertEqual(r.status_code, 302)
+        self.assertNotIn("/contas/entrar/", r["Location"])  # não pode ser redirecionamento ao login
+        from operacao.models import Agendamento
+
+        self.assertTrue(Agendamento.objects.filter(titulo="Evento fictício", criado_por=self.solicitante.usuario).exists())
 
     def test_templates_sem_rastreadores_de_terceiros(self):
         raiz = Path(__file__).resolve().parents[2]

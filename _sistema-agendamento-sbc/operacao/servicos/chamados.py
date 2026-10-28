@@ -62,6 +62,13 @@ def _parte_do_usuario(contrato, usuario):
     return PARTE_DO_PERFIL.get(v.perfil) if v else None
 
 
+def conta_como_resposta(chamado, ator):
+    """Primeira resposta = interação de outra pessoa; se a Prefeitura abriu, tem de ser da contratada."""
+    if ator.usuario.pk == chamado.aberto_por_id:
+        return False
+    return _parte_do_usuario(chamado.contrato, chamado.aberto_por) == Parte.CONTRATADA or ator.parte == Parte.CONTRATADA
+
+
 @transaction.atomic
 def responder(ator, chamado, texto):
     exigir_mesmo_contrato(ator, chamado)
@@ -73,10 +80,7 @@ def responder(ator, chamado, texto):
     texto = exigir_texto(texto, "Texto")
     i = InteracaoChamado.objects.create(chamado=c, autor=ator.usuario, texto=texto, em=timezone.now())
     antes = auditoria.serializar(c)
-    conta_como_resposta = ator.usuario.pk != c.aberto_por_id and (
-        _parte_do_usuario(c.contrato, c.aberto_por) == Parte.CONTRATADA or ator.parte == Parte.CONTRATADA
-    )
-    if c.primeira_resposta_em is None and conta_como_resposta:
+    if c.primeira_resposta_em is None and conta_como_resposta(c, ator):
         c.primeira_resposta_em, c.primeira_resposta_por = i.em, ator.usuario
         c.status = StatusChamado.EM_ATENDIMENTO
         if c.responsavel_id is None and ator.parte == Parte.CONTRATADA:
@@ -113,7 +117,7 @@ def concluir(ator, chamado, solucao):
     InteracaoChamado.objects.create(chamado=c, autor=ator.usuario, texto=f"[Conclusão] {solucao}", em=timezone.now())
     antes = auditoria.serializar(c)
     agora = timezone.now()
-    if c.primeira_resposta_em is None and ator.usuario.pk != c.aberto_por_id:
+    if c.primeira_resposta_em is None and conta_como_resposta(c, ator):
         c.primeira_resposta_em, c.primeira_resposta_por = agora, ator.usuario
     c.status, c.concluido_em, c.concluido_por = StatusChamado.CONCLUIDO, agora, ator.usuario
     c.save()

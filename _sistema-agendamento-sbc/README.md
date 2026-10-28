@@ -20,6 +20,7 @@ Educação de São Bernardo do Campo** (Pregão Eletrônico nº 246/2026).
 | `docs/03-manual-administracao.md` | Implantação, usuários, backup, restauração, limites do acesso à infraestrutura |
 | `docs/04-dependencias-e-custos.md` | Dependências de software e custos recorrentes |
 | `docs/05-protecao-de-dados.md` | Medidas de proteção de dados e seus limites |
+| `docs/06-auditoria-funcional.md` | Auditoria funcional dos 20 itens: testes, resultados, evidências, defeitos corrigidos |
 
 ## Stack
 
@@ -69,7 +70,7 @@ set -a; . ./.env.dev; set +a
 ```
 
 Os testes rodam em PostgreSQL real (o usuário do banco precisa de `CREATEDB`)
-porque verificam os triggers. Resultado na última execução: **69 testes, todos
+porque verificam os triggers. Resultado na última execução: **97 testes, todos
 passando**.
 
 ## Comandos de gestão

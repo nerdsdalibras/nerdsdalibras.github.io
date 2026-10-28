@@ -72,6 +72,23 @@ def ator(request):
     return Ator.do_request(request)
 
 
+def informar_alerta(request, ag, resultado):
+    """Mostra a situação REAL do alerta gerado pela operação (nunca presume envio)."""
+    if not resultado:
+        return
+    n = Notificacao.objects.filter(agendamento=ag).order_by("-pk").first()
+    if n is None:
+        return
+    if n.status == StatusNotificacao.PENDENTE:
+        # Envio idempotente e com bloqueio de linha; não repete tentativas que já falharam.
+        n = notificacoes.enviar(n.pk) or n
+    texto = f"Alerta aos fiscais/gestores registrado na caixa interna do sistema. E-mail: {n.get_status_display()}."
+    if n.status == StatusNotificacao.ENVIADA:
+        messages.info(request, texto)
+    else:
+        messages.warning(request, texto + (f" Detalhe: {n.ultimo_erro[:200]}" if n.ultimo_erro else ""))
+
+
 def _agendamento(request, pk):
     ag = get_object_or_404(Agendamento.objects.select_related("contrato"), pk=pk, contrato=request.contrato)
     if not agendamentos.pode_ver(ator(request), ag):
@@ -279,8 +296,9 @@ def cancelar_escala(request, pk, escala_id):
     escala = get_object_or_404(Escala, pk=escala_id, agendamento=ag)
     f = forms.CancelarEscalaForm(request.POST, contrato=request.contrato)
     if f.is_valid():
-        executar(request, agendamentos.cancelar_escala, ator(request), escala, f.cleaned_data["motivo"], f.cleaned_data["substituto"],
-                 sucesso="Escala cancelada; fiscais notificados.")
+        r = executar(request, agendamentos.cancelar_escala, ator(request), escala, f.cleaned_data["motivo"], f.cleaned_data["substituto"],
+                     sucesso="Escala cancelada.")
+        informar_alerta(request, ag, r)
     else:
         messages.error(request, "Informe o motivo.")
     return redirect("operacao:agendamento", ag.pk)
@@ -290,7 +308,7 @@ def cancelar_escala(request, pk, escala_id):
 @perfis(Perfil.OPERADOR)
 def confirmar(request, pk):
     ag = _post_ag(request, pk)
-    executar(request, agendamentos.confirmar, ator(request), ag, sucesso="Atendimento confirmado; fiscais notificados.")
+    informar_alerta(request, ag, executar(request, agendamentos.confirmar, ator(request), ag, sucesso="Atendimento confirmado."))
     return redirect("operacao:agendamento", ag.pk)
 
 
@@ -301,8 +319,9 @@ def alterar_horario(request, pk):
     f = forms.AlterarHorarioForm(request.POST)
     if f.is_valid():
         d = f.cleaned_data
-        executar(request, agendamentos.alterar_horario, ator(request), ag, d["inicio_previsto"], d["duracao_prevista_min"],
-                 d["justificativa"], d["qtd_profissionais"], sucesso="Horário alterado; fiscais notificados.")
+        r = executar(request, agendamentos.alterar_horario, ator(request), ag, d["inicio_previsto"], d["duracao_prevista_min"],
+                     d["justificativa"], d["qtd_profissionais"], sucesso="Horário alterado.")
+        informar_alerta(request, ag, r)
     else:
         messages.error(request, "Dados inválidos: " + "; ".join(f"{k}: {' '.join(v)}" for k, v in f.errors.items()))
     return redirect("operacao:agendamento", ag.pk)
@@ -314,7 +333,8 @@ def cancelar(request, pk):
     ag = _post_ag(request, pk)
     f = forms.JustificativaForm(request.POST)
     if f.is_valid():
-        executar(request, agendamentos.cancelar, ator(request), ag, f.cleaned_data["justificativa"], sucesso="Agendamento cancelado (registro preservado).")
+        r = executar(request, agendamentos.cancelar, ator(request), ag, f.cleaned_data["justificativa"], sucesso="Agendamento cancelado (registro preservado).")
+        informar_alerta(request, ag, r)
     else:
         messages.error(request, "Justificativa obrigatória.")
     return redirect("operacao:agendamento", ag.pk)
@@ -633,12 +653,25 @@ def detalhe_relatorio(request, pk):
         linhas = [[i["codigo"], i["evento"], i["unidade"], i["modalidade"], i["local"], i["status"], i["inicio_previsto"],
                    i["duracao_prevista_min"], i["inicio_realizado"], i["fim_realizado"], ", ".join(i["interpretes"]),
                    i["horas_faturaveis"] or "", i["valor"] or ""] for i in c["atendimentos"]]
+        cab_memoria = ["Código", "Medição (versão/situação)", "Parâmetro (versão)", "Preço unitário (R$)", "Previsto (min)",
+                       "Realizado (min)", "Excedente (min)", "Acréscimo (min)", "Valor bruto (R$)", "Revezamento insuficiente",
+                       "Regra aplicada", "Fundamentação"]
+        memoria = [[i["codigo"], f"v{i.get('medicao_versao')} {i.get('medicao_situacao') or ''}" if i.get("medicao_versao") else "",
+                    i.get("parametro_versao") or "", i.get("preco_unitario") or "", i.get("minutos_previstos") or "",
+                    i.get("minutos_realizados") or "", i.get("excedente_min") if i.get("excedente_min") is not None else "",
+                    i.get("acrescimo_min") if i.get("acrescimo_min") is not None else "", i.get("valor_bruto") or "",
+                    "sim" if i.get("alerta_revezamento") else "", i.get("regra_aplicada") or "", i.get("fundamentacao") or ""]
+                   for i in c["atendimentos"] if i.get("medicao_versao") or i.get("alerta_revezamento")]
         nome = f"relatorio-{c['competencia'].replace('/', '-')}-v{r.versao}"
         if fmt == "csv":
             linhas.append([])
             linhas.append(["TOTAIS", "", "", "", "", "", "", "", "", "", "", c["totais"]["horas_prestadas"], c["totais"]["valor_horas_prestadas"]])
             linhas.append(["INDENIZAÇÕES APROVADAS (separadas)", "", "", "", "", "", "", "", "", "", "", "", c["totais"]["valor_indenizacoes"]])
             linhas.append(["HASH SHA-256 DO CONTEÚDO", r.hash_conteudo])
+            linhas.append([])
+            linhas.append(["MEMÓRIA DE CÁLCULO POR ATENDIMENTO"])
+            linhas.append(cab_memoria)
+            linhas.extend(memoria)
             return exportacoes.csv_resposta(nome, cab, linhas)
         t = c["totais"]
         return exportacoes.pdf_resposta(nome, f"Relatório mensal {c['competencia']} — versão {r.versao}", [
@@ -647,6 +680,7 @@ def detalhe_relatorio(request, pk):
                   f"{'no prazo' if r.submetido_no_prazo else 'FORA DO PRAZO'}). Layout v{r.layout_versao}."),
             ("h", "Serviços prestados"), ("tabela", cab, linhas),
             ("p", f"<b>Horas prestadas:</b> {t['horas_prestadas']} h — <b>Valor:</b> R$ {t['valor_horas_prestadas']}"),
+            ("h", "Memória de cálculo por atendimento"), ("tabela", cab_memoria, memoria),
             ("h", "Indenizações aprovadas (separadas das horas prestadas)"),
             ("tabela", ["Código", "Horas ref.", "Valor (R$)", "Memória"], [[i["codigo"], i["horas_referencia"], i["valor"], i["memoria"]] for i in c["indenizacoes_aprovadas"]]),
             ("h", "Pendências de medição (fora dos totais)"),
@@ -663,25 +697,26 @@ def detalhe_relatorio(request, pk):
 
 
 # ------------------------------------------------------------ usuários e auditoria
-@perfis(Perfil.ADMIN_TECNICO)
+@perfis(Perfil.ADMIN_TECNICO, Perfil.FISCAL)
 def usuarios(request):
-    form = forms.UsuarioForm(request.POST or None)
+    geridos = cadastros.perfis_geridos(ator(request))
+    form = forms.UsuarioForm(request.POST or None, perfis=geridos)
     senha = None
     if request.method == "POST" and form.is_valid():
         d = form.cleaned_data
         r = executar(request, cadastros.criar_usuario_vinculo, ator(request), d["email"], d["nome_completo"], d["perfil"], sucesso="Acesso criado.")
         if r and r is not True:
             senha = r[1]
-            form = forms.UsuarioForm()
+            form = forms.UsuarioForm(perfis=geridos)
     return render(request, "operacao/usuarios.html", {
         "form": form, "senha_temporaria": senha,
         "vinculos": Vinculo.objects.filter(contrato=request.contrato).select_related("usuario").order_by("usuario__nome_completo"),
-        "f_vinculo": forms.VinculoForm(),
+        "f_vinculo": forms.VinculoForm(perfis=geridos), "geridos": geridos,
     })
 
 
 @require_POST
-@perfis(Perfil.ADMIN_TECNICO)
+@perfis(Perfil.ADMIN_TECNICO, Perfil.FISCAL)
 def vinculo_alterar(request, pk):
     v = get_object_or_404(Vinculo, pk=pk, contrato=request.contrato)
     f = forms.VinculoForm(request.POST)

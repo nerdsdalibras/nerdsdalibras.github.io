@@ -1,0 +1,11 @@
+%no-protection
+Key-Type: RSA
+Key-Length: 3072
+Key-Usage: sign
+Subkey-Type: RSA
+Subkey-Length: 3072
+Subkey-Usage: encrypt
+Name-Real: Backup SGI Teste
+Name-Email: backup@exemplo.invalid
+Expire-Date: 0
+%commit

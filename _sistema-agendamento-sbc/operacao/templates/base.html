@@ -35,7 +35,7 @@
     {% endif %}
     <li><a href="{% url 'operacao:feriados' %}">Calendário</a></li>
     {% if vinculo.perfil == Perfil.FISCAL or vinculo.perfil == Perfil.ADMIN_TECNICO %}<li><a href="{% url 'operacao:auditoria' %}">Auditoria</a></li>{% endif %}
-    {% if vinculo.perfil == Perfil.ADMIN_TECNICO %}<li><a href="{% url 'operacao:usuarios' %}">Usuários</a></li>{% endif %}
+    {% if vinculo.perfil == Perfil.ADMIN_TECNICO or vinculo.perfil == Perfil.FISCAL %}<li><a href="{% url 'operacao:usuarios' %}">Usuários</a></li>{% endif %}
   </ul>
 </nav>
 <p class="contrato">{{ vinculo.contrato }}</p>

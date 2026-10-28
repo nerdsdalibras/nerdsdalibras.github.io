@@ -126,6 +126,6 @@ class ConfiguracoesSujeitasAPrefeitura(Cenario):
         from operacao.models import Notificacao
         from operacao.servicos import cadastros
 
-        v, senha = cadastros.criar_usuario_vinculo(self.admin, "novo.fiscal@exemplo.invalid", "Novo Fiscal Fictício", Perfil.FISCAL)
+        v, senha = cadastros.criar_usuario_vinculo(self.fiscal, "novo.fiscal@exemplo.invalid", "Novo Fiscal Fictício", Perfil.FISCAL)
         self.assertTrue(senha)
         self.assertTrue(Notificacao.objects.filter(tipo="ACESSO_PREFEITURA").exists())

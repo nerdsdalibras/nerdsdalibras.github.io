@@ -44,8 +44,14 @@ com HTTPS (ex.: Nginx/Caddy com certificado válido), relógio sincronizado (NTP
 
 ## 2. Gestão de usuários
 
-- Pelo menu **Usuários** (perfil Administrador técnico): criar acesso gera
-  senha temporária exibida uma única vez; o usuário é obrigado a trocá-la.
+- Pelo menu **Usuários**: criar acesso gera senha temporária exibida uma única
+  vez; o usuário é obrigado a trocá-la.
+- **Cada parte gere apenas os próprios acessos**: o Fiscal/Gestor da Prefeitura
+  cria e altera perfis Solicitante e Fiscal/Gestor; o Administrador técnico da
+  contratada cria e altera perfis Operador e Administrador técnico. Assim a
+  contratada não consegue criar um "fiscal" para aprovar seus próprios parâmetros.
+  O primeiro Fiscal é criado na implantação pelo comando `criar_usuario`
+  (auditado, com o nome de quem executou).
 - Desligamentos: desative o vínculo (não há exclusão; o histórico permanece).
 - Criar ou promover alguém a perfil da Prefeitura gera aviso automático a
   todos os fiscais/gestores, para que acessos indevidos sejam percebidos.
@@ -59,7 +65,11 @@ com HTTPS (ex.: Nginx/Caddy com certificado válido), relógio sincronizado (NTP
 - `sgi-anexos-<data>.tar.gz` (comprovações de indenização, se houver);
 - `sgi-<data>.sha256` (somas de verificação).
 
-Com `BACKUP_GPG_DESTINATARIO=<chave>` os arquivos são cifrados com GnuPG.
+Com `BACKUP_GPG_DESTINATARIO=<chave>` os arquivos são cifrados com GnuPG e
+somente os `.gpg` permanecem. Se a cifragem falhar, o script termina com erro e
+não deixa arquivos em claro. Para restaurar, decifre antes:
+`gpg -d -o sgi-<data>.dump sgi-<data>.dump.gpg` (idem para os anexos) e confira
+as somas com `sha256sum -c sgi-<data>.sha256` (as somas são dos arquivos `.gpg`).
 
 Política recomendada (a ser acordada com a Prefeitura): diário com retenção de
 30 dias + mensal com retenção durante a vigência; cópia em armazenamento
@@ -69,15 +79,19 @@ hash exibido por `verificar_auditoria` a cada backup.
 
 ## 4. Restauração
 
-1. Crie um banco **vazio** (o script recusa banco com tabelas).
+1. Crie um banco **vazio** e uma pasta de anexos **vazia** (o script recusa
+   ambos se tiverem conteúdo, antes de alterar qualquer coisa; recusa também
+   backup cuja soma SHA-256 não confere).
 2. `PYTHON=.venv/bin/python DB_NAME=<novo> scripts/restaurar.sh sgi-<data>.dump [sgi-anexos-<data>.tar.gz]`
 3. O script confere as somas SHA-256, restaura, verifica migrações e recalcula a
    cadeia de auditoria. Compare o último hash com o registrado externamente.
 4. Aplique `sql/02-permissoes-apos-migracao.sql` no banco restaurado e aponte a
    aplicação para ele.
 
-Procedimento testado em ambiente local em 27/10/2026: restauração em banco
-novo, 57 triggers recriados, cadeia de auditoria íntegra após a restauração.
+Procedimento testado em ambiente local em 27/10/2026 e novamente em
+28/10/2026 (auditoria funcional): restauração em banco e pasta novos, 29 tabelas
+com conteúdo idêntico ao original, 57 triggers recriados, cadeia de auditoria
+íntegra, anexos idênticos e aplicação funcionando sobre o banco restaurado.
 **Teste a restauração periodicamente** (sugestão: trimestral) e registre o resultado.
 
 ## 5. Limites e controles do acesso administrativo à infraestrutura

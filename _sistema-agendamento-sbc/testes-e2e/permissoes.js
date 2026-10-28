@@ -1,0 +1,30 @@
+const { chromium } = require('playwright');
+const B = process.argv[2]; const SENHA = process.env.SENHA_DEMONSTRACAO; const ID_PARAM = process.argv[3]; const URL_OP = process.argv[4];
+(async () => {
+  const b = await chromium.launch();
+  async function entrar(email) { const p = await (await b.newContext()).newPage(); await p.goto(B + '/contas/entrar/');
+    await p.fill('#id_username', email); await p.fill('#id_password', SENHA); await p.click('button[type=submit]'); return p; }
+  const csrf = p => p.evaluate(() => document.querySelector('input[name=csrfmiddlewaretoken]').value);
+  const a = await entrar('admin@exemplo.invalid');
+  await a.goto(B + '/usuarios/');
+  console.log('admin — perfis oferecidos no formulário:', await a.locator('#id_perfil option').allInnerTexts());
+  let r = await a.request.post(B + '/usuarios/', { form: { csrfmiddlewaretoken: await csrf(a), nome_completo: 'Falso', email: 'falso.fiscal@exemplo.invalid', perfil: 'FISCAL' }, headers: { Referer: B + '/usuarios/' } });
+  await a.goto(B + '/usuarios/');
+  console.log('admin — POST forjado criando FISCAL → HTTP', r.status(), '| mensagem:', (await a.locator('.mensagens').innerText().catch(() => '')).trim().slice(0, 140));
+  r = await a.request.post(B + '/agendamentos/novo/', { form: { csrfmiddlewaretoken: await csrf(a), titulo: 'x' }, headers: { Referer: B } });
+  console.log('admin — POST forjado criando agendamento → HTTP', r.status());
+  const f = await entrar('fiscal@exemplo.invalid');
+  await f.goto(B + '/usuarios/');
+  console.log('fiscal — perfis oferecidos:', await f.locator('#id_perfil option').allInnerTexts());
+  const o = await entrar('operador@exemplo.invalid');
+  await o.goto(B + '/parametros/');
+  console.log('operador — botões "Decidir" em Parâmetros:', await o.locator('button', { hasText: 'Decidir' }).count());
+  r = await o.request.post(`${B}/parametros/${ID_PARAM}/decidir/`, { form: { csrfmiddlewaretoken: await csrf(o), decisao: 'aprovar', parecer: 'auto' }, headers: { Referer: B } });
+  console.log('operador — POST forjado aprovando parâmetro → HTTP', r.status());
+  r = await o.request.post(`${B}/parametros/${ID_PARAM}/decidir/`, { form: { decisao: 'aprovar', parecer: 'sem csrf' } });
+  console.log('operador — mesmo POST sem token CSRF → HTTP', r.status());
+  const s = await entrar('solicitante@exemplo.invalid');
+  r = await s.request.get(B + new URL(URL_OP).pathname);
+  console.log('solicitante — abrir agendamento criado pela contratada → HTTP', r.status());
+  await b.close();
+})();

@@ -208,7 +208,7 @@ def confirmar(ator, ag):
     )
     nomes = "; ".join(e.interprete.nome_completo for e in escalas)
     _notificar(ag, TipoNotificacao.CONFIRMACAO, f"CONFIRMACAO:{ag.pk}:{evento.pk}", "Atendimento confirmado",
-               f"Atendimento confirmado por {ator.descricao}. Intérpretes escalados: {nomes}.")
+               f"Atendimento confirmado por {ator.usuario.nome_completo}. Intérpretes escalados: {nomes}.")
     return ag
 
 
@@ -242,7 +242,7 @@ def alterar_horario(ator, ag, novo_inicio, nova_duracao, justificativa, nova_qtd
     ag.save()
     evento = auditoria.registrar(ator, "Agendamento", ag.pk, "ALTERACAO_HORARIO", justificativa, antes, auditoria.serializar(ag))
     texto = (
-        f"Horário alterado por {ator.descricao}. De {calendario.local(inicio_anterior):%d/%m/%Y %H:%M} "
+        f"Horário alterado por {ator.usuario.nome_completo}. De {calendario.local(inicio_anterior):%d/%m/%Y %H:%M} "
         f"({duracao_anterior} min) para {calendario.local(novo_inicio):%d/%m/%Y %H:%M} ({nova_duracao} min). "
         f"Justificativa: {justificativa}."
     )
@@ -299,7 +299,7 @@ def cancelar(ator, ag, justificativa):
         cancelamento_dias_uteis=dias, cancelamento_classificacao=classe,
     )
     texto = (
-        f"Agendamento cancelado por {ator.descricao} ({Parte(ator.parte).label}). Justificativa: {justificativa}.\n"
+        f"Agendamento cancelado por {ator.usuario.nome_completo} ({Parte(ator.parte).label}). Justificativa: {justificativa}.\n"
         f"Antecedência: {minutos // 60} h {minutos % 60} min; {dias} dia(s) útil(eis). "
         f"Classificação: {ClassificacaoCancelamento(classe).label}."
     )

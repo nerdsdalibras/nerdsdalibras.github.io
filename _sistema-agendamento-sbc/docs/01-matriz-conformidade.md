@@ -1,5 +1,7 @@
 # Matriz de requisitos — situação real
 
+> Atualizada após a auditoria funcional de 28/10/2026 (`06-auditoria-funcional.md`), que encontrou e corrigiu 6 defeitos e 1 teste falso positivo.
+
 Legenda das colunas:
 
 - **Impl.** — implementado no código (servidor).
@@ -49,8 +51,8 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 |---|---|---|---|---|
 | Perfis e identificação individual | Sim (4 perfis por vínculo; login por e-mail; senha ≥ 12; bloqueio após 5 falhas) | V `test_exige_login`, `test_login_bloqueia_apos_tentativas`; A `test_admin_tecnico_nao_registra`, `test_prefeitura_nao_confirma` | — | — |
 | Homologação pelas duas partes com evidência | Sim (hash do estado conferido) | I `test_homologado_pelas_duas_partes_fica_travado`, `test_homologacao_parcial_perde_efeito_se_dados_mudam` | — | — |
-| Contratada não altera configurações/fórmulas unilateralmente | Sim (parâmetros, calendário, retenção só vigoram com aprovação do Fiscal) | V `test_operador_nao_aprova_parametro_pela_interface`; R `test_calendario_so_pela_prefeitura`, `test_admin_tecnico_nao_propoe_parametro` | — | — |
-| Layout sujeito à autorização da Prefeitura | Parcial: o layout é código; o relatório grava `layout_versao` | Não testado | — | **Sim** — processo de aprovação de mudanças de código/layout (ver doc 02) |
+| Contratada não altera configurações/fórmulas unilateralmente | Sim (parâmetros, calendário, retenção só vigoram com aprovação do Fiscal; a contratada não cria nem promove acessos da Prefeitura) | V `test_operador_nao_aprova_parametro_pela_interface`; R `test_calendario_so_pela_prefeitura`, `test_admin_tecnico_nao_propoe_parametro` | — | — |
+| Layout sujeito à autorização da Prefeitura | Parcial: o layout é código; o relatório grava `layout_versao` (atual: 1.1) | Não testado | — | **Sim** — processo de aprovação de mudanças de código/layout (ver doc 02) |
 | Parâmetros versionados sem alterar medições anteriores | Sim | M `test_medicao_guarda_versao_do_parametro_e_nao_muda_com_novo_preco`; I `test_parametro_aprovado_imutavel` | — | — |
 
 ## 4. Alertas automáticos
@@ -123,7 +125,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Migrações e estrutura do banco | `operacao/migrations/0001–0003`, `contas/migrations/0001` |
 | Aplicação funcional com instruções | `README.md`; executada localmente com Gunicorn e verificada no navegador |
 | Configuração segura por variáveis de ambiente | `config/settings.py`, `.env.example` (sem segredos) |
-| Testes das regras críticas | 69 testes passando |
+| Testes das regras críticas | 97 testes passando (inclui a auditoria funcional, `docs/06-auditoria-funcional.md`) |
 | Manual de administração, backup e recuperação | `docs/03-manual-administracao.md`; backup e restauração executados com sucesso em ambiente local |
 | Matriz | Este documento |
 | Dependências e custos | `docs/04-dependencias-e-custos.md` |

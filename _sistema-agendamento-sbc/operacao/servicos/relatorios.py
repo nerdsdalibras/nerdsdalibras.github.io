@@ -27,7 +27,7 @@ from . import auditoria, calendario
 from .base import ErroRegra, exigir_mesmo_contrato, exigir_perfil, exigir_texto
 from .medicao import PENDENCIAS, medicao_vigente
 
-LAYOUT_VERSAO = "1.0"
+LAYOUT_VERSAO = "1.1"  # 1.1: memória de cálculo por atendimento e alerta de revezamento
 
 
 def limites_mes(competencia):
@@ -60,6 +60,7 @@ def consolidar(contrato, competencia):
     total_horas, total_valor, total_indenizacao = Decimal("0"), Decimal("0"), Decimal("0")
     for ag in ags:
         m = medicao_vigente(ag) if ag.status in (StatusAgendamento.REALIZADO, StatusAgendamento.HOMOLOGADO) else None
+        ultima = max(ag.medicoes.all(), key=lambda x: x.versao, default=None)
         item = {
             "codigo": ag.codigo,
             "evento": ag.titulo,
@@ -77,7 +78,17 @@ def consolidar(contrato, competencia):
             "horas_faturaveis": str(m.horas_faturaveis) if m else None,
             "valor": str(m.valor_total) if m else None,
             "medicao_versao": m.versao if m else None,
+            "medicao_situacao": m.get_situacao_display() if m else None,
             "parametro_versao": m.parametro.versao if m else None,
+            "preco_unitario": str(m.preco_unitario) if m else None,
+            "minutos_previstos": m.minutos_previstos if m else None,
+            "minutos_realizados": m.minutos_realizados if m else ag.duracao_realizada_min,
+            "excedente_min": m.excedente_min if m else None,
+            "acrescimo_min": m.acrescimo_min if m else None,
+            "valor_bruto": str(m.valor_bruto) if m else None,
+            "regra_aplicada": m.regra_aplicada if m else None,
+            "fundamentacao": m.fundamentacao if m else "",
+            "alerta_revezamento": bool(ultima and ultima.alerta_revezamento),
             "homologado": ag.status == StatusAgendamento.HOMOLOGADO,
         }
         if ag.status == StatusAgendamento.CANCELADO:
@@ -88,7 +99,6 @@ def consolidar(contrato, competencia):
                 "classificacao": ag.get_cancelamento_classificacao_display(),
             }
         if ag.status == StatusAgendamento.REALIZADO and m is None:
-            ultima = ag.medicoes.order_by("-versao").first()
             motivos = [PENDENCIAS.get(p, p) for p in (ultima.pendencias if ultima else [])] or ["Medição não aprovada."]
             pendencias.append({"codigo": ag.codigo, "motivos": motivos})
         if m:

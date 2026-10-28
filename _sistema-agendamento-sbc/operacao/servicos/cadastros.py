@@ -13,6 +13,31 @@ from .base import ErroRegra, exigir_mesmo_contrato, exigir_perfil, exigir_texto
 CAMPOS_USUARIO = ["email", "nome_completo", "is_active"]
 
 
+# Cada parte administra apenas os próprios perfis: a contratada (administrador
+# técnico) nunca cria, promove ou desativa acessos da Prefeitura, o que lhe
+# permitiria aprovar sozinha parâmetros, homologações e relatórios.
+PERFIS_GERIDOS = {
+    Perfil.ADMIN_TECNICO: {Perfil.OPERADOR, Perfil.ADMIN_TECNICO},
+    Perfil.FISCAL: {Perfil.SOLICITANTE, Perfil.FISCAL},
+}
+
+
+def perfis_geridos(ator):
+    if getattr(ator, "perfil", None) == "SISTEMA":
+        return set(Perfil.values)
+    return PERFIS_GERIDOS.get(ator.perfil, set())
+
+
+def _exigir_gestao(ator, *perfis):
+    if getattr(ator, "perfil", None) != "SISTEMA":
+        exigir_perfil(ator, *PERFIS_GERIDOS)
+    permitidos = perfis_geridos(ator)
+    for p in perfis:
+        if p not in permitidos:
+            raise ErroRegra(f"Seu perfil não pode conceder ou alterar o perfil '{Perfil(p).label}'. "
+                            "Acessos da Prefeitura são geridos pelo Fiscal/Gestor; os da contratada, pelo administrador técnico.")
+
+
 def gerar_senha_temporaria():
     return secrets.token_urlsafe(12) + "-Aa1"
 
@@ -23,10 +48,9 @@ def criar_usuario_vinculo(ator, email, nome_completo, perfil, senha=None):
 
     Retorna (vinculo, senha_temporaria). A senha é exibida uma única vez.
     """
-    if getattr(ator, "perfil", None) != "SISTEMA":
-        exigir_perfil(ator, Perfil.ADMIN_TECNICO)
     if perfil not in Perfil.values:
         raise ErroRegra("Perfil inválido.")
+    _exigir_gestao(ator, perfil)
     Usuario = get_user_model()
     email = exigir_texto(email, "E-mail").lower()
     usuario = Usuario.objects.filter(email=email).first()
@@ -53,8 +77,10 @@ def criar_usuario_vinculo(ator, email, nome_completo, perfil, senha=None):
 
 @transaction.atomic
 def alterar_vinculo(ator, vinculo, ativo, perfil, justificativa):
-    exigir_perfil(ator, Perfil.ADMIN_TECNICO)
     exigir_mesmo_contrato(ator, vinculo)
+    if perfil not in Perfil.values:
+        raise ErroRegra("Perfil inválido.")
+    _exigir_gestao(ator, vinculo.perfil, perfil)
     justificativa = exigir_texto(justificativa, "Justificativa")
     if vinculo.usuario_id == ator.usuario.pk:
         raise ErroRegra("Não é permitido alterar o próprio vínculo.")

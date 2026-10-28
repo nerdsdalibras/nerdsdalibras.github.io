@@ -197,8 +197,19 @@ class UsuarioForm(forms.Form):
     email = forms.EmailField()
     perfil = forms.ChoiceField(choices=Perfil.choices)
 
+    def __init__(self, *a, perfis=None, **kw):
+        super().__init__(*a, **kw)
+        if perfis is not None:
+            self.fields["perfil"].choices = [(v, r) for v, r in Perfil.choices if v in perfis]
+
 
 class VinculoForm(forms.Form):
+    # Todas as opções são aceitas aqui; a regra de quem pode conceder o quê fica no serviço.
     perfil = forms.ChoiceField(choices=Perfil.choices)
     ativo = forms.BooleanField(required=False)
     justificativa = forms.CharField()
+
+    def __init__(self, *a, perfis=None, **kw):
+        super().__init__(*a, **kw)
+        if perfis is not None and not self.is_bound:
+            self.fields["perfil"].choices = [(v, r) for v, r in Perfil.choices if v in perfis]

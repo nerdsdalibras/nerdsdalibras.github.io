@@ -10,6 +10,11 @@
 <div class="rolagem"><table><thead><tr><th>Código</th><th>Evento</th><th>Modalidade</th><th>Previsto</th><th>Realizado</th><th>Intérpretes</th><th>Situação</th><th>Horas</th><th>Valor</th></tr></thead><tbody>
 {% for i in c.atendimentos %}<tr><td>{{ i.codigo }}</td><td>{{ i.evento }}</td><td>{{ i.modalidade }}</td><td>{{ i.inicio_previsto }} ({{ i.duracao_prevista_min }} min)</td><td>{{ i.inicio_realizado }}{% if i.fim_realizado %} – {{ i.fim_realizado }}{% endif %}</td><td>{{ i.interpretes|join:", " }}</td><td>{{ i.status }}{% if i.cancelamento %}: {{ i.cancelamento.classificacao }}{% endif %}</td><td>{{ i.horas_faturaveis|horas }}</td><td>{{ i.valor|brl }}</td></tr>{% endfor %}
 </tbody></table></div>
+<h2>Memória de cálculo por atendimento</h2>
+<div class="rolagem"><table><thead><tr><th>Código</th><th>Medição</th><th>Parâmetro</th><th>Preço/h</th><th>Previsto</th><th>Realizado</th><th>Excedente → acréscimo</th><th>Regra aplicada</th></tr></thead><tbody>
+{% for i in c.atendimentos %}{% if i.medicao_versao or i.alerta_revezamento %}<tr><td>{{ i.codigo }}</td><td>{% if i.medicao_versao %}v{{ i.medicao_versao }} — {{ i.medicao_situacao }}{% endif %}</td><td>{% if i.parametro_versao %}v{{ i.parametro_versao }}{% endif %}</td><td>{{ i.preco_unitario|brl }}</td><td>{{ i.minutos_previstos|default:"—" }} min</td><td>{{ i.minutos_realizados|default:"—" }} min</td><td>{% if i.excedente_min is not None %}{{ i.excedente_min }} → +{{ i.acrescimo_min|default:"—" }} min{% endif %}</td>
+<td>{{ i.regra_aplicada|default:"" }}{% if i.fundamentacao %}<br><em>Fundamentação:</em> {{ i.fundamentacao }}{% endif %}{% if i.alerta_revezamento %}<br><strong>Revezamento insuficiente: atendimento acima de 1 h com menos de dois intérpretes.</strong>{% endif %}</td></tr>{% endif %}{% endfor %}
+</tbody></table></div>
 <p><strong>Horas prestadas:</strong> {{ c.totais.horas_prestadas|horas }} — {{ c.totais.valor_horas_prestadas|brl }}</p>
 <h2>Indenizações aprovadas (separadas das horas)</h2>
 <ul>{% for i in c.indenizacoes_aprovadas %}<li>{{ i.codigo }}: {{ i.horas_referencia|horas }} — {{ i.valor|brl }}. {{ i.memoria }}</li>{% empty %}<li>Nenhuma.</li>{% endfor %}</ul>
