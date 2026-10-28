@@ -16,7 +16,6 @@ Fica em registro próprio, separado das horas efetivamente prestadas.
 """
 import hashlib
 import os
-import uuid
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.conf import settings
@@ -68,18 +67,22 @@ def verificar_elegibilidade(ag):
     return imp
 
 
-def _salvar_anexo(contrato, arquivo):
+ASSINATURAS = {".pdf": (b"%PDF",), ".png": (b"\x89PNG\r\n\x1a\n",), ".jpg": (b"\xff\xd8\xff",), ".jpeg": (b"\xff\xd8\xff",)}
+TIPOS = {".pdf": "application/pdf", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
+
+
+def _ler_anexo(arquivo):
+    """Valida extensão, tamanho e assinatura real do arquivo; devolve (nome, sha256, bytes, tipo)."""
     nome = os.path.basename(arquivo.name)
     ext = os.path.splitext(nome)[1].lower()
     if ext not in EXTENSOES_ANEXO:
         raise ErroRegra("Anexo deve ser PDF, PNG ou JPG.")
     if arquivo.size > settings.ANEXO_TAMANHO_MAXIMO_MB * 1024 * 1024:
         raise ErroRegra(f"Anexo excede {settings.ANEXO_TAMANHO_MAXIMO_MB} MB.")
-    h = hashlib.sha256()
-    for parte in arquivo.chunks():
-        h.update(parte)
-    arquivo.name = f"{contrato.codigo}-{uuid.uuid4().hex}{ext}"
-    return nome, h.hexdigest()
+    conteudo = b"".join(arquivo.chunks())
+    if not conteudo.startswith(ASSINATURAS[ext]):
+        raise ErroRegra("O conteúdo do anexo não corresponde à extensão informada.")
+    return nome, hashlib.sha256(conteudo).hexdigest(), conteudo, TIPOS[ext]
 
 
 @transaction.atomic
@@ -97,9 +100,9 @@ def solicitar(ator, ag, comprovacao, anexo=None):
     pct, minutos, horas = referencia(ag)
     bruto = Decimal(p.preco_unitario_hora) * horas
     total = bruto.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-    nome_original, sha = ("", "")
+    nome_original, sha, conteudo, tipo = "", "", None, ""
     if anexo:
-        nome_original, sha = _salvar_anexo(ag.contrato, anexo)
+        nome_original, sha, conteudo, tipo = _ler_anexo(anexo)
     memoria = (
         f"{ag.get_modalidade_display()}: {pct}% do tempo estimado ({ag.duracao_prevista_min} min)"
         + (", limitado a 120 min" if ag.modalidade == Modalidade.PRESENCIAL else "")
@@ -110,9 +113,10 @@ def solicitar(ator, ag, comprovacao, anexo=None):
         agendamento=ag,
         solicitado_por=ator.usuario,
         comprovacao=comprovacao,
-        anexo=anexo,
         anexo_nome_original=nome_original,
         anexo_sha256=sha,
+        anexo_conteudo=conteudo,
+        anexo_tipo=tipo,
         parametro=p,
         percentual=pct,
         minutos_referencia=minutos.quantize(Decimal("0.01")),

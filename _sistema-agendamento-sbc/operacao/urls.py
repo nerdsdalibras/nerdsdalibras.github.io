@@ -43,4 +43,6 @@ urlpatterns = [
     path("usuarios/", v.usuarios, name="usuarios"),
     path("usuarios/vinculos/<int:pk>/", v.vinculo_alterar, name="vinculo_alterar"),
     path("auditoria/", v.auditoria_view, name="auditoria"),
+    path("plataforma/", v.plataforma, name="plataforma"),
+    path("plataforma/cidades/<int:pk>/entrar/", v.plataforma_entrar, name="plataforma_entrar"),
 ]

@@ -23,19 +23,38 @@ PERFIS_GERIDOS = {
 
 
 def perfis_geridos(ator):
+    """Perfis que o ator pode conceder/alterar no contrato atual.
+
+    Administrador da plataforma (Nerds da Libras): perfis da contratada, solicitantes
+    e — somente enquanto a cidade NÃO tiver fiscal ativo — o primeiro Fiscal/Gestor.
+    Depois disso, fiscais são geridos pela própria Prefeitura; o administrador não
+    cria, troca nem desativa fiscais (evita aprovar sozinho em nome da Prefeitura).
+    """
     if getattr(ator, "perfil", None) == "SISTEMA":
         return set(Perfil.values)
-    return PERFIS_GERIDOS.get(ator.perfil, set())
+    geridos = set(PERFIS_GERIDOS.get(ator.perfil, set()))
+    if getattr(getattr(ator, "usuario", None), "administrador_plataforma", False):
+        from .plataforma import tem_fiscal_ativo
+
+        geridos |= {Perfil.OPERADOR, Perfil.ADMIN_TECNICO, Perfil.SOLICITANTE}
+        if not tem_fiscal_ativo(ator.contrato):
+            geridos.add(Perfil.FISCAL)
+    return geridos
+
+
+def pode_gerir_usuarios(ator):
+    return bool(perfis_geridos(ator))
 
 
 def _exigir_gestao(ator, *perfis):
-    if getattr(ator, "perfil", None) != "SISTEMA":
+    if getattr(ator, "perfil", None) != "SISTEMA" and not pode_gerir_usuarios(ator):
         exigir_perfil(ator, *PERFIS_GERIDOS)
     permitidos = perfis_geridos(ator)
     for p in perfis:
         if p not in permitidos:
             raise ErroRegra(f"Seu perfil não pode conceder ou alterar o perfil '{Perfil(p).label}'. "
-                            "Acessos da Prefeitura são geridos pelo Fiscal/Gestor; os da contratada, pelo administrador técnico.")
+                            "Acessos da Prefeitura são geridos pelo Fiscal/Gestor; o administrador da plataforma libera "
+                            "solicitantes e apenas o primeiro Fiscal/Gestor de cada cidade.")
 
 
 def gerar_senha_temporaria():

@@ -33,6 +33,10 @@ DEBUG = env_bool("DJANGO_DEBUG", False)
 SECRET_KEY = env("DJANGO_SECRET_KEY", obrigatorio=True)
 ALLOWED_HOSTS = env_lista("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 CSRF_TRUSTED_ORIGINS = env_lista("DJANGO_CSRF_TRUSTED_ORIGINS")
+# Endereço público informado pela hospedagem (Render) e domínio próprio opcional.
+for _host in filter(None, [env("RENDER_EXTERNAL_HOSTNAME", ""), env("SGI_DOMINIO", "")]):
+    ALLOWED_HOSTS.append(_host)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{_host}")
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -77,6 +81,20 @@ TEMPLATES = [
         },
     },
 ]
+
+_url_banco = env("DATABASE_URL", "")  # fornecida pela hospedagem (ex.: Render)
+if _url_banco:
+    import urllib.parse as _up
+
+    _u = _up.urlparse(_url_banco)
+    _q = dict(_up.parse_qsl(_u.query))
+    os.environ.setdefault("DB_NAME", _u.path.lstrip("/"))
+    os.environ.setdefault("DB_USER", _up.unquote(_u.username or ""))
+    os.environ.setdefault("DB_PASSWORD", _up.unquote(_u.password or ""))
+    os.environ.setdefault("DB_HOST", _u.hostname or "")
+    os.environ.setdefault("DB_PORT", str(_u.port or 5432))
+    if "sslmode" in _q:
+        os.environ.setdefault("DB_SSLMODE", _q["sslmode"])
 
 DATABASES = {
     "default": {
@@ -179,7 +197,8 @@ GDRIVE_TOKEN_URL = env("GDRIVE_TOKEN_URL", "https://oauth2.googleapis.com/token"
 GDRIVE_API_URL = env("GDRIVE_API_URL", "https://www.googleapis.com")
 
 # Endereço público do sistema (usado nos links dos e-mails).
-URL_BASE = env("URL_BASE", "http://localhost:8000")
+URL_BASE = env("URL_BASE", f"https://{env('SGI_DOMINIO', '') or env('RENDER_EXTERNAL_HOSTNAME', '')}"
+               if (env("SGI_DOMINIO", "") or env("RENDER_EXTERNAL_HOSTNAME", "")) else "http://localhost:8000")
 
 LOGGING = {
     "version": 1,

@@ -15,8 +15,8 @@
 <h2>Registro de envios por e-mail</h2>
 <div class="rolagem"><table><thead><tr><th>Criada</th><th>Tipo</th><th>Assunto</th><th>Destinatários</th><th>Situação</th><th>Tentativas</th><th>Último erro</th><th>Ação</th></tr></thead><tbody>
 {% for n in envios %}<tr><td>{{ n.criada_em|date:"d/m/Y H:i:s" }}</td><td>{{ n.get_tipo_display }}</td><td>{{ n.assunto }}</td><td>{{ n.destinatarios|length }}</td><td>{{ n.get_status_display }}{% if n.enviada_em %} em {{ n.enviada_em|date:"d/m/Y H:i:s" }}{% endif %}</td>
-<td><details><summary>{{ n.tentativas_envio.all|length }}</summary><ul>{% for t in n.tentativas_envio.all %}<li>{{ t.em|date:"d/m/Y H:i:s" }} — {{ t.get_resultado_display }} {{ t.detalhe|truncatechars:120 }}</li>{% endfor %}</ul></details></td>
-<td>{{ n.ultimo_erro|truncatechars:80 }}</td>
+<td><details><summary>{{ n.tentativas_envio.all|length }}</summary><ul>{% for t in n.tentativas_envio.all %}<li>{{ t.em|date:"d/m/Y H:i:s" }} — {{ t.get_resultado_display }}{% if detalhe_tecnico %} {{ t.detalhe|truncatechars:160 }}{% endif %}</li>{% endfor %}</ul></details></td>
+<td>{% if detalhe_tecnico %}{{ n.ultimo_erro|truncatechars:160 }}{% elif n.ultimo_erro %}Não enviado por e-mail (aviso disponível na caixa interna){% endif %}</td>
 <td>{% if n.status != "ENVIADA" %}<form method="post" action="{% url 'operacao:notificacao_reenviar' n.pk %}">{% csrf_token %}<button>Tentar reenviar</button></form>{% endif %}</td></tr>
 {% empty %}<tr><td colspan="8">Nenhuma notificação.</td></tr>{% endfor %}</tbody></table></div>
 {% endif %}

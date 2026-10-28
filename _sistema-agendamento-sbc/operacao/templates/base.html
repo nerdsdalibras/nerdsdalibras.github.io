@@ -14,7 +14,9 @@
   <div class="marca"><strong>SGI</strong> <span>Agendamento de Intérpretes de Libras</span></div>
   {% if user.is_authenticated %}
   <div class="usuario">
-    {% if vinculo %}<span>{{ user.nome_completo }} · <em>{{ vinculo.get_perfil_display }}</em></span>{% endif %}
+    {% if vinculo %}<span>{{ user.nome_completo }} · <em>{{ vinculo.get_perfil_display }}</em></span>{% else %}<span>{{ user.nome_completo }}</span>{% endif %}
+    {% if varias_cidades %}<a class="topo-link" href="{% url 'operacao:selecionar_contrato' %}">Trocar cidade</a>{% endif %}
+    {% if admin_plataforma %}<a class="topo-link" href="{% url 'operacao:plataforma' %}">Plataforma</a>{% endif %}
     <form method="post" action="{% url 'contas:logout' %}">{% csrf_token %}<button class="link">Sair</button></form>
   </div>
   {% endif %}
@@ -35,10 +37,10 @@
     {% endif %}
     <li><a href="{% url 'operacao:feriados' %}">Calendário</a></li>
     {% if vinculo.perfil == Perfil.FISCAL or vinculo.perfil == Perfil.ADMIN_TECNICO %}<li><a href="{% url 'operacao:auditoria' %}">Auditoria</a></li>{% endif %}
-    {% if vinculo.perfil == Perfil.ADMIN_TECNICO or vinculo.perfil == Perfil.FISCAL %}<li><a href="{% url 'operacao:usuarios' %}">Usuários</a></li>{% endif %}
+    {% if gere_usuarios %}<li><a href="{% url 'operacao:usuarios' %}">Usuários</a></li>{% endif %}
   </ul>
 </nav>
-<p class="contrato">{{ vinculo.contrato }}</p>
+<p class="contrato"><strong>{{ vinculo.contrato.nome_curto }}</strong> — {{ vinculo.contrato }}</p>
 {% endif %}
 <main id="conteudo" tabindex="-1">
   {% if messages %}

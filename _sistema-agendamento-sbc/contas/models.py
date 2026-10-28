@@ -27,6 +27,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField("ativo", default=True)
     criado_em = models.DateTimeField(default=timezone.now, editable=False)
     deve_trocar_senha = models.BooleanField(default=True)
+    # Administrador da plataforma (Nerds da Libras): cria cidades/contratos e libera
+    # acessos. Só é concedido por linha de comando/variável de implantação, nunca pela tela.
+    administrador_plataforma = models.BooleanField(default=False)
 
     objects = UsuarioManager()
 

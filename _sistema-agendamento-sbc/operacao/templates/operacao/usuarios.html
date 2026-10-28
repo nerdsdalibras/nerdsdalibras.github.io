@@ -2,6 +2,7 @@
 {% block titulo %}Usuários{% endblock %}
 {% block conteudo %}
 <h1>Usuários e perfis do contrato</h1>
+<p><strong>Cidade: {{ vinculo.contrato.nome_curto }}.</strong> Os acessos criados aqui valem somente para esta cidade.</p>
 <p>Toda criação/alteração é auditada. Acessos da <strong>Prefeitura</strong> (solicitante, fiscal/gestor) são geridos pelo Fiscal/Gestor; acessos da <strong>contratada</strong> (operador, administrador técnico), pelo administrador técnico. A criação de perfis da Prefeitura gera aviso aos fiscais/gestores.</p>
 {% if senha_temporaria %}<p class="msg msg-warning" role="alert"><strong>Senha temporária (exibida uma única vez):</strong> <code>{{ senha_temporaria }}</code><br>Entregue por canal seguro; o usuário deverá trocá-la no primeiro acesso.</p>{% endif %}
 <div class="rolagem"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th>Alterar</th></tr></thead><tbody>
@@ -11,5 +12,6 @@
 <input type="checkbox" id="a{{ v.pk }}" name="ativo"{% if v.ativo %} checked{% endif %}> <label for="a{{ v.pk }}">Ativo</label>
 <label for="j{{ v.pk }}">Justificativa</label><input id="j{{ v.pk }}" name="justificativa" required><button>Salvar</button></form></details>{% endif %}</td></tr>{% endfor %}
 </tbody></table></div>
-<section class="cartao"><h2>Novo acesso</h2><form method="post">{% csrf_token %}{% include "operacao/_form.html" %}<button>Criar</button></form></section>
+<section class="cartao"><h2>Novo acesso</h2>
+{% if admin_plataforma and "FISCAL" not in geridos %}<p><small>Esta cidade já tem Fiscal/Gestor ativo: novos fiscais são liberados pelo próprio Fiscal/Gestor da Prefeitura.</small></p>{% endif %}<form method="post">{% csrf_token %}{% include "operacao/_form.html" %}<button>Criar</button></form></section>
 {% endblock %}

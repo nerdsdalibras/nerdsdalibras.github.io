@@ -20,7 +20,19 @@ Educação de São Bernardo do Campo** (Pregão Eletrônico nº 246/2026).
 | `docs/03-manual-administracao.md` | Implantação, usuários, backup, restauração, limites do acesso à infraestrutura |
 | `docs/04-dependencias-e-custos.md` | Dependências de software e custos recorrentes |
 | `docs/05-protecao-de-dados.md` | Medidas de proteção de dados e seus limites |
+| `docs/07-publicar-na-internet.md` | **Como publicar com login e senha (Render) e liberar cada cidade** |
 | `docs/06-auditoria-funcional.md` | Auditoria funcional dos 20 itens: testes, resultados, evidências, defeitos corrigidos |
+
+## Plataforma multi-cidades
+
+Uma única instalação atende várias cidades. Cada cidade (contrato) tem seus
+próprios agendamentos, usuários, calendário, parâmetros, relatórios e histórico
+auditável; usuários de uma cidade não veem nada de outra. O **administrador da
+plataforma** (Nerds da Libras) cria cidades e libera os acessos (solicitantes e
+o primeiro Fiscal/Gestor de cada Prefeitura), sem poder aprovar nada em nome da
+Prefeitura. O primeiro administrador é criado na implantação pelas variáveis
+`SGI_ADMIN_EMAIL`, `SGI_ADMIN_NOME` e `SGI_ADMIN_SENHA` (comando
+`inicializar_plataforma`, executado automaticamente ao iniciar).
 
 ## Stack
 
@@ -70,7 +82,7 @@ set -a; . ./.env.dev; set +a
 ```
 
 Os testes rodam em PostgreSQL real (o usuário do banco precisa de `CREATEDB`)
-porque verificam os triggers. Resultado na última execução: **111 testes, todos
+porque verificam os triggers. Resultado na última execução: **126 testes, todos
 passando**.
 
 ## Comandos de gestão
@@ -82,6 +94,8 @@ passando**.
 | `testar_email [--para X --executor "Nome"]` | Diagnóstico do e-mail (Gmail `nerdsdalibras@gmail.com`) e envio de UMA mensagem de teste, auditada |
 | `drive_autorizar` | Autorização OAuth (uma vez) do Google Drive de `nerdsdalibras@gmail.com` |
 | `drive_backup diagnostico\|enviar\|listar\|baixar` | Cópia externa de backups cifrados no Drive |
+| `inicializar_plataforma` | Cria o primeiro administrador da plataforma a partir das variáveis `SGI_ADMIN_*` (idempotente; nunca redefine senha) |
+| `promover_admin_plataforma --email X --operador-infra "Nome"` | Concede/retira o papel de administrador da plataforma (auditado) |
 | `processar_notificacoes` | Envia pendentes e reenvia falhas — agendar a cada 1–5 min |
 | `verificar_auditoria` | Recalcula a cadeia de hash da trilha de auditoria |
 | `carregar_demonstracao` | Dados fictícios; recusado fora de `DEBUG` salvo `PERMITIR_DEMONSTRACAO=sim` |

@@ -1,0 +1,47 @@
+# Blueprint do Render para o SGI (sistema de agendamento de intérpretes).
+# Na criação do Blueprint, informe o caminho: _sistema-agendamento-sbc/render.yaml
+# Valores marcados "sync: false" são pedidos na tela do Render (segredos; nunca versionar).
+databases:
+  - name: sgi-banco
+    databaseName: sgi
+    user: sgi
+    plan: basic-256mb        # pago: banco persistente com backups da própria Render
+    region: virginia
+    ipAllowList: []          # sem acesso externo ao banco; só o serviço web (rede interna)
+
+services:
+  - type: web
+    name: sgi-nerdsdalibras
+    runtime: python
+    rootDir: _sistema-agendamento-sbc
+    plan: starter            # pago: não "dorme" (o gratuito dorme e atrasa alertas)
+    region: virginia
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: bash scripts/iniciar_servico.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sgi-banco
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: HTTPS_ATIVO
+        value: "true"
+      - key: ATRAS_DE_PROXY
+        value: "true"
+      - key: SGI_ADMIN_EMAIL     # e-mail do administrador da plataforma (login)
+        sync: false
+      - key: SGI_ADMIN_NOME
+        sync: false
+      - key: SGI_ADMIN_SENHA     # senha inicial (mín. 12 caracteres); troca obrigatória no 1º acesso
+        sync: false
+      - key: SGI_DOMINIO         # opcional: sgi.nerdsdalibras.com, depois de configurar o DNS
+        sync: false
+      - key: EMAIL_ENVIO_HABILITADO
+        value: "false"           # mude para true só após a senha de app e a autorização
+      - key: EMAIL_HOST_PASSWORD # senha de app do Gmail nerdsdalibras@gmail.com
+        sync: false

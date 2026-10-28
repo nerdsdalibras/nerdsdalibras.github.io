@@ -44,6 +44,13 @@ com HTTPS (ex.: Nginx/Caddy com certificado válido), relógio sincronizado (NTP
 
 ## 2. Gestão de usuários
 
+**Administrador da plataforma** (Nerds da Libras): menu **Plataforma** → cria
+cidades, entra em qualquer uma (como contratada) e libera acessos de
+solicitantes e o **primeiro** Fiscal/Gestor de cada cidade. Não aprova
+parâmetros/medições/relatórios e não troca nem desativa fiscais existentes.
+O papel só é concedido na implantação (`SGI_ADMIN_*`) ou pelo comando
+`promover_admin_plataforma` (auditado). Guia completo: `docs/07-publicar-na-internet.md`.
+
 - Pelo menu **Usuários**: criar acesso gera senha temporária exibida uma única
   vez; o usuário é obrigado a trocá-la.
 - **Cada parte gere apenas os próprios acessos**: o Fiscal/Gestor da Prefeitura

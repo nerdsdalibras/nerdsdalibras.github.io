@@ -9,7 +9,7 @@ from django.urls import reverse
 from .models import Vinculo
 
 CHAVE_SESSAO = "vinculo_id"
-LIVRES = ("/contas/", "/static/", "/sem-vinculo/", "/selecionar-contrato/")
+LIVRES = ("/contas/", "/static/", "/sem-vinculo/", "/selecionar-contrato/", "/plataforma/")
 
 
 class ContratoAtivoMiddleware:
@@ -32,6 +32,8 @@ class ContratoAtivoMiddleware:
                 if request.user.deve_trocar_senha:
                     return redirect(reverse("contas:trocar_senha"))
                 if request.vinculo is None:
+                    if request.user.administrador_plataforma and not vinculos.exists():
+                        return redirect(reverse("operacao:plataforma"))
                     if vinculos.exists():
                         return redirect(reverse("operacao:selecionar_contrato"))
                     return redirect(reverse("operacao:sem_vinculo"))

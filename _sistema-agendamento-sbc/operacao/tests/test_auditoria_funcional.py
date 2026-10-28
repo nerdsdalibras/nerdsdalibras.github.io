@@ -517,9 +517,11 @@ class A16Notificacoes(Base):
         n = Notificacao.objects.get(tipo="CONFIRMACAO")
         self.assertEqual(n.status, StatusNotificacao.FALHA)
         html = self.cliente(Perfil.FISCAL).get(reverse("operacao:avisos")).content.decode()
-        self.assertIn("Falha (nova tentativa agendada)", html)
-        self.assertIn("SMTP recusou", html)
+        self.assertIn("Falha (nova tentativa agendada)", html)  # falha visível para a Prefeitura
+        self.assertNotIn("SMTP recusou", html)  # detalhe técnico só para a contratada
         self.assertIn("Atendimento confirmado", html)  # aviso interno disponível mesmo com falha no e-mail
+        html_op = self.cliente(Perfil.OPERADOR).get(reverse("operacao:avisos")).content.decode()
+        self.assertIn("SMTP recusou", html_op)
         notificacoes.processar_pendentes()  # ainda não venceu o intervalo
         self.assertEqual(len(mail.outbox), 0)
         self.cliente(Perfil.FISCAL).post(reverse("operacao:notificacao_reenviar", args=[n.pk]))
@@ -625,3 +627,23 @@ class A16MensagemDeTela(Base):
             agendamentos.escalar(self.operador, ag, i)
         r = self.cliente(Perfil.OPERADOR).post(reverse("operacao:agendamento_confirmar", args=[ag.pk]), follow=True)
         self.assertIn("Integração de e-mail pendente (não enviada)", r.content.decode())
+
+
+class A16DetalheTecnicoSoParaContratada(Base):
+    @override_settings(EMAIL_ENVIO_HABILITADO=False, EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
+                       EMAIL_HOST="smtp.gmail.com", EMAIL_HOST_USER="nerdsdalibras@gmail.com", EMAIL_HOST_PASSWORD="")
+    def test_prefeitura_nao_ve_configuracao_tecnica(self):
+        ag = self.novo_agendamento()
+        for i in self.interpretes[:2]:
+            agendamentos.escalar(self.operador, ag, i)
+        agendamentos.confirmar(self.operador, ag)
+        fiscal = self.cliente(Perfil.FISCAL)
+        for url in (reverse("operacao:painel"), reverse("operacao:avisos")):
+            html = fiscal.get(url).content.decode()
+            for termo in ("EMAIL_HOST_PASSWORD", "EMAIL_ENVIO_HABILITADO", "senha de app"):
+                self.assertNotIn(termo, html)
+        r = fiscal.post(reverse("operacao:agendamento_alterar", args=[ag.pk]), {
+            "inicio_previsto": "2026-11-16T10:00", "duracao_prevista_min": 120, "qtd_profissionais": 2, "justificativa": "x"}, follow=True)
+        self.assertNotIn("EMAIL_HOST_PASSWORD", r.content.decode())
+        self.assertIn("Integração de e-mail pendente", r.content.decode())
+        self.assertIn("EMAIL_HOST_PASSWORD", self.cliente(Perfil.OPERADOR).get(reverse("operacao:painel")).content.decode())

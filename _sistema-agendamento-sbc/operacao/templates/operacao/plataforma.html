@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block titulo %}Plataforma{% endblock %}
+{% block conteudo %}
+<h1>Plataforma — cidades atendidas</h1>
+<p>Cada cidade tem seus próprios agendamentos, usuários, calendário, parâmetros e histórico auditável. Usuários de uma cidade <strong>não</strong> veem dados de outra.</p>
+<div class="rolagem"><table>
+<thead><tr><th scope="col">Cidade</th><th scope="col">Órgão / referência</th><th scope="col">Prefixo</th><th scope="col">Fiscal da Prefeitura</th><th scope="col">Usuários ativos</th><th scope="col">Agendamentos</th><th scope="col">Acesso</th></tr></thead>
+<tbody>
+{% for i in cidades %}<tr>
+<td><strong>{{ i.c.nome_curto }}</strong></td><td>{{ i.c.orgao }}<br><small>{{ i.c.referencia }}</small></td><td>{{ i.c.prefixo_codigo }}</td>
+<td>{% if i.fiscal %}Liberado{% else %}<strong>Pendente</strong> — libere em Usuários{% endif %}</td>
+<td>{{ i.usuarios }}</td><td>{{ i.agendamentos }}</td>
+<td><form method="post" action="{% url 'operacao:plataforma_entrar' i.c.pk %}">{% csrf_token %}{% if i.meu %}<button>Entrar ({{ i.meu.get_perfil_display }})</button>{% else %}<input type="hidden" name="perfil" value="OPERADOR"><button>Vincular-me e entrar</button>{% endif %}</form></td>
+</tr>{% empty %}<tr><td colspan="7">Nenhuma cidade cadastrada.</td></tr>{% endfor %}
+</tbody></table></div>
+<section class="cartao"><h2>Nova cidade</h2>
+<p>Depois de criar, você é levado à tela de <strong>Usuários</strong> da cidade para liberar o acesso do Fiscal/Gestor da Prefeitura (senha temporária exibida uma vez, com troca obrigatória no primeiro acesso).</p>
+<form method="post">{% csrf_token %}{% include "operacao/_form.html" %}<button class="primario">Criar cidade</button></form></section>
+{% endblock %}

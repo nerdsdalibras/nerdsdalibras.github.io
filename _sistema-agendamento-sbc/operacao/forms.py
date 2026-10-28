@@ -213,3 +213,16 @@ class VinculoForm(forms.Form):
         super().__init__(*a, **kw)
         if perfis is not None and not self.is_bound:
             self.fields["perfil"].choices = [(v, r) for v, r in Perfil.choices if v in perfis]
+
+
+class CidadeForm(forms.Form):
+    cidade = forms.CharField(max_length=120, help_text="Ex.: São Bernardo do Campo")
+    uf = forms.CharField(label="UF", max_length=2, help_text="Ex.: SP")
+    orgao = forms.CharField(label="Órgão contratante", max_length=200, help_text="Ex.: Prefeitura de ... — Secretaria de Educação")
+    referencia = forms.CharField(label="Referência (licitação/contrato)", max_length=200, help_text="Ex.: Pregão Eletrônico nº 246/2026")
+    prefixo = forms.CharField(label="Prefixo dos códigos", max_length=6, help_text="2 a 6 letras, único por cidade (ex.: SBC, FRA)")
+    vigencia_inicio = forms.DateField(label="Início da vigência", required=False, widget=forms.DateInput(attrs={"type": "date"}))
+    vigencia_fim = forms.DateField(label="Fim da vigência", required=False, widget=forms.DateInput(attrs={"type": "date"}))
+    preco_inicial = forms.DecimalField(label="Preço inicial por hora (proposta, R$)", max_digits=14, decimal_places=4, required=False,
+                                       help_text="Fica PROPOSTO até aprovação do Fiscal/Gestor da cidade. Vazio = 156,6000.")
+    meu_perfil = forms.ChoiceField(label="Meu perfil nesta cidade", choices=[("OPERADOR", "Operador da contratada"), ("ADMIN_TECNICO", "Administrador técnico")])

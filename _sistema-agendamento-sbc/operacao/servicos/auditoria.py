@@ -4,6 +4,7 @@ O banco preenche data/hora e a cadeia de hash (trigger). Esta camada apenas
 monta o conteúdo: quem, o quê, justificativa e valores anteriores/posteriores.
 """
 import datetime
+import hashlib
 import decimal
 import uuid
 
@@ -22,6 +23,9 @@ def _valor_json(v):
         return str(v)
     if isinstance(v, FieldFile):
         return v.name or None
+    if isinstance(v, (bytes, bytearray, memoryview)):
+        dados = bytes(v)
+        return {"bytes": len(dados), "sha256": hashlib.sha256(dados).hexdigest()}  # nunca o conteúdo
     return v
 
 

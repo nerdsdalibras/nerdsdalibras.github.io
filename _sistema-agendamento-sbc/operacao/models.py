@@ -72,6 +72,8 @@ class Contrato(SemExclusao):
     """Unidade de isolamento. Nenhum dado atravessa contratos."""
 
     codigo = models.SlugField(unique=True)
+    cidade = models.CharField(max_length=120, blank=True)
+    uf = models.CharField("UF", max_length=2, blank=True)
     orgao = models.CharField("órgão contratante", max_length=200)
     contratada = models.CharField(max_length=200)
     referencia = models.CharField("referência (licitação/processo)", max_length=200)
@@ -85,6 +87,10 @@ class Contrato(SemExclusao):
 
     def __str__(self):
         return f"{self.orgao} — {self.referencia}"
+
+    @property
+    def nome_curto(self):
+        return f"{self.cidade}/{self.uf}" if self.cidade else self.orgao
 
 
 class Vinculo(models.Model):
@@ -365,6 +371,9 @@ class PedidoIndenizacao(SemExclusao):
     anexo = models.FileField(upload_to="comprovacoes/%Y/%m/", null=True, blank=True)
     anexo_nome_original = models.CharField(max_length=255, blank=True)
     anexo_sha256 = models.CharField(max_length=64, blank=True)
+    # Conteúdo do anexo guardado no próprio banco (sobrevive a reimplantações e entra no backup).
+    anexo_conteudo = models.BinaryField(null=True, blank=True, editable=False)
+    anexo_tipo = models.CharField(max_length=100, blank=True)
     parametro = models.ForeignKey(ParametroMedicao, on_delete=models.PROTECT, related_name="+")
     percentual = models.DecimalField(max_digits=5, decimal_places=2)
     minutos_referencia = models.DecimalField(max_digits=10, decimal_places=2)

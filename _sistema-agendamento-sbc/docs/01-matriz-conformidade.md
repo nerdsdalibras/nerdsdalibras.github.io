@@ -96,7 +96,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Minimização (só dados contratuais) | Sim (ver doc 05) | Revisão do modelo de dados | — | Validação pelo encarregado (DPO) das partes |
 | Proteção contra acesso não autorizado | Sim (autenticação, perfis, CSRF, CSP, cookies seguros em HTTPS, bloqueio de tentativas) | V `test_exige_login`, `test_login_bloqueia_apos_tentativas`, `test_solicitante_nao_ve_agendamento_de_outro`, `test_paginas_principais_respondem` (CSP) | HTTPS/hospedagem | — |
 | Contatos de intérpretes não públicos | Sim | V `test_contatos_de_interpretes_so_para_vinculados`; N verifica que o e-mail de alerta não contém telefone | — | — |
-| Isolamento entre clientes/contratos; sem dados da CMAA | Sim (contrato_id em tudo; nenhuma carga de outro contrato) | R `test_dados_de_outro_contrato_inacessiveis`; V (404 para outro contrato) | — | — |
+| Isolamento entre clientes/contratos; sem dados da CMAA | Sim (contrato_id em tudo; nenhuma carga de outro contrato; plataforma multi-cidades com administrador da Nerds que não aprova pela Prefeitura) — `test_plataforma` e simulação de publicação com duas cidades | R `test_dados_de_outro_contrato_inacessiveis`; V (404 para outro contrato) | — | — |
 | Sem rastreadores de terceiros | Sim | V `test_templates_sem_rastreadores_de_terceiros` | — | — |
 | Conformidade plena com a LGPD | **Não declarada** — depende de medidas organizacionais (ver doc 05) | — | — | — |
 
@@ -126,7 +126,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Migrações e estrutura do banco | `operacao/migrations/0001–0003`, `contas/migrations/0001` |
 | Aplicação funcional com instruções | `README.md`; executada localmente com Gunicorn e verificada no navegador |
 | Configuração segura por variáveis de ambiente | `config/settings.py`, `.env.example` (sem segredos) |
-| Testes das regras críticas | 111 testes passando (inclui a auditoria funcional, `docs/06-auditoria-funcional.md`) |
+| Testes das regras críticas | 126 testes passando (inclui a auditoria funcional, `docs/06-auditoria-funcional.md`) |
 | Manual de administração, backup e recuperação | `docs/03-manual-administracao.md`; backup e restauração executados com sucesso em ambiente local |
 | Matriz | Este documento |
 | Dependências e custos | `docs/04-dependencias-e-custos.md` |

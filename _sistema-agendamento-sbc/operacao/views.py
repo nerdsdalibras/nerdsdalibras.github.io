@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import DatabaseError
 from django.db.models import Q
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -20,10 +20,11 @@ from django.views.decorators.http import require_POST
 from . import exportacoes, forms
 from .middleware import CHAVE_SESSAO
 from .models import (
-    Agendamento, AvisoInterno, Chamado, Escala, EventoAuditoria, Feriado, Interprete, Medicao, Notificacao,
+    Agendamento, AvisoInterno, Chamado, Contrato, Escala, EventoAuditoria, Feriado, Interprete, Medicao, Notificacao,
     ParametroMedicao, PedidoIndenizacao, Perfil, PoliticaRetencao, RelatorioMensal, SituacaoIndenizacao,
     SituacaoMedicao, StatusAgendamento, StatusChamado, StatusNotificacao, Vinculo,
 )
+from .servicos import plataforma as plat
 from .servicos import (
     agendamentos, auditoria, cadastros, calendario, chamados, homologacao, indenizacao, medicao, notificacoes,
     parametros, relatorios,
@@ -85,8 +86,16 @@ def informar_alerta(request, ag, resultado):
     texto = f"Alerta aos fiscais/gestores registrado na caixa interna do sistema. E-mail: {n.get_status_display()}."
     if n.status == StatusNotificacao.ENVIADA:
         messages.info(request, texto)
+    elif ve_detalhe_tecnico(request) and n.ultimo_erro:
+        messages.warning(request, f"{texto} Detalhe técnico: {n.ultimo_erro}")
     else:
-        messages.warning(request, texto + (f" Detalhe: {n.ultimo_erro[:200]}" if n.ultimo_erro else ""))
+        messages.warning(request, texto)
+
+
+def ve_detalhe_tecnico(request):
+    """Configuração/erros de infraestrutura só para a contratada e o administrador da plataforma."""
+    return request.user.administrador_plataforma or (
+        request.vinculo is not None and request.vinculo.perfil in (Perfil.OPERADOR, Perfil.ADMIN_TECNICO))
 
 
 def _agendamento(request, pk):
@@ -131,7 +140,7 @@ def painel(request):
         "relatorios_pendentes": RelatorioMensal.objects.filter(contrato=request.contrato, status="SUBMETIDO").count(),
         "notificacoes_problema": Notificacao.objects.filter(contrato=request.contrato).exclude(status=StatusNotificacao.ENVIADA).count(),
         "integracao_email": notificacoes.integracao_configurada(),
-        "pendencias_email": notificacoes.diagnostico_email(),
+        "pendencias_email": notificacoes.diagnostico_email() if ve_detalhe_tecnico(request) else [],
     }
     return render(request, "operacao/painel.html", ctx)
 
@@ -421,7 +430,11 @@ def decidir_indenizacao(request, pk, pedido_id):
 @perfis(Perfil.FISCAL, Perfil.OPERADOR)
 def anexo_indenizacao(request, pedido_id):
     p = get_object_or_404(PedidoIndenizacao, pk=pedido_id, agendamento__contrato=request.contrato)
-    if not p.anexo:
+    if p.anexo_conteudo is not None:
+        resp = HttpResponse(bytes(p.anexo_conteudo), content_type=p.anexo_tipo or "application/octet-stream")
+        resp["Content-Disposition"] = f'attachment; filename="{(p.anexo_nome_original or "anexo").replace(chr(34), "")}"'
+        return resp
+    if not p.anexo:  # anexos antigos gravados em disco
         raise Http404
     return FileResponse(p.anexo.open("rb"), as_attachment=True, filename=p.anexo_nome_original or "anexo")
 
@@ -589,7 +602,8 @@ def avisos(request):
     if request.vinculo.perfil in GESTAO:
         envios = Notificacao.objects.filter(contrato=request.contrato).prefetch_related("tentativas_envio")[:200]
     return render(request, "operacao/avisos.html", {"avisos": lista, "envios": envios, "integracao": notificacoes.integracao_configurada(),
-                                                   "pendencias_email": notificacoes.diagnostico_email()})
+                                                   "pendencias_email": notificacoes.diagnostico_email() if ve_detalhe_tecnico(request) else [],
+                                                   "detalhe_tecnico": ve_detalhe_tecnico(request)})
 
 
 @require_POST
@@ -699,9 +713,11 @@ def detalhe_relatorio(request, pk):
 
 
 # ------------------------------------------------------------ usuários e auditoria
-@perfis(Perfil.ADMIN_TECNICO, Perfil.FISCAL)
+@perfis()
 def usuarios(request):
     geridos = cadastros.perfis_geridos(ator(request))
+    if not geridos:
+        raise PermissionDenied("Seu perfil não gerencia acessos.")
     form = forms.UsuarioForm(request.POST or None, perfis=geridos)
     senha = None
     if request.method == "POST" and form.is_valid():
@@ -718,8 +734,10 @@ def usuarios(request):
 
 
 @require_POST
-@perfis(Perfil.ADMIN_TECNICO, Perfil.FISCAL)
+@perfis()
 def vinculo_alterar(request, pk):
+    if not cadastros.pode_gerir_usuarios(ator(request)):
+        raise PermissionDenied("Seu perfil não gerencia acessos.")
     v = get_object_or_404(Vinculo, pk=pk, contrato=request.contrato)
     f = forms.VinculoForm(request.POST)
     if f.is_valid():
@@ -748,3 +766,43 @@ def auditoria_view(request):
         ])
     entidades = EventoAuditoria.objects.filter(contrato=request.contrato).values_list("entidade", flat=True).distinct().order_by("entidade")
     return render(request, "operacao/auditoria.html", {"eventos": qs[:300], "entidades": entidades, "integridade": integridade, "ent": ent})
+
+
+# ------------------------------------------------------------ plataforma (multi-cidades)
+@login_required
+def plataforma(request):
+    plat.exigir_admin_plataforma(request.user)
+    form = forms.CidadeForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        d = form.cleaned_data
+        r = executar(request, plat.criar_cidade, request.user, cidade=d["cidade"], uf=d["uf"], orgao=d["orgao"],
+                     referencia=d["referencia"], prefixo=d["prefixo"], vigencia_inicio=d["vigencia_inicio"],
+                     vigencia_fim=d["vigencia_fim"], preco_inicial=d["preco_inicial"], meu_perfil=d["meu_perfil"],
+                     ip=request.META.get("REMOTE_ADDR"), sucesso="Cidade criada. Agora libere o acesso do Fiscal/Gestor da Prefeitura.")
+        if r and r is not True:
+            request.session[CHAVE_SESSAO] = r[1].pk
+            return redirect("operacao:usuarios")
+    meus = {v.contrato_id: v for v in Vinculo.objects.filter(usuario=request.user, ativo=True)}
+    cidades = []
+    for c in Contrato.objects.order_by("uf", "cidade", "codigo"):
+        cidades.append({
+            "c": c, "meu": meus.get(c.pk), "fiscal": plat.tem_fiscal_ativo(c),
+            "usuarios": Vinculo.objects.filter(contrato=c, ativo=True).count(),
+            "agendamentos": Agendamento.objects.filter(contrato=c).count(),
+        })
+    return render(request, "operacao/plataforma.html", {"form": form, "cidades": cidades})
+
+
+@require_POST
+@login_required
+def plataforma_entrar(request, pk):
+    plat.exigir_admin_plataforma(request.user)
+    c = get_object_or_404(Contrato, pk=pk)
+    v = Vinculo.objects.filter(usuario=request.user, contrato=c, ativo=True).first()
+    if v is None:
+        v = executar(request, plat.vincular_me, request.user, c, request.POST.get("perfil", Perfil.OPERADOR),
+                     ip=request.META.get("REMOTE_ADDR"), sucesso=f"Você foi vinculado a {c.nome_curto}.")
+        if not v or v is True:
+            return redirect("operacao:plataforma")
+    request.session[CHAVE_SESSAO] = v.pk
+    return redirect("operacao:painel")

@@ -123,7 +123,7 @@ Contratada: {% if homologacoes_validas.CONTRATADA %}conferido por {{ homologacoe
 <p>Não é gerada automaticamente. Depende de confirmação prévia, comprovação de reserva/mobilização, ausência de fato imputável à contratada e aprovação da Prefeitura. Fica separada das horas prestadas.</p>
 {% for p in indenizacoes %}
 <div class="bloco"><p><strong>{{ p.get_situacao_display }}</strong> — solicitado em {{ p.solicitado_em|date:"d/m/Y H:i" }}. Referência: {{ p.horas_referencia|horas }} → {{ p.valor_referencia|brl }}</p>
-<p>{{ p.memoria_calculo }}</p><p><em>Comprovação:</em> {{ p.comprovacao }}{% if p.anexo %} — <a href="{% url 'operacao:indenizacao_anexo' p.pk %}">anexo ({{ p.anexo_nome_original }})</a>{% endif %}</p>
+<p>{{ p.memoria_calculo }}</p><p><em>Comprovação:</em> {{ p.comprovacao }}{% if p.anexo_nome_original %} — <a href="{% url 'operacao:indenizacao_anexo' p.pk %}">anexo ({{ p.anexo_nome_original }})</a>{% endif %}</p>
 {% if p.decidido_em %}<p>Decisão: {{ p.decidido_por.nome_completo }} em {{ p.decidido_em|date:"d/m/Y H:i" }} — {{ p.parecer }}</p>
 {% elif vinculo.perfil == Perfil.FISCAL %}
 <form method="post" action="{% url 'operacao:indenizacao_decidir' ag.pk p.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_decisao_indenizacao %}<button>Registrar decisão</button></form>{% endif %}
