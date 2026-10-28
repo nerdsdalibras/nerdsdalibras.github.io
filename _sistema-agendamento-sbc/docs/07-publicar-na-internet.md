@@ -1,94 +1,125 @@
-# Publicar o SGI na internet (Render)
+# Publicar o SGI em https://sgi.nerdsdalibras.com (Netlify)
 
-Resultado: um endereço como `https://sgi-nerdsdalibras.onrender.com` (depois,
-opcionalmente, `https://sgi.nerdsdalibras.com`), com login e senha:
+## Como fica
 
-- **Você** (administrador da plataforma) entra, cria as cidades e libera os acessos.
-- **Cada Prefeitura** entra com o próprio login e vê **somente a sua cidade**:
-  agendamentos, correções, cancelamentos e histórico auditável.
+```
+Usuário (Prefeitura / Nerds)
+        │  https://sgi.nerdsdalibras.com   ← endereço que todos usam
+        ▼
+   Netlify (site "sgi", separado do site institucional)
+        │  repassa cada acesso (proxy), sem mudar o endereço no navegador
+        ▼
+   Render: aplicação Python + banco PostgreSQL (o "motor" do sistema)
+```
 
-A preparação foi testada localmente simulando a hospedagem (mesmo comando de
-build, mesmo script de início, mesmas variáveis). A criação da conta e a
-publicação em si precisam ser feitas por você, porque envolvem cadastro e cartão.
+**Por que dois serviços:** a Netlify publica páginas e arquivos prontos, mas
+**não executa Python nem mantém um banco de dados** — e o sistema (login,
+agendamentos, histórico auditável) precisa das duas coisas funcionando 24 horas.
+Por isso a Netlify fica na frente, no domínio da Nerds, e repassa tudo ao
+servidor da aplicação no Render. Para o usuário, o endereço é sempre
+`sgi.nerdsdalibras.com`.
 
-## Passo a passo (cerca de 15 minutos)
+**Por que subdomínio (`sgi.`) e não `nerdsdalibras.com/sistema`:** as páginas do
+site institucional carregam scripts de terceiros (ex.: Meta Pixel). No mesmo
+endereço, esses scripts poderiam ler dados das Prefeituras de quem estivesse
+logado. O subdomínio isola completamente o sistema do site de marketing.
+O site `nerdsdalibras.com` **não é alterado**.
 
-1. **Crie a conta** em https://render.com usando "Sign in with GitHub" com o
-   GitHub que tem acesso ao repositório `nerdsdalibras/nerdsdalibras.github.io`.
-   Cadastre um cartão (os planos usados são pagos; veja "Custos").
-2. No painel do Render: **New → Blueprint**.
-   - Repositório: `nerdsdalibras/nerdsdalibras.github.io`
-   - Branch: `claude/hopeful-sagan-ucav78` (ou `main`, se as mudanças forem mescladas)
-   - **Blueprint Path:** `_sistema-agendamento-sbc/render.yaml`
-3. O Render vai pedir os valores marcados como secretos:
-   | Variável | O que colocar |
+O que foi testado localmente (simulação, dados fictícios): servidor em modo
+produção atrás de um proxy que imita a Netlify, nos dois comportamentos possíveis
+de cabeçalho `Host`; login, troca de cidade, filtros, cadastro, exportação e
+saída funcionaram; cookies ficam presos ao domínio público, com `Secure` e
+`HttpOnly`; nenhum redirecionamento expõe o endereço interno; sem `SGI_DOMINIO`
+o login é bloqueado (CSRF). **A publicação real não foi testada** — exige suas
+contas na Netlify e no Render.
+
+## Parte 1 — Motor do sistema no Render (uma vez)
+
+1. Crie a conta em https://render.com ("Sign in with GitHub") e cadastre um cartão.
+2. **New → Blueprint** → repositório `nerdsdalibras/nerdsdalibras.github.io`,
+   branch `claude/hopeful-sagan-ucav78` (ou `main`, após mesclar),
+   **Blueprint Path:** `_sistema-agendamento-sbc/render.yaml`.
+3. Preencha os valores pedidos:
+   | Variável | Valor |
    |---|---|
-   | `SGI_ADMIN_EMAIL` | o e-mail que **você** usará para entrar (ex.: `nerdsdalibras@gmail.com`) |
+   | `SGI_ADMIN_EMAIL` | o e-mail com que **você** vai entrar (ex.: `nerdsdalibras@gmail.com`) |
    | `SGI_ADMIN_NOME` | seu nome |
-   | `SGI_ADMIN_SENHA` | uma senha **temporária** com 12+ caracteres (será trocada no 1º acesso) |
-   | `EMAIL_HOST_PASSWORD` | deixe vazio por enquanto (senha de app do Gmail, quando tiver) |
-   | `SGI_DOMINIO` | deixe vazio por enquanto |
-4. Clique em **Apply**. O Render cria o banco PostgreSQL e o serviço web, instala
-   tudo e, ao iniciar, aplica as migrações (inclusive as travas de auditoria) e
-   cria o seu usuário administrador. Leva alguns minutos.
-5. Abra o endereço mostrado pelo Render (`https://….onrender.com`), entre com o
-   e-mail e a senha temporária e **defina sua senha definitiva**.
-6. Você cai na tela **Plataforma**. Em **Nova cidade**, cadastre a cidade (ex.:
-   São Bernardo do Campo / SP / Pregão Eletrônico nº 246/2026 / prefixo `SBC`).
-7. Você é levado à tela **Usuários** daquela cidade: crie o acesso do
-   **Fiscal/Gestor da Prefeitura**. A senha temporária aparece **uma única vez**:
-   envie login e senha por canais diferentes (ex.: e-mail com o login, telefone
-   com a senha). No primeiro acesso a pessoa é obrigada a trocar a senha.
-8. Repita para cada cidade (ex.: Franca). Use **Trocar cidade** / **Plataforma**
-   no topo para alternar entre elas.
+   | `SGI_ADMIN_SENHA` | senha **temporária**, 12+ caracteres (trocada no 1º acesso) |
+   | `EMAIL_HOST_PASSWORD` | vazio por enquanto (senha de app do Gmail, depois) |
+   (`SGI_DOMINIO` já vem como `sgi.nerdsdalibras.com`.)
+4. **Apply** e aguarde. Anote o endereço do serviço, algo como
+   `https://sgi-nerdsdalibras.onrender.com` — ele será usado na Netlify.
+
+## Parte 2 — Site na Netlify com o domínio sgi.nerdsdalibras.com
+
+1. Na Netlify (mesma conta do site institucional): **Add new site → Import an
+   existing project → GitHub** → `nerdsdalibras/nerdsdalibras.github.io`.
+2. Configuração do site:
+   - **Branch to deploy:** `claude/hopeful-sagan-ucav78` (ou `main`, após mesclar)
+   - **Base directory:** `_sistema-agendamento-sbc/netlify`
+   - Build command e publish directory vêm do `netlify.toml` (deixe como sugerido).
+3. **Environment variables** do site: `SGI_BACKEND_URL` = o endereço anotado na
+   Parte 1 (ex.: `https://sgi-nerdsdalibras.onrender.com`). Faça o deploy.
+   O build falha de propósito se essa variável faltar ou não for `https://`.
+4. **Domain management → Add a domain →** `sgi.nerdsdalibras.com`.
+   - Se o DNS de `nerdsdalibras.com` já está na Netlify, ela cria o registro sozinha.
+   - Se o DNS está em outro provedor (ex.: Registro.br), crie lá um **CNAME**
+     `sgi` → `<nome-do-site>.netlify.app`.
+   - A Netlify emite o certificado HTTPS automaticamente (pode levar alguns minutos).
+5. Acesse **https://sgi.nerdsdalibras.com**, entre com o e-mail e a senha temporária
+   e defina a sua senha definitiva.
+
+## Parte 3 — Liberar as cidades
+
+1. Na tela **Plataforma**, em **Nova cidade**, cadastre a cidade (ex.: São
+   Bernardo do Campo / SP / Pregão Eletrônico nº 246/2026 / prefixo `SBC`).
+2. Você vai direto para **Usuários** dessa cidade: crie o acesso do
+   **Fiscal/Gestor da Prefeitura**. A senha temporária aparece **uma única vez**;
+   envie login e senha por canais diferentes. No 1º acesso a pessoa troca a senha.
+3. Repita para cada cidade (ex.: Franca). Use **Trocar cidade** e **Plataforma**
+   no topo para alternar.
 
 ## O que cada um pode fazer
 
 | Quem | Pode | Não pode |
 |---|---|---|
 | Você (administrador da plataforma) | Criar cidades; entrar em qualquer cidade como contratada; criar acessos da contratada, **solicitantes** e o **primeiro Fiscal/Gestor** de cada cidade | Aprovar parâmetros, medições, indenizações ou relatórios em nome da Prefeitura; trocar/desativar fiscais já existentes |
-| Fiscal/Gestor da Prefeitura | Tudo da sua cidade: solicitar, corrigir horário, cancelar, homologar, aprovar parâmetros, atestar relatório, criar outros acessos da Prefeitura | Ver qualquer dado de outra cidade |
+| Fiscal/Gestor da Prefeitura | Tudo da sua cidade: solicitar, corrigir horário, cancelar, homologar, aprovar parâmetros, atestar relatório, liberar outros acessos da Prefeitura | Ver qualquer dado de outra cidade |
 | Solicitante da Prefeitura | Criar e acompanhar os próprios pedidos, corrigir e cancelar | Ver pedidos de outros solicitantes ou de outra cidade |
 
 Toda ação fica no **histórico auditável** (quem, quando, justificativa, valores
 antes/depois), separado por cidade e protegido contra alteração.
 
-## Domínio próprio (opcional): sgi.nerdsdalibras.com
+## Custos (conferir as tabelas vigentes)
 
-1. No Render, no serviço `sgi-nerdsdalibras`: **Settings → Custom Domains → Add**
-   `sgi.nerdsdalibras.com`.
-2. No provedor de DNS de `nerdsdalibras.com`, crie o registro **CNAME** `sgi`
-   apontando para o endereço `….onrender.com` indicado pelo Render.
-3. No Render, em **Environment**, defina `SGI_DOMINIO=sgi.nerdsdalibras.com` e
-   salve (o serviço reinicia). O certificado HTTPS é emitido pelo Render.
-
-O site institucional `nerdsdalibras.com` não é alterado.
-
-## Custos (conferir a tabela vigente no site do Render)
-
-O `render.yaml` usa planos **pagos de entrada** — serviço web "Starter" e banco
-"Basic 256 MB" —, da ordem de poucas dezenas de dólares por mês no total.
-Planos gratuitos **não** são recomendados: o serviço gratuito "dorme" (atrasa
-alertas) e o banco gratuito tem prazo de validade, com risco de perda de dados.
+- **Netlify:** o site `sgi` só repassa acessos; tende a caber no plano que você
+  já usa, mas o tráfego conta para os limites da conta.
+- **Render:** planos pagos de entrada (serviço web "Starter" + banco
+  "Basic 256 MB"), da ordem de poucas dezenas de dólares por mês. Planos
+  gratuitos não são recomendados: o serviço "dorme" (o primeiro acesso demora e
+  pode estourar o tempo do proxy da Netlify) e o banco gratuito expira.
 
 ## Limites e cuidados
 
-- **Servidores fora do Brasil:** o Render não tem região no Brasil (o arquivo
-  usa `virginia`, EUA). Há transferência internacional de dados pessoais;
-  informe a Prefeitura (pendência P19).
-- **Banco gerenciado:** a aplicação conecta como dona das tabelas, então a
-  separação de papéis descrita no manual (seção 5) não se aplica. As travas
-  (triggers) e a cadeia de hash continuam ativas; quem tem acesso ao painel do
-  Render pode, em tese, alterar o banco — proteja a conta do Render com
-  verificação em duas etapas.
-- **Backups:** o plano pago do banco tem backups do próprio Render. A cópia
-  cifrada no Google Drive (`scripts/backup.sh` com `BACKUP_DRIVE=sim`) precisa
-  rodar em algum agendador (ex.: um "Cron Job" do Render ou um computador da
-  equipe com acesso ao banco).
-- **E-mail:** os alertas ficam na caixa interna do sistema até você configurar
-  a senha de app do Gmail e definir `EMAIL_ENVIO_HABILITADO=true`.
-- **Repositório público:** o código está no repositório do site, que é público.
-  Não há senhas no código, mas recomenda-se mover o sistema para um repositório
-  privado antes de receber dados reais.
-- **Dados reais:** só cadastre dados reais depois que a Prefeitura estiver de
-  acordo com as pendências do documento 02.
+- **Limites do proxy da Netlify:** requisições repassadas têm tempo máximo e
+  tamanho de envio limitados pela Netlify. As telas do sistema são rápidas, mas
+  **teste, após publicar, o envio de um anexo de alguns MB** na indenização; se
+  falhar, reduza `ANEXO_TAMANHO_MAXIMO_MB` no Render.
+- **IP nos registros:** atrás de dois proxies, o IP gravado na auditoria é o do
+  proxy, não o do usuário. Usuário, data/hora e ação continuam corretos.
+- **Servidor nos EUA:** o Render não tem região no Brasil (o arquivo usa
+  `virginia`). Há transferência internacional de dados pessoais; informe a
+  Prefeitura (pendência P19).
+- **Banco gerenciado:** a aplicação conecta como dona das tabelas; as travas e a
+  cadeia de hash continuam ativas, mas quem acessa o painel do Render pode, em
+  tese, alterar o banco. Ative verificação em duas etapas no Render, na Netlify
+  e no GitHub.
+- **Backups:** o banco pago do Render tem backups próprios. A cópia cifrada no
+  Google Drive (`scripts/backup.sh` com `BACKUP_DRIVE=sim`) precisa de um
+  agendador (ex.: "Cron Job" do Render).
+- **E-mail:** alertas ficam na caixa interna até configurar a senha de app do
+  Gmail e `EMAIL_ENVIO_HABILITADO=true` no Render.
+- **Repositório público:** não há senhas no código, mas recomenda-se mover o
+  sistema para um repositório privado antes de receber dados reais.
+- **Dados reais:** só depois que a Prefeitura estiver de acordo com as
+  pendências do documento 02.

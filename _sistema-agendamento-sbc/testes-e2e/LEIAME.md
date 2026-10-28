@@ -27,6 +27,12 @@ GDRIVE_TOKEN_URL=http://127.0.0.1:8790/token GDRIVE_API_URL=http://127.0.0.1:879
 BACKUP_DRIVE=sim BACKUP_GPG_DESTINATARIO=backup@exemplo.invalid PYTHON=.venv/bin/python scripts/backup.sh /tmp/bk
 ```
 
+Proxy da Netlify (simulado localmente; testa os dois modos de cabeçalho Host):
+```bash
+python3 -I testes-e2e/proxy_netlify_simulado.py 8800 127.0.0.1:8781 preservar   # ou: destino sgi-nerdsdalibras.onrender.com
+# navegador em http://sgi.localhost:8800 ; servidor com SGI_DOMINIO=sgi.localhost
+```
+
 Backup/restauração e reinício: ver os comandos descritos na tabela do relatório
 (`scripts/backup.sh`, `scripts/restaurar.sh`, `pg_ctlcluster 16 main restart`).
 Para o teste de GPG, use um `GNUPGHOME` com caminho curto (limite de socket do gpg-agent)

@@ -1,0 +1,18 @@
+# Site Netlify do SGI: https://sgi.nerdsdalibras.com
+#
+# A Netlify é a "porta de entrada" no domínio da Nerds da Libras: todas as
+# requisições são repassadas (proxy, sem mudar o endereço no navegador) ao
+# servidor da aplicação, porque a Netlify não executa Python nem PostgreSQL.
+#
+# Na Netlify: Base directory = _sistema-agendamento-sbc/netlify
+# Variável obrigatória do site: SGI_BACKEND_URL (ex.: https://sgi-nerdsdalibras.onrender.com)
+# Este site é SEPARADO do site institucional (nerdsdalibras.com), que não é alterado.
+
+[build]
+  command = "sh gerar_redirects.sh"
+  publish = "publico"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

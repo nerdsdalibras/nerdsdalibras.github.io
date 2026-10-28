@@ -39,8 +39,8 @@ services:
         sync: false
       - key: SGI_ADMIN_SENHA     # senha inicial (mín. 12 caracteres); troca obrigatória no 1º acesso
         sync: false
-      - key: SGI_DOMINIO         # opcional: sgi.nerdsdalibras.com, depois de configurar o DNS
-        sync: false
+      - key: SGI_DOMINIO         # endereço público (site Netlify que repassa ao Render)
+        value: sgi.nerdsdalibras.com
       - key: EMAIL_ENVIO_HABILITADO
         value: "false"           # mude para true só após a senha de app e a autorização
       - key: EMAIL_HOST_PASSWORD # senha de app do Gmail nerdsdalibras@gmail.com
