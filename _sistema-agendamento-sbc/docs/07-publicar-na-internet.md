@@ -50,6 +50,31 @@ contas na Netlify e no Render.
 4. **Apply** e aguarde. Anote o endereço do serviço, algo como
    `https://sgi-nerdsdalibras.onrender.com` — ele será usado na Netlify.
 
+### Alternativa manual (se o campo "Blueprint Path" não aparecer)
+
+1. **New → Postgres:** nome `sgi-banco`, Database `sgi`, User `sgi`, região
+   **Virginia (US East)**, plano **Basic-256mb**. Depois de criado, copie a
+   **Internal Database URL**.
+2. **New → Web Service** → repositório `nerdsdalibras/nerdsdalibras.github.io`,
+   branch `claude/hopeful-sagan-ucav78`, mesma região, plano **Starter**:
+   - **Root Directory:** `_sistema-agendamento-sbc`
+   - **Runtime/Language:** Python 3
+   - **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
+   - **Start Command:** `bash scripts/iniciar_servico.sh`
+3. Em **Environment**, crie as variáveis:
+   | Variável | Valor |
+   |---|---|
+   | `DATABASE_URL` | a Internal Database URL copiada no passo 1 |
+   | `DJANGO_SECRET_KEY` | use o botão **Generate** do Render |
+   | `DJANGO_DEBUG` | `false` |
+   | `HTTPS_ATIVO` | `true` |
+   | `ATRAS_DE_PROXY` | `true` |
+   | `SGI_DOMINIO` | `sgi.nerdsdalibras.com` |
+   | `PYTHON_VERSION` | `3.12.8` |
+   | `EMAIL_ENVIO_HABILITADO` | `false` |
+   | `SGI_ADMIN_EMAIL`, `SGI_ADMIN_NOME`, `SGI_ADMIN_SENHA` | como na tabela acima |
+4. **Create Web Service** e anote o endereço `https://….onrender.com`.
+
 ## Parte 2 — Site na Netlify com o domínio sgi.nerdsdalibras.com
 
 1. Na Netlify (mesma conta do site institucional): **Add new site → Import an
