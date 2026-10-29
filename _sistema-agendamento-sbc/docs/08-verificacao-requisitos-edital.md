@@ -10,7 +10,7 @@ dados fictícios e relógio simulado em America/Sao_Paulo.
 **Evidências:**
 - `operacao/tests/test_jornada_edital.py` — 10 testes, um por grupo do edital
   (`test_1_...` a `test_9_...` e `test_decisoes_...`);
-- suíte completa: **139 testes passando** em PostgreSQL 16;
+- suíte completa: **140 testes passando** em PostgreSQL 16;
 - navegador real (Chromium): 54 telas, 4 perfis, em celular (375 px) e
   computador (1280 px), sem rolagem lateral, todo campo com rótulo,
   identificadores únicos, idioma pt-BR.
@@ -133,6 +133,17 @@ provisória; a definição é da Prefeitura (`02-pendencias-esclarecimento.md`).
 | Histórico protegido contra os usuários; limites do acesso à infraestrutura explicados | OK | `test_2`; doc 03, seção 5 |
 | Interface em português, responsiva e acessível | OK | `test_decisoes` e navegador (54 telas em 375 px e 1280 px; defeito V2 corrigido). Não substitui uma auditoria completa de acessibilidade (WCAG) |
 | Somente dados fictícios | OK | Todos os testes e a carga de demonstração |
+
+## Ajuste pedido pela Nerds da Libras (29/10/2026)
+
+Não é exigência do edital; foi pedido pela contratada para a operação.
+
+| Item | Situação | Evidência |
+|---|---|---|
+| Pedido, alteração de horário e cancelamento feitos pela Prefeitura avisam os operadores da contratada (caixa de avisos e e-mail) | OK (e-mail real pendente) | `test_4b_avisos_para_a_contratada` |
+| Painel do Operador: "Pedidos aguardando sua confirmação" (escalar + confirmar = aceitar o agendamento) e "Cancelados pela Prefeitura (últimos 7 dias)" | OK | `test_4b`; navegador (celular) |
+| A Prefeitura vê na tela que a contratada foi avisada | OK | `test_4b` |
+| Operador da contratada consulta o histórico geral da cidade (somente leitura) | OK | `test_4b` |
 
 ## O que ainda não foi testado
 

@@ -1,4 +1,8 @@
-"""Alertas aos fiscais/gestores da Prefeitura.
+"""Alertas aos fiscais/gestores da Prefeitura e avisos à contratada.
+
+Prefeitura (exigência do edital): confirmação, alteração de horário e cancelamento.
+Contratada (operadores da cidade): novas solicitações, alterações de horário e
+cancelamentos feitos pela Prefeitura, para que a escala seja providenciada.
 
 Padrão outbox: a notificação é gravada na MESMA transação da operação que a
 originou e enviada logo após o commit. Se o envio falhar, o comando
@@ -23,7 +27,7 @@ from django.core.mail import EmailMessage, get_connection
 from django.db import transaction
 from django.utils import timezone
 
-from ..models import AvisoInterno, Notificacao, Perfil, StatusNotificacao, TentativaEnvio, Vinculo
+from ..models import AvisoInterno, Notificacao, Parte, Perfil, StatusNotificacao, TentativaEnvio, Vinculo
 
 log = logging.getLogger(__name__)
 
@@ -63,14 +67,23 @@ def destinatarios_prefeitura(contrato):
     )
 
 
-def enfileirar(contrato, tipo, chave, assunto, corpo, agendamento=None):
+def destinatarios_contratada(contrato):
+    return list(
+        Vinculo.objects.filter(contrato=contrato, perfil=Perfil.OPERADOR, ativo=True, usuario__is_active=True)
+        .select_related("usuario")
+        .order_by("usuario__email")
+    )
+
+
+def enfileirar(contrato, tipo, chave, assunto, corpo, agendamento=None, publico=Parte.PREFEITURA):
     """Cria (uma única vez por chave) a notificação e os avisos internos."""
-    vinculos = destinatarios_prefeitura(contrato)
+    vinculos = destinatarios_contratada(contrato) if publico == Parte.CONTRATADA else destinatarios_prefeitura(contrato)
     notif, criada = Notificacao.objects.get_or_create(
         chave_idempotencia=chave,
         defaults=dict(
             contrato=contrato,
             tipo=tipo,
+            publico=publico,
             agendamento=agendamento,
             assunto=assunto[:300],
             corpo=corpo,
@@ -107,7 +120,8 @@ def enviar(notificacao_id, forcar=False):
             return notif
         agora = timezone.now()
         if not notif.destinatarios:
-            _resultado(notif, StatusNotificacao.SEM_DESTINATARIO, "Nenhum fiscal/gestor ativo cadastrado.")
+            quem = "operador da contratada" if notif.publico == Parte.CONTRATADA else "fiscal/gestor"
+            _resultado(notif, StatusNotificacao.SEM_DESTINATARIO, f"Nenhum {quem} ativo cadastrado.")
             return notif
         if not integracao_configurada():
             _resultado(

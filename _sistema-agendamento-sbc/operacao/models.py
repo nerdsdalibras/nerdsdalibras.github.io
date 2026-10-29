@@ -445,6 +445,7 @@ class TipoNotificacao(models.TextChoices):
     CANCELAMENTO_ESCALA = "CANCELAMENTO_ESCALA", "Cancelamento de escala"
     CANCELAMENTO_AGENDAMENTO = "CANCELAMENTO_AGENDAMENTO", "Cancelamento de agendamento"
     ACESSO_PREFEITURA = "ACESSO_PREFEITURA", "Novo acesso com perfil da Prefeitura"
+    NOVA_SOLICITACAO = "NOVA_SOLICITACAO", "Nova solicitação da Prefeitura"
 
 
 class StatusNotificacao(models.TextChoices):
@@ -461,6 +462,9 @@ class Notificacao(SemExclusao):
     tipo = models.CharField(max_length=30, choices=TipoNotificacao.choices)
     agendamento = models.ForeignKey(Agendamento, on_delete=models.PROTECT, null=True, blank=True, related_name="+")
     chave_idempotencia = models.CharField(max_length=200, unique=True)
+    # Prefeitura: alertas do edital aos fiscais/gestores. Contratada: avisos aos operadores
+    # sobre pedidos, alterações e cancelamentos feitos pela Prefeitura.
+    publico = models.CharField("destinada a", max_length=10, choices=Parte.choices, default=Parte.PREFEITURA)
     assunto = models.CharField(max_length=300)
     corpo = models.TextField()
     destinatarios = models.JSONField(default=list)

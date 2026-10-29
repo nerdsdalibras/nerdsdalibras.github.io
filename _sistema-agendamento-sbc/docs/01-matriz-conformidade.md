@@ -62,6 +62,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Requisito | Impl. | Testado (evidência) | Pend. integração | Pend. esclarecimento |
 |---|---|---|---|---|
 | Alerta imediato: confirmação, alteração de horário, cancelamento de escala (e de agendamento) | Sim (envio após commit + caixa interna) | A `test_confirmacao_exige_escala_completa_e_alerta`, `test_alteracao_de_horario_registra_antes_e_depois_e_alerta`, `test_cancelamento_de_escala_alerta_e_reabre_confirmacao`; N `test_envio_imediato_aos_fiscais_e_sem_duplicidade` (backend de teste em memória) | **Sim — conta definida (`nerdsdalibras@gmail.com`, Gmail SMTP); faltam a senha de app e a autorização de envio real. Nenhum e-mail real foi enviado.** Protocolo SMTP testado contra servidor local | Lista oficial de fiscais/gestores destinatários |
+| Aviso à contratada (operadores da cidade) de novas solicitações, alterações de horário e cancelamentos feitos pela Prefeitura — pedido da Nerds da Libras, não exigência do edital | Sim (caixa de avisos + e-mail; painel "Pedidos aguardando sua confirmação" e "Cancelados pela Prefeitura") | `test_jornada_edital.test_4b_avisos_para_a_contratada` | **Sim — e-mail real pendente** (mesma configuração dos alertas) | — |
 | Sem credencial → "integração pendente", sem simular sucesso | Sim | N `test_sem_configuracao_fica_pendente_de_integracao_sem_simular_sucesso` | — | — |
 | Registro de envio, falha, reenvio; sem duplicidade | Sim | N `test_falha_registra_e_reenvia`, `test_falha_definitiva`, `test_envio_imediato_aos_fiscais_e_sem_duplicidade` | Agendador (cron/systemd) do comando `processar_notificacoes` no servidor | — |
 
@@ -127,7 +128,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Migrações e estrutura do banco | `operacao/migrations/0001–0003`, `contas/migrations/0001` |
 | Aplicação funcional com instruções | `README.md`; executada localmente com Gunicorn e verificada no navegador |
 | Configuração segura por variáveis de ambiente | `config/settings.py`, `.env.example` (sem segredos) |
-| Testes das regras críticas | 139 testes passando (inclui a auditoria funcional, `docs/06`, e a jornada completa do edital, `docs/08`) |
+| Testes das regras críticas | 140 testes passando (inclui a auditoria funcional, `docs/06`, e a jornada completa do edital, `docs/08`) |
 | Manual de administração, backup e recuperação | `docs/03-manual-administracao.md`; backup e restauração executados com sucesso em ambiente local |
 | Matriz | Este documento |
 | Dependências e custos | `docs/04-dependencias-e-custos.md` |

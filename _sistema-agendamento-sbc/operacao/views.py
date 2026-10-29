@@ -21,7 +21,7 @@ from . import exportacoes, forms
 from .middleware import CHAVE_SESSAO
 from .models import (
     Agendamento, AvisoInterno, Chamado, Contrato, Escala, EventoAuditoria, Feriado, Interprete, Medicao, Notificacao,
-    ParametroMedicao, PedidoIndenizacao, Perfil, PoliticaRetencao, RelatorioMensal, SituacaoIndenizacao,
+    Parte, ParametroMedicao, PedidoIndenizacao, Perfil, PoliticaRetencao, RelatorioMensal, SituacaoIndenizacao,
     SituacaoMedicao, StatusAgendamento, StatusChamado, StatusNotificacao, Vinculo,
 )
 from .servicos import plataforma as plat
@@ -77,7 +77,7 @@ def informar_alerta(request, ag, resultado):
     """Mostra a situação REAL do alerta gerado pela operação (nunca presume envio)."""
     if not resultado:
         return
-    n = Notificacao.objects.filter(agendamento=ag).order_by("-pk").first()
+    n = Notificacao.objects.filter(agendamento=ag, publico=Parte.PREFEITURA).order_by("-pk").first()
     if n is None:
         return
     if n.status == StatusNotificacao.PENDENTE:
@@ -90,6 +90,19 @@ def informar_alerta(request, ag, resultado):
         messages.warning(request, f"{texto} Detalhe técnico: {n.ultimo_erro}")
     else:
         messages.warning(request, texto)
+
+
+def informar_aviso_contratada(request, ag, resultado):
+    """Quando a Prefeitura pede, altera ou cancela: confirma na tela que a contratada foi avisada."""
+    if not resultado or ator(request).parte != Parte.PREFEITURA:
+        return
+    n = Notificacao.objects.filter(agendamento=ag, publico=Parte.CONTRATADA).order_by("-pk").first()
+    if n is None:
+        return
+    if n.status == StatusNotificacao.PENDENTE:
+        n = notificacoes.enviar(n.pk) or n
+    email = " e por e-mail" if n.status == StatusNotificacao.ENVIADA else ""
+    messages.info(request, f"A contratada ({ag.contrato.contratada}) foi avisada na caixa de avisos do sistema{email}.")
 
 
 def ve_detalhe_tecnico(request):
@@ -140,6 +153,11 @@ def painel(request):
         "relatorios_pendentes": RelatorioMensal.objects.filter(contrato=request.contrato, status="SUBMETIDO").count(),
         "notificacoes_problema": Notificacao.objects.filter(contrato=request.contrato).exclude(status=StatusNotificacao.ENVIADA).count(),
         "integracao_email": notificacoes.integracao_configurada(),
+        "pedidos_pendentes": qs.filter(status=StatusAgendamento.SOLICITADO).order_by("inicio_previsto")[:30]
+        if a.perfil == Perfil.OPERADOR else None,
+        "cancelados_prefeitura": qs.filter(status=StatusAgendamento.CANCELADO, cancelamento_parte=Parte.PREFEITURA,
+                                           cancelado_em__gte=agora - timedelta(days=7)).order_by("-cancelado_em")[:30]
+        if a.perfil == Perfil.OPERADOR else None,
         "pendencias_email": notificacoes.diagnostico_email() if ve_detalhe_tecnico(request) else [],
     }
     return render(request, "operacao/painel.html", ctx)
@@ -203,6 +221,7 @@ def novo_agendamento(request):
     form = forms.AgendamentoForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         ag = executar(request, agendamentos.criar, ator(request), **form.cleaned_data, sucesso="Solicitação registrada.")
+        informar_aviso_contratada(request, ag, ag)
         if ag:
             if ag.fora_do_prazo:
                 messages.warning(request, f"Pedido FORA do prazo de antecedência ({ag.antecedencia_dias_uteis} de {ag.antecedencia_minima_dias_uteis} dia(s) útil(eis)). Registro preservado e sinalizado.")
@@ -335,6 +354,7 @@ def alterar_horario(request, pk):
         r = executar(request, agendamentos.alterar_horario, ator(request), ag, d["inicio_previsto"], d["duracao_prevista_min"],
                      d["justificativa"], d["qtd_profissionais"], sucesso="Horário alterado.")
         informar_alerta(request, ag, r)
+        informar_aviso_contratada(request, ag, r)
     else:
         messages.error(request, "Dados inválidos: " + "; ".join(f"{k}: {' '.join(v)}" for k, v in f.errors.items()))
     return redirect("operacao:agendamento", ag.pk)
@@ -348,6 +368,7 @@ def cancelar(request, pk):
     if f.is_valid():
         r = executar(request, agendamentos.cancelar, ator(request), ag, f.cleaned_data["justificativa"], sucesso="Agendamento cancelado (registro preservado).")
         informar_alerta(request, ag, r)
+        informar_aviso_contratada(request, ag, r)
     else:
         messages.error(request, "Justificativa obrigatória.")
     return redirect("operacao:agendamento", ag.pk)
@@ -750,7 +771,7 @@ def vinculo_alterar(request, pk):
     return redirect("operacao:usuarios")
 
 
-@perfis(Perfil.FISCAL, Perfil.ADMIN_TECNICO)
+@perfis(Perfil.FISCAL, Perfil.ADMIN_TECNICO, Perfil.OPERADOR)  # somente leitura
 def auditoria_view(request):
     qs = EventoAuditoria.objects.filter(contrato=request.contrato).order_by("-id")
     ent = request.GET.get("entidade")

@@ -363,7 +363,7 @@ class Jornada(TestCase):
                                                                   "qtd_profissionais": 2, "justificativa": "Mudança de sala"})
         escala = ag.escalas.get(interprete=self.i2, ativa=True)
         self.enviar(self.op, "escala_cancelar", ag.pk, escala.pk, dados={"motivo": "Intérprete com atestado (fictício)", "substituto": self.i3.pk})
-        tipos = set(Notificacao.objects.filter(agendamento=ag).values_list("tipo", flat=True))
+        tipos = set(Notificacao.objects.filter(agendamento=ag, publico="PREFEITURA").values_list("tipo", flat=True))
         self.assertEqual(tipos, {"CONFIRMACAO", "ALTERACAO_HORARIO", "CANCELAMENTO_ESCALA"})
 
         # Com envio autorizado: sai na hora, e o reprocessamento não duplica
@@ -371,7 +371,8 @@ class Jornada(TestCase):
             ag2 = self.confirmado([self.i1, self.i2], inicio="2026-11-18T09:00")
             n2 = Notificacao.objects.get(agendamento=ag2, tipo="CONFIRMACAO")
             self.assertEqual(n2.status, "ENVIADA")
-            self.assertEqual([m.to for m in mail.outbox], [["fiscal@exemplo.invalid"]])
+            # 1º: aviso de pedido novo à Nerds; 2º: confirmação ao Fiscal
+            self.assertEqual([m.to for m in mail.outbox], [["admin.nerds@exemplo.invalid"], ["fiscal@exemplo.invalid"]])
             # Envia o que ficou pendente (inclui os avisos de novo acesso da Prefeitura) e roda de novo
             call_command("processar_notificacoes", stdout=io.StringIO())
             enviados = len(mail.outbox)
@@ -399,7 +400,60 @@ class Jornada(TestCase):
         n3.refresh_from_db()
         self.assertEqual(n3.status, "ENVIADA")
         self.assertEqual(list(TentativaEnvio.objects.filter(notificacao=n3).order_by("pk").values_list("resultado", flat=True)), ["FALHA", "ENVIADA"])
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual([m.extra_headers["X-SGI-Chave"] for m in mail.outbox].count(n3.chave_idempotencia), 1)
+        # o aviso de pedido novo à Nerds, que também falhou, foi reenviado uma única vez
+        aviso = Notificacao.objects.get(agendamento=ag3, tipo="NOVA_SOLICITACAO")
+        self.assertEqual(aviso.status, "ENVIADA")
+        self.assertEqual(len(mail.outbox), 2)
+
+    def test_4b_avisos_para_a_contratada(self):
+        """Pedido, alteração e cancelamento feitos pela Prefeitura chegam à Nerds (caixa de avisos e e-mail)."""
+        u_sol = U.objects.get(email="solicitante.a@exemplo.invalid")
+        with override_settings(EMAIL_ENVIO_HABILITADO=True, EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend"):
+            # Pedido da Prefeitura: a Nerds recebe na hora; a Prefeitura vê que a contratada foi avisada
+            r = self.sol.post(reverse("operacao:agendamento_novo"), self.dados_ag(titulo="Palestra (fictícia)"), follow=True)
+            self.assertIn("A contratada (Nerds da Libras) foi avisada na caixa de avisos do sistema e por e-mail", mensagens(r))
+            ag = Agendamento.objects.get(titulo="Palestra (fictícia)")
+            nova = Notificacao.objects.get(agendamento=ag, tipo="NOVA_SOLICITACAO")
+            self.assertEqual((nova.publico, nova.destinatarios, nova.status), ("CONTRATADA", ["admin.nerds@exemplo.invalid"], "ENVIADA"))
+            self.assertEqual([m.to for m in mail.outbox], [["admin.nerds@exemplo.invalid"]])
+            self.assertIn("Solicitante Fictícia A", mail.outbox[0].body)
+            self.assertIn(ag.codigo, mail.outbox[0].subject)
+            self.assertTrue(AvisoInterno.objects.filter(notificacao=nova, usuario=self.admin).exists())
+            self.assertFalse(AvisoInterno.objects.filter(notificacao=nova, usuario=self.u_fiscal).exists())
+            # Aparece no painel da Nerds como pedido aguardando confirmação e na caixa de avisos
+            painel = self.op.get(reverse("operacao:painel"))
+            self.assertEqual([a.codigo for a in painel.context["pedidos_pendentes"]], [ag.codigo])
+            self.assertIn("Nova solicitação de intérprete", self.op.get(reverse("operacao:avisos")).content.decode())
+            self.assertIsNone(self.sol.get(reverse("operacao:painel")).context["pedidos_pendentes"])
+            # A Nerds "aceita": escala e confirma; o Fiscal da Prefeitura é avisado da confirmação
+            self.escalar(ag, self.i1)
+            self.escalar(ag, self.i2)
+            self.enviar(self.op, "agendamento_confirmar", ag.pk)
+            self.assertEqual(mail.outbox[-1].to, ["fiscal@exemplo.invalid"])
+            self.assertEqual(self.op.get(reverse("operacao:painel")).context["pedidos_pendentes"].count(), 0)
+            # Alteração de horário e cancelamento pela Prefeitura: a Nerds e o Fiscal são avisados
+            self.em(2026, 11, 5, 10, 0)
+            self.enviar(self.sol, "agendamento_alterar", ag.pk, dados={"inicio_previsto": "2026-11-16T14:00", "duracao_prevista_min": 120,
+                                                                       "qtd_profissionais": 2, "justificativa": "Mudança de turno"})
+            self.em(2026, 11, 10, 10, 0)
+            r = self.enviar(self.sol, "agendamento_cancelar", ag.pk, dados={"justificativa": "Palestra adiada (fictício)"})
+            self.assertIn("A contratada (Nerds da Libras) foi avisada", mensagens(r))
+            para_nerds = Notificacao.objects.filter(agendamento=ag, publico="CONTRATADA").order_by("pk")
+            self.assertEqual(list(para_nerds.values_list("tipo", flat=True)), ["NOVA_SOLICITACAO", "ALTERACAO_HORARIO", "CANCELAMENTO_AGENDAMENTO"])
+            self.assertTrue(all(n.status == "ENVIADA" for n in para_nerds))
+            self.assertEqual(Notificacao.objects.filter(agendamento=ag, publico="PREFEITURA").count(), 3)  # confirmação, alteração, cancelamento
+            cancelados = self.op.get(reverse("operacao:painel")).context["cancelados_prefeitura"]
+            self.assertEqual([a.codigo for a in cancelados], [ag.codigo])
+            # Quando a própria Nerds cria ou cancela, não avisa a si mesma
+            antes = Notificacao.objects.filter(publico="CONTRATADA").count()
+            proprio = self.criar_ag(self.op, inicio="2026-11-20T09:00", titulo="Pedido registrado pela Nerds")
+            self.enviar(self.op, "agendamento_cancelar", proprio.pk, dados={"justificativa": "Registrado por engano"})
+            self.assertEqual(Notificacao.objects.filter(publico="CONTRATADA").count(), antes)
+        # O operador da Nerds vê o histórico geral da cidade (somente leitura) e os pedidos de quem os fez
+        r = self.op.get(reverse("operacao:auditoria"))
+        self.assertEqual(r.status_code, 200)
+        self.assertTrue(any(e.usuario_id == u_sol.pk and e.acao == "CRIACAO" for e in r.context["eventos"]))
 
     # ------------------------------------------------------------ 5. Medição das horas
     def test_5_medicao(self):

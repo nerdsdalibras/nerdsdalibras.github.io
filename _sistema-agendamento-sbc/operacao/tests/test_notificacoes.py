@@ -13,6 +13,11 @@ from .base import Cenario
 LOCMEM = dict(EMAIL_ENVIO_HABILITADO=True, EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 
 
+def enviados(n):
+    """Mensagens desta notificação (o pedido da Prefeitura também gera aviso à contratada)."""
+    return [m for m in mail.outbox if m.extra_headers.get("X-SGI-Chave") == n.chave_idempotencia]
+
+
 class Notificacoes(Cenario):
     def confirmar_novo(self):
         ag = self.novo_agendamento()
@@ -36,12 +41,12 @@ class Notificacoes(Cenario):
         n = self.confirmar_novo()
         n.refresh_from_db()
         self.assertEqual(n.status, StatusNotificacao.ENVIADA)
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [self.fiscal.usuario.email])
-        self.assertNotIn("90000", mail.outbox[0].body)  # contatos de intérpretes não vão por e-mail
+        self.assertEqual(len(enviados(n)), 1)
+        self.assertEqual(enviados(n)[0].to, [self.fiscal.usuario.email])
+        self.assertNotIn("90000", enviados(n)[0].body)  # contatos de intérpretes não vão por e-mail
         notificacoes.enviar(n.pk)
         notificacoes.processar_pendentes()
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(enviados(n)), 1)
         mesma = notificacoes.enfileirar(self.contrato, "CONFIRMACAO", n.chave_idempotencia, "x", "y")
         self.assertEqual(mesma.pk, n.pk)
         self.assertEqual(Notificacao.objects.filter(chave_idempotencia=n.chave_idempotencia).count(), 1)
@@ -57,7 +62,7 @@ class Notificacoes(Cenario):
         notificacoes.processar_pendentes()
         n.refresh_from_db()
         self.assertEqual(n.status, StatusNotificacao.ENVIADA)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(enviados(n)), 1)
         self.assertEqual(TentativaEnvio.objects.filter(notificacao=n).count(), 2)
 
     @override_settings(**LOCMEM, NOTIFICACAO_MAX_TENTATIVAS=1)

@@ -168,7 +168,7 @@ class A04Cancelamento(Base):
         self.assertEqual(ag.status, StatusAgendamento.CANCELADO)
         self.assertEqual(auditoria.serializar(ag, list(original)), original)
         self.assertEqual(ag.escalas.filter(ativa=False).count(), 2)
-        n = Notificacao.objects.get(agendamento=ag, tipo="CANCELAMENTO_AGENDAMENTO")
+        n = Notificacao.objects.get(agendamento=ag, tipo="CANCELAMENTO_AGENDAMENTO", publico="PREFEITURA")
         self.assertIn("Unidade fechada", n.corpo)
         self.assertIn("Escalas canceladas", n.corpo)
         self.assertTrue(EventoAuditoria.objects.filter(entidade_id=str(ag.pk), acao="CRIACAO").exists())
@@ -522,17 +522,20 @@ class A16Notificacoes(Base):
         self.assertIn("Atendimento confirmado", html)  # aviso interno disponível mesmo com falha no e-mail
         html_op = self.cliente(Perfil.OPERADOR).get(reverse("operacao:avisos")).content.decode()
         self.assertIn("SMTP recusou", html_op)
+        def enviados():  # só as mensagens desta notificação (o pedido também avisa a contratada)
+            return [m for m in mail.outbox if m.extra_headers.get("X-SGI-Chave") == n.chave_idempotencia]
+
         notificacoes.processar_pendentes()  # ainda não venceu o intervalo
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(enviados()), 0)
         self.cliente(Perfil.FISCAL).post(reverse("operacao:notificacao_reenviar", args=[n.pk]))
         n.refresh_from_db()
         self.assertEqual(n.status, StatusNotificacao.ENVIADA)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(enviados()), 1)
         self.cliente(Perfil.FISCAL).post(reverse("operacao:notificacao_reenviar", args=[n.pk]))
         Notificacao.objects.filter(pk=n.pk).update(proxima_tentativa_em=timezone.now() - timedelta(hours=1))
         notificacoes.processar_pendentes()
         notificacoes.enviar(n.pk, forcar=True)
-        self.assertEqual(len(mail.outbox), 1)  # nenhuma duplicidade
+        self.assertEqual(len(enviados()), 1)  # nenhuma duplicidade
         self.assertEqual(list(n.tentativas_envio.values_list("resultado", flat=True).order_by("pk")), ["FALHA", "ENVIADA"])
         self.assertTrue(EventoAuditoria.objects.filter(entidade="Notificacao", acao="REENVIO_MANUAL").exists())
         with self.assertRaises(DatabaseError), transaction.atomic(), connection.cursor() as cur:

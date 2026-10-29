@@ -80,6 +80,13 @@ O papel só é concedido na implantação (`SGI_ADMIN_*`) ou pelo comando
    As notificações que ficaram "integração pendente" serão enviadas pelo
    `processar_notificacoes`.
 
+Quem recebe cada e-mail (e o mesmo aviso na caixa **Avisos** do sistema):
+- **Fiscais/gestores da Prefeitura** (exigência do edital): confirmação de
+  atendimento, alteração de horário, cancelamento de escala ou de agendamento.
+- **Operadores da contratada na cidade** (pedido da Nerds da Libras): nova
+  solicitação, alteração de horário e cancelamento feitos pela Prefeitura. Quando a
+  própria contratada registra ou cancela, ela não é avisada de novo.
+
 Observações: contas Gmail gratuitas têm limite diário de envio (da ordem de
 centenas de destinatários por dia, conforme política do Google), suficiente para
 o volume esperado. O Gmail exige que o remetente seja a própria conta; o sistema

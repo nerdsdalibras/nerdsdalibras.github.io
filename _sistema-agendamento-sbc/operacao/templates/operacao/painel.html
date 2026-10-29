@@ -6,6 +6,13 @@
 <div class="msg msg-warning"><p><strong>Integração de e-mail pendente:</strong> alertas estão sendo registrados e exibidos na caixa interna de avisos, mas <strong>não</strong> estão sendo enviados por e-mail. {% if pendencias_email %}Falta:{% else %}A contratada foi informada.{% endif %}</p>
 {% if pendencias_email %}<ul>{% for p in pendencias_email %}<li>{{ p }}</li>{% endfor %}</ul>{% endif %}</div>
 {% endif %}
+{% if pedidos_pendentes is not None %}
+<h2>Pedidos aguardando sua confirmação</h2>
+<p>Abra o pedido, escale o(s) intérprete(s) e clique em <strong>Confirmar atendimento</strong>. A Prefeitura é avisada da confirmação.</p>
+{% include "operacao/_tabela_agendamentos.html" with agendamentos=pedidos_pendentes %}
+<h2>Cancelados pela Prefeitura (últimos 7 dias)</h2>
+{% include "operacao/_tabela_agendamentos.html" with agendamentos=cancelados_prefeitura %}
+{% endif %}
 <ul class="indicadores">
   <li><a href="{% url 'operacao:agendamentos' %}?status=SOLICITADO"><strong>{{ aguardando_confirmacao }}</strong> aguardando confirmação</a></li>
   <li><a href="{% url 'operacao:agendamentos' %}?status=REALIZADO"><strong>{{ aguardando_homologacao }}</strong> aguardando homologação</a></li>

@@ -64,7 +64,7 @@ def calcular_antecedencia(contrato, modalidade, criado_em, inicio):
     return dias, minimo, dias < minimo
 
 
-def _notificar(ag, tipo, chave, assunto, corpo):
+def _notificar(ag, tipo, chave, assunto, corpo, publico=Parte.PREFEITURA):
     from django.conf import settings
 
     link = f"{settings.URL_BASE}/agendamentos/{ag.pk}/"
@@ -75,7 +75,7 @@ def _notificar(ag, tipo, chave, assunto, corpo):
         f"Local/plataforma: {ag.local}\n\nDetalhes (acesso autenticado): {link}\n\n"
         "Mensagem automática do SGI. Dados de contato dos intérpretes estão disponíveis apenas no sistema."
     )
-    notificacoes.enfileirar(ag.contrato, tipo, chave, f"[SGI {ag.codigo}] {assunto}", corpo, agendamento=ag)
+    notificacoes.enfileirar(ag.contrato, tipo, chave, f"[SGI {ag.codigo}] {assunto}", corpo, agendamento=ag, publico=publico)
 
 
 @transaction.atomic
@@ -111,6 +111,12 @@ def criar(ator, *, titulo, unidade_solicitante, modalidade, local, inicio_previs
         fora_do_prazo=fora,
     )
     auditoria.registrar(ator, "Agendamento", ag.pk, "CRIACAO", "Registro original da solicitação", depois=auditoria.serializar(ag))
+    if ator.parte == Parte.PREFEITURA:
+        prazo = f"{dias} de {minimo} dia(s) útil(eis) de antecedência" + (" — FORA DO PRAZO" if fora else "")
+        _notificar(ag, TipoNotificacao.NOVA_SOLICITACAO, f"NOVA_SOLICITACAO:{ag.pk}", "Nova solicitação de intérprete",
+                   f"Nova solicitação de {ator.usuario.nome_completo} ({Perfil(ator.perfil).label}), unidade "
+                   f"{ag.unidade_solicitante}. Profissionais necessários: {ag.qtd_profissionais}. {prazo}.\n"
+                   "Escale o(s) intérprete(s) e confirme o atendimento no sistema.", publico=Parte.CONTRATADA)
     return ag
 
 
@@ -249,6 +255,9 @@ def alterar_horario(ator, ag, novo_inicio, nova_duracao, justificativa, nova_qtd
     if reconfirmar:
         texto += " A escala ficou incompleta e o agendamento voltou a 'Solicitado' (requer nova confirmação)."
     _notificar(ag, TipoNotificacao.ALTERACAO_HORARIO, f"ALTERACAO_HORARIO:{ag.pk}:{evento.pk}", "Alteração de horário", texto)
+    if ator.parte == Parte.PREFEITURA:
+        _notificar(ag, TipoNotificacao.ALTERACAO_HORARIO, f"ALTERACAO_HORARIO:{ag.pk}:{evento.pk}:CONTRATADA",
+                   "Alteração de horário pela Prefeitura", texto + " Confira a escala dos intérpretes.", publico=Parte.CONTRATADA)
     return ag
 
 
@@ -306,6 +315,9 @@ def cancelar(ator, ag, justificativa):
     if escalas:
         texto += " Escalas canceladas: " + "; ".join(e.interprete.nome_completo for e in escalas) + "."
     _notificar(ag, TipoNotificacao.CANCELAMENTO_AGENDAMENTO, f"CANCELAMENTO_AGENDAMENTO:{ag.pk}:{evento.pk}", "Cancelamento de agendamento/escala", texto)
+    if ator.parte == Parte.PREFEITURA:
+        _notificar(ag, TipoNotificacao.CANCELAMENTO_AGENDAMENTO, f"CANCELAMENTO_AGENDAMENTO:{ag.pk}:{evento.pk}:CONTRATADA",
+                   "Cancelamento pela Prefeitura", texto, publico=Parte.CONTRATADA)
     return ag
 
 

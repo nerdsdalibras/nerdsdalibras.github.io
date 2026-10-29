@@ -83,7 +83,7 @@ set -a; . ./.env.dev; set +a
 ```
 
 Os testes rodam em PostgreSQL real (o usuário do banco precisa de `CREATEDB`)
-porque verificam os triggers. Resultado na última execução: **139 testes, todos
+porque verificam os triggers. Resultado na última execução: **140 testes, todos
 passando**.
 
 ## Comandos de gestão
