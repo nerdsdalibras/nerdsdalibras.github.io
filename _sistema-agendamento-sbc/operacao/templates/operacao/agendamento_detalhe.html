@@ -40,7 +40,7 @@
   <td>{% if e.ativa %}Ativa{% else %}Cancelada em {{ e.cancelada_em|date:"d/m/Y H:i" }}: {{ e.motivo_cancelamento }}{% endif %}</td>
   {% if vinculo.perfil == Perfil.OPERADOR and ativos %}<td>{% if e.ativa %}
     <details><summary>Cancelar/substituir</summary>
-    <form method="post" action="{% url 'operacao:escala_cancelar' ag.pk e.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=f_cancelar_escala %}<button>Cancelar escala</button></form>
+    <form method="post" action="{% url 'operacao:escala_cancelar' ag.pk e.pk %}">{% csrf_token %}{% include "operacao/_form.html" with form=e.form_cancelar %}<button>Cancelar escala</button></form>
     </details>{% endif %}</td>{% endif %}
 </tr>
 {% empty %}<tr><td colspan="6">Nenhum intérprete escalado.</td></tr>{% endfor %}

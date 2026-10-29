@@ -22,6 +22,7 @@ Educação de São Bernardo do Campo** (Pregão Eletrônico nº 246/2026).
 | `docs/05-protecao-de-dados.md` | Medidas de proteção de dados e seus limites |
 | `docs/07-publicar-na-internet.md` | **Como publicar em https://sgi.nerdsdalibras.com (Netlify na frente + Render) e liberar cada cidade** |
 | `docs/06-auditoria-funcional.md` | Auditoria funcional dos 20 itens: testes, resultados, evidências, defeitos corrigidos |
+| `docs/08-verificacao-requisitos-edital.md` | Verificação requisito a requisito pela jornada completa nas telas (plataforma multi-cidades) |
 
 ## Plataforma multi-cidades
 
@@ -82,7 +83,7 @@ set -a; . ./.env.dev; set +a
 ```
 
 Os testes rodam em PostgreSQL real (o usuário do banco precisa de `CREATEDB`)
-porque verificam os triggers. Resultado na última execução: **126 testes, todos
+porque verificam os triggers. Resultado na última execução: **139 testes, todos
 passando**.
 
 ## Comandos de gestão

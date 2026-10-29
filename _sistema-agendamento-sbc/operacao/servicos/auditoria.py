@@ -7,14 +7,22 @@ import datetime
 import hashlib
 import decimal
 import uuid
+from zoneinfo import ZoneInfo
 
 from django.db import connection
 from django.db.models.fields.files import FieldFile
+from django.utils import timezone
 
 from ..models import EventoAuditoria
 
+FUSO = ZoneInfo("America/Sao_Paulo")
+
 
 def _valor_json(v):
+    if isinstance(v, datetime.datetime) and timezone.is_aware(v):
+        # Sempre no horário de Brasília: o mesmo instante não pode aparecer como
+        # "12:00+00:00" no valor anterior e "09:00-03:00" no posterior.
+        return timezone.localtime(v, FUSO).isoformat()
     if isinstance(v, (datetime.datetime, datetime.date, datetime.time)):
         return v.isoformat()
     if isinstance(v, decimal.Decimal):

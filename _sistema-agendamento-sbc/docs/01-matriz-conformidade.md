@@ -1,6 +1,7 @@
 # Matriz de requisitos — situação real
 
 > Atualizada após a auditoria funcional de 28/10/2026 (`06-auditoria-funcional.md`), que encontrou e corrigiu 6 defeitos e 1 teste falso positivo.
+> Verificação mais recente, pela jornada completa nas telas da plataforma multi-cidades: `08-verificacao-requisitos-edital.md` (29/10/2026; 2 defeitos encontrados e corrigidos; teste `test_jornada_edital`).
 
 Legenda das colunas:
 
@@ -30,14 +31,14 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Cancelamento com justificativa, sem apagar | Sim | A `test_cancelar_nao_apaga_e_exige_justificativa`; E2E | — | — |
 | Eventos simultâneos em locais/plataformas diferentes | Sim | A `test_eventos_simultaneos_em_locais_diferentes` | — | — |
 | Bloqueio de intérprete em eventos sobrepostos (decisão de implementação) | Sim | A `test_mesmo_interprete_nao_pode_estar_em_eventos_sobrepostos` | — | — |
-| Identificador único, status, filtros (período, modalidade, profissional, situação) | Sim | Filtros verificados manualmente; sem teste automatizado dedicado | — | — |
+| Identificador único, status, filtros (período, modalidade, profissional, situação) | Sim | `test_jornada_edital.test_decisoes_filtros_exportacao_interface` | — | — |
 
 ## 2. Histórico auditável
 
 | Requisito | Impl. | Testado (evidência) | Pend. integração | Pend. esclarecimento |
 |---|---|---|---|---|
 | Registro original preservado | Sim (evento `CRIACAO` com snapshot + campos originais imutáveis por trigger) | A `test_registra_campos_e_registro_original`; I `test_campos_originais_imutaveis` | — | — |
-| Usuário, data/hora, justificativa, valores antes/depois | Sim | A `test_alteracao_de_horario_registra_antes_e_depois_e_alerta` | — | — |
+| Usuário, data/hora, justificativa, valores antes/depois | Sim (datas sempre em horário de Brasília — defeito V1 corrigido em 29/10/2026) | A `test_alteracao_de_horario_registra_antes_e_depois_e_alerta`; `test_jornada_edital.test_2_historico_auditavel` | — | — |
 | Cancelar não apaga | Sim | A `test_cancelar_nao_apaga_e_exige_justificativa`; I `test_delete_de_agendamento_bloqueado_no_banco_e_na_aplicacao` | — | — |
 | Travas contra exclusão/adulteração de homologados | Sim (triggers PostgreSQL) | I `test_homologado_pelas_duas_partes_fica_travado`, `test_cancelado_e_imutavel` | — | — |
 | Histórico protegido contra alteração | Sim (append-only + cadeia SHA-256) | I `test_auditoria_append_only`, `test_cadeia_de_hash_integra_e_detecta_adulteracao` | — | — |
@@ -126,7 +127,7 @@ R = `test_relatorio_chamados_isolamento`, V = `test_views`).
 | Migrações e estrutura do banco | `operacao/migrations/0001–0003`, `contas/migrations/0001` |
 | Aplicação funcional com instruções | `README.md`; executada localmente com Gunicorn e verificada no navegador |
 | Configuração segura por variáveis de ambiente | `config/settings.py`, `.env.example` (sem segredos) |
-| Testes das regras críticas | 126 testes passando (inclui a auditoria funcional, `docs/06-auditoria-funcional.md`) |
+| Testes das regras críticas | 139 testes passando (inclui a auditoria funcional, `docs/06`, e a jornada completa do edital, `docs/08`) |
 | Manual de administração, backup e recuperação | `docs/03-manual-administracao.md`; backup e restauração executados com sucesso em ambiente local |
 | Matriz | Este documento |
 | Dependências e custos | `docs/04-dependencias-e-custos.md` |

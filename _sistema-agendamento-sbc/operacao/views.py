@@ -215,9 +215,12 @@ def detalhe_agendamento(request, pk):
     ag = _agendamento(request, pk)
     a = ator(request)
     ultima = ag.medicoes.order_by("-versao").first()
+    escalas = list(ag.escalas.select_related("interprete", "escalado_por", "cancelada_por").order_by("escalado_em"))
+    for e in escalas:  # um formulário por escala, com identificadores próprios (rótulos acessíveis)
+        e.form_cancelar = forms.CancelarEscalaForm(contrato=request.contrato, auto_id=f"escala{e.pk}_%s")
     ctx = {
         "ag": ag,
-        "escalas": ag.escalas.select_related("interprete", "escalado_por", "cancelada_por").order_by("escalado_em"),
+        "escalas": escalas,
         "medicoes": ag.medicoes.select_related("parametro", "criada_por", "decidida_por"),
         "medicao_vigente": medicao.medicao_vigente(ag),
         "ultima_medicao": ultima,
@@ -228,21 +231,21 @@ def detalhe_agendamento(request, pk):
         "homologacoes_validas": homologacao.homologacoes_validas(ag) if ag.status in (StatusAgendamento.REALIZADO, StatusAgendamento.HOMOLOGADO) else {},
         "historico": EventoAuditoria.objects.filter(contrato=request.contrato).filter(_filtro_historico(ag)).order_by("id"),
         "chamados": ag.chamados.all(),
-        "f_escalar": forms.EscalarForm(contrato=request.contrato),
-        "f_cancelar_escala": forms.CancelarEscalaForm(contrato=request.contrato),
-        "f_alterar": forms.AlterarHorarioForm(initial={
+        "f_escalar": forms.EscalarForm(contrato=request.contrato, auto_id="escalar_%s"),
+        "f_alterar": forms.AlterarHorarioForm(auto_id="alterar_%s", initial={
             "inicio_previsto": calendario.local(ag.inicio_previsto).strftime("%Y-%m-%dT%H:%M"),
             "duracao_prevista_min": ag.duracao_prevista_min, "qtd_profissionais": ag.qtd_profissionais,
         }),
-        "f_realizacao": forms.RealizacaoForm(initial={
+        "f_realizacao": forms.RealizacaoForm(auto_id="realizacao_%s", initial={
             "inicio_realizado": calendario.local(ag.inicio_realizado or ag.inicio_previsto).strftime("%Y-%m-%dT%H:%M"),
             "fim_realizado": calendario.local(ag.fim_realizado or ag.fim_previsto).strftime("%Y-%m-%dT%H:%M"),
         }),
-        "f_justificativa": forms.JustificativaForm(),
-        "f_fundamentada": forms.MedicaoFundamentadaForm(),
-        "f_decisao": forms.DecisaoForm(),
-        "f_indenizacao": forms.IndenizacaoForm(),
-        "f_decisao_indenizacao": forms.DecisaoIndenizacaoForm(),
+        # Identificadores distintos por formulário: vários têm campos de mesmo nome na mesma página.
+        "f_justificativa": forms.JustificativaForm(auto_id="cancelar_%s"),
+        "f_fundamentada": forms.MedicaoFundamentadaForm(auto_id="fundamentada_%s"),
+        "f_decisao": forms.DecisaoForm(auto_id="decisao_medicao_%s"),
+        "f_indenizacao": forms.IndenizacaoForm(auto_id="indenizacao_%s"),
+        "f_decisao_indenizacao": forms.DecisaoIndenizacaoForm(auto_id="decisao_indenizacao_%s"),
         "pode_contatos": a.perfil in (Perfil.FISCAL, Perfil.OPERADOR, Perfil.SOLICITANTE),
         "ativos": ag.status in (StatusAgendamento.SOLICITADO, StatusAgendamento.CONFIRMADO),
     }
