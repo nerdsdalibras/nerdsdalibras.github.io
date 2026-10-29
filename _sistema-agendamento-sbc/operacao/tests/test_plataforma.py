@@ -71,6 +71,23 @@ class Plataforma(TestCase):
         r = self.c.post(reverse("operacao:plataforma"), form_cidade("Outra", "SP", "SBC"))
         self.assertEqual(Contrato.objects.filter(prefixo_codigo="SBC").count(), 1)  # prefixo único
 
+    def test_prefixo_vazio_e_gerado_pelo_nome_da_cidade(self):
+        for cidade, uf, esperado in [("São Bernardo do Campo", "SP", "SBC"), ("Franca", "SP", "FRA"),
+                                     ("Franca", "SP", "FRAN"),  # já em uso: mais letras
+                                     ("Santa Bárbara d'Oeste", "SP", "SBO")]:
+            r = self.c.post(reverse("operacao:plataforma"), form_cidade(cidade, uf, ""))
+            self.assertEqual(r.status_code, 302, r.content[:400])
+            self.assertEqual(Contrato.objects.order_by("-id").first().prefixo_codigo, esperado)
+        self.assertEqual(plataforma.sugerir_prefixo("Ribeirão Preto"), "RP")
+        Contrato.objects.filter(prefixo_codigo="FRA").update(prefixo_codigo="FRANCA")
+        for n in ("FRA", "FRANC"):
+            Contrato.objects.create(codigo=f"x-{n}", orgao="O", contratada="C", referencia="R", prefixo_codigo=n)
+        self.assertEqual(plataforma.sugerir_prefixo("Franca"), "FRAA")  # todas as variações em uso
+        # Prefixo informado continua valendo e sendo validado
+        self.criar("Belo Horizonte", "MG", "BHZ")
+        self.c.post(reverse("operacao:plataforma"), form_cidade("Contagem", "MG", "C1"))
+        self.assertFalse(Contrato.objects.filter(cidade="Contagem").exists())
+
     def test_prefeitura_ve_so_a_propria_cidade(self):
         sbc, fra = self.criar("São Bernardo do Campo", "SP", "SBC"), self.criar("Franca", "SP", "FRA")
         self.liberar(sbc, "fiscal.sbc@exemplo.invalid", "FISCAL")

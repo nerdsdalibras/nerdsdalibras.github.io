@@ -220,9 +220,15 @@ class CidadeForm(forms.Form):
     uf = forms.CharField(label="UF", max_length=2, help_text="Ex.: SP")
     orgao = forms.CharField(label="Órgão contratante", max_length=200, help_text="Ex.: Prefeitura de ... — Secretaria de Educação")
     referencia = forms.CharField(label="Referência (licitação/contrato)", max_length=200, help_text="Ex.: Pregão Eletrônico nº 246/2026")
-    prefixo = forms.CharField(label="Prefixo dos códigos", max_length=6, help_text="2 a 6 letras, único por cidade (ex.: SBC, FRA)")
+    prefixo = forms.CharField(label="Prefixo dos códigos", max_length=6, required=False,
+                              help_text="Opcional. Aparece no número dos pedidos (ex.: SBC-2026-000001). "
+                                        "Vazio = gerado pelo nome da cidade (São Bernardo do Campo → SBC, Franca → FRA).")
     vigencia_inicio = forms.DateField(label="Início da vigência", required=False, widget=forms.DateInput(attrs={"type": "date"}))
     vigencia_fim = forms.DateField(label="Fim da vigência", required=False, widget=forms.DateInput(attrs={"type": "date"}))
     preco_inicial = forms.DecimalField(label="Preço inicial por hora (proposta, R$)", max_digits=14, decimal_places=4, required=False,
                                        help_text="Fica PROPOSTO até aprovação do Fiscal/Gestor da cidade. Vazio = 156,6000.")
-    meu_perfil = forms.ChoiceField(label="Meu perfil nesta cidade", choices=[("OPERADOR", "Operador da contratada"), ("ADMIN_TECNICO", "Administrador técnico")])
+    meu_perfil = forms.ChoiceField(label="Meu perfil nesta cidade", choices=[("OPERADOR", "Operador da contratada"), ("ADMIN_TECNICO", "Administrador técnico")],
+                                   help_text="Seu acesso nesta cidade, pelo lado da Nerds da Libras. Operador: trabalha no dia a dia "
+                                             "(escala intérpretes, registra atendimentos, medição, relatórios e chamados). "
+                                             "Administrador técnico: cuida dos acessos da equipe e consulta o histórico, sem operar. "
+                                             "Você não pode trocar o próprio perfil depois.")

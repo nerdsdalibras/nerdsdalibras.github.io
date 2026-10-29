@@ -5,6 +5,8 @@ ficam isolados por contrato. O administrador da plataforma cria cidades e
 libera acessos, mas NÃO aprova nada em nome da Prefeitura (ver cadastros.py).
 """
 import re
+import string
+import unicodedata
 from datetime import date
 from decimal import Decimal
 
@@ -36,6 +38,32 @@ FERIADOS_ESTADUAIS = {
 UFS = ("AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO").split()
 
 
+CONECTIVOS = {"D", "DA", "DAS", "DE", "DO", "DOS", "E"}
+
+
+def sugerir_prefixo(cidade):
+    """Prefixo automático e livre a partir do nome da cidade.
+
+    Iniciais das palavras (São Bernardo do Campo → SBC); para nome de uma palavra,
+    as primeiras letras (Franca → FRA). Se já estiver em uso, tenta mais letras e,
+    por fim, acrescenta uma letra ao final (FRAA, FRAB...).
+    """
+    texto = unicodedata.normalize("NFKD", cidade or "").encode("ascii", "ignore").decode().upper()
+    palavras = [p for p in re.findall(r"[A-Z]+", texto) if p not in CONECTIVOS]
+    letras = "".join(palavras)
+    candidatos = ["".join(p[0] for p in palavras)[:6]] if len(palavras) >= 2 else []
+    candidatos += [letras[:n] for n in range(3, 7)]
+    candidatos = [c for c in dict.fromkeys(candidatos) if len(c) >= 2]
+    for c in candidatos:
+        if not Contrato.objects.filter(prefixo_codigo=c).exists():
+            return c
+    base = (candidatos[0] if candidatos else "CID")[:5]
+    for letra in string.ascii_uppercase:
+        if not Contrato.objects.filter(prefixo_codigo=base + letra).exists():
+            return base + letra
+    raise ErroRegra("Não foi possível gerar o prefixo automaticamente; informe um.")
+
+
 def exigir_admin_plataforma(usuario):
     if not getattr(usuario, "administrador_plataforma", False):
         raise PermissionDenied("Apenas o administrador da plataforma.")
@@ -61,7 +89,7 @@ def criar_cidade(usuario, *, cidade, uf, orgao, referencia, prefixo, vigencia_in
     uf = (uf or "").upper().strip()
     if uf not in UFS:
         raise ErroRegra("UF inválida.")
-    prefixo = (prefixo or "").upper().strip()
+    prefixo = (prefixo or "").upper().strip() or sugerir_prefixo(cidade)
     if not re.fullmatch(r"[A-Z]{2,6}", prefixo):
         raise ErroRegra("Prefixo deve ter de 2 a 6 letras (ex.: SBC, FRA).")
     if Contrato.objects.filter(prefixo_codigo=prefixo).exists():
