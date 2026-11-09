@@ -35,10 +35,10 @@
 
 # ── INTÉRPRETE DE LIBRAS (SEO) ──
 # 301 permanente direto para a landing oficial (consolida a autoridade de SEO)
-/interprete-de-libras            /precisodeinterprete/                            301!
-/interprete-de-libras.html       /precisodeinterprete/                            301!
-/interprete                      /precisodeinterprete/                            301!
-/preciso-de-interprete-de-libras /precisodeinterprete/                            301!
+/interprete-de-libras            /                            301!
+/interprete-de-libras.html       /                            301!
+/interprete                      /                            301!
+/preciso-de-interprete-de-libras /                            301!
 
 # ── DASHBOARD ──
 /dashboard            /dashboard.html                                            200

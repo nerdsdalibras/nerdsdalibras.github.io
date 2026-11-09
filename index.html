@@ -5,148 +5,135 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d0c0b" />
 
-  <!-- ═══════════════ FAVICON — Nerds da Libras ═══════════════ -->
+  <!-- FAVICON -->
   <link rel="icon" href="/fotos/favicon-nerds.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="/fotos/favicon-nerds-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/fotos/favicon-nerds-16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/fotos/favicon-nerds-180.png" />
 
-  <!-- ═══════════════ SEO ═══════════════ -->
-  <title>Nerds da Libras — Escolha o que você precisa</title>
-  <meta name="description" content="Intérprete de Libras, interpretação de vídeos e lives, curso de Libras para empresas, aprender Libras do zero e programa de afiliados. Fale agora com a Nerds da Libras." />
+  <!-- SEO -->
+  <title>Nerds da Libras — Referência em Libras e Acessibilidade no Brasil</title>
+  <meta name="description" content="Intérprete de Libras, interpretação de vídeos e lives, curso de Libras para empresas, aprender Libras do zero e programa de afiliados. +1000 alunos, +1500 eventos interpretados. Fale com a Nerds da Libras." />
   <meta name="author" content="Nerds da Libras" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://nerdsdalibras.com/" />
-
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://nerdsdalibras.com/" />
-  <meta property="og:title" content="Nerds da Libras — Escolha o que você precisa" />
+  <meta property="og:title" content="Nerds da Libras — Referência em Libras no Brasil" />
   <meta property="og:description" content="Intérprete, vídeos e lives, curso para empresas, aprender Libras e afiliados. Escolha e fale com a gente." />
-  <meta property="og:image" content="https://nerdsdalibras.com/fotos/equipe-nerds-da-libras-logo.jpg" />
+  <meta property="og:image" content="https://nerdsdalibras.com/fotos/hero-fundadores.jpg" />
   <meta property="og:locale" content="pt_BR" />
   <meta property="og:site_name" content="Nerds da Libras" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="/fotos/hero-fundadores.jpg" fetchpriority="high" />
 
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --gold:#E9B44C;
-      --gold-2:#F4CD6C;
-      --gold-deep:#C6871F;
-      --bg:#0d0c0b;
-      --surface-top:#241e14;
-      --surface-bot:#17130d;
-      --line:#2c271d;
-      --cream:#F3EEE3;
-      --cream-dim:#d6ccb9;
-      --muted:#9d968a;
-      --wpp:#25D366;
+      --gold:#E9B44C; --gold-2:#F4CD6C; --gold-deep:#C6871F;
+      --bg:#0d0c0b; --bg2:#131110; --surface:#1a1712; --line:#2c271d;
+      --cream:#F3EEE3; --cream-dim:#d6ccb9; --muted:#9d968a; --wpp:#25D366;
     }
     html{scroll-behavior:smooth}
-    body{
-      font-family:'Inter',sans-serif;color:var(--cream);line-height:1.5;
-      -webkit-font-smoothing:antialiased;min-height:100vh;
-      background:
-        radial-gradient(900px 480px at 50% -8%, rgba(233,180,76,.16), transparent 60%),
-        radial-gradient(700px 500px at 100% 100%, rgba(233,180,76,.06), transparent 55%),
-        var(--bg);
-      background-attachment:fixed;
-    }
+    body{font-family:'Inter',sans-serif;color:var(--cream);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
     a{text-decoration:none;color:inherit}
     img{max-width:100%;display:block}
-    .wrap{width:100%;max-width:560px;margin:0 auto;padding:38px 20px 48px}
+    .container{width:100%;max-width:1120px;margin:0 auto;padding:0 20px}
 
-    /* ── LOGO / TOPO ── */
-    .brand{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:10px}
-    .brand-icon{
-      width:92px;height:92px;object-fit:contain;
-      filter:drop-shadow(0 10px 26px rgba(233,180,76,.35));
-      animation:floaty 4s ease-in-out infinite;
-    }
-    @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-    .brand-name{margin-top:14px;font-weight:900;font-size:30px;letter-spacing:-.02em;line-height:1;color:var(--cream)}
-    .brand-name span{color:var(--gold)}
-    .eyebrow{
-      display:inline-flex;align-items:center;gap:7px;margin-top:16px;
-      background:rgba(233,180,76,.10);color:var(--gold);font-weight:800;font-size:12.5px;
-      padding:6px 14px;border-radius:999px;border:1px dashed rgba(233,180,76,.5);
-      letter-spacing:.01em;
-    }
-    .lead{margin:22px auto 26px;text-align:center;color:var(--cream-dim);font-size:16.5px;max-width:420px}
-    .lead b{color:var(--cream)}
+    /* ═══ HERO ═══ */
+    .hero{position:relative;padding:40px 0 20px;
+      background:radial-gradient(800px 500px at 80% 0%, rgba(233,180,76,.16), transparent 60%), var(--bg);}
+    .brand-top{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:26px}
+    .brand-top img{height:44px;width:auto}
+    .brand-top .nm{font-weight:900;font-size:19px;color:var(--cream)}
+    .brand-top .nm span{color:var(--gold)}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(233,180,76,.1);color:var(--gold);
+      font-weight:800;font-size:13px;padding:7px 15px;border-radius:999px;border:1px dashed rgba(233,180,76,.5);margin-bottom:20px}
+    .hero h1{font-size:clamp(30px,5.2vw,52px);font-weight:900;line-height:1.06;letter-spacing:-.02em;color:var(--cream)}
+    .hero h1 span{color:var(--gold)}
+    .hero p.sub{font-size:17.5px;color:var(--cream-dim);margin:20px 0 28px;max-width:520px}
+    .hero-cta{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--gold-2),var(--gold-deep));
+      color:#231800;font-weight:800;font-size:16px;padding:15px 26px;border-radius:999px;box-shadow:0 12px 30px rgba(233,180,76,.3);transition:transform .15s,filter .2s}
+    .hero-cta:hover{transform:translateY(-2px);filter:brightness(1.06)}
+    .hero-photo{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--line);
+      box-shadow:0 24px 60px rgba(0,0,0,.6);aspect-ratio:4/4.3;background:#17140f}
+    .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
+    .hero-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(13,12,11,.55));pointer-events:none}
+    .hero-tag{position:absolute;left:16px;bottom:16px;background:rgba(13,12,11,.82);backdrop-filter:blur(6px);
+      border:1px solid var(--line);border-radius:14px;padding:11px 15px;font-size:13.5px;font-weight:700}
+    .hero-tag b{color:var(--gold-2)}
 
-    /* ── TIRAS 3D ── */
-    .tiras{display:flex;flex-direction:column;gap:16px}
-    .tira{
-      position:relative;display:flex;align-items:center;gap:15px;
-      padding:18px 18px;border-radius:18px;overflow:hidden;
-      background:linear-gradient(180deg,var(--surface-top) 0%,var(--surface-bot) 100%);
-      border:1px solid rgba(233,180,76,.26);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.07),
-        inset 0 -12px 22px rgba(0,0,0,.28),
-        0 9px 0 -2px #090705,
-        0 18px 30px rgba(0,0,0,.5);
-      transition:transform .14s ease, box-shadow .2s ease, border-color .2s ease;
-      cursor:pointer;
-    }
-    /* brilho que percorre (sheen) */
-    .tira::after{
-      content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
-      background:linear-gradient(120deg,transparent,rgba(255,255,255,.10),transparent);
-      transform:skewX(-20deg);pointer-events:none;transition:left .55s ease;
-    }
-    .tira:hover{
-      transform:translateY(-3px);border-color:rgba(233,180,76,.6);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.09),
-        inset 0 -12px 22px rgba(0,0,0,.3),
-        0 12px 0 -2px #090705,
-        0 24px 40px rgba(0,0,0,.6),
-        0 0 0 1px rgba(233,180,76,.25);
-    }
-    .tira:hover::after{left:150%}
-    .tira:active{transform:translateY(2px);box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.06),
-        inset 0 -8px 18px rgba(0,0,0,.3),
-        0 4px 0 -2px #090705,
-        0 10px 18px rgba(0,0,0,.5);}
+    /* ═══ CONTADORES ═══ */
+    .stats{background:linear-gradient(180deg,var(--bg2),var(--bg));border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+      margin-top:40px;padding:30px 0}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;text-align:center}
+    .stat .num{font-size:clamp(28px,4.6vw,44px);font-weight:900;letter-spacing:-.02em;color:var(--gold);line-height:1;
+      text-shadow:0 2px 20px rgba(233,180,76,.25)}
+    .stat .num .plus{color:var(--gold-2)}
+    .stat .lbl{font-size:13.5px;color:var(--cream-dim);margin-top:9px;font-weight:600;line-height:1.3}
 
-    .tira .ico{
-      width:56px;height:56px;flex-shrink:0;border-radius:15px;
-      background:linear-gradient(145deg,var(--gold-2),var(--gold-deep));
-      display:flex;align-items:center;justify-content:center;font-size:27px;
-      box-shadow:0 5px 12px rgba(198,135,31,.45), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -3px 6px rgba(120,70,0,.4);
-    }
-    .tira .txt{flex:1;min-width:0}
-    .tira .txt b{display:block;font-size:16.5px;font-weight:800;color:var(--cream);line-height:1.2}
-    .tira .txt span{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.35}
-    .tira .go{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%}
-    .go-wpp{background:rgba(37,211,102,.14);border:1px solid rgba(37,211,102,.4)}
-    .go-wpp svg{width:21px;height:21px;fill:var(--wpp)}
-    .go-ext{background:rgba(233,180,76,.12);border:1px solid rgba(233,180,76,.4)}
-    .go-ext svg{width:19px;height:19px;fill:none;stroke:var(--gold);stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+    /* ═══ SEÇÃO FITAS ═══ */
+    .sec-head{text-align:center;max-width:640px;margin:52px auto 8px;padding:0 20px}
+    .sec-head h2{font-size:clamp(24px,3.6vw,34px);font-weight:900;letter-spacing:-.02em;color:var(--cream)}
+    .sec-head p{color:var(--muted);font-size:16.5px;margin-top:12px}
 
-    /* ── RODAPÉ ── */
-    footer{margin-top:34px;text-align:center;color:var(--muted);font-size:13px}
-    .social{display:flex;justify-content:center;gap:14px;margin-bottom:16px}
-    .social a{
-      width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);
-      display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .2s;
-    }
+    .fitas{margin-top:34px}
+    .fita{position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:stretch;min-height:360px;overflow:hidden;
+      border-top:1px solid var(--line)}
+    .fita:nth-child(odd){background:linear-gradient(180deg,#141109,#0f0d0a)}
+    .fita:nth-child(even){background:linear-gradient(180deg,#121512,#0d0f0d)}
+    .fita:nth-child(even) .fita-img{order:2}
+    .fita-img{position:relative;overflow:hidden;min-height:260px}
+    .fita-img img{width:100%;height:100%;object-fit:cover}
+    .fita-img::after{content:"";position:absolute;inset:0;
+      background:linear-gradient(90deg,transparent 40%,rgba(13,12,11,.65) 100%)}
+    .fita:nth-child(even) .fita-img::after{background:linear-gradient(270deg,transparent 40%,rgba(13,12,11,.65) 100%)}
+    .fita-body{display:flex;flex-direction:column;justify-content:center;padding:40px 46px;position:relative}
+    .fita-num{position:absolute;top:14px;right:24px;font-size:72px;font-weight:900;color:rgba(233,180,76,.08);line-height:1;letter-spacing:-.04em}
+    .fita:nth-child(even) .fita-num{right:auto;left:24px}
+    .fita-ico{width:50px;height:50px;border-radius:13px;background:linear-gradient(145deg,var(--gold-2),var(--gold-deep));
+      display:flex;align-items:center;justify-content:center;font-size:25px;margin-bottom:16px;
+      box-shadow:0 5px 12px rgba(198,135,31,.4),inset 0 1px 0 rgba(255,255,255,.5)}
+    .fita-body h3{font-size:clamp(21px,2.6vw,27px);font-weight:900;color:var(--cream);line-height:1.15;letter-spacing:-.01em}
+    .curio{display:flex;align-items:flex-start;gap:9px;margin:14px 0 22px;padding:12px 15px;border-radius:13px;
+      background:rgba(233,180,76,.07);border:1px solid rgba(233,180,76,.22);font-size:14.5px;color:var(--cream-dim);max-width:440px}
+    .curio b{color:var(--gold-2)}
+    .cta{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:15.5px;padding:13px 22px;border-radius:999px;
+      align-self:flex-start;transition:transform .15s,filter .2s,box-shadow .2s}
+    .cta svg{width:20px;height:20px;flex-shrink:0}
+    .cta-wpp{background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;box-shadow:0 10px 24px rgba(37,211,102,.35)}
+    .cta-wpp svg{fill:#fff}
+    .cta-wpp:hover{transform:translateY(-2px);filter:brightness(1.05)}
+    .cta-gold{background:linear-gradient(135deg,var(--gold-2),var(--gold-deep));color:#231800;box-shadow:0 10px 24px rgba(233,180,76,.3)}
+    .cta-gold svg{fill:none;stroke:#231800;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+    .cta-gold:hover{transform:translateY(-2px);filter:brightness(1.06)}
+
+    /* ═══ FOOTER ═══ */
+    footer{background:#0a0908;border-top:1px solid var(--line);padding:40px 0 34px;text-align:center;color:var(--muted);font-size:14px;margin-top:10px}
+    .social{display:flex;justify-content:center;gap:14px;margin-bottom:18px}
+    .social a{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .2s}
     .social a:hover{transform:scale(1.08);border-color:var(--gold)}
-    .social svg{width:22px;height:22px}
-    footer .mini{line-height:1.6}
+    .social svg{width:23px;height:23px}
+    footer .mini{line-height:1.7}
     footer a{color:var(--gold)}
 
-    @media(max-width:420px){
-      .brand-name{font-size:26px}
-      .tira .txt b{font-size:15.5px}
-      .tira .ico{width:50px;height:50px;font-size:24px}
+    @media(max-width:860px){
+      .hero-grid{grid-template-columns:1fr;gap:30px;text-align:center}
+      .hero-eyebrow,.hero p.sub{margin-left:auto;margin-right:auto}
+      .hero-photo{max-width:420px;margin:0 auto;aspect-ratio:4/3.6;order:-1}
+      .hero-photo img{object-position:center 22%}
+      .stats-grid{grid-template-columns:1fr 1fr;gap:26px 14px}
+      .fita{grid-template-columns:1fr}
+      .fita:nth-child(even) .fita-img{order:0}
+      .fita-img{min-height:220px;max-height:260px}
+      .fita-img::after,.fita:nth-child(even) .fita-img::after{background:linear-gradient(180deg,transparent 45%,rgba(13,12,11,.7))}
+      .fita-body{padding:30px 24px}
+      .fita-num{font-size:56px;top:8px;right:18px}
+      .fita:nth-child(even) .fita-num{left:auto;right:18px}
     }
   </style>
   <!-- Meta Pixel Code -->
@@ -168,76 +155,151 @@
   <!-- End Meta Pixel Code -->
 </head>
 <body>
-  <div class="wrap">
 
-    <!-- ═══════════ LOGO ═══════════ -->
-    <div class="brand">
-      <img class="brand-icon" src="/fotos/logo-nerds-icone-dourado.png" alt="Nerds da Libras" width="261" height="257" fetchpriority="high" />
-      <div class="brand-name">nerds <span>da libras</span></div>
-      <span class="eyebrow">🤟 Atendimento em todo o Brasil</span>
-    </div>
-
-    <p class="lead">O que você precisa hoje? <b>Toque na opção</b> e fale com a gente. 👇</p>
-
-    <!-- ═══════════ TIRAS ═══════════ -->
-    <div class="tiras">
-
-      <!-- 1. Vídeos e lives -->
-      <a class="tira" href="https://wa.me/5534991855624?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Nerds%20da%20Libras.%20Quero%20um%20or%C3%A7amento%20para%20interpreta%C3%A7%C3%A3o%20de%20v%C3%ADdeos%20ou%20lives.%20Preciso%20de%20ajuda%21" target="_blank" rel="noopener">
-        <span class="ico" aria-hidden="true">🎥</span>
-        <span class="txt"><b>Interpretação de vídeos e lives</b><span>Orçamento para traduzir seu vídeo ou live em Libras</span></span>
-        <span class="go go-wpp" aria-label="WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg></span>
-      </a>
-
-      <!-- 2. Intérprete presencial/remoto -->
-      <a class="tira" href="https://wa.me/5534991855624?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Nerds%20da%20Libras.%20Preciso%20de%20um%20int%C3%A9rprete%20de%20Libras%2C%20presencial%20ou%20remoto." target="_blank" rel="noopener">
-        <span class="ico" aria-hidden="true">🤟</span>
-        <span class="txt"><b>Preciso de intérprete de Libras</b><span>Presencial ou remoto — eventos, consultas e reuniões</span></span>
-        <span class="go go-wpp" aria-label="WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg></span>
-      </a>
-
-      <!-- 3. Empresa / curso para equipe -->
-      <a class="tira" href="https://wa.me/5534991855624?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Nerds%20da%20Libras.%20Quero%20capacitar%20minha%20empresa%20com%20o%20curso%20de%20Libras%20para%20a%20equipe." target="_blank" rel="noopener">
-        <span class="ico" aria-hidden="true">🏢</span>
-        <span class="txt"><b>Capacitar minha empresa</b><span>Curso de Libras para a sua equipe — acessibilidade e inclusão</span></span>
-        <span class="go go-wpp" aria-label="WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg></span>
-      </a>
-
-      <!-- 4. Aprender Libras do zero -> Escola da Libras -->
-      <a class="tira" href="https://escoladalibras.com" target="_blank" rel="noopener">
-        <span class="ico" aria-hidden="true">📚</span>
-        <span class="txt"><b>Quero aprender Libras do zero</b><span>Comunique-se com surdos — conheça a Escola da Libras</span></span>
-        <span class="go go-ext" aria-label="Abrir Escola da Libras"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
-      </a>
-
-      <!-- 5. Afiliado -->
-      <a class="tira" href="https://wa.me/5534991855624?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Nerds%20da%20Libras.%20Sou%20int%C3%A9rprete%20de%20Libras%20e%20quero%20ser%20afiliado%20da%20Nerds%20para%20vender%20curso%2C%20mentoria%20ou%20central%20de%20Libras." target="_blank" rel="noopener">
-        <span class="ico" aria-hidden="true">💼</span>
-        <span class="txt"><b>Sou intérprete e quero ser afiliado</b><span>Venda curso, mentoria ou central de Libras com a Nerds</span></span>
-        <span class="go go-wpp" aria-label="WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg></span>
-      </a>
-
-    </div>
-
-    <!-- ═══════════ RODAPÉ ═══════════ -->
-    <footer>
-      <div class="social">
-        <a href="https://www.instagram.com/nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#ig)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#ig)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#ig)"/></svg>
-        </a>
+  <!-- ═══════════ HERO ═══════════ -->
+  <header class="hero">
+    <div class="container">
+      <div class="brand-top">
+        <img src="/fotos/logo-nerds-icone-dourado.png" alt="Nerds da Libras" width="261" height="257" fetchpriority="high" />
+        <span class="nm">nerds <span>da libras</span></span>
       </div>
-      <p class="mini">© Nerds da Libras — Acessibilidade em Libras em todo o Brasil.<br/>
-      <a href="/precisodeinterprete/">Serviço de intérprete</a> · <a href="/politica-de-privacidade/">Política de Privacidade</a></p>
-    </footer>
+      <div class="hero-grid">
+        <div>
+          <span class="hero-eyebrow">🤟 Referência em Libras em todo o Brasil</span>
+          <h1>Acessibilidade em Libras <span>de verdade</span>, com quem entende do assunto.</h1>
+          <p class="sub">Intérpretes profissionais, cursos e soluções em Libras. <b>Escolha o que você precisa</b> e fale com a gente agora mesmo. 👇</p>
+          <a class="hero-cta" href="#servicos">Ver serviços ↓</a>
+        </div>
+        <div class="hero-photo">
+          <img src="/fotos/hero-fundadores.jpg" alt="João e Lorena — fundadores da Nerds da Libras" width="1100" height="1100" fetchpriority="high" />
+          <div class="hero-tag">🤟 <b>João &amp; Lorena</b><br/>Fundadores · +15 anos de Libras</div>
+        </div>
+      </div>
+    </div>
 
-  </div>
+    <!-- CONTADORES -->
+    <div class="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat"><div class="num" data-count="1000"><span class="plus">+</span>0</div><div class="lbl">Alunos atendidos</div></div>
+          <div class="stat"><div class="num" data-count="1500"><span class="plus">+</span>0</div><div class="lbl">Eventos interpretados</div></div>
+          <div class="stat"><div class="num" data-count="500"><span class="plus">+</span>0</div><div class="lbl">Horas de vídeos em Libras</div></div>
+          <div class="stat"><div class="num" data-count="500"><span class="plus">+</span>0</div><div class="lbl">Afiliados pelo Brasil</div></div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-  <!-- Rastreio: clique no WhatsApp dispara evento Contact do Meta Pixel -->
+  <!-- ═══════════ SERVIÇOS / FITAS ═══════════ -->
+  <section id="servicos">
+    <div class="sec-head">
+      <h2>O que você precisa hoje?</h2>
+      <p>Toque na fita do serviço que você procura — é rápido e direto.</p>
+    </div>
+
+    <div class="fitas">
+
+      <!-- FITA 1 — Vídeos e lives -->
+      <article class="fita">
+        <div class="fita-img"><img src="/fotos/foto-videos.jpg" alt="Interpretação de vídeos e lives" loading="lazy" decoding="async" /></div>
+        <div class="fita-body">
+          <span class="fita-num">01</span>
+          <span class="fita-ico" aria-hidden="true">🎥</span>
+          <h3>Interpretação de vídeos e lives</h3>
+          <div class="curio">📈&nbsp;<span>Existem <b>mais de 10 milhões de surdos</b> no Brasil. Seu vídeo com Libras fala com todos eles — já são <b>+500 horas</b> interpretadas por nós.</span></div>
+          <a class="cta cta-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Nerds%20da%20Libras.%20Quero%20um%20or%C3%A7amento%20para%20interpreta%C3%A7%C3%A3o%20de%20v%C3%ADdeos%20ou%20lives." target="_blank" rel="noopener"><svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg>Quero um orçamento</a>
+        </div>
+      </article>
+
+      <!-- FITA 2 — Intérprete presencial/remoto -->
+      <article class="fita">
+        <div class="fita-img"><img src="/fotos/foto-interprete.jpg" alt="Intérprete de Libras presencial e remoto" loading="lazy" decoding="async" /></div>
+        <div class="fita-body">
+          <span class="fita-num">02</span>
+          <span class="fita-ico" aria-hidden="true">🤟</span>
+          <h3>Preciso de intérprete de Libras</h3>
+          <div class="curio">🏆&nbsp;<span><b>+1.500 eventos interpretados</b> — palestras, consultas, audiências e reuniões. Presencial ou remoto, em <b>todo o Brasil</b>.</span></div>
+          <a class="cta cta-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Nerds%20da%20Libras.%20Preciso%20de%20um%20int%C3%A9rprete%20de%20Libras%2C%20presencial%20ou%20remoto." target="_blank" rel="noopener"><svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg>Falar com um intérprete</a>
+        </div>
+      </article>
+
+      <!-- FITA 3 — Empresa -->
+      <article class="fita">
+        <div class="fita-img"><img src="/fotos/foto-empresa.jpg" alt="Curso de Libras para empresas e equipes" loading="lazy" decoding="async" /></div>
+        <div class="fita-body">
+          <span class="fita-num">03</span>
+          <span class="fita-ico" aria-hidden="true">🏢</span>
+          <h3>Capacitar minha empresa em Libras</h3>
+          <div class="curio">♿&nbsp;<span>Empresas <b>acessíveis vendem mais</b> e retêm talentos. Capacite sua equipe para atender <b>milhões de clientes surdos</b>.</span></div>
+          <a class="cta cta-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Nerds%20da%20Libras.%20Quero%20capacitar%20minha%20equipe%20com%20o%20curso%20de%20Libras%20para%20empresas." target="_blank" rel="noopener"><svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg>Quero capacitar minha equipe</a>
+        </div>
+      </article>
+
+      <!-- FITA 4 — Aprender Libras -> Escola -->
+      <article class="fita">
+        <div class="fita-img"><img src="/fotos/foto-aprender.jpg" alt="Aprender Libras do zero na Escola da Libras" loading="lazy" decoding="async" /></div>
+        <div class="fita-body">
+          <span class="fita-num">04</span>
+          <span class="fita-ico" aria-hidden="true">📚</span>
+          <h3>Quero aprender Libras do zero</h3>
+          <div class="curio">🎓&nbsp;<span><b>+1.000 alunos</b> já saíram do zero à fluência e hoje se comunicam com surdos. Conheça a <b>Escola da Libras</b> da Prof. Lorena.</span></div>
+          <a class="cta cta-gold" href="https://escoladalibras.com" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>Conhecer a Escola da Libras</a>
+        </div>
+      </article>
+
+      <!-- FITA 5 — Afiliado -->
+      <article class="fita">
+        <div class="fita-img"><img src="/fotos/foto-afiliado.jpg" alt="Seja afiliado da Nerds da Libras" loading="lazy" decoding="async" /></div>
+        <div class="fita-body">
+          <span class="fita-num">05</span>
+          <span class="fita-ico" aria-hidden="true">💼</span>
+          <h3>Sou intérprete e quero ser afiliado</h3>
+          <div class="curio">💰&nbsp;<span><b>+500 afiliados</b> já faturam indicando nossos cursos, mentoria e central de Libras. Entre para o time da Nerds.</span></div>
+          <a class="cta cta-wpp" href="https://wa.me/5534991855624?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Nerds%20da%20Libras.%20Sou%20int%C3%A9rprete%20de%20Libras%20e%20quero%20ser%20afiliado%20para%20vender%20curso%2C%20mentoria%20ou%20central%20de%20Libras." target="_blank" rel="noopener"><svg viewBox="0 0 32 32"><path d="M16 .4C7.4.4.5 7.3.5 15.9c0 2.8.7 5.4 2.1 7.8L.3 31.6l8.1-2.1c2.3 1.3 4.9 1.9 7.6 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.4 16 .4zm0 28.3c-2.4 0-4.7-.6-6.7-1.9l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.4-2.1-2.1-4.6-2.1-7.1 0-7.1 5.8-12.9 12.9-12.9 3.4 0 6.7 1.3 9.1 3.8 2.4 2.4 3.8 5.7 3.8 9.1-.1 7.1-5.9 12.9-12.9 12.9zm7.1-9.7c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.9.2s-1 1.3-1.2 1.5c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-1.9-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.2-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1.1.5s-1.5 1.4-1.5 3.5 1.5 4.1 1.7 4.3c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.4.9 1 .3 1.9.3 2.7.2.8-.1 2.3-.9 2.7-1.9.3-.9.3-1.8.2-1.9-.1-.3-.4-.4-.8-.6z"/></svg>Quero ser afiliado</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer>
+    <div class="social">
+      <a href="https://www.instagram.com/nerdsdalibras" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".7" stop-color="#d62976"/><stop offset="1" stop-color="#962fbf"/></linearGradient></defs><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" fill="url(#ig)"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4z" fill="url(#ig)"/><circle cx="18.41" cy="5.59" r="1.44" fill="url(#ig)"/></svg>
+      </a>
+    </div>
+    <p class="mini">© Nerds da Libras — Acessibilidade e inclusão em Libras em todo o Brasil.<br/>
+    <a href="/politica-de-privacidade/">Política de Privacidade</a></p>
+  </footer>
+
   <script>
-    document.addEventListener('click', function(ev){
-      var a = ev.target.closest('a[href*="wa.me"]');
-      if (a) { try { if (typeof fbq === 'function') fbq('track','Contact'); } catch(e){} }
-    }, true);
+    // Contadores animados
+    (function(){
+      function anima(el){
+        var alvo=+el.getAttribute('data-count'), ini=null, dur=1600;
+        function fmt(n){return n.toLocaleString('pt-BR');}
+        function passo(t){
+          if(!ini)ini=t; var p=Math.min((t-ini)/dur,1);
+          var val=Math.floor((1-Math.pow(1-p,3))*alvo);
+          el.innerHTML='<span class="plus">+</span>'+fmt(val);
+          if(p<1)requestAnimationFrame(passo);
+        }
+        requestAnimationFrame(passo);
+      }
+      var vistos=new WeakSet();
+      var io=new IntersectionObserver(function(ents){
+        ents.forEach(function(e){
+          if(e.isIntersecting && !vistos.has(e.target)){vistos.add(e.target);anima(e.target);}
+        });
+      },{threshold:.4});
+      document.querySelectorAll('.num[data-count]').forEach(function(n){io.observe(n)});
+    })();
+    // Meta Pixel: evento Contact no clique do WhatsApp
+    document.addEventListener('click',function(ev){
+      var a=ev.target.closest('a[href*="wa.me"]');
+      if(a){try{if(typeof fbq==='function')fbq('track','Contact');}catch(e){}}
+    },true);
   </script>
 </body>
 </html>
