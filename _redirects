@@ -34,10 +34,10 @@
 /tiktok               https://www.tiktok.com/@nerds.da.libras                   302
 
 # ── INTÉRPRETE DE LIBRAS (landing de destino da campanha) ──
-# /interprete-de-libras/ é servido pela pasta; atalhos e URL antiga redirecionam pra ela
-/interprete-de-libras.html       /interprete-de-libras/                          301!
-/interprete                      /interprete-de-libras/                          301!
-/preciso-de-interprete-de-libras /interprete-de-libras/                          301!
+# / é servido pela pasta; atalhos e URL antiga redirecionam pra ela
+/interprete-de-libras.html       /                          301!
+/interprete                      /                          301!
+/preciso-de-interprete-de-libras /                          301!
 
 # ── DASHBOARD ──
 /dashboard            /dashboard.html                                            200
