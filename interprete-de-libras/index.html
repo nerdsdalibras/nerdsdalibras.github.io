@@ -24,18 +24,14 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/fotos/favicon-nerds-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/fotos/favicon-nerds-180.png" />
 
-  <!-- ═══════════ GOOGLE ADS — Tag do Google ═══════════
-       TODO (João): quando criar a conversão "Clique WhatsApp" na conta NOVA,
-       cole aqui o ID (AW-...) descomentando as 2 linhas abaixo e troque no
-       script de conversão lá no fim da página o AW-XXXXXXXXX/ROTULO.
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXX"></script>
+  <!-- ═══════════ GOOGLE ADS — Tag do Google (conta Nerds da Libras) ═══════════ -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18337551981"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'AW-XXXXXXXXX');
+    gtag('config', 'AW-18337551981');
   </script>
-  ═══════════════════════════════════════════════════════ -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -371,8 +367,8 @@
     document.addEventListener('click', function (e) {
       var link = e.target.closest('a[href*="wa.me"]');
       if (!link) return;
-      // Google Ads — TODO (João): troque AW-XXXXXXXXX/ROTULO pelos dados da conta nova
-      try { if (typeof gtag === 'function') gtag('event','conversion',{'send_to':'AW-XXXXXXXXX/ROTULO'}); } catch(e){}
+      // Google Ads — conversão "Clique WhatsApp" (conta Nerds da Libras)
+      try { if (typeof gtag === 'function') gtag('event','conversion',{'send_to':'AW-18337551981/n1pOCITT8LgdEO2sg6hE'}); } catch(e){}
       // Meta Pixel (já instalado no site)
       try { if (window.fbq) fbq('track','Contact'); } catch(e){}
     });
