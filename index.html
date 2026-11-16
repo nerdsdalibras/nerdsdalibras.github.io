@@ -136,8 +136,8 @@
 
     /* Listas com check */
     .checks{max-width:720px;margin:24px auto 0;list-style:none}
-    .checks li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;font-size:16px;color:var(--cream-dim);border-bottom:1px solid var(--line)}
-    .checks li::before{content:"✓";color:var(--gold);font-weight:900;flex-shrink:0;font-size:17px}
+    .checks li{display:block;position:relative;padding:9px 0 9px 28px;font-size:16px;color:var(--cream-dim);border-bottom:1px solid var(--line)}
+    .checks li::before{content:"✓";position:absolute;left:0;top:9px;color:var(--gold);font-weight:900;font-size:17px}
     .checks li b{color:var(--cream)}
 
     /* Caixa destaque */
@@ -181,6 +181,16 @@
       .steps{grid-template-columns:1fr}
     }
     @media(max-width:480px){.float span{display:none}.float{padding:15px}}
+
+    /* Quem já contratou + depoimentos */
+    .rotulo{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+    .clientes{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:16px auto 0;padding:0;max-width:820px}
+    .clientes li{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:15px;font-weight:600;color:var(--cream)}
+    .depo-titulo{margin-top:40px;font-size:22px;color:var(--cream)}
+    .depo{margin:0}
+    .depo blockquote{margin:0 0 14px;font-size:16px;line-height:1.55;color:var(--cream)}
+    .depo figcaption{margin-top:auto;font-size:14px;color:var(--muted)}
+    .depo figcaption b{color:var(--gold)}
   </style>
   <!-- Meta Pixel Code -->
   <script>
@@ -222,7 +232,6 @@
           <span><b>+500</b>&nbsp;horas de vídeo em Libras</span>
           <span>🧾&nbsp;CNPJ e nota fiscal</span>
         </div>
-        <p class="resp">⚡ <b>Respondemos em até 1 hora útil</b> pelo WhatsApp.</p>
       </div>
       <div class="hero-photo">
         <picture>
@@ -235,7 +244,7 @@
   </div></header>
 
   <!-- ═══ 1. SERVIÇOS ═══ -->
-  <section class="sec bg-soft"><div class="wrap">
+  <section class="sec bg-soft" id="servicos"><div class="wrap">
     <h2 class="center">Nossos serviços de interpretação em Libras</h2>
     <div class="cards">
       <div class="card">
